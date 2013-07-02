@@ -29,6 +29,27 @@
 		39955E7F178334C000D225D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4C178334BF00D225D7 /* Foundation.framework */; };
 		39955E87178334C000D225D7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39955E85178334C000D225D7 /* InfoPlist.strings */; };
 		39955E8A178334C000D225D7 /* ObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955E89178334C000D225D7 /* ObserverTests.m */; };
+		39955E941783377E00D225D7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E931783377E00D225D7 /* CoreLocation.framework */; };
+		39955E961783379400D225D7 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E951783379400D225D7 /* CoreText.framework */; };
+		39955E98178337BF00D225D7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E97178337BF00D225D7 /* QuartzCore.framework */; };
+		39955E9A178337D900D225D7 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E99178337D900D225D7 /* MediaPlayer.framework */; };
+		39955E9C178337E000D225D7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9B178337E000D225D7 /* MobileCoreServices.framework */; };
+		39955E9E178337E800D225D7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9D178337E800D225D7 /* Security.framework */; };
+		39955EA0178337F700D225D7 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9F178337F700D225D7 /* libc++.dylib */; };
+		39955EA21783382200D225D7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA11783382200D225D7 /* libz.dylib */; };
+		39955EA41783388600D225D7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA31783388600D225D7 /* OpenGLES.framework */; };
+		39955EA617833A7B00D225D7 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 39955EA517833A7B00D225D7 /* ArcGIS.bundle */; };
+		39955EA717833A7B00D225D7 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 39955EA517833A7B00D225D7 /* ArcGIS.bundle */; };
+		39955EA817833CE900D225D7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4E178334BF00D225D7 /* CoreGraphics.framework */; };
+		39955EA917833CFD00D225D7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E931783377E00D225D7 /* CoreLocation.framework */; };
+		39955EAA17833D0E00D225D7 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E951783379400D225D7 /* CoreText.framework */; };
+		39955EAB17833D1800D225D7 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E99178337D900D225D7 /* MediaPlayer.framework */; };
+		39955EAC17833D1F00D225D7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA31783388600D225D7 /* OpenGLES.framework */; };
+		39955EAD17833D2600D225D7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E97178337BF00D225D7 /* QuartzCore.framework */; };
+		39955EAE17833D2E00D225D7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9B178337E000D225D7 /* MobileCoreServices.framework */; };
+		39955EAF17833D3500D225D7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9D178337E800D225D7 /* Security.framework */; };
+		39955EB017833D3F00D225D7 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9F178337F700D225D7 /* libc++.dylib */; };
+		39955EB117833D4600D225D7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA11783382200D225D7 /* libz.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +92,16 @@
 		39955E86178334C000D225D7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		39955E88178334C000D225D7 /* ObserverTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObserverTests.h; sourceTree = "<group>"; };
 		39955E89178334C000D225D7 /* ObserverTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObserverTests.m; sourceTree = "<group>"; };
+		39955E931783377E00D225D7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		39955E951783379400D225D7 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		39955E97178337BF00D225D7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		39955E99178337D900D225D7 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		39955E9B178337E000D225D7 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		39955E9D178337E800D225D7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		39955E9F178337F700D225D7 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
+		39955EA11783382200D225D7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		39955EA31783388600D225D7 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		39955EA517833A7B00D225D7 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +109,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39955EA41783388600D225D7 /* OpenGLES.framework in Frameworks */,
+				39955EA21783382200D225D7 /* libz.dylib in Frameworks */,
+				39955EA0178337F700D225D7 /* libc++.dylib in Frameworks */,
+				39955E9E178337E800D225D7 /* Security.framework in Frameworks */,
+				39955E9C178337E000D225D7 /* MobileCoreServices.framework in Frameworks */,
+				39955E9A178337D900D225D7 /* MediaPlayer.framework in Frameworks */,
+				39955E98178337BF00D225D7 /* QuartzCore.framework in Frameworks */,
+				39955E961783379400D225D7 /* CoreText.framework in Frameworks */,
+				39955E941783377E00D225D7 /* CoreLocation.framework in Frameworks */,
 				39955E4B178334BF00D225D7 /* UIKit.framework in Frameworks */,
 				39955E4D178334BF00D225D7 /* Foundation.framework in Frameworks */,
 				39955E4F178334BF00D225D7 /* CoreGraphics.framework in Frameworks */,
@@ -88,6 +128,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39955EB117833D4600D225D7 /* libz.dylib in Frameworks */,
+				39955EB017833D3F00D225D7 /* libc++.dylib in Frameworks */,
+				39955EAF17833D3500D225D7 /* Security.framework in Frameworks */,
+				39955EAE17833D2E00D225D7 /* MobileCoreServices.framework in Frameworks */,
+				39955EAD17833D2600D225D7 /* QuartzCore.framework in Frameworks */,
+				39955EAC17833D1F00D225D7 /* OpenGLES.framework in Frameworks */,
+				39955EAB17833D1800D225D7 /* MediaPlayer.framework in Frameworks */,
+				39955EAA17833D0E00D225D7 /* CoreText.framework in Frameworks */,
+				39955EA917833CFD00D225D7 /* CoreLocation.framework in Frameworks */,
+				39955EA817833CE900D225D7 /* CoreGraphics.framework in Frameworks */,
 				39955E7D178334C000D225D7 /* SenTestingKit.framework in Frameworks */,
 				39955E7E178334C000D225D7 /* UIKit.framework in Frameworks */,
 				39955E7F178334C000D225D7 /* Foundation.framework in Frameworks */,
@@ -119,6 +169,15 @@
 		39955E49178334BF00D225D7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				39955EA31783388600D225D7 /* OpenGLES.framework */,
+				39955EA11783382200D225D7 /* libz.dylib */,
+				39955E9F178337F700D225D7 /* libc++.dylib */,
+				39955E9D178337E800D225D7 /* Security.framework */,
+				39955E9B178337E000D225D7 /* MobileCoreServices.framework */,
+				39955E99178337D900D225D7 /* MediaPlayer.framework */,
+				39955E97178337BF00D225D7 /* QuartzCore.framework */,
+				39955E951783379400D225D7 /* CoreText.framework */,
+				39955E931783377E00D225D7 /* CoreLocation.framework */,
 				39955E4A178334BF00D225D7 /* UIKit.framework */,
 				39955E4C178334BF00D225D7 /* Foundation.framework */,
 				39955E4E178334BF00D225D7 /* CoreGraphics.framework */,
@@ -136,12 +195,8 @@
 				39955E65178334C000D225D7 /* MainStoryboard_iPad.storyboard */,
 				39955E68178334C000D225D7 /* ObserverFirstViewController.h */,
 				39955E69178334C000D225D7 /* ObserverFirstViewController.m */,
-				39955E6B178334C000D225D7 /* first.png */,
-				39955E6D178334C000D225D7 /* first@2x.png */,
 				39955E6F178334C000D225D7 /* ObserverSecondViewController.h */,
 				39955E70178334C000D225D7 /* ObserverSecondViewController.m */,
-				39955E72178334C000D225D7 /* second.png */,
-				39955E74178334C000D225D7 /* second@2x.png */,
 				39955E51178334C000D225D7 /* Supporting Files */,
 			);
 			path = Observer;
@@ -150,6 +205,11 @@
 		39955E51178334C000D225D7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				39955EA517833A7B00D225D7 /* ArcGIS.bundle */,
+				39955E6B178334C000D225D7 /* first.png */,
+				39955E6D178334C000D225D7 /* first@2x.png */,
+				39955E72178334C000D225D7 /* second.png */,
+				39955E74178334C000D225D7 /* second@2x.png */,
 				39955E52178334C000D225D7 /* Observer-Info.plist */,
 				39955E53178334C000D225D7 /* InfoPlist.strings */,
 				39955E56178334C000D225D7 /* main.m */,
@@ -262,6 +322,7 @@
 				39955E6E178334C000D225D7 /* first@2x.png in Resources */,
 				39955E73178334C000D225D7 /* second.png in Resources */,
 				39955E75178334C000D225D7 /* second@2x.png in Resources */,
+				39955EA617833A7B00D225D7 /* ArcGIS.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,6 +331,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				39955E87178334C000D225D7 /* InfoPlist.strings in Resources */,
+				39955EA717833A7B00D225D7 /* ArcGIS.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,6 +433,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/SDKs/ArcGIS/iOS/**";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -386,6 +449,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = armv7;
 			};
 			name = Debug;
 		};
@@ -403,6 +467,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/SDKs/ArcGIS/iOS/**";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -412,16 +477,25 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = armv7;
 			};
 			name = Release;
 		};
 		39955E8E178334C000D225D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/SDKs/ArcGIS/iOS/**";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Observer/Observer-Prefix.pch";
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+					"-framework",
+					ArcGIS,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -429,10 +503,18 @@
 		39955E8F178334C000D225D7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/SDKs/ArcGIS/iOS/**";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Observer/Observer-Prefix.pch";
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+					"-framework",
+					ArcGIS,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -442,12 +524,19 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Observer.app/Observer";
 				FRAMEWORK_SEARCH_PATHS = (
+					"$(HOME)/Library/SDKs/ArcGIS/iOS/**",
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Observer/Observer-Prefix.pch";
 				INFOPLIST_FILE = "ObserverTests/ObserverTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+					"-framework",
+					ArcGIS,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
@@ -459,12 +548,19 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Observer.app/Observer";
 				FRAMEWORK_SEARCH_PATHS = (
+					"$(HOME)/Library/SDKs/ArcGIS/iOS/**",
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Observer/Observer-Prefix.pch";
 				INFOPLIST_FILE = "ObserverTests/ObserverTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+					"-framework",
+					ArcGIS,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
