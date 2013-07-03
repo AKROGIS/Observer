@@ -50,6 +50,12 @@
 		39955EAF17833D3500D225D7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9D178337E800D225D7 /* Security.framework */; };
 		39955EB017833D3F00D225D7 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9F178337F700D225D7 /* libc++.dylib */; };
 		39955EB117833D4600D225D7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA11783382200D225D7 /* libz.dylib */; };
+		39955EB7178382D600D225D7 /* map.png in Resources */ = {isa = PBXBuildFile; fileRef = 39955EB5178382D600D225D7 /* map.png */; };
+		39955EB8178382D600D225D7 /* map@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 39955EB6178382D600D225D7 /* map@2x.png */; };
+		39955EC017838C7E00D225D7 /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 39955EBE17838C7E00D225D7 /* settings.png */; };
+		39955EC117838C7E00D225D7 /* settings@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 39955EBF17838C7E00D225D7 /* settings@2x.png */; };
+		39955EC41783A16900D225D7 /* form.png in Resources */ = {isa = PBXBuildFile; fileRef = 39955EC21783A16900D225D7 /* form.png */; };
+		39955EC51783A16900D225D7 /* form@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 39955EC31783A16900D225D7 /* form@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +108,12 @@
 		39955EA11783382200D225D7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		39955EA31783388600D225D7 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		39955EA517833A7B00D225D7 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
+		39955EB5178382D600D225D7 /* map.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = map.png; sourceTree = "<group>"; };
+		39955EB6178382D600D225D7 /* map@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "map@2x.png"; sourceTree = "<group>"; };
+		39955EBE17838C7E00D225D7 /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
+		39955EBF17838C7E00D225D7 /* settings@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings@2x.png"; sourceTree = "<group>"; };
+		39955EC21783A16900D225D7 /* form.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = form.png; sourceTree = "<group>"; };
+		39955EC31783A16900D225D7 /* form@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "form@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -205,18 +217,12 @@
 		39955E51178334C000D225D7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				39955EBD17838C2E00D225D7 /* Images */,
 				39955EA517833A7B00D225D7 /* ArcGIS.bundle */,
-				39955E6B178334C000D225D7 /* first.png */,
-				39955E6D178334C000D225D7 /* first@2x.png */,
-				39955E72178334C000D225D7 /* second.png */,
-				39955E74178334C000D225D7 /* second@2x.png */,
 				39955E52178334C000D225D7 /* Observer-Info.plist */,
 				39955E53178334C000D225D7 /* InfoPlist.strings */,
 				39955E56178334C000D225D7 /* main.m */,
 				39955E58178334C000D225D7 /* Observer-Prefix.pch */,
-				39955E5C178334C000D225D7 /* Default.png */,
-				39955E5E178334C000D225D7 /* Default@2x.png */,
-				39955E60178334C000D225D7 /* Default-568h@2x.png */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -238,6 +244,26 @@
 				39955E85178334C000D225D7 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		39955EBD17838C2E00D225D7 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				39955EC21783A16900D225D7 /* form.png */,
+				39955EC31783A16900D225D7 /* form@2x.png */,
+				39955EBE17838C7E00D225D7 /* settings.png */,
+				39955EBF17838C7E00D225D7 /* settings@2x.png */,
+				39955EB5178382D600D225D7 /* map.png */,
+				39955EB6178382D600D225D7 /* map@2x.png */,
+				39955E6B178334C000D225D7 /* first.png */,
+				39955E6D178334C000D225D7 /* first@2x.png */,
+				39955E72178334C000D225D7 /* second.png */,
+				39955E74178334C000D225D7 /* second@2x.png */,
+				39955E5C178334C000D225D7 /* Default.png */,
+				39955E5E178334C000D225D7 /* Default@2x.png */,
+				39955E60178334C000D225D7 /* Default-568h@2x.png */,
+			);
+			path = Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -323,6 +349,12 @@
 				39955E73178334C000D225D7 /* second.png in Resources */,
 				39955E75178334C000D225D7 /* second@2x.png in Resources */,
 				39955EA617833A7B00D225D7 /* ArcGIS.bundle in Resources */,
+				39955EB7178382D600D225D7 /* map.png in Resources */,
+				39955EB8178382D600D225D7 /* map@2x.png in Resources */,
+				39955EC017838C7E00D225D7 /* settings.png in Resources */,
+				39955EC117838C7E00D225D7 /* settings@2x.png in Resources */,
+				39955EC41783A16900D225D7 /* form.png in Resources */,
+				39955EC51783A16900D225D7 /* form@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
