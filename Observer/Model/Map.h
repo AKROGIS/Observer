@@ -10,4 +10,9 @@
 
 @interface Map : NSObject
 
++ (Map *) randomMap; //for testing purposes
+
+@property (strong, nonatomic) NSString *name;
+@property (strong, nonatomic) NSString *summary;
+
 @end

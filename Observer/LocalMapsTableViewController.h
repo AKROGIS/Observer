@@ -10,4 +10,7 @@
 
 @interface LocalMapsTableViewController : UITableViewController
 
+//model
+@property (strong, nonatomic) NSArray *maps; //of Map
+
 @end

@@ -10,4 +10,7 @@
 
 @interface Maps : NSObject
 
++ (NSArray *) serverMaps; //of Map
++ (NSArray *) localMaps; //of Map
+
 @end

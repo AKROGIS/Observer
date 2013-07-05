@@ -7,6 +7,8 @@
 //
 
 #import "LocalMapsTableViewController.h"
+#import "Maps.h"
+#import "Map.h"
 
 @interface LocalMapsTableViewController ()
 
@@ -40,6 +42,15 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - Model
+
+//Lazy load the model
+- (NSArray *)maps {
+    if (!_maps)
+        _maps = [Maps localMaps];
+    return _maps;
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -49,15 +60,17 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 0;
+    return self.maps.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
+    static NSString *CellIdentifier = @"Local Map Description Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    // Configure the cell...
+    Map *map = self.maps[indexPath.row];
+    cell.textLabel.text = map.name;
+    cell.detailTextLabel.text = map.summary;
     
     return cell;
 }

@@ -7,7 +7,29 @@
 //
 
 #import "Maps.h"
+#import "Map.h"
 
 @implementation Maps
+
++ (NSArray *) localMaps {
+    NSMutableArray * maps = [[NSMutableArray alloc] init];
+    if (maps) {
+        for (int i = 0; i < 2 + rand() % 5; i++) {
+            [maps addObject:[Map randomMap]];
+        }
+    }
+    return [maps copy];
+}
+
++ (NSArray *) serverMaps {
+    NSMutableArray * maps = [[NSMutableArray alloc] init];
+    if (maps) {
+        for (int i = 0; i < 2 + rand() % 5; i++) {
+            [maps addObject:[Map randomMap]];
+        }
+    }
+    return [maps copy];
+}
+
 
 @end
