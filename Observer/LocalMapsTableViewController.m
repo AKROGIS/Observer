@@ -7,7 +7,6 @@
 //
 
 #import "LocalMapsTableViewController.h"
-#import "Maps.h"
 #import "Map.h"
 
 @interface LocalMapsTableViewController ()
@@ -42,15 +41,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Model
-
-//Lazy load the model
-- (NSArray *)maps {
-    if (!_maps)
-        _maps = [[NSMutableArray alloc] initWithArray:[Maps localMaps]];
-    return _maps;
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -68,7 +58,7 @@
     static NSString *CellIdentifier = @"Local Map Description Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    Map *map = self.maps[indexPath.row];
+    Map *map = [self.maps mapAtIndex:indexPath.row];
     cell.textLabel.text = map.name;
     cell.detailTextLabel.text = map.summary;
     
@@ -81,7 +71,7 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
-        [self.maps removeObjectAtIndex:indexPath.row];
+        [self.maps removeMapAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -91,9 +81,7 @@
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-    Map *temp = self.maps[fromIndexPath.row];
-    [self.maps removeObjectAtIndex:fromIndexPath.row];
-    [self.maps insertObject:temp atIndex:toIndexPath.row];
+    [self.maps moveMapAtIndex:fromIndexPath.row toIndex:toIndexPath.row];
 }
 
 

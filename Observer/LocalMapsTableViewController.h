@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Maps.h"
 
 @interface LocalMapsTableViewController : UITableViewController
 
 //model
-@property (strong, nonatomic) NSMutableArray *maps; //of Map
+@property (strong, nonatomic) Maps *maps;
 
 @end
