@@ -39,6 +39,16 @@
     return [self initWithLocalURL:nil andServerURL:nil];
 }
 
+- (NSString *) name {
+    if (!_name) _name = [self.localURL path];
+        return _name;
+}
+
+- (NSString *) summary {
+    if (!_summary) _summary = self.localURL.absoluteString;
+    return _summary;
+}
+
 
 #pragma mark public properties
 

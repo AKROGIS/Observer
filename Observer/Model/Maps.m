@@ -22,8 +22,10 @@
 #pragma mark - properties
 
 - (NSUInteger) count {
-    return self.maps.count;
+    return [self.maps count];
 }
+
+@synthesize currentMap = _currentMap; //required since I'm implementing a setter and getter
 
 - (void) setCurrentMap:(Map *)currentMap {
     if (_currentMap == currentMap)
@@ -33,6 +35,22 @@
         _currentMap = currentMap;
         [self updateNSDefaults];
     }
+}
+
+- (Map *)currentMap
+{
+    if (!_currentMap) {
+        // Get the current map from defaults
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        NSURL *currentMapURL = [defaults URLForKey:@"CurrentMapURL"];
+        for (Map *map in self.maps) {
+            if ([map.localURL isEqual:currentMapURL]) {
+                _currentMap = map;
+                break;
+            }
+        }
+    }
+    return _currentMap;
 }
 
 
@@ -107,7 +125,8 @@
         NSArray *localMapURLs = [defaults valueForKey:@"LocalMapURLs"];
         NSMutableSet *files = [NSMutableSet setWithArray:[self mapURLsInFileManager]];
         // create maps in order from urls saved in defaults  IFF they are found in filesystem
-        for (NSURL *url in localMapURLs) {
+        for (NSString *urlString in localMapURLs) {
+            NSURL *url = [NSURL URLWithString:urlString];
             if ([files containsObject:url]) {
                 [_maps addObject:[[Map alloc] initWithLocalURL:url]];
                 [files removeObject:url];
@@ -116,16 +135,6 @@
         //Add any other maps in filesystem (maybe added via iTunes) to end of list from defaults
         for (NSURL *url in files) {
             [_maps addObject:[[Map alloc] initWithLocalURL:url]];
-        }
-        
-        // Get the current map from defaults 
-        NSURL *currentMapURL = [defaults URLForKey:@"CurrentMapURL"];
-        _currentMap = nil;
-        for (Map *map in _maps) {
-            if ([map.localURL isEqual:currentMapURL]) {
-                _currentMap = map;
-                break;
-            }
         }
     }
     return _maps;
@@ -160,7 +169,7 @@
     
     NSMutableArray *localURLs = [[NSMutableArray alloc] initWithCapacity:[self.maps count]];
     for (Map *map in self.maps) {
-        [localURLs addObject:map.localURL];
+        [localURLs addObject:[map.localURL absoluteString]];
     }
     [defaults setValue:localURLs forKey:@"LocalMapURLs"];
 }
