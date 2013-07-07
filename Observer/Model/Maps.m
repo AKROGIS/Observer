@@ -8,7 +8,8 @@
 
 #import "Maps.h"
 
-#define TILE_CACHE_EXTENSION @"tpk"
+#define DEFAULTS_KEY_CURRENT_MAP_URL @"CurrentMapURL"
+#define DEFAULTS_KEY_LOCAL_MAP_URLS @"LocalMapURLs"
 
 @interface Maps()
 
@@ -42,7 +43,7 @@
     if (!_currentMap) {
         // Get the current map from defaults
         NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-        NSURL *currentMapURL = [defaults URLForKey:@"CurrentMapURL"];
+        NSURL *currentMapURL = [defaults URLForKey:DEFAULTS_KEY_CURRENT_MAP_URL];
         for (Map *map in self.maps) {
             if ([map.localURL isEqual:currentMapURL]) {
                 _currentMap = map;
@@ -102,27 +103,55 @@
     [self updateNSDefaults];
 }
 
+static NSArray * _cachedServerResponse;
 
-#pragma mark - class methods
++ (NSArray *) refreshServerMaps {
+    _cachedServerResponse = nil;
+    return [self getServerMaps];
+}
 
-+ (NSArray *) serverMaps {
++ (NSArray *) getServerMaps {
+    if (_cachedServerResponse)
+        return _cachedServerResponse;
+    
+    //we need to query the server(s) on a background thread
+    //we will return nil until we get a response
+    //the delegate will be informed when a response is available
+    
     NSMutableArray * maps = [[NSMutableArray alloc] init];
     if (maps) {
         for (int i = 0; i < 2 + rand() % 5; i++) {
             [maps addObject:[Map randomMap]];
         }
     }
+#pragma warning how do we use a delegate in a class method
+    //if ([self.delegate respondsToSelector:@selector(mapsDidFinishServerRequest:)]) {
+    //    [self.delegate mapsDidFinishServerRequest:self];
+    //}
     return [maps copy];
 }
 
+
+
+#pragma mark - class methods
+
++ (NSURL *) cacheDirectory {
+    NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];
+    return urls[0];
+}
+
++ (NSURL *) documentsDirectory {
+    NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
+    return urls[0];
+}
 
 #pragma mark - private methods
 
 - (NSMutableArray *)maps {
     if (!_maps) {
         _maps = [[NSMutableArray alloc] init];
-        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-        NSArray *localMapURLs = [defaults valueForKey:@"LocalMapURLs"];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSArray *localMapURLs = [defaults valueForKey:DEFAULTS_KEY_LOCAL_MAP_URLS];
         NSMutableSet *files = [NSMutableSet setWithArray:[self mapURLsInFileManager]];
         // create maps in order from urls saved in defaults  IFF they are found in filesystem
         for (NSString *urlString in localMapURLs) {
@@ -142,16 +171,25 @@
 
 - (NSArray *) /* of NSURL */ mapURLsInFileManager
 {
-    
     NSMutableArray *localUrls = [[NSMutableArray alloc] init];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = paths[0];
-    NSArray *contents = [fileManager contentsOfDirectoryAtPath:documentsDirectory error:NULL];
-    if (contents) {
-        for (NSString *filename in contents) {
-            if ([[filename pathExtension] isEqualToString:TILE_CACHE_EXTENSION]) {
-                [localUrls addObject:[NSURL URLWithString:filename]];
+    
+    NSArray *documents = [[NSFileManager defaultManager]
+                          contentsOfDirectoryAtURL:[Maps documentsDirectory]
+                          includingPropertiesForKeys:nil
+                          options:NSDirectoryEnumerationSkipsHiddenFiles
+                          error:nil];
+    
+    NSArray *caches = [[NSFileManager defaultManager]
+                       contentsOfDirectoryAtURL:[Maps documentsDirectory]
+                       includingPropertiesForKeys:nil
+                       options:NSDirectoryEnumerationSkipsHiddenFiles
+                       error:nil];
+    
+    documents = [documents arrayByAddingObjectsFromArray:caches];
+    if (documents) {
+        for (NSURL *url in documents) {
+            if ([[url pathExtension] isEqualToString:TILE_CACHE_EXTENSION]) {
+                [localUrls addObject:url];
             }
         }
     }
@@ -163,15 +201,15 @@
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     
     if (self.currentMap && self.currentMap.localURL)
-        [defaults setURL:self.currentMap.localURL forKey:@"CurrentMapURL"];
+        [defaults setURL:self.currentMap.localURL forKey:DEFAULTS_KEY_CURRENT_MAP_URL];
     else
-        [defaults setNilValueForKey:@"CurrentMapURL"];
+        [defaults setNilValueForKey:DEFAULTS_KEY_CURRENT_MAP_URL];
     
     NSMutableArray *localURLs = [[NSMutableArray alloc] initWithCapacity:[self.maps count]];
     for (Map *map in self.maps) {
         [localURLs addObject:[map.localURL absoluteString]];
     }
-    [defaults setValue:localURLs forKey:@"LocalMapURLs"];
+    [defaults setValue:localURLs forKey:DEFAULTS_KEY_LOCAL_MAP_URLS];
 }
 
 @end

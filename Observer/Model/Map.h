@@ -7,6 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MapMonitoring.h"
+
+typedef enum {
+    MapStatusNormal,
+    MapStatusDownloading,
+    MapStatusDownloadFailed,
+    MapStatusLoading,
+    MapStatusLoadFailed
+} MapStatus;
+
+#define TILE_CACHE_EXTENSION @"tpk"
 
 @interface Map : NSObject
 
@@ -17,10 +28,18 @@
 - (id) initWithServerURL:(NSURL *)serverUrl;
 - (id) init; // don't call this - it overrides super init to prevent malformed objects
 
-@property (strong, nonatomic) NSURL *localURL;
-@property (strong, nonatomic) NSURL *serverURL;
+@property (strong, nonatomic, readonly) NSURL *localURL;
+@property (strong, nonatomic, readonly) NSURL *serverURL;
+@property (nonatomic, readonly) MapStatus status;
+
 @property (strong, nonatomic) NSString *name;
 @property (strong, nonatomic) NSString *summary;
+@property (strong, nonatomic) NSDate *fileDate;
+@property (strong, nonatomic) NSDate *serverDate;
+@property (weak, nonatomic) id <MapMonitoring> delegate;
+
+- (BOOL) isOutdated;
+- (BOOL) isOrphan;
 
 - (void) download;
 - (void) unload;

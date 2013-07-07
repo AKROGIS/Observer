@@ -120,6 +120,7 @@
 		39955ECE1787336800D225D7 /* LocalMapsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalMapsTableViewController.m; sourceTree = "<group>"; };
 		39955ED0178733B900D225D7 /* ObserverMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverMapViewController.h; sourceTree = "<group>"; };
 		39955ED1178733B900D225D7 /* ObserverMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObserverMapViewController.m; sourceTree = "<group>"; };
+		59119861178906FD00B2331B /* MapMonitoring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MapMonitoring.h; path = Model/MapMonitoring.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -280,6 +281,7 @@
 				39955EC8178732DE00D225D7 /* Map.m */,
 				39955ECA1787332400D225D7 /* Maps.h */,
 				39955ECB1787332400D225D7 /* Maps.m */,
+				59119861178906FD00B2331B /* MapMonitoring.h */,
 			);
 			name = Model;
 			sourceTree = "<group>";

@@ -7,10 +7,19 @@
 //
 
 #import "Map.h"
+#import "Maps.h"
+
+@interface Map()
+
+@property (strong, nonatomic, readwrite) NSURL *localURL;
+@property (strong, nonatomic, readwrite) NSURL *serverURL;
+@property (nonatomic, readwrite) MapStatus status;
+
+@end
 
 @implementation Map
 
-#pragma mark - initializer
+#pragma mark - initializers
 
 - (id) initWithLocalURL:(NSURL *)localURL andServerURL:(NSURL *)serverUrl
 {
@@ -39,9 +48,12 @@
     return [self initWithLocalURL:nil andServerURL:nil];
 }
 
+
+#pragma mark public properties
+
 - (NSString *) name {
     if (!_name) _name = [self.localURL path];
-        return _name;
+    return _name;
 }
 
 - (NSString *) summary {
@@ -50,17 +62,53 @@
 }
 
 
-#pragma mark public properties
-
-
 #pragma mark public instance methods
+
+- (BOOL) isOutdated {
+    if (!self.serverURL)
+        return NO;
+    
+    NSArray *serverMaps = [Maps getServerMaps]; //of Map
+    if (!serverMaps)
+        return NO;
+    
+    for (Map *map in serverMaps) {
+        if ([map.serverURL isEqual:self.serverURL]) {
+            return map.fileDate < map.serverDate;
+        }
+    }
+    return NO;
+}
+
+- (BOOL) isOrphan {
+    if (!self.serverURL)
+        return NO;
+    
+    NSArray *serverMaps = [Maps getServerMaps]; //of Map
+    if (!serverMaps)
+        return NO;
+    
+    for (Map *map in serverMaps) {
+        if ([map.serverURL isEqual:self.serverURL]) {
+            return NO;
+        }
+    }
+    return YES;
+}
 
 - (void) download {
 #warning incomplete implementation
+    if ([self.delegate respondsToSelector:@selector(mapDidFinishDownload:)]) {
+        [self.delegate mapDidFinishDownload:self];
+    }  
 }
 
 - (void) unload {
-#warning incomplete implementation
+    #warning check if the file is currentmap
+    #warning we should do something if the file does not delete 
+    //delete the file
+    if ([[NSFileManager defaultManager] removeItemAtURL:self.localURL error:nil])
+        self.status = MapStatusLoadFailed;
 }
 
 
