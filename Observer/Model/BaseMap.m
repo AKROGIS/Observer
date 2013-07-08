@@ -75,7 +75,7 @@
     if (!self.serverURL)
         return NO;
     
-    NSArray *serverMaps = [BaseMapManager getServerMaps]; //of Map
+    NSArray *serverMaps = [[BaseMapManager sharedManager] getServerMaps]; //of BaseMap
     if (!serverMaps)
         return NO;
     
@@ -91,7 +91,7 @@
     if (!self.serverURL)
         return NO;
     
-    NSArray *serverMaps = [BaseMapManager getServerMaps]; //of Map
+    NSArray *serverMaps = [[BaseMapManager sharedManager] getServerMaps]; //of BaseMap
     if (!serverMaps)
         return NO;
     

@@ -20,7 +20,7 @@
 @implementation ObserverMapViewController
 
 - (BaseMapManager *)maps {
-    if (!_maps) _maps = [[BaseMapManager alloc] init];
+    if (!_maps) _maps = [BaseMapManager sharedManager];
     return _maps;
 }
 

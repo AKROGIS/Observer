@@ -21,6 +21,18 @@
 
 @implementation BaseMapManager
 
+#pragma mark - singleton setup
+//This is not a "true" singleton, it is still possible to create another object with [[BaseMapManager alloc] init]
+//I only need/want one shareable instance in my app, so I will use a factory method to return the sharedManager
+
+static BaseMapManager * _sharedManager;
+
++ (BaseMapManager *) sharedManager
+{
+    if (!_sharedManager) _sharedManager = [[BaseMapManager alloc] init];
+    return _sharedManager;
+}
+
 
 #pragma mark - properties
 
@@ -107,12 +119,12 @@
 
 static NSArray * _cachedServerResponse;
 
-+ (NSArray *) refreshServerMaps {
+- (NSArray *) refreshServerMaps {
     _cachedServerResponse = nil;
     return [self getServerMaps];
 }
 
-+ (NSArray *) getServerMaps {
+- (NSArray *) getServerMaps {
     if (_cachedServerResponse)
         return _cachedServerResponse;
     

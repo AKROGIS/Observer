@@ -12,6 +12,8 @@
 
 @interface BaseMapManager : NSObject
 
++ (BaseMapManager *) sharedManager;  //this is single instance BaseMapManager that unrelated classes can share.
+
 - (NSUInteger) count;
 @property (strong, nonatomic) BaseMap *currentMap;
 @property (weak, nonatomic) id <MapMonitoring> delegate;
@@ -23,8 +25,8 @@
 - (void) removeMapAtIndex:(NSUInteger)index;
 - (void) moveMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
-+ (NSArray *) refreshServerMaps; //of BaseMap
-+ (NSArray *) getServerMaps; //of BaseMap
+- (NSArray *) refreshServerMaps; //of BaseMap
+- (NSArray *) getServerMaps; //of BaseMap
 
 + (NSURL *) cacheDirectory;
 + (NSURL *) documentsDirectory;
