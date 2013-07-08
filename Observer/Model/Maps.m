@@ -10,6 +10,8 @@
 
 #define DEFAULTS_KEY_CURRENT_MAP_URL @"CurrentMapURL"
 #define DEFAULTS_KEY_LOCAL_MAP_URLS @"LocalMapURLs"
+#define TILE_CACHE_EXTENSION @"tpk"
+
 
 @interface Maps()
 

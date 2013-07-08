@@ -11,10 +11,6 @@
 
 @interface Map()
 
-@property (strong, nonatomic, readwrite) NSURL *localURL;
-@property (strong, nonatomic, readwrite) NSURL *serverURL;
-@property (nonatomic, readwrite) MapStatus status;
-
 @end
 
 @implementation Map
@@ -48,6 +44,17 @@
     return [self initWithLocalURL:nil andServerURL:nil];
 }
 
+#pragma mark MapManager (or self) managed properties
+
+- (AGSLocalTiledLayer *) tileCache
+{
+    if (!_tileCache && self.localURL && self.status == MapStatusNormal) {
+        _tileCache = [AGSLocalTiledLayer localTiledLayerWithName:[self.localURL absoluteString]];
+        if (_tileCache)
+            self.status = MapStatusLoadFailed;
+    }
+    return _tileCache;
+}
 
 #pragma mark public properties
 
@@ -98,6 +105,7 @@
 
 - (void) download {
 #warning incomplete implementation
+    //We need to ask the MapManager to do the download, since it knows how to talk to the servers
     if ([self.delegate respondsToSelector:@selector(mapDidFinishDownload:)]) {
         [self.delegate mapDidFinishDownload:self];
     }  
