@@ -7,7 +7,7 @@
 //
 
 #import "LocalMapsTableViewController.h"
-#import "Map.h"
+#import "BaseMap.h"
 
 @interface LocalMapsTableViewController ()
 
@@ -58,7 +58,7 @@
     static NSString *CellIdentifier = @"Local Map Description Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    Map *map = [self.maps mapAtIndex:indexPath.row];
+    BaseMap *map = [self.maps mapAtIndex:indexPath.row];
     cell.textLabel.text = map.name;
     cell.detailTextLabel.text = map.summary;
     

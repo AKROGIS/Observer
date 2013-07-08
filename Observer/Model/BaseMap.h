@@ -1,5 +1,5 @@
 //
-//  Map.h
+//  BaseMap.h
 //  Observer
 //
 //  Created by Regan Sarwas on 7/5/13.
@@ -28,7 +28,7 @@ typedef enum {
     ServerStatusNotApplicable,
 } ServerStatus;
 
-@interface Map : NSObject
+@interface BaseMap : NSObject
 
 //designated initializer
 - (id) initWithLocalURL:(NSURL *)localURL andServerURL:(NSURL *)serverUrl;
@@ -64,6 +64,6 @@ typedef enum {
 @property (weak, nonatomic) id <MapMonitoring> delegate;
 
 
-+ (Map *) randomMap; //for testing purposes
++ (BaseMap *) randomMap; //for testing purposes
 
 @end

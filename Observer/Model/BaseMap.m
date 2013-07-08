@@ -1,19 +1,19 @@
 //
-//  Map.m
+//  BaseMap.m
 //  Observer
 //
 //  Created by Regan Sarwas on 7/5/13.
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
-#import "Map.h"
-#import "Maps.h"
+#import "BaseMap.h"
+#import "BaseMapManager.h"
 
-@interface Map()
+@interface BaseMap()
 
 @end
 
-@implementation Map
+@implementation BaseMap
 
 #pragma mark - initializers
 
@@ -75,11 +75,11 @@
     if (!self.serverURL)
         return NO;
     
-    NSArray *serverMaps = [Maps getServerMaps]; //of Map
+    NSArray *serverMaps = [BaseMapManager getServerMaps]; //of Map
     if (!serverMaps)
         return NO;
     
-    for (Map *map in serverMaps) {
+    for (BaseMap *map in serverMaps) {
         if ([map.serverURL isEqual:self.serverURL]) {
             return map.fileDate < map.serverDate;
         }
@@ -91,11 +91,11 @@
     if (!self.serverURL)
         return NO;
     
-    NSArray *serverMaps = [Maps getServerMaps]; //of Map
+    NSArray *serverMaps = [BaseMapManager getServerMaps]; //of Map
     if (!serverMaps)
         return NO;
     
-    for (Map *map in serverMaps) {
+    for (BaseMap *map in serverMaps) {
         if ([map.serverURL isEqual:self.serverURL]) {
             return NO;
         }
@@ -122,10 +122,10 @@
 
 #pragma mark public class methods
 
-+ (Map *) randomMap {
++ (BaseMap *) randomMap {
     int i = 1 + rand() % 999;
     NSURL *serverURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://myserver/mymaps/map%u.tpk", i]];
-    Map *map = [[Map alloc] initWithServerURL:serverURL];
+    BaseMap *map = [[BaseMap alloc] initWithServerURL:serverURL];
     if (map) {
         map.name = [NSString stringWithFormat:@"Map # %u", i];
         map.summary = [serverURL description];

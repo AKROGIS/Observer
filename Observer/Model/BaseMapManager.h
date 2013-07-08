@@ -1,5 +1,5 @@
 //
-//  Maps.h
+//  BaseMapManager.h
 //  Observer
 //
 //  Created by Regan Sarwas on 7/5/13.
@@ -7,24 +7,24 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Map.h"
+#import "BaseMap.h"
 #import "MapMonitoring.h"
 
-@interface Maps : NSObject
+@interface BaseMapManager : NSObject
 
 - (NSUInteger) count;
-@property (strong, nonatomic) Map *currentMap;
+@property (strong, nonatomic) BaseMap *currentMap;
 @property (weak, nonatomic) id <MapMonitoring> delegate;
 
-- (Map *) mapAtIndex:(NSUInteger)index;
-- (void) addMap:(Map *)map;
-- (void) insertMap:(Map *)map atIndex:(NSUInteger)index;
-- (void) removeMap:(Map *)map;
+- (BaseMap *) mapAtIndex:(NSUInteger)index;
+- (void) addMap:(BaseMap *)map;
+- (void) insertMap:(BaseMap *)map atIndex:(NSUInteger)index;
+- (void) removeMap:(BaseMap *)map;
 - (void) removeMapAtIndex:(NSUInteger)index;
 - (void) moveMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
-+ (NSArray *) refreshServerMaps; //of Map
-+ (NSArray *) getServerMaps; //of Map
++ (NSArray *) refreshServerMaps; //of BaseMap
++ (NSArray *) getServerMaps; //of BaseMap
 
 + (NSURL *) cacheDirectory;
 + (NSURL *) documentsDirectory;

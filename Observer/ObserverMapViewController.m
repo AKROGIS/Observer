@@ -8,19 +8,19 @@
 
 #import "ObserverMapViewController.h"
 #import "LocalMapsTableViewController.h"
-#import "Maps.h"
+#import "BaseMapManager.h"
 
 @interface ObserverMapViewController ()
 
-@property (strong, nonatomic) Maps *maps;
+@property (strong, nonatomic) BaseMapManager *maps;
 @property (weak, nonatomic) IBOutlet UILabel *mapLabel;
 
 @end
 
 @implementation ObserverMapViewController
 
-- (Maps *)maps {
-    if (!_maps) _maps = [[Maps alloc] init];
+- (BaseMapManager *)maps {
+    if (!_maps) _maps = [[BaseMapManager alloc] init];
     return _maps;
 }
 
@@ -41,7 +41,7 @@
 
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    Map *currentMap = [self.maps currentMap];
+    BaseMap *currentMap = [self.maps currentMap];
     if (currentMap)
         self.mapLabel.text = currentMap.name;    
 }

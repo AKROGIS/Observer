@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Maps.h"
+#import "BaseMapManager.h"
 
 @interface LocalMapsTableViewController : UITableViewController
 
 //model
-@property (strong, nonatomic) Maps *maps;
+@property (strong, nonatomic) BaseMapManager *maps;
 
 @end

@@ -8,21 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
-@class Map;
-@class Maps;
+@class BaseMap;
+@class BaseMapManager;
 
 @protocol MapMonitoring <NSObject>
 
 @optional
 
-- (void)mapDidFinishLoad:(Map *)map;
-- (void)map:(Map *)map didFailLoadWithError:(NSError *)error;
+- (void)mapDidFinishLoad:(BaseMap *)map;
+- (void)map:(BaseMap *)map didFailLoadWithError:(NSError *)error;
 
-- (void)mapDidFinishDownload:(Map *)map;
-- (void)map:(Map *)map didFailDownloadWithError:(NSError *)error;
+- (void)mapDidFinishDownload:(BaseMap *)map;
+- (void)map:(BaseMap *)map didFailDownloadWithError:(NSError *)error;
 
-- (void)mapsDidFinishServerRequest:(Maps *)maps;
-- (void)mapsDidFinishAllServerRequests:(Maps *)maps;
-- (void)maps:(Maps *)maps didFailServerRequestWithError:(NSError *)error;
+- (void)mapsDidFinishServerRequest:(BaseMapManager *)maps;
+- (void)mapsDidFinishAllServerRequests:(BaseMapManager *)maps;
+- (void)maps:(BaseMapManager *)maps didFailServerRequestWithError:(NSError *)error;
 
 @end

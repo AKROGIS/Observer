@@ -1,25 +1,25 @@
 //
-//  Maps.m
+//  BaseMapManager.m
 //  Observer
 //
 //  Created by Regan Sarwas on 7/5/13.
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
-#import "Maps.h"
+#import "BaseMapManager.h"
 
 #define DEFAULTS_KEY_CURRENT_MAP_URL @"CurrentMapURL"
 #define DEFAULTS_KEY_LOCAL_MAP_URLS @"LocalMapURLs"
 #define TILE_CACHE_EXTENSION @"tpk"
 
 
-@interface Maps()
+@interface BaseMapManager()
 
 @property (strong, nonatomic) NSMutableArray *maps;
 
 @end
 
-@implementation Maps
+@implementation BaseMapManager
 
 
 #pragma mark - properties
@@ -30,7 +30,7 @@
 
 @synthesize currentMap = _currentMap; //required since I'm implementing a setter and getter
 
-- (void) setCurrentMap:(Map *)currentMap {
+- (void) setCurrentMap:(BaseMap *)currentMap {
     if (_currentMap == currentMap)
         return;
     //allow setting the current map to nothing (usually when the current map is deleted)
@@ -40,13 +40,13 @@
     }
 }
 
-- (Map *)currentMap
+- (BaseMap *)currentMap
 {
     if (!_currentMap) {
         // Get the current map from defaults
         NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
         NSURL *currentMapURL = [defaults URLForKey:DEFAULTS_KEY_CURRENT_MAP_URL];
-        for (Map *map in self.maps) {
+        for (BaseMap *map in self.maps) {
             if ([map.localURL isEqual:currentMapURL]) {
                 _currentMap = map;
                 break;
@@ -59,15 +59,15 @@
 
 #pragma mark - methods
 
-- (Map *) mapAtIndex:(NSUInteger) index {
+- (BaseMap *) mapAtIndex:(NSUInteger) index {
     return (index < [self.maps count]) ? [self.maps objectAtIndex:index] : nil;
 }
 
-- (void) addMap:(Map *)map {
+- (void) addMap:(BaseMap *)map {
     [self insertMap:map atIndex:[self.maps count]];
 }
 
-- (void) insertMap:(Map *)map atIndex:(NSUInteger)index {
+- (void) insertMap:(BaseMap *)map atIndex:(NSUInteger)index {
     if (!map)
         return;
     if ([self.maps containsObject:map])
@@ -79,7 +79,7 @@
     [self updateNSDefaults];
 }
 
-- (void) removeMap:(Map *)map {
+- (void) removeMap:(BaseMap *)map {
     [map unload];
     [self.maps removeObject:map];
     if (self.currentMap == map)
@@ -90,7 +90,7 @@
 - (void) removeMapAtIndex:(NSUInteger)index {
     if ([self.maps count] <= index)
         return;
-    Map *map = self.maps[index];
+    BaseMap *map = self.maps[index];
     [self removeMap:map];
 }
 
@@ -99,7 +99,7 @@
         return;
     if ([self.maps count] <= fromIndex || [self.maps count] <= toIndex)
         return;
-    Map *temp = self.maps[fromIndex];
+    BaseMap *temp = self.maps[fromIndex];
     [self.maps removeObjectAtIndex:fromIndex];
     [self.maps insertObject:temp atIndex:toIndex];
     [self updateNSDefaults];
@@ -123,7 +123,7 @@ static NSArray * _cachedServerResponse;
     NSMutableArray * maps = [[NSMutableArray alloc] init];
     if (maps) {
         for (int i = 0; i < 2 + rand() % 5; i++) {
-            [maps addObject:[Map randomMap]];
+            [maps addObject:[BaseMap randomMap]];
         }
     }
 #pragma warning how do we use a delegate in a class method
@@ -159,13 +159,13 @@ static NSArray * _cachedServerResponse;
         for (NSString *urlString in localMapURLs) {
             NSURL *url = [NSURL URLWithString:urlString];
             if ([files containsObject:url]) {
-                [_maps addObject:[[Map alloc] initWithLocalURL:url]];
+                [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
                 [files removeObject:url];
             }
         }
         //Add any other maps in filesystem (maybe added via iTunes) to end of list from defaults
         for (NSURL *url in files) {
-            [_maps addObject:[[Map alloc] initWithLocalURL:url]];
+            [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
         }
     }
     return _maps;
@@ -176,13 +176,13 @@ static NSArray * _cachedServerResponse;
     NSMutableArray *localUrls = [[NSMutableArray alloc] init];
     
     NSArray *documents = [[NSFileManager defaultManager]
-                          contentsOfDirectoryAtURL:[Maps documentsDirectory]
+                          contentsOfDirectoryAtURL:[BaseMapManager documentsDirectory]
                           includingPropertiesForKeys:nil
                           options:NSDirectoryEnumerationSkipsHiddenFiles
                           error:nil];
     
     NSArray *caches = [[NSFileManager defaultManager]
-                       contentsOfDirectoryAtURL:[Maps documentsDirectory]
+                       contentsOfDirectoryAtURL:[BaseMapManager documentsDirectory]
                        includingPropertiesForKeys:nil
                        options:NSDirectoryEnumerationSkipsHiddenFiles
                        error:nil];
@@ -208,7 +208,7 @@ static NSArray * _cachedServerResponse;
         [defaults setNilValueForKey:DEFAULTS_KEY_CURRENT_MAP_URL];
     
     NSMutableArray *localURLs = [[NSMutableArray alloc] initWithCapacity:[self.maps count]];
-    for (Map *map in self.maps) {
+    for (BaseMap *map in self.maps) {
         [localURLs addObject:[map.localURL absoluteString]];
     }
     [defaults setValue:localURLs forKey:DEFAULTS_KEY_LOCAL_MAP_URLS];
