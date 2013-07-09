@@ -40,6 +40,11 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+- (void) setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    [self.tableView reloadData];
+}
 
 #pragma mark - Table view data source
 
@@ -53,7 +58,7 @@
     NSInteger rowCount;
     if (self.editing)
     {
-        rowCount = self.maps.count + self.maps.serverMaps.count == 0 ? 1 : self.maps.serverMaps.count;
+        rowCount = self.maps.count + (self.maps.serverMaps.count == 0 ? 1 : self.maps.serverMaps.count);
     }
     else
     {
