@@ -41,6 +41,9 @@
 
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+
+    //see http://robsprogramknowledge.blogspot.com/2012/05/back-segues.html
+
     BaseMap *currentMap = [self.maps currentMap];
     if (currentMap)
         self.mapLabel.text = currentMap.name;    

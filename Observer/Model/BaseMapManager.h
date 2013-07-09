@@ -30,6 +30,8 @@
 
 - (void) refreshServerStatusForMap:(BaseMap *)map;
 
+- (NSArray *) serverMaps; //of BaseMap  //nil => not queried; empty => no results
+
 - (NSArray *) refreshServerMaps; //of BaseMap
 - (NSArray *) getServerMaps; //of BaseMap
 

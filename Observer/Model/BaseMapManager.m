@@ -16,7 +16,7 @@
 @interface BaseMapManager()
 
 @property (strong, nonatomic) NSMutableArray *maps;
-@property (strong, nonatomic) NSArray *cachedServerResponse;
+@property (strong, nonatomic) NSArray *cachedServerResponse; //of BaseMap
 
 @end
 
@@ -170,7 +170,37 @@ static BaseMapManager * _sharedManager;
 
 - (void) downloadMapListFromServer
 {
+#pragma warning this is half-baked
+    self.cachedServerResponse = nil;
+    //FIXME - replace URL
+    //FIXME - loop over multiple servers
+    NSString *data = [NSString stringWithContentsOfURL:[NSURL URLWithString:@"www.google.com"] usedEncoding:nil error:nil];
+    if (data)
+        //FIXME - check that the JSON is correct and builds the array we want.
+        //FIXME - it needs to be an array of BaseMap
+        self.cachedServerResponse = [data ags_JSONValue];
+    //alert delegates of success or failure
+}
 
+- (NSArray *) serverMaps
+{
+    if (self.cachedServerResponse)
+        //FIXME - should not include maps that are already downloaded and local
+        return self.cachedServerResponse;
+    else
+    {
+        //FIXME - only do this once; don't start a second thread if called while one is still working
+        dispatch_queue_t downloadQueue = dispatch_queue_create("serverMapsDownload", NULL);
+        dispatch_async(downloadQueue, ^{
+            [self downloadMapListFromServer];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //FIXME - need to check for error and return appropriately
+                if ([self.delegate respondsToSelector:@selector(mapsDidFinishServerRequest:)])
+                    [self.delegate mapsDidFinishServerRequest:self];
+            });
+        });
+        return nil;
+    }
 }
 
 

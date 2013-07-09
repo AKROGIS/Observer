@@ -59,7 +59,7 @@
 #pragma mark public properties
 
 - (NSString *) name {
-    if (!_name) _name = [self.localURL path];
+    if (!_name) _name = [self.localURL lastPathComponent];
     return _name;
 }
 
