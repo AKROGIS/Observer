@@ -71,36 +71,20 @@
 
 #pragma mark public instance methods
 
-- (BOOL) isOutdated {
+- (BOOL) isOutdated
+{
     if (!self.serverURL)
         return NO;
     
-    NSArray *serverMaps = [[BaseMapManager sharedManager] getServerMaps]; //of BaseMap
-    if (!serverMaps)
-        return NO;
-    
-    for (BaseMap *map in serverMaps) {
-        if ([map.serverURL isEqual:self.serverURL]) {
-            return map.fileDate < map.serverDate;
-        }
-    }
-    return NO;
+    return [[BaseMapManager sharedManager] isOutdatedMap:self];;
 }
 
-- (BOOL) isOrphan {
+- (BOOL) isOrphan
+{
     if (!self.serverURL)
         return NO;
     
-    NSArray *serverMaps = [[BaseMapManager sharedManager] getServerMaps]; //of BaseMap
-    if (!serverMaps)
-        return NO;
-    
-    for (BaseMap *map in serverMaps) {
-        if ([map.serverURL isEqual:self.serverURL]) {
-            return NO;
-        }
-    }
-    return YES;
+    return [[BaseMapManager sharedManager] isOrphanMap:self];;
 }
 
 - (void) download {

@@ -25,7 +25,7 @@ typedef enum {
     ServerStatusPending,
     ServerStatusUnavailable,
     ServerStatusResolved,
-    ServerStatusNotApplicable,
+    ServerStatusNotApplicable,  //No server URL
 } ServerStatus;
 
 @interface BaseMap : NSObject
@@ -45,11 +45,11 @@ typedef enum {
 @property (nonatomic) MapStatus status;
 @property (nonatomic) ServerStatus serverStatus;
 
+
 //server dependent properties will always return immediately
 //result will be default (nil, or NO) unless serverStatus == ServerStatusResolved
-@property (strong, nonatomic) NSDate *serverDate; //Date is in UTC
-- (BOOL) isOutdated;
 - (BOOL) isOrphan;
+- (BOOL) isOutdated;
 
 
 @property (strong, nonatomic) NSString *name;

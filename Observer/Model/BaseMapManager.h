@@ -25,6 +25,11 @@
 - (void) removeMapAtIndex:(NSUInteger)index;
 - (void) moveMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
+- (BOOL) isOutdatedMap:(BaseMap *)map;
+- (BOOL) isOrphanMap:(BaseMap *)map;
+
+- (void) refreshServerStatusForMap:(BaseMap *)map;
+
 - (NSArray *) refreshServerMaps; //of BaseMap
 - (NSArray *) getServerMaps; //of BaseMap
 

@@ -16,6 +16,7 @@
 @interface BaseMapManager()
 
 @property (strong, nonatomic) NSMutableArray *maps;
+@property (strong, nonatomic) NSArray *cachedServerResponse;
 
 @end
 
@@ -117,20 +118,77 @@ static BaseMapManager * _sharedManager;
     [self updateNSDefaults];
 }
 
-static NSArray * _cachedServerResponse;
+- (BOOL) isOutdatedMap:(BaseMap *)map
+{
+    if (map.serverStatus == ServerStatusUnknown) {
+        map.serverStatus = ServerStatusPending;
+        //start background query of servers
+        return NO;
+    }
+    if (map.serverStatus == ServerStatusResolved) {
+        //return date < date
+    }
+    return NO;
+}
+
+- (BOOL) isOrphanMap:(BaseMap *)map
+{
+    if (map.serverStatus == ServerStatusUnknown) {
+        map.serverStatus = ServerStatusPending;
+        //start background query of servers
+        return NO;
+    }
+    if (map.serverStatus == ServerStatusResolved) {
+        //return date < date
+    }
+    return NO;
+    
+}
+
+
+- (void) refreshServerStatusForMap:(BaseMap *)map
+{
+    if (self.cachedServerResponse) {
+        //update map
+    }
+    else {
+        dispatch_queue_t downloadQueue = dispatch_queue_create("serverStatusDownload", NULL);
+        dispatch_async(downloadQueue, ^{
+            [self downloadMapListFromServer];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self refreshServerStatusForMap:map];
+                if ([self.delegate respondsToSelector:@selector(mapsDidFinishServerRequest:)])
+                    [self.delegate mapsDidFinishServerRequest:self];                
+            });
+        });
+#pragma warning need to implement
+        //call getServer maps on a background thread
+        //callback should use the cached server response to update all maps
+
+    }
+}
+
+- (void) downloadMapListFromServer
+{
+
+}
+
 
 - (NSArray *) refreshServerMaps {
-    _cachedServerResponse = nil;
+    self.cachedServerResponse = nil;
     return [self getServerMaps];
 }
 
+                       
 - (NSArray *) getServerMaps {
-    if (_cachedServerResponse)
-        return _cachedServerResponse;
+    if (self.cachedServerResponse)
+        return self.cachedServerResponse;
     
     //we need to query the server(s) on a background thread
     //we will return nil until we get a response
     //the delegate will be informed when a response is available
+
+#pragma warning need to use NSURLConnection, background thread and json decoding
     
     NSMutableArray * maps = [[NSMutableArray alloc] init];
     if (maps) {
@@ -138,10 +196,9 @@ static NSArray * _cachedServerResponse;
             [maps addObject:[BaseMap randomMap]];
         }
     }
-#pragma warning how do we use a delegate in a class method
-    //if ([self.delegate respondsToSelector:@selector(mapsDidFinishServerRequest:)]) {
-    //    [self.delegate mapsDidFinishServerRequest:self];
-    //}
+    if ([self.delegate respondsToSelector:@selector(mapsDidFinishServerRequest:)]) {
+        [self.delegate mapsDidFinishServerRequest:self];
+    }
     return [maps copy];
 }
 
