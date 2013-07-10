@@ -49,7 +49,7 @@
 - (AGSLocalTiledLayer *) tileCache
 {
     if (!_tileCache && self.localURL && self.status == MapStatusNormal) {
-        _tileCache = [AGSLocalTiledLayer localTiledLayerWithName:[self.localURL absoluteString]];
+        _tileCache = [AGSLocalTiledLayer localTiledLayerWithName:[self.localURL lastPathComponent]];
         if (_tileCache)
             self.status = MapStatusLoadFailed;
     }
