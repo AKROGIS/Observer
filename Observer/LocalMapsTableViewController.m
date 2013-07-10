@@ -50,21 +50,15 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return self.editing ? 2 : 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger rowCount;
-    if (self.editing)
-    {
-        rowCount = self.maps.count + (self.maps.serverMaps.count == 0 ? 1 : self.maps.serverMaps.count);
-    }
-    else
-    {
-        rowCount = self.maps.count == 0 ? 1 : self.maps.count;
-    }
-    return rowCount;
+    return
+        section == 0
+        ? self.maps.count == 0 ? 1 : self.maps.count
+        : self.maps.serverMaps.count == 0 ? 1 : self.maps.serverMaps.count;    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -73,7 +67,7 @@
     if (self.editing)
     {
         //display local maps first
-        if (indexPath.row < self.maps.count)
+        if (indexPath.section == 0)
         {
             static NSString *CellIdentifier = @"Local Map Description Cell";
             cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
@@ -87,11 +81,10 @@
         else
         {
             if (self.maps.serverMaps.count) {
-                NSInteger index = indexPath.row - self.maps.count;
                 static NSString *CellIdentifier = @"Local Map Description Cell";
                 cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
                 
-                BaseMap *map = self.maps.serverMaps[index];
+                BaseMap *map = self.maps.serverMaps[indexPath.row];
                 cell.textLabel.text = map.name;
                 cell.detailTextLabel.text = map.summary;
                 // Set up the iconography
@@ -117,6 +110,8 @@
             BaseMap *map = [self.maps mapAtIndex:indexPath.row];
             cell.textLabel.text = map.name;
             cell.detailTextLabel.text = map.summary;
+            cell.imageView.image = map.tileCache.thumbnail;
+            [cell.imageView sizeToFit];
             // Set up the iconography
         }
         else
@@ -129,12 +124,19 @@
     return cell;
 }
 
-- (UITableViewCellEditingStyle)tableView:(UITableView *)aTableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+- (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    if (self.editing) {
-        return (self.maps.count <= indexPath.row) ? UITableViewCellEditingStyleInsert : UITableViewCellEditingStyleDelete;
-    }
-    return UITableViewCellEditingStyleNone;
+    return section == 0 ? @"Maps on Device" : @"Downloadable Maps";
+}
+
+- (BOOL) tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self canSelectIndexPath:indexPath];
+}
+
+- (BOOL) tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self canSelectIndexPath:indexPath];
 }
 
 // Override to support editing the table view.
@@ -158,10 +160,33 @@
 
 #pragma mark - Table view delegate
 
+- (UITableViewCellEditingStyle)tableView:(UITableView *)aTableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.editing) {
+        return indexPath.section == 0 ? UITableViewCellEditingStyleDelete : UITableViewCellEditingStyleInsert;
+    }
+    return UITableViewCellEditingStyleNone;
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     self.maps.currentMap = [self.maps mapAtIndex:indexPath.row];
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+
+#pragma mark - private support methods
+
+- (BOOL) canSelectIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section == 0 && indexPath.row == 0 && self.maps.count == 0) {
+        return NO;
+    }
+    if (indexPath.section == 1 && indexPath.row == 0 && self.maps.serverMaps.count == 0) {
+        return NO;
+    }
+    return YES;
+}
+
 
 @end
