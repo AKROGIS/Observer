@@ -13,11 +13,17 @@
 @interface BaseMapManager : NSObject
 
 + (BaseMapManager *) sharedManager;  //this is single instance BaseMapManager that unrelated classes can share.
+                                     //This is not a "true" singleton, it is still possible to create another object with [[BaseMapManager alloc] init]
+                                     //I only need/want one shareable instance in my app, so I will use a factory method to return the sharedManager
++ (NSURL *) cacheDirectory;
++ (NSURL *) documentsDirectory;
 
-- (NSUInteger) count;
+
 @property (strong, nonatomic) BaseMap *currentMap;
 @property (weak, nonatomic) id <MapMonitoring> delegate;
 
+
+- (NSUInteger) count;
 - (BaseMap *) mapAtIndex:(NSUInteger)index;
 - (void) addMap:(BaseMap *)map;
 - (void) insertMap:(BaseMap *)map atIndex:(NSUInteger)index;
@@ -35,8 +41,6 @@
 - (NSArray *) refreshServerMaps; //of BaseMap
 - (NSArray *) getServerMaps; //of BaseMap
 
-+ (NSURL *) cacheDirectory;
-+ (NSURL *) documentsDirectory;
 
 @end
 

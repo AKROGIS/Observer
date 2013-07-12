@@ -22,45 +22,27 @@
 
 @implementation BaseMapManager
 
-#pragma mark - singleton setup
-//This is not a "true" singleton, it is still possible to create another object with [[BaseMapManager alloc] init]
-//I only need/want one shareable instance in my app, so I will use a factory method to return the sharedManager
+
+#pragma mark - private ivars and class vars
 
 static BaseMapManager * _sharedManager;
 
-+ (BaseMapManager *) sharedManager
-{
-    if (!_sharedManager) _sharedManager = [[BaseMapManager alloc] init];
-    return _sharedManager;
-}
 
-
-#pragma mark - properties
-
-- (NSUInteger) count {
-    return [self.maps count];
-}
+#pragma mark - Public Properties
 
 @synthesize currentMap = _currentMap; //required since I'm implementing a setter and getter
 
-- (void) setCurrentMap:(BaseMap *)currentMap {
-    if (_currentMap == currentMap)
-        return;
-    //allow setting the current map to nothing (usually when the current map is deleted)
-    if (!currentMap || [self.maps containsObject:currentMap]) {
-        _currentMap = currentMap;
-        [self updateNSDefaults];
-    }
-}
-
 - (BaseMap *)currentMap
 {
-    if (!_currentMap) {
+    if (!_currentMap)
+    {
         // Get the current map from defaults
         NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
         NSURL *currentMapURL = [defaults URLForKey:DEFAULTS_KEY_CURRENT_MAP_URL];
-        for (BaseMap *map in self.maps) {
-            if ([map.localURL isEqual:currentMapURL]) {
+        for (BaseMap *map in self.maps)
+        {
+            if ([map.localURL isEqual:currentMapURL])
+            {
                 _currentMap = map;
                 break;
             }
@@ -69,18 +51,64 @@ static BaseMapManager * _sharedManager;
     return _currentMap;
 }
 
+- (void) setCurrentMap:(BaseMap *)currentMap
+{
+    if (_currentMap == currentMap)
+        return;
+    //allow setting the current map to nothing (usually when the current map is deleted)
+    if (!currentMap || [self.maps containsObject:currentMap])
+    {
+        _currentMap = currentMap;
+        [self updateNSDefaults];
+    }
+}
 
-#pragma mark - methods
+- (NSUInteger) count
+{
+    return [self.maps count];
+}
 
-- (BaseMap *) mapAtIndex:(NSUInteger) index {
+
+#pragma mark - Private Properties
+
+//lazy instantiation
+- (NSMutableArray *)maps {
+    if (!_maps) {
+        _maps = [[NSMutableArray alloc] init];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSArray *localMapURLs = [defaults valueForKey:DEFAULTS_KEY_LOCAL_MAP_URLS];
+        NSMutableSet *files = [NSMutableSet setWithArray:[self mapURLsInFileManager]];
+        // create maps in order from urls saved in defaults  IFF they are found in filesystem
+        for (NSString *urlString in localMapURLs) {
+            NSURL *url = [NSURL URLWithString:urlString];
+            if ([files containsObject:url]) {
+                [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
+                [files removeObject:url];
+            }
+        }
+        //Add any other maps in filesystem (maybe added via iTunes) to end of list from defaults
+        for (NSURL *url in files) {
+            [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
+        }
+    }
+    return _maps;
+}
+
+
+#pragma mark - Public Methods
+
+- (BaseMap *) mapAtIndex:(NSUInteger) index
+{
     return (index < [self.maps count]) ? [self.maps objectAtIndex:index] : nil;
 }
 
-- (void) addMap:(BaseMap *)map {
+- (void) addMap:(BaseMap *)map
+{
     [self insertMap:map atIndex:[self.maps count]];
 }
 
-- (void) insertMap:(BaseMap *)map atIndex:(NSUInteger)index {
+- (void) insertMap:(BaseMap *)map atIndex:(NSUInteger)index
+{
     if (!map)
         return;
     if ([self.maps containsObject:map])
@@ -92,7 +120,8 @@ static BaseMapManager * _sharedManager;
     [self updateNSDefaults];
 }
 
-- (void) removeMap:(BaseMap *)map {
+- (void) removeMap:(BaseMap *)map
+{
     [map unload];
     [self.maps removeObject:map];
     if (self.currentMap == map)
@@ -100,14 +129,16 @@ static BaseMapManager * _sharedManager;
     [self updateNSDefaults];
 }
 
-- (void) removeMapAtIndex:(NSUInteger)index {
+- (void) removeMapAtIndex:(NSUInteger)index
+{
     if ([self.maps count] <= index)
         return;
     BaseMap *map = self.maps[index];
     [self removeMap:map];
 }
 
-- (void) moveMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex {
+- (void) moveMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+{
     if (fromIndex == toIndex)
         return;
     if ([self.maps count] <= fromIndex || [self.maps count] <= toIndex)
@@ -120,12 +151,14 @@ static BaseMapManager * _sharedManager;
 
 - (BOOL) isOutdatedMap:(BaseMap *)map
 {
-    if (map.serverStatus == ServerStatusUnknown) {
+    if (map.serverStatus == ServerStatusUnknown)
+    {
         map.serverStatus = ServerStatusPending;
         //start background query of servers
         return NO;
     }
-    if (map.serverStatus == ServerStatusResolved) {
+    if (map.serverStatus == ServerStatusResolved)
+    {
         //return date < date
     }
     return NO;
@@ -133,38 +166,40 @@ static BaseMapManager * _sharedManager;
 
 - (BOOL) isOrphanMap:(BaseMap *)map
 {
-    if (map.serverStatus == ServerStatusUnknown) {
+    if (map.serverStatus == ServerStatusUnknown)
+    {
         map.serverStatus = ServerStatusPending;
         //start background query of servers
         return NO;
     }
-    if (map.serverStatus == ServerStatusResolved) {
+    if (map.serverStatus == ServerStatusResolved)
+    {
         //return date < date
     }
     return NO;
     
 }
 
-
 - (void) refreshServerStatusForMap:(BaseMap *)map
 {
-    if (self.cachedServerResponse) {
+    if (self.cachedServerResponse)
+    {
         //update map
     }
-    else {
+    else
+    {
         dispatch_queue_t downloadQueue = dispatch_queue_create("serverStatusDownload", NULL);
         dispatch_async(downloadQueue, ^{
             [self downloadMapListFromServer];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self refreshServerStatusForMap:map];
                 if ([self.delegate respondsToSelector:@selector(mapsDidFinishServerRequest:)])
-                    [self.delegate mapsDidFinishServerRequest:self];                
+                    [self.delegate mapsDidFinishServerRequest:self];
             });
         });
 #pragma warning need to implement
         //call getServer maps on a background thread
         //callback should use the cached server response to update all maps
-
     }
 }
 
@@ -204,71 +239,61 @@ static BaseMapManager * _sharedManager;
 }
 
 
-- (NSArray *) refreshServerMaps {
+- (NSArray *) refreshServerMaps
+{
     self.cachedServerResponse = nil;
     return [self getServerMaps];
 }
 
-                       
-- (NSArray *) getServerMaps {
+
+- (NSArray *) getServerMaps
+{
     if (self.cachedServerResponse)
         return self.cachedServerResponse;
     
     //we need to query the server(s) on a background thread
     //we will return nil until we get a response
     //the delegate will be informed when a response is available
-
+    
 #pragma warning need to use NSURLConnection, background thread and json decoding
     
     NSMutableArray * maps = [[NSMutableArray alloc] init];
-    if (maps) {
-        for (int i = 0; i < 2 + rand() % 5; i++) {
+    if (maps)
+    {
+        for (int i = 0; i < 2 + rand() % 5; i++)
+        {
             [maps addObject:[BaseMap randomMap]];
         }
     }
-    if ([self.delegate respondsToSelector:@selector(mapsDidFinishServerRequest:)]) {
+    if ([self.delegate respondsToSelector:@selector(mapsDidFinishServerRequest:)])
         [self.delegate mapsDidFinishServerRequest:self];
-    }
     return [maps copy];
 }
 
 
+#pragma mark - Public Class Methods
 
-#pragma mark - class methods
++ (BaseMapManager *) sharedManager
+{
+    if (!_sharedManager)
+        _sharedManager = [[BaseMapManager alloc] init];
+    return _sharedManager;
+}
 
-+ (NSURL *) cacheDirectory {
++ (NSURL *) cacheDirectory
+{
     NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];
     return urls[0];
 }
 
-+ (NSURL *) documentsDirectory {
++ (NSURL *) documentsDirectory
+{
     NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
     return urls[0];
 }
 
-#pragma mark - private methods
 
-- (NSMutableArray *)maps {
-    if (!_maps) {
-        _maps = [[NSMutableArray alloc] init];
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSArray *localMapURLs = [defaults valueForKey:DEFAULTS_KEY_LOCAL_MAP_URLS];
-        NSMutableSet *files = [NSMutableSet setWithArray:[self mapURLsInFileManager]];
-        // create maps in order from urls saved in defaults  IFF they are found in filesystem
-        for (NSString *urlString in localMapURLs) {
-            NSURL *url = [NSURL URLWithString:urlString];
-            if ([files containsObject:url]) {
-                [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
-                [files removeObject:url];
-            }
-        }
-        //Add any other maps in filesystem (maybe added via iTunes) to end of list from defaults
-        for (NSURL *url in files) {
-            [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
-        }
-    }
-    return _maps;
-}
+#pragma mark - Private Methods
 
 - (NSArray *) /* of NSURL */ mapURLsInFileManager
 {
@@ -298,7 +323,8 @@ static BaseMapManager * _sharedManager;
 }
 
 
-- (void) updateNSDefaults {
+- (void) updateNSDefaults
+{
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     
     if (self.currentMap && self.currentMap.localURL)
@@ -307,7 +333,8 @@ static BaseMapManager * _sharedManager;
         [defaults setNilValueForKey:DEFAULTS_KEY_CURRENT_MAP_URL];
     
     NSMutableArray *localURLs = [[NSMutableArray alloc] initWithCapacity:[self.maps count]];
-    for (BaseMap *map in self.maps) {
+    for (BaseMap *map in self.maps)
+    {
         [localURLs addObject:[map.localURL absoluteString]];
     }
     [defaults setValue:localURLs forKey:DEFAULTS_KEY_LOCAL_MAP_URLS];

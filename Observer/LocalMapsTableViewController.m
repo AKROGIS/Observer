@@ -15,24 +15,37 @@
 
 @implementation LocalMapsTableViewController
 
+
+#pragma mark - Public Properties
+
+
+#pragma mark - Private Properties
+
+
+#pragma mark - Public Methods: Initializers
+
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
-    if (self) {
+    if (self)
+    {
         // Custom initialization
     }
     return self;
 }
 
+
+#pragma mark - Public Methods: Super class methods
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     // Uncomment the following line to preserve selection between presentations.
-     self.clearsSelectionOnViewWillAppear = NO;
- 
+    self.clearsSelectionOnViewWillAppear = NO;
+    
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-     self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)didReceiveMemoryWarning
@@ -40,13 +53,21 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 - (void) setEditing:(BOOL)editing animated:(BOOL)animated
 {
     [super setEditing:editing animated:animated];
     [self.tableView reloadData];
 }
 
-#pragma mark - Table view data source
+
+#pragma mark - Public Methods: Mine
+
+
+#pragma mark - Delegate Methods: XX
+
+
+#pragma mark - Delegate Methods: UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -56,9 +77,9 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return
-        section == 0
-        ? self.maps.count == 0 ? 1 : self.maps.count
-        : self.maps.serverMaps.count == 0 ? 1 : self.maps.serverMaps.count;    
+    section == 0
+    ? self.maps.count == 0 ? 1 : self.maps.count
+    : self.maps.serverMaps.count == 0 ? 1 : self.maps.serverMaps.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -76,11 +97,11 @@
             cell.textLabel.text = map.name;
             cell.detailTextLabel.text = map.summary;
             // Set up the iconography
-            
         }
         else
         {
-            if (self.maps.serverMaps.count) {
+            if (self.maps.serverMaps.count)
+            {
                 static NSString *CellIdentifier = @"Local Map Description Cell";
                 cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
                 
@@ -120,7 +141,7 @@
             cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
             cell.textLabel.text = @"Click Edit to add maps.";
         }
-    }    
+    }
     return cell;
 }
 
@@ -142,14 +163,16 @@
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
+    if (editingStyle == UITableViewCellEditingStyleDelete)
+    {
         // Delete the row from the data source
         [self.maps removeMapAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
+    }
+    else if (editingStyle == UITableViewCellEditingStyleInsert)
+    {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+    }
 }
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
@@ -158,13 +181,12 @@
 }
 
 
-#pragma mark - Table view delegate
+#pragma mark - Delegate Methods: UITableViewDelegate
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)aTableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.editing) {
+    if (self.editing)
         return indexPath.section == 0 ? UITableViewCellEditingStyleDelete : UITableViewCellEditingStyleInsert;
-    }
     return UITableViewCellEditingStyleNone;
 }
 
@@ -175,18 +197,15 @@
 }
 
 
-#pragma mark - private support methods
+#pragma mark - Private Methods
 
 - (BOOL) canSelectIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == 0 && indexPath.row == 0 && self.maps.count == 0) {
+    if (indexPath.section == 0 && indexPath.row == 0 && self.maps.count == 0)
         return NO;
-    }
-    if (indexPath.section == 1 && indexPath.row == 0 && self.maps.serverMaps.count == 0) {
+    if (indexPath.section == 1 && indexPath.row == 0 && self.maps.serverMaps.count == 0)
         return NO;
-    }
     return YES;
 }
-
 
 @end

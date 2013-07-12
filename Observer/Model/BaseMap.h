@@ -28,7 +28,9 @@ typedef enum {
     ServerStatusNotApplicable,  //No server URL
 } ServerStatus;
 
+
 @interface BaseMap : NSObject
+
 
 //designated initializer
 - (id) initWithLocalURL:(NSURL *)localURL andServerURL:(NSURL *)serverUrl;
@@ -36,6 +38,7 @@ typedef enum {
 - (id) initWithLocalURL:(NSURL *)localURL;
 - (id) initWithServerURL:(NSURL *)serverUrl;
 - (id) init; // don't call this - it overrides super init to prevent malformed maps
+
 
 //These properties should be considered readonly to all objects except the map manager that created (owns) the map
 //If you muck with them, you will likely corrupt the map.
@@ -57,13 +60,17 @@ typedef enum {
 @property (strong, nonatomic) NSDate *fileDate;  //Date is in UTC
 @property (nonatomic) NSUInteger fileSize;  //Size in KB
 
+
 //Managing map data
 - (void) download; //no effect if the map has been downloaded
 - (void) unload;   //deletes the filesystem data, and sets mapStatus => MapStatusLoadFailed
                    //If the map has no serverURL, the owner should delete it.
+
+
 @property (weak, nonatomic) id <MapMonitoring> delegate;
 
 
 + (BaseMap *) randomMap; //for testing purposes
+
 
 @end

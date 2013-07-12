@@ -20,27 +20,21 @@
 
 @implementation ObserverMapViewController
 
-- (BaseMapManager *)maps {
-    if (!_maps) _maps = [BaseMapManager sharedManager];
+
+#pragma mark - Public Properties
+
+
+#pragma mark - Private Properties
+
+//lazy instantiation
+
+- (BaseMapManager *)maps
+{
+    if (!_maps)
+        _maps = [BaseMapManager sharedManager];
     return _maps;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    [self setOrResetBasemap:self.maps.currentMap];
-}
-
-//lazy instantiation
 - (AGSMapView *)mapView
 {
     if (!_mapView)
@@ -52,13 +46,55 @@
     return _mapView;
 }
 
+
+#pragma mark - Public Methods: Initializers
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self)
+    {
+        // Custom initialization
+    }
+    return self;
+}
+
+
+#pragma mark - Public Methods: Super class methods
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self setOrResetBasemap:self.maps.currentMap];
+}
+
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-
+    
     //see http://robsprogramknowledge.blogspot.com/2012/05/back-segues.html for handling 'reverse seques'
     
     [self setOrResetBasemap:self.maps.currentMap];
 }
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([[segue identifier] isEqualToString:@"Push Local Map Table"])
+    {
+        LocalMapsTableViewController *dvc = [segue destinationViewController];
+        dvc.maps = self.maps;
+    }
+}
+
+
+#pragma mark - Public Methods: Mine
+
+
+#pragma mark - Private Methods
 
 - (void) setOrResetBasemap:(BaseMap *)baseMap
 {
@@ -88,20 +124,6 @@
                     [self.mapView addMapLayer:layer];
             }
         }
-    }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:@"Push Local Map Table"])
-    {
-        LocalMapsTableViewController *dvc = [segue destinationViewController];
-        dvc.maps = self.maps;
     }
 }
 
