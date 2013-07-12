@@ -13,6 +13,7 @@
 @interface ObserverMapViewController ()
 
 @property (strong, nonatomic) BaseMapManager *maps;
+@property (weak, nonatomic) IBOutlet AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UILabel *mapLabel;
 
 @end
@@ -45,8 +46,16 @@
     //see http://robsprogramknowledge.blogspot.com/2012/05/back-segues.html
 
     BaseMap *currentMap = [self.maps currentMap];
-    if (currentMap)
-        self.mapLabel.text = currentMap.name;    
+    if (currentMap.tileCache)
+    {
+        self.mapLabel.text = currentMap.name;
+        if ([self.mapView.mapLayers count] > 0)
+            [self.mapView removeMapLayer:self.mapView.mapLayers[0]];
+        [self.mapView insertMapLayer:currentMap.tileCache atIndex:0];
+    }
+    else {
+        self.mapLabel.text = @"No background map selected. Click the Maps button to select one.";
+    }
 }
 
 - (void)didReceiveMemoryWarning
