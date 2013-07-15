@@ -30,6 +30,11 @@
                                             <segue destination="6MB-CL-g4f" kind="push" identifier="Push Local Map Table" id="KMQ-24-dvf"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem title="off" id="zVj-NC-O4w">
+                                        <connections>
+                                            <action selector="toggleLocationServices:" destination="TiC-11-YSU" id="bOA-j9-my3"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                         </subviews>
@@ -49,6 +54,7 @@
                     <navigationItem key="navigationItem" title="Survey xyz" id="DZH-KF-4La"/>
                     <connections>
                         <outlet property="MapLabel" destination="009-3q-8gq" id="wAk-bj-gFF"/>
+                        <outlet property="locationButton" destination="zVj-NC-O4w" id="geK-6T-Ols"/>
                         <outlet property="mapView" destination="nhM-18-yk1" id="0Ek-pr-oTm"/>
                     </connections>
                 </viewController>
@@ -147,12 +153,6 @@
         <image name="Attachments.png" width="20" height="20"/>
     </resources>
     <classes>
-        <class className="AGSMapView" superclassName="AGSMapViewBase">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/AGSMapView.h"/>
-        </class>
-        <class className="AGSMapViewBase" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/AGSMapViewBase.h"/>
-        </class>
         <class className="LocalMapsTableViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/LocalMapsTableViewController.h"/>
         </class>
@@ -162,8 +162,9 @@
         <class className="ObserverMapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
             <relationships>
+                <relationship kind="action" name="toggleLocationServices:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="LocationButton" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="mapLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="mapView" candidateClass="AGSMapView"/>
             </relationships>
         </class>
     </classes>

@@ -10,11 +10,20 @@
 #import "LocalMapsTableViewController.h"
 #import "BaseMapManager.h"
 
+
+typedef enum {
+    LocationStyleOff,
+    LocationStyleNormal,
+    LocationStyleNaviagation,
+    LocationStyleMagnetic
+} LocationStyle;
+
 @interface ObserverMapViewController ()
 
 @property (strong, nonatomic) BaseMapManager *maps;
 @property (strong, nonatomic) AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UILabel *mapLabel;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *locationButton;
 
 @end
 
@@ -41,7 +50,11 @@
     {
         _mapView = [[AGSMapView alloc] initWithFrame:self.view.bounds];
         _mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        _mapView.layerDelegate = self;
+        //_mapView.touchDelegate = self;
+        //_mapView.calloutDelegate = self;
         [self.view insertSubview:_mapView aboveSubview:self.mapLabel];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapDidPan:) name:AGSMapViewDidEndPanningNotification object:_mapView];
     }
     return _mapView;
 }
@@ -76,6 +89,13 @@
     [self setOrResetBasemap:self.maps.currentMap];
 }
 
+- (void) viewDidDisappear:(BOOL)animated
+{
+    //don't check self.mapview, because that will create a new mapview
+    if (_mapView)
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:AGSMapViewDidEndPanningNotification object:self.mapView];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -93,6 +113,45 @@
 
 #pragma mark - Public Methods: Mine
 
+- (IBAction)toggleLocationServices:(UIBarButtonItem *)sender
+{
+    if ([sender.title isEqualToString:@"off"])
+    {
+        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
+        
+        self.locationButton.title = @"1";
+    }
+    else if ([sender.title isEqualToString:@"1"])
+    {
+        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
+        self.locationButton.title = @"2";
+    }
+    else if ([sender.title isEqualToString:@"2"])
+    {
+        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
+        self.locationButton.title = @"3";
+    }
+    else
+    {
+        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
+        self.locationButton.title = @"off";
+    }
+}
+
+- (void) mapDidPan:(NSNotification *)notification
+{
+    //done automatically
+    //self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
+    //FIXME need to distiguish between a user touch and a system pan (due to changing autopan mode
+    //self.locationButton.title = @"off";
+}
+
+#pragma mark - Delegate Methods: AGSMap
+
+-(void) mapViewDidLoad:(AGSMapView*)mapView
+{
+ 	[self.mapView.locationDisplay startDataSource];
+}
 
 #pragma mark - Private Methods
 
@@ -120,6 +179,7 @@
                 layers[0] = baseMap.tileCache;
                 [self.mapView removeFromSuperview];
                 self.mapView = nil;
+                //FIXME - remove self from notification observer (do it in the setter)
                 for (AGSLayer *layer in layers)
                     [self.mapView addMapLayer:layer];
             }

@@ -64,9 +64,6 @@
 #pragma mark - Public Methods: Mine
 
 
-#pragma mark - Delegate Methods: XX
-
-
 #pragma mark - Delegate Methods: UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
