@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ObserverMapViewController : UIViewController <AGSMapViewLayerDelegate>
+@interface ObserverMapViewController : UIViewController <AGSMapViewLayerDelegate, AGSMapViewTouchDelegate, AGSMapViewCalloutDelegate>
 
 @end

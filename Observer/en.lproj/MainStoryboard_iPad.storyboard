@@ -20,9 +20,6 @@
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nhM-18-yk1" customClass="AGSMapView">
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                            </view>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="blackTranslucent" translatesAutoresizingMaskIntoConstraints="NO" id="3Af-C7-mib">
                                 <items>
                                     <barButtonItem title="Maps" id="gJK-vn-5w7">
@@ -30,9 +27,29 @@
                                             <segue destination="6MB-CL-g4f" kind="push" identifier="Push Local Map Table" id="KMQ-24-dvf"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="off" id="zVj-NC-O4w">
+                                    <barButtonItem title="gps" id="zVj-NC-O4w">
                                         <connections>
-                                            <action selector="toggleLocationServices:" destination="TiC-11-YSU" id="bOA-j9-my3"/>
+                                            <action selector="toggleGps:" destination="TiC-11-YSU" id="fX7-5c-WYI"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="auto pan" id="jXA-Ll-IBJ">
+                                        <connections>
+                                            <action selector="togglePanMode:" destination="TiC-11-YSU" id="wsV-bl-ssf"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="N" id="DbJ-vQ-vy2">
+                                        <connections>
+                                            <action selector="setNorthUp:" destination="TiC-11-YSU" id="j7Y-z3-RcE"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="mode" id="Q6g-O2-Fjg">
+                                        <connections>
+                                            <action selector="togglePanStyle:" destination="TiC-11-YSU" id="XjC-nk-PBr"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem systemItem="play" id="fCO-tO-IRq">
+                                        <connections>
+                                            <action selector="toggleRecordMode:" destination="TiC-11-YSU" id="njS-aE-mhL"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -40,22 +57,22 @@
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="nhM-18-yk1" firstAttribute="top" secondItem="SFd-OI-tIi" secondAttribute="top" type="user" id="3NR-kU-R07"/>
                             <constraint firstAttribute="centerY" secondItem="009-3q-8gq" secondAttribute="centerY" type="user" id="UxM-ZN-8lM"/>
-                            <constraint firstAttribute="trailing" secondItem="nhM-18-yk1" secondAttribute="trailing" type="user" id="dnw-x1-pvO"/>
                             <constraint firstItem="009-3q-8gq" firstAttribute="centerX" secondItem="3Af-C7-mib" secondAttribute="centerX" type="default" id="fVd-bw-ueG"/>
-                            <constraint firstItem="nhM-18-yk1" firstAttribute="bottom" secondItem="SFd-OI-tIi" secondAttribute="bottom" type="default" id="hfy-3E-8Db"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leading" type="default" id="msM-N1-Wbb"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="bottom" secondItem="SFd-OI-tIi" secondAttribute="bottom" type="default" id="pGg-O5-6in"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="trailing" secondItem="SFd-OI-tIi" secondAttribute="trailing" type="default" id="qRh-xh-UHh"/>
-                            <constraint firstItem="nhM-18-yk1" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leading" type="user" id="sTU-Sy-Peo"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Survey xyz" id="DZH-KF-4La"/>
                     <connections>
                         <outlet property="MapLabel" destination="009-3q-8gq" id="wAk-bj-gFF"/>
-                        <outlet property="locationButton" destination="zVj-NC-O4w" id="geK-6T-Ols"/>
-                        <outlet property="mapView" destination="nhM-18-yk1" id="0Ek-pr-oTm"/>
+                        <outlet property="gpsButton" destination="zVj-NC-O4w" id="O9U-6E-rj1"/>
+                        <outlet property="mapLabel" destination="009-3q-8gq" id="Nkh-6c-eHg"/>
+                        <outlet property="northButton" destination="DbJ-vQ-vy2" id="VSL-dx-sL7"/>
+                        <outlet property="panButton" destination="jXA-Ll-IBJ" id="ANP-0w-d3Q"/>
+                        <outlet property="panStyleButton" destination="Q6g-O2-Fjg" id="dp0-lZ-ZWa"/>
+                        <outlet property="recordButton" destination="fCO-tO-IRq" id="qHA-uf-NP4"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dpZ-sC-Ovn" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -162,9 +179,17 @@
         <class className="ObserverMapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
             <relationships>
-                <relationship kind="action" name="toggleLocationServices:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="LocationButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="toggleGps:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="togglePanMode:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="togglePanStyle:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="toggleRecordMode:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="gpsButton" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="mapLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="northButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="panButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="panStyleButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="recordButton" candidateClass="UIBarButtonItem"/>
             </relationships>
         </class>
     </classes>
