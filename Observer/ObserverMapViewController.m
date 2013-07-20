@@ -12,7 +12,7 @@
 
 #define DEFAULTS_KEY_WANTS_AUTOPAN @"wants_autopan"
 #define DEFAULTS_KEY_AUTOPAN_MODE @"autopan_mode"
-
+#define MINIMUM_NAVIGATION_SPEED 1.5  //speed in meters per second at which to switch map orientation from compass heading to course direction
 
 typedef enum {
     LocationStyleOff,
@@ -26,13 +26,18 @@ typedef enum {
 @property (strong, nonatomic) BaseMapManager *maps;
 @property (strong, nonatomic) AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UILabel *mapLabel;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *gpsButton;
+//@property (weak, nonatomic) IBOutlet UIBarButtonItem *gpsButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *panButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *recordButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *northButton;
 @property (nonatomic) BOOL userWantsAutoPanOn;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *panStyleButton;
 @property (nonatomic) AGSLocationDisplayAutoPanMode savedAutoPanMode;
+@property (strong, nonatomic) CLLocationManager *locationManager;
+@property (weak, nonatomic) IBOutlet UIButton *northButton2;
+@property (strong, nonatomic) AGSGraphicsLayer *observationsLayer;
+@property (strong, nonatomic) AGSGraphicsLayer *gpsPointsLayer;
+@property (strong, nonatomic) AGSGraphicsLayer *gpsTracksLayer;
 
 @end
 
@@ -53,6 +58,34 @@ typedef enum {
     return _maps;
 }
 
+- (CLLocationManager *)locationManager
+{
+    if (!_locationManager)
+        _locationManager = [[CLLocationManager alloc] init];
+    return _locationManager;
+}
+
+- (AGSGraphicsLayer *)observationsLayer
+{
+    if (!_observationsLayer)
+        _observationsLayer = [[AGSGraphicsLayer alloc] init];
+    return _observationsLayer;
+}
+
+- (AGSGraphicsLayer *)gpsPointsLayer
+{
+    if (!_gpsPointsLayer)
+        _gpsPointsLayer = [[AGSGraphicsLayer alloc] init];
+    return _gpsPointsLayer;
+}
+
+- (AGSGraphicsLayer *)gpsTracksLayer
+{
+    if (!_gpsTracksLayer)
+        _gpsTracksLayer = [[AGSGraphicsLayer alloc] init];
+    return _gpsTracksLayer;
+}
+
 - (IBAction)toggleGps:(UIBarButtonItem *)sender {
     if (sender.style == UIBarButtonItemStyleDone)
         [self turnOffGPS];
@@ -65,7 +98,7 @@ typedef enum {
     self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
     self.mapView.locationDisplay.wanderExtentFactor = 0.0;
     [self.mapView.locationDisplay startDataSource];
-    self.gpsButton.style = UIBarButtonItemStyleDone;
+    //self.gpsButton.style = UIBarButtonItemStyleDone;
     self.panButton.enabled = YES;
     self.northButton.enabled = NO;
     self.recordButton.enabled = YES;
@@ -73,12 +106,19 @@ typedef enum {
     self.userWantsAutoPanOn = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_WANTS_AUTOPAN];
     
     self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];
+    
+    //AGSLocationDisplay does not have a delegate or provide notifications,  If we want location events we need our own CLLocationManager
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
+    {
+        self.locationManager.delegate = self;
+        [self.locationManager startUpdatingLocation];
+    }
 }
 
 - (void) turnOffGPS
 {
     [self.mapView.locationDisplay stopDataSource];
-    self.gpsButton.style = UIBarButtonItemStyleBordered;
+    //self.gpsButton.style = UIBarButtonItemStyleBordered;
     self.panButton.enabled = NO;
     self.panStyleButton.enabled = NO;
     self.recordButton.enabled = NO;
@@ -117,6 +157,14 @@ typedef enum {
         NSLog(@"start recording");
         sender.style = UIBarButtonItemStyleDone;
     }
+}
+- (IBAction)resetNorth:(UIButton *)sender {
+    [self.mapView setRotationAngle:0 animated:YES];
+    CATransition *animation = [CATransition animation];
+    animation.type = kCATransitionFade;
+    animation.duration = 0.4;
+    [sender.layer addAnimation:animation forKey:nil];
+    sender.hidden = YES;
 }
 
 - (IBAction)setNorthUp:(UIBarButtonItem *)sender {
@@ -159,8 +207,17 @@ typedef enum {
 - (void) checkIfMapIsRotated
 {
     if (self.mapView.rotationAngle != 0)
+    {
         self.northButton.enabled = YES;
-
+        if (self.northButton2.hidden)
+        {
+            CATransition *animation = [CATransition animation];
+            animation.type = kCATransitionFade;
+            animation.duration = 0.4;
+            [self.northButton2.layer addAnimation:animation forKey:nil];
+            self.northButton2.hidden = NO;
+        }
+    }
     if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation ||
         self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation)
     {
@@ -188,6 +245,31 @@ typedef enum {
     return _mapView;
 }
 
+#pragma mark - CLLocationManagerDelegate Protocol
+       
+- (void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    //monitor the velocity to auto switch between AGSLocation Auto Pan Mode between navigation and heading
+    CLLocation *location = [locations lastObject];
+   if (!location || location.speed < 0)
+       return;
+    if (location.speed < MINIMUM_NAVIGATION_SPEED &&
+        self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation)
+    {
+        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
+        self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
+    }
+    if (MINIMUM_NAVIGATION_SPEED <= location.speed &&
+        self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation)
+    {
+        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
+        self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
+    }
+    NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
+    AGSPoint *mapPoint = self.mapView.locationDisplay.mapLocation;
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
+    [self.gpsPointsLayer addGraphic:graphic];
+}
 
 #pragma mark - Public Methods: Initializers
 
@@ -208,6 +290,17 @@ typedef enum {
 {
     [super viewDidLoad];
     [self setOrResetBasemap:self.maps.currentMap];
+    [self initializeGraphicsLayer];
+
+    NSMutableDictionary *graphicAttributes;
+    
+    graphicAttributes=[[NSMutableDictionary alloc]initWithCapacity:3];
+    [graphicAttributes setObject:[NSString stringWithFormat:@"%d",4] forKey:@"SampleID"];
+    [graphicAttributes setObject:@[@"d1", @"d2"] forKey:@"SurveyData" ];
+    
+    NSLog(@"%@",[graphicAttributes objectForKey:@"SurveyData"]);
+    NSLog(@"%@", [graphicAttributes allKeys]);
+
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -288,6 +381,18 @@ typedef enum {
     //Tells the delegate the map was single-tapped at specified location.
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
     NSLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mappoint, graphics);
+    if ([graphics count]) {
+        NSLog(@"display graphic callout");
+    }
+    else
+    {
+        NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
+        //        AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
+        //[symbol setSize:CGSizeMake(7,7)];
+        AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mappoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
+        [self.observationsLayer addGraphic:graphic];
+        //[self.observationsLayer refresh];
+    }
 }
 
 - (void)mapView:(AGSMapView *)mapView :(CGPoint)screen mapPoint:(AGSPoint *)mappoint graphics:(NSDictionary *)graphics
@@ -303,6 +408,10 @@ typedef enum {
     //Sent continuously to allow tracking of the movement
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
     NSLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, graphics);
+    AGSGraphic *graphic = [graphics[@"observations"] lastObject];
+    if (graphic) {
+        [graphic setGeometry:mappoint];
+    }
 }
 
 - (void)mapView:(AGSMapView *)mapView didEndTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint graphics:(NSDictionary *)graphics
@@ -390,11 +499,29 @@ typedef enum {
                 self.mapView = nil;
                 //FIXME - remove self from notification observer (do it in the setter)
                 for (AGSLayer *layer in layers)
+                {
+                    NSLog(@"Adding Layer %@",layer.name);
                     [self.mapView addMapLayer:layer];
+                }
             }
         }
     }
 }
 
+- (void) initializeGraphicsLayer
+{
+    //AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[[UIColor purpleColor] colorWithAlphaComponent:.5]];
+    AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
+    [symbol setSize:CGSizeMake(7,7)];
+    [self.observationsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
+    [self.mapView addMapLayer:self.observationsLayer withName:@"gpsPointsLayer"];
+    
+    //symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor purpleColor]];
+    symbol = [AGSPictureMarkerSymbol pictureMarkerSymbolWithImageNamed:@"compass.png"];
+    //[symbol setSize:CGSizeMake(18,18)];
+    [self.observationsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
+    [self.mapView addMapLayer:self.observationsLayer withName:@"observations"];
+    
+}
 
 @end

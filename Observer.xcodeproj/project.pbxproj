@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		396775071798C800009ECD34 /* compass.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775031798C800009ECD34 /* compass.png */; };
+		396775081798C800009ECD34 /* compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775041798C800009ECD34 /* compass@2x.png */; };
+		396775091798C800009ECD34 /* heading.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775051798C800009ECD34 /* heading.png */; };
+		3967750A1798C800009ECD34 /* heading@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775061798C800009ECD34 /* heading@2x.png */; };
 		39955E4B178334BF00D225D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
 		39955E4D178334BF00D225D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4C178334BF00D225D7 /* Foundation.framework */; };
 		39955E4F178334BF00D225D7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4E178334BF00D225D7 /* CoreGraphics.framework */; };
@@ -71,6 +75,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		396775031798C800009ECD34 /* compass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = compass.png; sourceTree = "<group>"; };
+		396775041798C800009ECD34 /* compass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "compass@2x.png"; sourceTree = "<group>"; };
+		396775051798C800009ECD34 /* heading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = heading.png; sourceTree = "<group>"; };
+		396775061798C800009ECD34 /* heading@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "heading@2x.png"; sourceTree = "<group>"; };
 		39955E47178334BF00D225D7 /* Observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Observer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39955E4A178334BF00D225D7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39955E4C178334BF00D225D7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -257,6 +265,10 @@
 		39955EBD17838C2E00D225D7 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				396775031798C800009ECD34 /* compass.png */,
+				396775041798C800009ECD34 /* compass@2x.png */,
+				396775051798C800009ECD34 /* heading.png */,
+				396775061798C800009ECD34 /* heading@2x.png */,
 				39955EC21783A16900D225D7 /* form.png */,
 				39955EC31783A16900D225D7 /* form@2x.png */,
 				39955EBE17838C7E00D225D7 /* settings.png */,
@@ -375,6 +387,10 @@
 				39955EC117838C7E00D225D7 /* settings@2x.png in Resources */,
 				39955EC41783A16900D225D7 /* form.png in Resources */,
 				39955EC51783A16900D225D7 /* form@2x.png in Resources */,
+				396775071798C800009ECD34 /* compass.png in Resources */,
+				396775081798C800009ECD34 /* compass@2x.png in Resources */,
+				396775091798C800009ECD34 /* heading.png in Resources */,
+				3967750A1798C800009ECD34 /* heading@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

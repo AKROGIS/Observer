@@ -27,12 +27,7 @@
                                             <segue destination="6MB-CL-g4f" kind="push" identifier="Push Local Map Table" id="KMQ-24-dvf"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="gps" id="zVj-NC-O4w">
-                                        <connections>
-                                            <action selector="toggleGps:" destination="TiC-11-YSU" id="fX7-5c-WYI"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem title="auto pan" id="jXA-Ll-IBJ">
+                                    <barButtonItem image="heading.png" id="jXA-Ll-IBJ">
                                         <connections>
                                             <action selector="togglePanMode:" destination="TiC-11-YSU" id="wsV-bl-ssf"/>
                                         </connections>
@@ -54,22 +49,37 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fOP-b6-5IU">
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" image="compass.png">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="resetNorth:" destination="TiC-11-YSU" eventType="touchUpInside" id="Oxa-wU-P3j"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerY" secondItem="009-3q-8gq" secondAttribute="centerY" type="user" id="UxM-ZN-8lM"/>
                             <constraint firstItem="009-3q-8gq" firstAttribute="centerX" secondItem="3Af-C7-mib" secondAttribute="centerX" type="default" id="fVd-bw-ueG"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leading" type="default" id="msM-N1-Wbb"/>
+                            <constraint firstAttribute="trailing" secondItem="fOP-b6-5IU" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="nsx-gg-eH3"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="bottom" secondItem="SFd-OI-tIi" secondAttribute="bottom" type="default" id="pGg-O5-6in"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="trailing" secondItem="SFd-OI-tIi" secondAttribute="trailing" type="default" id="qRh-xh-UHh"/>
+                            <constraint firstItem="fOP-b6-5IU" firstAttribute="top" secondItem="SFd-OI-tIi" secondAttribute="top" constant="66" id="uqF-Eh-ZkY"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Survey xyz" id="DZH-KF-4La"/>
                     <connections>
                         <outlet property="MapLabel" destination="009-3q-8gq" id="wAk-bj-gFF"/>
-                        <outlet property="gpsButton" destination="zVj-NC-O4w" id="O9U-6E-rj1"/>
                         <outlet property="mapLabel" destination="009-3q-8gq" id="Nkh-6c-eHg"/>
                         <outlet property="northButton" destination="DbJ-vQ-vy2" id="VSL-dx-sL7"/>
+                        <outlet property="northButton2" destination="fOP-b6-5IU" id="qxr-us-yGI"/>
                         <outlet property="panButton" destination="jXA-Ll-IBJ" id="ANP-0w-d3Q"/>
                         <outlet property="panStyleButton" destination="Q6g-O2-Fjg" id="dp0-lZ-ZWa"/>
                         <outlet property="recordButton" destination="fCO-tO-IRq" id="qHA-uf-NP4"/>
@@ -168,6 +178,8 @@
     </scenes>
     <resources>
         <image name="Attachments.png" width="20" height="20"/>
+        <image name="compass.png" width="30" height="30"/>
+        <image name="heading.png" width="33" height="29"/>
     </resources>
     <classes>
         <class className="LocalMapsTableViewController" superclassName="UITableViewController">
@@ -179,14 +191,12 @@
         <class className="ObserverMapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
             <relationships>
+                <relationship kind="action" name="resetNorth:" candidateClass="UIButton"/>
                 <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="toggleGps:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="togglePanMode:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="togglePanStyle:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="toggleRecordMode:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="gpsButton" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="mapLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="northButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="northButton2" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="panButton" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="panStyleButton" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="recordButton" candidateClass="UIBarButtonItem"/>
