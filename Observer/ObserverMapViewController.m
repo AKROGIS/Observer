@@ -61,6 +61,10 @@ typedef enum {
     return _maps;
 }
 
+- (IBAction)tap:(UITapGestureRecognizer *)sender {
+    NSLog(@"User Tap");
+}
+
 - (CLLocationManager *)locationManager
 {
     if (!_locationManager)
@@ -237,18 +241,14 @@ typedef enum {
     self.mapView.layerDelegate = self;
     self.mapView.touchDelegate = self;
     self.mapView.calloutDelegate = self;
-    if (self.maps.currentMap.tileCache)
-    {
-        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
-        self.maps.currentMap.tileCache.delegate = self;
-        [self.mapView addMapLayer:self.maps.currentMap.tileCache withName:@"tilecache basemap"];
-    }
-    else
-    {
-        self.noMapLabel.hidden = NO;
-        [self.mapLoadingIndicator stopAnimating];
-    }
-    [self.maps addObserver:self forKeyPath:@"currentMap" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
+    dispatch_queue_t loadQueue = dispatch_queue_create("loadLocalMaps", NULL);
+    dispatch_async(loadQueue, ^{
+        [self.maps loadLocalMaps];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self loadBaseMap];
+        });
+    });
+    
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -289,6 +289,8 @@ typedef enum {
         self.userWantsAutoPanOn = NO;
 }
 
+//FIXME - KVO callbacks will happen on whichever thread made the change!
+//Use receptionist pattern: http://developer.apple.com/library/ios/#documentation/general/conceptual/CocoaEncyclopedia/ReceptionistPattern/ReceptionistPattern.html
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (self.maps == object && [keyPath isEqualToString:@"currentMap"])
@@ -314,8 +316,9 @@ typedef enum {
 {
     // Tells the delegate that the layer is loaded and ready to use.
     NSLog(@"layer %@ did load", layer);
-    [self.mapLoadingIndicator stopAnimating];
-    self.noMapLabel.hidden = YES;
+    //stopping animation will be done in mapView's delegate
+    //[self.mapLoadingIndicator stopAnimating];
+    //self.noMapLabel.hidden = YES;
 }
 
 - (void) layer:(AGSLayer *)layer didInitializeSpatialReferenceStatus:(BOOL)srStatusValid
@@ -333,9 +336,9 @@ typedef enum {
     [self.mapLoadingIndicator stopAnimating];
     self.noMapLabel.hidden = YES;
     [self initializeGraphicsLayer];
-    [self turnOnGPS];
+    //[self turnOnGPS];
 }
-
+/*
 - (BOOL)mapView:(AGSMapView *)mapView shouldFindGraphicsInLayer:(AGSGraphicsLayer *)graphicsLayer atPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint
 {
     //Asks delegate whether to find which graphics in the specified layer intersect the tapped location. Default is YES.
@@ -354,7 +357,7 @@ typedef enum {
     NSLog(@"mapView:shouldProcessClickAtPoint:(%f,%f)=(%@)", screen.x, screen.y, mappoint);
     return YES;
 }
-
+*/
 - (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint graphics:(NSDictionary *)graphics
 {
     //Tells the delegate the map was single-tapped at specified location.
@@ -371,6 +374,7 @@ typedef enum {
         AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mappoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
         [self.observationsLayer addGraphic:graphic];
         //[self.observationsLayer refresh];
+        NSLog(@"Graphic added to map");
     }
 }
 
@@ -514,6 +518,22 @@ typedef enum {
 - (void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     self.mapView.locationDisplay.interfaceOrientation = toInterfaceOrientation;
+}
+
+- (void) loadBaseMap
+{
+    if (self.maps.currentMap.tileCache)
+    {
+        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
+        self.maps.currentMap.tileCache.delegate = self;
+        [self.mapView addMapLayer:self.maps.currentMap.tileCache withName:@"tilecache basemap"];
+    }
+    else
+    {
+        self.noMapLabel.hidden = NO;
+        [self.mapLoadingIndicator stopAnimating];
+    }
+    [self.maps addObserver:self forKeyPath:@"currentMap" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
 }
 
 - (void) resetBasemap

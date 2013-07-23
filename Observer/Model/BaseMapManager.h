@@ -23,6 +23,9 @@
 @property (weak, nonatomic) id <MapMonitoring> delegate;
 
 
+//A convenience to ensure that the maps are loaded, probably done on a background thread
+- (void) loadLocalMaps;
+
 - (NSUInteger) count;
 - (BaseMap *) mapAtIndex:(NSUInteger)index;
 - (void) addMap:(BaseMap *)map;

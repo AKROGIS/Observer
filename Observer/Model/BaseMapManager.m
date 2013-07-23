@@ -97,6 +97,12 @@ static BaseMapManager * _sharedManager;
 
 #pragma mark - Public Methods
 
+- (void) loadLocalMaps
+{
+    [self currentMap]; //acessing the current map will lazy load it and the map list
+    return;
+}
+
 - (BaseMap *) mapAtIndex:(NSUInteger) index
 {
     return (index < [self.maps count]) ? [self.maps objectAtIndex:index] : nil;
