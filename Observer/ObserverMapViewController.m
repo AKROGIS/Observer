@@ -233,7 +233,7 @@ typedef enum {
     NSLog(@"View Did Load");
     [super viewDidLoad];
     self.noMapLabel.hidden = YES;
-    self.mapLoadingIndicator.hidden = NO;
+    [self.mapLoadingIndicator startAnimating];
     self.mapView.layerDelegate = self;
     self.mapView.touchDelegate = self;
     self.mapView.calloutDelegate = self;
@@ -241,12 +241,12 @@ typedef enum {
     {
         //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
         self.maps.currentMap.tileCache.delegate = self;
-        [self.mapView addMapLayer:self.maps.currentMap.tileCache];
+        [self.mapView addMapLayer:self.maps.currentMap.tileCache withName:@"tilecache basemap"];
     }
     else
     {
         self.noMapLabel.hidden = NO;
-        self.mapLoadingIndicator.hidden = YES;
+        [self.mapLoadingIndicator stopAnimating];
     }
     [self.maps addObserver:self forKeyPath:@"currentMap" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
 }
@@ -306,7 +306,7 @@ typedef enum {
 {
     // Tells the delegate that the layer failed to load with the specified error.
     NSLog(@"layer %@ failed to load with error %@", layer, error);
-    self.mapLoadingIndicator.hidden = YES;
+    [self.mapLoadingIndicator stopAnimating];
     self.noMapLabel.hidden = NO;
 }
 
@@ -314,7 +314,7 @@ typedef enum {
 {
     // Tells the delegate that the layer is loaded and ready to use.
     NSLog(@"layer %@ did load", layer);
-    self.mapLoadingIndicator.hidden = YES;
+    [self.mapLoadingIndicator stopAnimating];
     self.noMapLabel.hidden = YES;
 }
 
@@ -330,7 +330,7 @@ typedef enum {
 {
     //Tells the delegate the map is loaded and ready for use. Fires when the map’s base layer loads.
     NSLog(@"mapViewDidLoad");
-    self.mapLoadingIndicator.hidden = YES;
+    [self.mapLoadingIndicator stopAnimating];
     self.noMapLabel.hidden = YES;
     [self initializeGraphicsLayer];
     [self turnOnGPS];
@@ -529,29 +529,27 @@ typedef enum {
     if (!self.maps.currentMap.tileCache)
     {
         self.noMapLabel.hidden = NO;
-        self.mapLoadingIndicator.hidden = YES;
+        [self.mapLoadingIndicator stopAnimating];
     }
     else
     {
         self.noMapLabel.hidden = YES;
-        self.mapLoadingIndicator.hidden = NO;
-        NSMutableArray *layers = [NSMutableArray arrayWithArray: self.mapView.mapLayers];
-        if (layers.count > 0)
-            ((AGSLayer *)layers[0]).delegate = nil;
-        layers[0] = self.maps.currentMap.tileCache;
+        [self.mapLoadingIndicator startAnimating];
         self.maps.currentMap.tileCache.delegate = self;
+        if (self.mapView.mapLayers.count > 0)
+            ((AGSLayer *)self.mapView.mapLayers[0]).delegate = nil;
         [self.mapView reset];
-        for (AGSLayer *layer in layers)
-        {
-            NSLog(@"Adding Layer %@",layer.name);
-            //FIXME if the old SR != new SR, then we need to reproject the grphics layer.
-            [self.mapView addMapLayer:layer];
-        }
+        //NSLog(@"Reset Map, loaded:%u, Layer count: %u", self.mapView.loaded, self.mapView.mapLayers.count);
+        //NSLog(@"Adding new basemap layer %@",self.maps.currentMap.tileCache);
+        [self.mapView addMapLayer:self.maps.currentMap.tileCache withName:@"tilecache basemap"];
     }
 }
 
 - (void) initializeGraphicsLayer
 {
+    //FIXME - Each graphic is created with the SR of the current basemap.  Is this a problem?
+    
+    NSLog(@"Adding two graphics layers");
     //AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[[UIColor purpleColor] colorWithAlphaComponent:.5]];
     AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
     [symbol setSize:CGSizeMake(7,7)];
