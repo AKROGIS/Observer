@@ -60,6 +60,12 @@
                                             <action selector="hideBaseMap:" destination="TiC-11-YSU" id="GLg-HC-Vs8"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="pyp-S6-0zm"/>
+                                    <barButtonItem systemItem="add" id="zVE-98-VDX">
+                                        <connections>
+                                            <action selector="addObservation:" destination="TiC-11-YSU" id="ERG-XA-Wci"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fOP-b6-5IU">
@@ -75,22 +81,25 @@
                                     <action selector="resetNorth:" destination="TiC-11-YSU" eventType="touchUpInside" id="Oxa-wU-P3j"/>
                                 </connections>
                             </button>
+                            <imageView opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="center" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" image="Crosshairs.png" translatesAutoresizingMaskIntoConstraints="NO" id="fpV-JS-knH"/>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leading" type="user" id="1aD-AU-X6q"/>
                             <constraint firstItem="zJv-q7-y2x" firstAttribute="centerY" secondItem="gK6-lQ-eLV" secondAttribute="centerY" type="user" id="2UZ-iA-oSP"/>
                             <constraint firstAttribute="centerX" secondItem="gK6-lQ-eLV" secondAttribute="centerX" type="user" id="5Nb-Tk-0le"/>
-                            <constraint firstItem="gK6-lQ-eLV" firstAttribute="centerY" secondItem="SFd-OI-tIi" secondAttribute="centerY" type="default" id="C2h-yP-cqu"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="bottom" secondItem="3Af-C7-mib" secondAttribute="bottom" type="default" id="Gdw-aM-DJV"/>
+                            <constraint firstItem="fpV-JS-knH" firstAttribute="centerX" secondItem="zJv-q7-y2x" secondAttribute="centerX" type="default" id="L0i-cR-cJ9"/>
+                            <constraint firstItem="009-3q-8gq" firstAttribute="centerX" secondItem="3Af-C7-mib" secondAttribute="centerX" type="default" id="UF6-JM-Jrt"/>
                             <constraint firstItem="zJv-q7-y2x" firstAttribute="centerX" secondItem="009-3q-8gq" secondAttribute="centerX" type="default" id="ZSP-Jm-5Hc"/>
                             <constraint firstItem="zJv-q7-y2x" firstAttribute="centerY" secondItem="009-3q-8gq" secondAttribute="centerY" type="user" id="cMD-wB-biu"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leading" type="default" id="msM-N1-Wbb"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="top" secondItem="SFd-OI-tIi" secondAttribute="top" type="user" id="nPA-CR-ach"/>
                             <constraint firstAttribute="trailing" secondItem="fOP-b6-5IU" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="nsx-gg-eH3"/>
+                            <constraint firstItem="fpV-JS-knH" firstAttribute="centerY" secondItem="SFd-OI-tIi" secondAttribute="centerY" type="default" id="pqD-lP-E2E"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="trailing" secondItem="SFd-OI-tIi" secondAttribute="trailing" type="default" id="qRh-xh-UHh"/>
-                            <constraint firstItem="3Af-C7-mib" firstAttribute="centerX" secondItem="009-3q-8gq" secondAttribute="centerX" type="default" id="qng-2A-XqA"/>
                             <constraint firstItem="fOP-b6-5IU" firstAttribute="top" secondItem="SFd-OI-tIi" secondAttribute="top" constant="66" id="uqF-Eh-ZkY"/>
+                            <constraint firstItem="fpV-JS-knH" firstAttribute="centerY" secondItem="zJv-q7-y2x" secondAttribute="centerY" type="default" id="yZ1-qb-Wt5"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Survey xyz" id="DZH-KF-4La"/>
@@ -203,15 +212,13 @@
     </scenes>
     <resources>
         <image name="Attachments.png" width="20" height="20"/>
+        <image name="Crosshairs.png" width="64" height="64"/>
         <image name="compass.png" width="30" height="30"/>
         <image name="heading.png" width="33" height="29"/>
     </resources>
     <classes>
         <class className="AGSMapView" superclassName="AGSMapViewBase">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/AGSMapView.h"/>
-        </class>
-        <class className="AGSMapViewBase" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/AGSMapViewBase.h"/>
         </class>
         <class className="LocalMapsTableViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/LocalMapsTableViewController.h"/>
@@ -222,9 +229,11 @@
         <class className="ObserverMapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
             <relationships>
+                <relationship kind="action" name="addObservation:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="hideBaseMap:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="resetNorth:" candidateClass="UIButton"/>
                 <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="tap:" candidateClass="UITapGestureRecognizer"/>
                 <relationship kind="action" name="toggleGps:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanStyle:" candidateClass="UIBarButtonItem"/>

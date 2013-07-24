@@ -183,36 +183,11 @@ typedef enum {
     self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];    
 }
 
-
-#pragma mark - CLLocationManagerDelegate Protocol
-       
-- (void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+- (IBAction)addObservation:(UIBarButtonItem *)sender
 {
-    //monitor the velocity to auto switch between AGSLocation Auto Pan Mode between navigation and heading
-    CLLocation *location = [locations lastObject];
-   if (!location || location.speed < 0)
-       return;
-    
-    if (location.speed < MINIMUM_NAVIGATION_SPEED &&
-        self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation)
-    {
-        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
-        self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
-    }
-    if (MINIMUM_NAVIGATION_SPEED <= location.speed &&
-        self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation)
-    {
-        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
-        self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
-    }
-    
-    NSLog(@"Got a location %@",location);
-    NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
-    AGSPoint *mapPoint = self.mapView.locationDisplay.mapLocation;
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
-    [self.gpsPointsLayer addGraphic:graphic];
-
+    [self addObservationAtPoint:self.mapView.mapAnchor];
 }
+
 
 #pragma mark - Public Methods: Initializers
 
@@ -336,9 +311,9 @@ typedef enum {
     [self.mapLoadingIndicator stopAnimating];
     self.noMapLabel.hidden = YES;
     [self initializeGraphicsLayer];
-    //[self turnOnGPS];
+    [self turnOnGPS];
 }
-/*
+
 - (BOOL)mapView:(AGSMapView *)mapView shouldFindGraphicsInLayer:(AGSGraphicsLayer *)graphicsLayer atPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint
 {
     //Asks delegate whether to find which graphics in the specified layer intersect the tapped location. Default is YES.
@@ -357,7 +332,7 @@ typedef enum {
     NSLog(@"mapView:shouldProcessClickAtPoint:(%f,%f)=(%@)", screen.x, screen.y, mappoint);
     return YES;
 }
-*/
+ 
 - (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint graphics:(NSDictionary *)graphics
 {
     //Tells the delegate the map was single-tapped at specified location.
@@ -368,17 +343,11 @@ typedef enum {
     }
     else
     {
-        NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
-        //        AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
-        //[symbol setSize:CGSizeMake(7,7)];
-        AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mappoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
-        [self.observationsLayer addGraphic:graphic];
-        //[self.observationsLayer refresh];
-        NSLog(@"Graphic added to map");
+        [self addObservationAtPoint:mappoint];
     }
 }
 
-- (void)mapView:(AGSMapView *)mapView :(CGPoint)screen mapPoint:(AGSPoint *)mappoint graphics:(NSDictionary *)graphics
+- (void)mapView:(AGSMapView *)mapView didTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint graphics:(NSDictionary *)graphics
 {
     //Tells the delegate that a point on the map was tapped and held at specified location.
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
@@ -451,6 +420,40 @@ typedef enum {
     //Tells the delegate that the callout was dismissed.
     NSLog(@"mapViewDidDismissCallout:");
 }
+
+
+#pragma mark - CLLocationManagerDelegate Protocol
+
+- (void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    
+    //monitor the velocity to auto switch between AGSLocation Auto Pan Mode between navigation and heading
+    CLLocation *location = [locations lastObject];
+    if (!location || location.speed < 0)
+        return;
+    
+    NSLog(@"Got a new location %@",location);
+    
+    if (location.speed < MINIMUM_NAVIGATION_SPEED &&
+        self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation)
+    {
+        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
+        self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
+    }
+    if (MINIMUM_NAVIGATION_SPEED <= location.speed &&
+        self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation)
+    {
+        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
+        self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
+    }
+    
+    NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
+    AGSPoint *mapPoint = self.mapView.locationDisplay.mapLocation;
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
+    [self.gpsPointsLayer addGraphic:graphic];
+    
+}
+
 
 
 
@@ -582,6 +585,28 @@ typedef enum {
     [symbol setSize:CGSizeMake(18,18)];
     [self.observationsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
     [self.mapView addMapLayer:self.observationsLayer withName:@"observations"];
+    
+}
+
+- (void) addObservationAtAngle:(CLLocationDirection)angle andDistance:(CLLocationDistance)distance
+{
+    //FIXME - implement
+}
+
+- (void) addObservationAtGPS
+{
+    [self addObservationAtPoint:self.mapView.locationDisplay.mapLocation];
+}
+
+- (void) addObservationAtPoint:(AGSPoint *)mapPoint
+{
+    NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
+    //        AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
+    //[symbol setSize:CGSizeMake(7,7)];
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
+    [self.observationsLayer addGraphic:graphic];
+    //[self.observationsLayer refresh];
+    NSLog(@"Graphic added to map");
     
 }
 
