@@ -9,6 +9,7 @@
 #import "ObserverMapViewController.h"
 #import "LocalMapsTableViewController.h"
 #import "BaseMapManager.h"
+#import "AGSPoint+AKRAdditions.h"
 
 #define DEFAULTS_KEY_WANTS_AUTOPAN @"wants_autopan"
 #define DEFAULTS_KEY_AUTOPAN_MODE @"autopan_mode"
@@ -188,6 +189,34 @@ typedef enum {
     [self addObservationAtPoint:self.mapView.mapAnchor];
 }
 
+- (IBAction)addObservationAtGPS:(UIBarButtonItem *)sender
+{
+    [self addObservationAtPoint:self.mapView.locationDisplay.mapLocation];
+}
+
+- (IBAction)addObservatonAtAngleAndDistance:(id)sender
+{
+    AGSPoint *gpsPoint = self.mapView.locationDisplay.mapLocation;
+    double course = self.mapView.locationDisplay.location.course;
+    if (course < 0)
+    {
+        //Alert
+        course = 0; //Use North as baseline
+    }
+    // Fire Popup to get:
+    //  angle (in degrees, positive is clockwise)
+    //  reference angle of dead ahead
+    //  distance
+    //  units
+    double angle = 225.0;
+    double referenceAngle = 180.0;
+    double distance = 20;
+    AGSSRUnit unit = AGSSRUnitMeter;
+    
+    angle  = course + angle - referenceAngle;
+    AGSPoint *newPoint = [gpsPoint pointWithAngle:angle distance:distance units:unit];
+    [self addObservationAtPoint:newPoint];
+}
 
 #pragma mark - Public Methods: Initializers
 
@@ -591,11 +620,6 @@ typedef enum {
 - (void) addObservationAtAngle:(CLLocationDirection)angle andDistance:(CLLocationDistance)distance
 {
     //FIXME - implement
-}
-
-- (void) addObservationAtGPS
-{
-    [self addObservationAtPoint:self.mapView.locationDisplay.mapLocation];
 }
 
 - (void) addObservationAtPoint:(AGSPoint *)mapPoint

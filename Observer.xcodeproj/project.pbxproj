@@ -13,6 +13,7 @@
 		3967750A1798C800009ECD34 /* heading@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775061798C800009ECD34 /* heading@2x.png */; };
 		396775A017A065EE009ECD34 /* Crosshairs.png in Resources */ = {isa = PBXBuildFile; fileRef = 3967759E17A065EE009ECD34 /* Crosshairs.png */; };
 		396775A117A065EE009ECD34 /* Crosshairs@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3967759F17A065EE009ECD34 /* Crosshairs@2x.png */; };
+		396775A517A083E8009ECD34 /* AGSPoint+AKRAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */; };
 		39955E4B178334BF00D225D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
 		39955E4D178334BF00D225D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4C178334BF00D225D7 /* Foundation.framework */; };
 		39955E4F178334BF00D225D7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4E178334BF00D225D7 /* CoreGraphics.framework */; };
@@ -83,6 +84,8 @@
 		396775061798C800009ECD34 /* heading@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "heading@2x.png"; sourceTree = "<group>"; };
 		3967759E17A065EE009ECD34 /* Crosshairs.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Crosshairs.png; sourceTree = "<group>"; };
 		3967759F17A065EE009ECD34 /* Crosshairs@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Crosshairs@2x.png"; sourceTree = "<group>"; };
+		396775A317A083E8009ECD34 /* AGSPoint+AKRAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AGSPoint+AKRAdditions.h"; path = "Model/AGSPoint+AKRAdditions.h"; sourceTree = "<group>"; };
+		396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "AGSPoint+AKRAdditions.m"; path = "Model/AGSPoint+AKRAdditions.m"; sourceTree = "<group>"; };
 		39955E47178334BF00D225D7 /* Observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Observer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39955E4A178334BF00D225D7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39955E4C178334BF00D225D7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -300,6 +303,8 @@
 				39955ECA1787332400D225D7 /* BaseMapManager.h */,
 				39955ECB1787332400D225D7 /* BaseMapManager.m */,
 				59119861178906FD00B2331B /* MapMonitoring.h */,
+				396775A317A083E8009ECD34 /* AGSPoint+AKRAdditions.h */,
+				396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -440,6 +445,7 @@
 				39955ECC1787332400D225D7 /* BaseMapManager.m in Sources */,
 				39955ECF1787336900D225D7 /* LocalMapsTableViewController.m in Sources */,
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
+				396775A517A083E8009ECD34 /* AGSPoint+AKRAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

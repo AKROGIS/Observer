@@ -61,6 +61,16 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="pyp-S6-0zm"/>
+                                    <barButtonItem title="+AD" id="XBC-1H-O73">
+                                        <connections>
+                                            <action selector="addObservatonAtAngleAndDistance:" destination="TiC-11-YSU" id="l47-44-Wuf"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="+GPS" id="C8B-tf-jAe">
+                                        <connections>
+                                            <action selector="addObservationAtGPS:" destination="TiC-11-YSU" id="Dds-H0-CeP"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem systemItem="add" id="zVE-98-VDX">
                                         <connections>
                                             <action selector="addObservation:" destination="TiC-11-YSU" id="ERG-XA-Wci"/>
@@ -216,39 +226,6 @@
         <image name="compass.png" width="30" height="30"/>
         <image name="heading.png" width="33" height="29"/>
     </resources>
-    <classes>
-        <class className="AGSMapView" superclassName="AGSMapViewBase">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/AGSMapView.h"/>
-        </class>
-        <class className="LocalMapsTableViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/LocalMapsTableViewController.h"/>
-        </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="ObserverMapViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="addObservation:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="hideBaseMap:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="resetNorth:" candidateClass="UIButton"/>
-                <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="tap:" candidateClass="UITapGestureRecognizer"/>
-                <relationship kind="action" name="toggleGps:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="togglePanMode:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="togglePanStyle:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="toggleRecordMode:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="mapLoadingIndicator" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="mapView" candidateClass="AGSMapView"/>
-                <relationship kind="outlet" name="noMapLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="northButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="northButton2" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="panButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="panStyleButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="recordButton" candidateClass="UIBarButtonItem"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>
