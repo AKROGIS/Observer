@@ -14,6 +14,7 @@
 		396775A017A065EE009ECD34 /* Crosshairs.png in Resources */ = {isa = PBXBuildFile; fileRef = 3967759E17A065EE009ECD34 /* Crosshairs.png */; };
 		396775A117A065EE009ECD34 /* Crosshairs@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3967759F17A065EE009ECD34 /* Crosshairs@2x.png */; };
 		396775A517A083E8009ECD34 /* AGSPoint+AKRAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */; };
+		396775A817A0911E009ECD34 /* AGSPointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775A717A0911E009ECD34 /* AGSPointTests.m */; };
 		39955E4B178334BF00D225D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
 		39955E4D178334BF00D225D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4C178334BF00D225D7 /* Foundation.framework */; };
 		39955E4F178334BF00D225D7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4E178334BF00D225D7 /* CoreGraphics.framework */; };
@@ -86,6 +87,9 @@
 		3967759F17A065EE009ECD34 /* Crosshairs@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Crosshairs@2x.png"; sourceTree = "<group>"; };
 		396775A317A083E8009ECD34 /* AGSPoint+AKRAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AGSPoint+AKRAdditions.h"; path = "Model/AGSPoint+AKRAdditions.h"; sourceTree = "<group>"; };
 		396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "AGSPoint+AKRAdditions.m"; path = "Model/AGSPoint+AKRAdditions.m"; sourceTree = "<group>"; };
+		396775A617A0911E009ECD34 /* AGSPointTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGSPointTests.h; sourceTree = "<group>"; };
+		396775A717A0911E009ECD34 /* AGSPointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGSPointTests.m; sourceTree = "<group>"; };
+		396775C517A09B4D009ECD34 /* ObserverTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ObserverTests copy-Info.plist"; path = "/Users/regan_sarwas/Documents/Developer/ArcGIS iOS/Observer/ObserverTests copy-Info.plist"; sourceTree = "<absolute>"; };
 		39955E47178334BF00D225D7 /* Observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Observer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39955E4A178334BF00D225D7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39955E4C178334BF00D225D7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -188,6 +192,7 @@
 				39955E82178334C000D225D7 /* ObserverTests */,
 				39955E49178334BF00D225D7 /* Frameworks */,
 				39955E48178334BF00D225D7 /* Products */,
+				396775C517A09B4D009ECD34 /* ObserverTests copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -256,6 +261,8 @@
 				39955E88178334C000D225D7 /* ObserverTests.h */,
 				39955E89178334C000D225D7 /* ObserverTests.m */,
 				39955E83178334C000D225D7 /* Supporting Files */,
+				396775A617A0911E009ECD34 /* AGSPointTests.h */,
+				396775A717A0911E009ECD34 /* AGSPointTests.m */,
 			);
 			path = ObserverTests;
 			sourceTree = "<group>";
@@ -454,6 +461,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				39955E8A178334C000D225D7 /* ObserverTests.m in Sources */,
+				396775A817A0911E009ECD34 /* AGSPointTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -609,6 +617,7 @@
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
 				);
 				INFOPLIST_FILE = "ObserverTests/ObserverTests-Info.plist";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
@@ -625,6 +634,7 @@
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
 				);
 				INFOPLIST_FILE = "ObserverTests/ObserverTests-Info.plist";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
