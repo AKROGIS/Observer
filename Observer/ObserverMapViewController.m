@@ -8,6 +8,7 @@
 
 #import "ObserverMapViewController.h"
 #import "LocalMapsTableViewController.h"
+#import "AngleDistanceViewController.h"
 #import "BaseMapManager.h"
 #import "AGSPoint+AKRAdditions.h"
 
@@ -60,10 +61,6 @@ typedef enum {
         _maps = [BaseMapManager sharedManager];
     }
     return _maps;
-}
-
-- (IBAction)tap:(UITapGestureRecognizer *)sender {
-    NSLog(@"User Tap");
 }
 
 - (CLLocationManager *)locationManager
@@ -119,6 +116,10 @@ typedef enum {
 
 
 #pragma mark - IBActions
+
+- (IBAction)tap:(UITapGestureRecognizer *)sender {
+    NSLog(@"User Tap");
+}
 
 - (IBAction)hideBaseMap:(UIBarButtonItem *)sender {
     if ([self.mapView.mapLayers count] > 0) {
@@ -194,30 +195,6 @@ typedef enum {
     [self addObservationAtPoint:self.mapView.locationDisplay.mapLocation];
 }
 
-- (IBAction)addObservatonAtAngleAndDistance:(id)sender
-{
-    AGSPoint *gpsPoint = self.mapView.locationDisplay.mapLocation;
-    double course = self.mapView.locationDisplay.location.course;
-    if (course < 0)
-    {
-        //Alert
-        course = 0; //Use North as baseline
-    }
-    // Fire Popup to get:
-    //  angle (in degrees, positive is clockwise)
-    //  reference angle of dead ahead
-    //  distance
-    //  units
-    double angle = 225.0;
-    double referenceAngle = 180.0;
-    double distance = 20;
-    AGSSRUnit unit = AGSSRUnitMeter;
-    
-    angle  = course + angle - referenceAngle;
-    AGSPoint *newPoint = [gpsPoint pointWithAngle:angle distance:distance units:unit];
-    [self addObservationAtPoint:newPoint];
-}
-
 #pragma mark - Public Methods: Initializers
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -229,10 +206,12 @@ typedef enum {
     }
     return self;
 }
+
 - (void)dealloc
 {
     [self removeObserver:self forKeyPath:@"currentMap"];
 }
+
 
 #pragma mark - Public Methods: Super class methods
 
@@ -281,6 +260,15 @@ typedef enum {
         LocalMapsTableViewController *dvc = [segue destinationViewController];
         dvc.maps = self.maps;
     }
+    if ([[segue identifier] isEqualToString:@"AngleDistancePopOver"])
+    {
+        AngleDistanceViewController *vc = [segue destinationViewController];
+        //dvc.maps = self.maps;
+        vc.gpsPoint = self.mapView.locationDisplay.mapLocation;
+        vc.course = self.mapView.locationDisplay.location.course;
+        UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
+        pop.popoverController.delegate = self;
+    }
 }
 
 
@@ -302,6 +290,16 @@ typedef enum {
         NSLog(@"self.maps.currentMap has changed; old: %@, new: %@", change[NSKeyValueChangeOldKey], change[NSKeyValueChangeNewKey]);
         if (change[NSKeyValueChangeOldKey] != change[NSKeyValueChangeNewKey])
             [self resetBasemap];
+    }
+}
+
+#pragma mark - Delegate Methods: UIPopoverControllerDelegate (all optional)
+
+- (void) popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
+    AngleDistanceViewController *vc = (AngleDistanceViewController *)popoverController.contentViewController;
+    if (!vc.isCanceled) {
+        [self addObservationAtPoint:vc.observationPoint];
     }
 }
 
@@ -615,11 +613,6 @@ typedef enum {
     [self.observationsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
     [self.mapView addMapLayer:self.observationsLayer withName:@"observations"];
     
-}
-
-- (void) addObservationAtAngle:(CLLocationDirection)angle andDistance:(CLLocationDistance)distance
-{
-    //FIXME - implement
 }
 
 - (void) addObservationAtPoint:(AGSPoint *)mapPoint

@@ -32,7 +32,9 @@
                                 <items>
                                     <barButtonItem title="Maps" id="gJK-vn-5w7">
                                         <connections>
-                                            <segue destination="6MB-CL-g4f" kind="push" identifier="Push Local Map Table" id="KMQ-24-dvf"/>
+                                            <segue destination="6MB-CL-g4f" kind="popover" identifier="Push Local Map Table" popoverAnchorBarButtonItem="gJK-vn-5w7" id="KMQ-24-dvf">
+                                                <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                            </segue>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem image="heading.png" id="jXA-Ll-IBJ">
@@ -63,7 +65,9 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="pyp-S6-0zm"/>
                                     <barButtonItem title="+AD" id="XBC-1H-O73">
                                         <connections>
-                                            <action selector="addObservatonAtAngleAndDistance:" destination="TiC-11-YSU" id="l47-44-Wuf"/>
+                                            <segue destination="R0Y-nc-N3u" kind="popover" identifier="AngleDistancePopOver" popoverAnchorBarButtonItem="XBC-1H-O73" id="2cW-U4-adH">
+                                                <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                            </segue>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem title="+GPS" id="C8B-tf-jAe">
@@ -201,6 +205,114 @@
             </objects>
             <point key="canvasLocation" x="3551" y="1637"/>
         </scene>
+        <!--Angle Distance View Controller-->
+        <scene sceneID="PbA-IO-BOL">
+            <objects>
+                <viewController storyboardIdentifier="AngleDistancePopOver" modalPresentationStyle="currentContext" useStoryboardIdentifierAsRestorationIdentifier="YES" id="R0Y-nc-N3u" customClass="AngleDistanceViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="4op-Fu-vM9">
+                        <rect key="frame" x="0.0" y="20" width="768" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3xH-6S-lzP">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="350" id="cBW-WI-iyy"/>
+                                </constraints>
+                                <items>
+                                    <navigationItem title="Angle and Distance" id="4Ri-ni-uMW">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="qT8-bW-Xsi"/>
+                                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="dKY-yH-nKV"/>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <pickerView tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dlM-ZS-E79">
+                                <connections>
+                                    <outlet property="dataSource" destination="R0Y-nc-N3u" id="cKB-HE-i7u"/>
+                                    <outlet property="delegate" destination="R0Y-nc-N3u" id="FEw-So-RiU"/>
+                                </connections>
+                            </pickerView>
+                            <pickerView tag="2" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CFN-KM-JX3">
+                                <connections>
+                                    <outlet property="dataSource" destination="R0Y-nc-N3u" id="dtE-fZ-TiC"/>
+                                    <outlet property="delegate" destination="R0Y-nc-N3u" id="5Op-CJ-Mtw"/>
+                                </connections>
+                            </pickerView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Angle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SjZ-UU-GUN">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="23" id="Rlq-JH-zgf"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Baseline Angle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AKc-Tj-ePP">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="23" type="user" id="Y1B-Fj-15N"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Distance" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aK1-Rt-TGm">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="23" id="54m-9V-YlP"/>
+                                    <constraint firstAttribute="width" constant="74" id="Lua-8J-IW0"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="The angle that means dead ahead." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fse-zb-vnh">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.21960784310000001" green="0.3294117647" blue="0.52941176469999995" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="241" translatesAutoresizingMaskIntoConstraints="NO" id="I4c-Yu-a5e">
+                                <string key="text">Course is unknown.
+North is considered dead ahead</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="1" green="0.14642233218128065" blue="0.16207191225876827" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="The angle for dead ahead" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="uka-je-yEn">
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="phonePad"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="uka-je-yEn" firstAttribute="leading" secondItem="AKc-Tj-ePP" secondAttribute="trailing" constant="8" symbolic="YES" type="user" id="0uc-lX-gIc"/>
+                            <constraint firstItem="Fse-zb-vnh" firstAttribute="trailing" secondItem="uka-je-yEn" secondAttribute="trailing" type="default" id="8BE-jm-eBi"/>
+                            <constraint firstItem="I4c-Yu-a5e" firstAttribute="top" secondItem="Fse-zb-vnh" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="A7Z-31-dde"/>
+                            <constraint firstItem="CFN-KM-JX3" firstAttribute="top" secondItem="aK1-Rt-TGm" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="Cqd-Cs-2Vd"/>
+                            <constraint firstItem="Fse-zb-vnh" firstAttribute="top" secondItem="uka-je-yEn" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="ERr-YH-d2O"/>
+                            <constraint firstItem="SjZ-UU-GUN" firstAttribute="leading" secondItem="CFN-KM-JX3" secondAttribute="leading" type="user" id="SHI-1c-zJJ"/>
+                            <constraint firstItem="I4c-Yu-a5e" firstAttribute="centerX" secondItem="CFN-KM-JX3" secondAttribute="centerX" type="user" id="YNE-38-uEC"/>
+                            <constraint firstItem="aK1-Rt-TGm" firstAttribute="top" secondItem="dlM-ZS-E79" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="YZt-Ov-diB"/>
+                            <constraint firstItem="SjZ-UU-GUN" firstAttribute="leading" secondItem="aK1-Rt-TGm" secondAttribute="leading" type="user" id="YzL-Me-7lN"/>
+                            <constraint firstItem="SjZ-UU-GUN" firstAttribute="top" secondItem="4op-Fu-vM9" secondAttribute="top" constant="61" id="aa8-Ht-3xl"/>
+                            <constraint firstItem="uka-je-yEn" firstAttribute="top" secondItem="CFN-KM-JX3" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="dUI-VZ-6KK"/>
+                            <constraint firstItem="SjZ-UU-GUN" firstAttribute="leading" secondItem="dlM-ZS-E79" secondAttribute="leading" type="user" id="e2m-9o-BQ9"/>
+                            <constraint firstItem="CFN-KM-JX3" firstAttribute="trailing" secondItem="dlM-ZS-E79" secondAttribute="trailing" type="user" id="eaA-Z2-hZc"/>
+                            <constraint firstItem="AKc-Tj-ePP" firstAttribute="trailing" secondItem="SjZ-UU-GUN" secondAttribute="trailing" type="default" id="fan-Fu-hXL"/>
+                            <constraint firstItem="3xH-6S-lzP" firstAttribute="leading" secondItem="4op-Fu-vM9" secondAttribute="leading" type="default" id="iAV-CQ-Vhq"/>
+                            <constraint firstItem="dlM-ZS-E79" firstAttribute="top" secondItem="SjZ-UU-GUN" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="iX4-1P-dG6"/>
+                            <constraint firstItem="AKc-Tj-ePP" firstAttribute="centerY" secondItem="uka-je-yEn" secondAttribute="centerY" type="user" id="ipm-rm-IPC"/>
+                            <constraint firstItem="I4c-Yu-a5e" firstAttribute="top" secondItem="Fse-zb-vnh" secondAttribute="bottom" constant="8" type="user" id="jlf-Dd-OB0"/>
+                            <constraint firstItem="SjZ-UU-GUN" firstAttribute="leading" secondItem="AKc-Tj-ePP" secondAttribute="leading" type="user" id="kkU-eX-V7a"/>
+                            <constraint firstItem="3xH-6S-lzP" firstAttribute="top" secondItem="4op-Fu-vM9" secondAttribute="top" type="default" id="s9C-wq-OF6"/>
+                            <constraint firstItem="uka-je-yEn" firstAttribute="trailing" secondItem="CFN-KM-JX3" secondAttribute="trailing" type="user" id="ujP-9H-QeZ"/>
+                            <constraint firstItem="SjZ-UU-GUN" firstAttribute="leading" secondItem="4op-Fu-vM9" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="z8x-W6-JNz"/>
+                        </constraints>
+                    </view>
+                    <value key="contentSizeForViewInPopover" type="size" width="350" height="700"/>
+                    <connections>
+                        <outlet property="warningLabel" destination="I4c-Yu-a5e" id="kkU-Ny-Ggb"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="QDO-7F-CZk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3551" y="2816"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="u0G-14-FqP">
             <objects>
@@ -226,6 +338,49 @@
         <image name="compass.png" width="30" height="30"/>
         <image name="heading.png" width="33" height="29"/>
     </resources>
+    <classes>
+        <class className="AGSMapView" superclassName="AGSMapViewBase">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/AGSMapView.h"/>
+        </class>
+        <class className="AGSMapViewBase" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/AGSMapViewBase.h"/>
+        </class>
+        <class className="AngleDistanceViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/AngleDistanceViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="warningLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="LocalMapsTableViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/LocalMapsTableViewController.h"/>
+        </class>
+        <class className="NSLayoutConstraint" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+        <class className="ObserverMapViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="addObservation:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="addObservationAtGPS:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="hideBaseMap:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="resetNorth:" candidateClass="UIButton"/>
+                <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="tap:" candidateClass="UITapGestureRecognizer"/>
+                <relationship kind="action" name="toggleGps:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="togglePanMode:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="togglePanStyle:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="toggleRecordMode:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="mapLoadingIndicator" candidateClass="UIActivityIndicatorView"/>
+                <relationship kind="outlet" name="mapView" candidateClass="AGSMapView"/>
+                <relationship kind="outlet" name="noMapLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="northButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="northButton2" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="panButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="panStyleButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="recordButton" candidateClass="UIBarButtonItem"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>
