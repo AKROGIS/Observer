@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
+		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
+		393E8B0217A32C59009AD0AC /* NSArray+Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8B0117A32C59009AD0AC /* NSArray+Map.m */; };
 		396775071798C800009ECD34 /* compass.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775031798C800009ECD34 /* compass.png */; };
 		396775081798C800009ECD34 /* compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775041798C800009ECD34 /* compass@2x.png */; };
 		396775091798C800009ECD34 /* heading.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775051798C800009ECD34 /* heading.png */; };
@@ -80,6 +83,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		393E8AFA17A2E1D8009AD0AC /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = Model/Settings.h; sourceTree = "<group>"; };
+		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
+		393E8AFD17A30012009AD0AC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		393E8AFF17A318F5009AD0AC /* Enumerations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Enumerations.h; path = Model/Enumerations.h; sourceTree = "<group>"; };
+		393E8B0017A32C59009AD0AC /* NSArray+Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Map.h"; path = "Model/NSArray+Map.h"; sourceTree = "<group>"; };
+		393E8B0117A32C59009AD0AC /* NSArray+Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+Map.m"; path = "Model/NSArray+Map.m"; sourceTree = "<group>"; };
 		396775031798C800009ECD34 /* compass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = compass.png; sourceTree = "<group>"; };
 		396775041798C800009ECD34 /* compass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "compass@2x.png"; sourceTree = "<group>"; };
 		396775051798C800009ECD34 /* heading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = heading.png; sourceTree = "<group>"; };
@@ -256,6 +265,7 @@
 				39955E53178334C000D225D7 /* InfoPlist.strings */,
 				39955E56178334C000D225D7 /* main.m */,
 				39955E58178334C000D225D7 /* Observer-Prefix.pch */,
+				393E8AFD17A30012009AD0AC /* Settings.bundle */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -317,6 +327,11 @@
 				59119861178906FD00B2331B /* MapMonitoring.h */,
 				396775A317A083E8009ECD34 /* AGSPoint+AKRAdditions.h */,
 				396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */,
+				393E8AFA17A2E1D8009AD0AC /* Settings.h */,
+				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
+				393E8AFF17A318F5009AD0AC /* Enumerations.h */,
+				393E8B0017A32C59009AD0AC /* NSArray+Map.h */,
+				393E8B0117A32C59009AD0AC /* NSArray+Map.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -416,6 +431,7 @@
 				3967750A1798C800009ECD34 /* heading@2x.png in Resources */,
 				396775A017A065EE009ECD34 /* Crosshairs.png in Resources */,
 				396775A117A065EE009ECD34 /* Crosshairs@2x.png in Resources */,
+				393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,6 +475,8 @@
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
 				396775A517A083E8009ECD34 /* AGSPoint+AKRAdditions.m in Sources */,
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
+				393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */,
+				393E8B0217A32C59009AD0AC /* NSArray+Map.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

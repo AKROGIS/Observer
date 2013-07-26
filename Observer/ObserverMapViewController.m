@@ -11,9 +11,8 @@
 #import "AngleDistanceViewController.h"
 #import "BaseMapManager.h"
 #import "AGSPoint+AKRAdditions.h"
+#import "Settings.h"
 
-#define DEFAULTS_KEY_WANTS_AUTOPAN @"wants_autopan"
-#define DEFAULTS_KEY_AUTOPAN_MODE @"autopan_mode"
 #define MINIMUM_NAVIGATION_SPEED 1.5  //speed in meters per second at which to switch map orientation from compass heading to course direction
 
 typedef enum {
@@ -97,7 +96,7 @@ typedef enum {
 {
     if (!_savedAutoPanMode)
     {
-        _savedAutoPanMode = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_AUTOPAN_MODE];
+        _savedAutoPanMode = [Settings manager].autoPanMode;
         if (_savedAutoPanMode < 1 || 3 < _savedAutoPanMode)
             _savedAutoPanMode = 1;
     }
@@ -109,7 +108,7 @@ typedef enum {
     if (savedAutoPanMode != _savedAutoPanMode)
     {
         _savedAutoPanMode = savedAutoPanMode;
-        [[NSUserDefaults standardUserDefaults] setInteger:savedAutoPanMode forKey:DEFAULTS_KEY_AUTOPAN_MODE];
+        [Settings manager].autoPanMode = savedAutoPanMode;
         [self checkIfMapIsRotated];
     }
 }
@@ -149,7 +148,7 @@ typedef enum {
     [self checkIfMapIsRotated];
     _userWantsAutoPanOn = userWantsAutoPanOn;
 
-    [[NSUserDefaults standardUserDefaults] setBool:userWantsAutoPanOn forKey:DEFAULTS_KEY_WANTS_AUTOPAN];
+    [Settings manager].autoPanEnabled = userWantsAutoPanOn;
 }
 
 - (IBAction)toggleRecordMode:(UIBarButtonItem *)sender {
@@ -503,7 +502,7 @@ typedef enum {
     self.northButton.enabled = NO;
     self.recordButton.enabled = YES;
     
-    self.userWantsAutoPanOn = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_WANTS_AUTOPAN];
+    self.userWantsAutoPanOn = [Settings manager].autoPanEnabled;
     
     self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];
     

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PreferenceSpecifiers</key>
+	<array>
+		<dict>
+			<key>Title</key>
+			<string>Units of Measure</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Distance (Sighting)</string>
+			<key>Key</key>
+			<string>uom_distance_sighting</string>
+			<key>DefaultValue</key>
+			<integer>9001</integer>
+			<key>Titles</key>
+			<array>
+				<string>Meters</string>
+				<string>Feet</string>
+				<string>Yards</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<integer>9001</integer>
+				<integer>9002</integer>
+				<integer>109001</integer>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Distance (Measuring)</string>
+			<key>Key</key>
+			<string>uom_distance_measure</string>
+			<key>DefaultValue</key>
+			<integer>9093</integer>
+			<key>Titles</key>
+			<array>
+				<string>Meters</string>
+				<string>Kilometers</string>
+				<string>Feet</string>
+				<string>Yards</string>
+				<string>Miles</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<integer>9001</integer>
+				<integer>9036</integer>
+				<integer>9002</integer>
+				<integer>109001</integer>
+				<integer>9093</integer>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Angle Distance Observations</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Angles Increase</string>
+			<key>Key</key>
+			<string>angle_distance_angle_direction</string>
+			<key>DefaultValue</key>
+			<integer>0</integer>
+			<key>Titles</key>
+			<array>
+				<string>Clockwise</string>
+				<string>Counter Clockwise</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<integer>0</integer>
+				<integer>1</integer>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Dead Ahead</string>
+			<key>Key</key>
+			<string>angle_distance_dead_ahead</string>
+			<key>DefaultValue</key>
+			<integer>0</integer>
+			<key>Titles</key>
+			<array>
+				<string>0 Degrees</string>
+				<string>180 Degrees</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<integer>0</integer>
+				<integer>180</integer>
+			</array>
+		</dict>
+	</array>
+	<key>StringsTable</key>
+	<string>Root</string>
+</dict>
+</plist>

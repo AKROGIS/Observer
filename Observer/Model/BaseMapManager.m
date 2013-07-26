@@ -7,9 +7,8 @@
 //
 
 #import "BaseMapManager.h"
+#import "Settings.h"
 
-#define DEFAULTS_KEY_CURRENT_MAP_URL @"CurrentMapURL"
-#define DEFAULTS_KEY_LOCAL_MAP_URLS @"LocalMapURLs"
 #define TILE_CACHE_EXTENSION @"tpk"
 
 
@@ -37,8 +36,7 @@ static BaseMapManager * _sharedManager;
     if (!_currentMap)
     {
         // Get the current map from defaults
-        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-        NSURL *currentMapURL = [defaults URLForKey:DEFAULTS_KEY_CURRENT_MAP_URL];
+        NSURL *currentMapURL = [Settings manager].currentMap;
         for (BaseMap *map in self.maps)
         {
             if ([map.localURL isEqual:currentMapURL])
@@ -59,7 +57,7 @@ static BaseMapManager * _sharedManager;
     if (!currentMap || [self.maps containsObject:currentMap])
     {
         _currentMap = currentMap;
-        [self updateNSDefaults];
+        [Settings manager].currentMap = currentMap.localURL;
     }
 }
 
@@ -75,8 +73,7 @@ static BaseMapManager * _sharedManager;
 - (NSMutableArray *)maps {
     if (!_maps) {
         _maps = [[NSMutableArray alloc] init];
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSArray *localMapURLs = [defaults valueForKey:DEFAULTS_KEY_LOCAL_MAP_URLS];
+        NSArray *localMapURLs = [Settings manager].maps;
         NSMutableSet *files = [NSMutableSet setWithArray:[self mapURLsInFileManager]];
         // create maps in order from urls saved in defaults  IFF they are found in filesystem
         for (NSString *urlString in localMapURLs) {
@@ -123,16 +120,19 @@ static BaseMapManager * _sharedManager;
         return;
     [map download];
     [self.maps insertObject:map atIndex:index];
-    [self updateNSDefaults];
+    [Settings manager].maps = self.maps;
 }
 
 - (void) removeMap:(BaseMap *)map
 {
     [map unload];
     [self.maps removeObject:map];
+    [Settings manager].Maps = self.maps;
     if (self.currentMap == map)
+    {
         self.currentMap = nil;
-    [self updateNSDefaults];
+        [Settings manager].currentMap = nil;
+    }
 }
 
 - (void) removeMapAtIndex:(NSUInteger)index
@@ -152,7 +152,7 @@ static BaseMapManager * _sharedManager;
     BaseMap *temp = self.maps[fromIndex];
     [self.maps removeObjectAtIndex:fromIndex];
     [self.maps insertObject:temp atIndex:toIndex];
-    [self updateNSDefaults];
+    [Settings manager].maps = self.maps;
 }
 
 - (BOOL) isOutdatedMap:(BaseMap *)map
@@ -326,24 +326,6 @@ static BaseMapManager * _sharedManager;
         }
     }
     return localUrls;
-}
-
-
-- (void) updateNSDefaults
-{
-    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    
-    if (self.currentMap && self.currentMap.localURL)
-        [defaults setURL:self.currentMap.localURL forKey:DEFAULTS_KEY_CURRENT_MAP_URL];
-    else
-        [defaults setNilValueForKey:DEFAULTS_KEY_CURRENT_MAP_URL];
-    
-    NSMutableArray *localURLs = [[NSMutableArray alloc] initWithCapacity:[self.maps count]];
-    for (BaseMap *map in self.maps)
-    {
-        [localURLs addObject:[map.localURL absoluteString]];
-    }
-    [defaults setValue:localURLs forKey:DEFAULTS_KEY_LOCAL_MAP_URLS];
 }
 
 @end
