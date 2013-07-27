@@ -13,5 +13,6 @@
 
 //model
 @property (strong, nonatomic) BaseMapManager *maps;
+@property (weak, nonatomic) UIPopoverController *popover;
 
 @end

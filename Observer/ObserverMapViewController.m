@@ -258,11 +258,11 @@ typedef enum {
     {
         LocalMapsTableViewController *dvc = [segue destinationViewController];
         dvc.maps = self.maps;
+        dvc.popover = ((UIStoryboardPopoverSegue*)segue).popoverController;
     }
     if ([[segue identifier] isEqualToString:@"AngleDistancePopOver"])
     {
         AngleDistanceViewController *vc = [segue destinationViewController];
-        //dvc.maps = self.maps;
         vc.gpsPoint = self.mapView.locationDisplay.mapLocation;
         vc.course = self.mapView.locationDisplay.location.course;
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;

@@ -190,7 +190,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     self.maps.currentMap = [self.maps mapAtIndex:indexPath.row];
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.popover dismissPopoverAnimated:YES];
 }
 
 
