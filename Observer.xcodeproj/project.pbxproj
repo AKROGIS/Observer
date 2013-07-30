@@ -70,6 +70,7 @@
 		39955ECC1787332400D225D7 /* BaseMapManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ECB1787332400D225D7 /* BaseMapManager.m */; };
 		39955ECF1787336900D225D7 /* LocalMapsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ECE1787336800D225D7 /* LocalMapsTableViewController.m */; };
 		39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ED1178733B900D225D7 /* ObserverMapViewController.m */; };
+		39B92FCA17A7380B00C62145 /* Protocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FC917A7380B00C62145 /* Protocol.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,6 +152,8 @@
 		39955ECE1787336800D225D7 /* LocalMapsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalMapsTableViewController.m; sourceTree = "<group>"; };
 		39955ED0178733B900D225D7 /* ObserverMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverMapViewController.h; sourceTree = "<group>"; };
 		39955ED1178733B900D225D7 /* ObserverMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObserverMapViewController.m; sourceTree = "<group>"; };
+		39B92FC817A7380B00C62145 /* Protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Protocol.h; path = Model/Protocol.h; sourceTree = "<group>"; };
+		39B92FC917A7380B00C62145 /* Protocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Protocol.m; path = Model/Protocol.m; sourceTree = "<group>"; };
 		59119861178906FD00B2331B /* MapMonitoring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MapMonitoring.h; path = Model/MapMonitoring.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -332,6 +335,8 @@
 				393E8AFF17A318F5009AD0AC /* Enumerations.h */,
 				393E8B0017A32C59009AD0AC /* NSArray+Map.h */,
 				393E8B0117A32C59009AD0AC /* NSArray+Map.m */,
+				39B92FC817A7380B00C62145 /* Protocol.h */,
+				39B92FC917A7380B00C62145 /* Protocol.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -477,6 +482,7 @@
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
 				393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */,
 				393E8B0217A32C59009AD0AC /* NSArray+Map.m in Sources */,
+				39B92FCA17A7380B00C62145 /* Protocol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
