@@ -207,10 +207,10 @@
             </objects>
             <point key="canvasLocation" x="3599" y="1637"/>
         </scene>
-        <!--View Controller - Angle/Distance-->
+        <!--Angle Distance View Controller - Angle/Distance-->
         <scene sceneID="jYe-T7-uyT">
             <objects>
-                <viewController id="XgC-zb-GAl" sceneMemberID="viewController">
+                <viewController id="XgC-zb-GAl" customClass="AngleDistanceViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="cpS-cq-Xbt">
                         <rect key="frame" x="0.0" y="44" width="320" height="400"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -310,15 +310,19 @@
                     <value key="contentSizeForViewInPopover" type="size" width="320" height="200"/>
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <outlet property="detailsLabel" destination="X9z-CU-JZw" id="PWj-1x-LFM"/>
+                        <outlet property="warningLabel" destination="0hv-A6-tOW" id="KZb-nB-Rdf"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G0R-Lu-0Tm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4976" y="2168"/>
         </scene>
-        <!--Table View Controller - Settings-->
+        <!--Angle Distance Settings Table View Controller - Settings-->
         <scene sceneID="2CV-xr-awp">
             <objects>
-                <tableViewController modalTransitionStyle="flipHorizontal" clearsSelectionOnViewWillAppear="NO" id="if6-sF-wsZ" sceneMemberID="viewController">
+                <tableViewController modalTransitionStyle="flipHorizontal" clearsSelectionOnViewWillAppear="NO" id="if6-sF-wsZ" customClass="AngleDistanceSettingsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="syN-66-Y2W">
                         <rect key="frame" x="0.0" y="44" width="320" height="488"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -326,7 +330,7 @@
                         <sections>
                             <tableViewSection headerTitle="Angles Increase" id="oJX-jm-0Cc">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="kBx-Cf-FRC" style="IBUITableViewCellStyleDefault" id="fc1-Z0-AsP">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="kBx-Cf-FRC" style="IBUITableViewCellStyleDefault" id="fc1-Z0-AsP" customClass="RadioStyleTableViewCell">
                                         <rect key="frame" x="0.0" y="34" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -342,7 +346,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="vZd-wQ-JZl" style="IBUITableViewCellStyleDefault" id="bNe-we-gfk">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="vZd-wQ-JZl" style="IBUITableViewCellStyleDefault" id="bNe-we-gfk" customClass="RadioStyleTableViewCell">
                                         <rect key="frame" x="0.0" y="79" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -351,7 +355,6 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Counter-Clockwise" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vZd-wQ-JZl">
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 </label>
                                             </subviews>
@@ -362,14 +365,14 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Dead Ahead" id="quh-St-aex">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="S4w-Qc-krE" style="IBUITableViewCellStyleDefault" id="Vgn-mc-qhz">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="S4w-Qc-krE" style="IBUITableViewCellStyleDefault" id="Vgn-mc-qhz" customClass="RadioStyleTableViewCell">
                                         <rect key="frame" x="0.0" y="168" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="0 Degreees" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="S4w-Qc-krE">
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="0 Degrees" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="S4w-Qc-krE">
                                                     <rect key="frame" x="10" y="0.0" width="280" height="43"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
@@ -380,14 +383,32 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="pwK-PD-irY" style="IBUITableViewCellStyleDefault" id="Odb-7y-PYi">
-                                        <rect key="frame" x="0.0" y="213" width="320" height="45"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="pwK-PD-irY" style="IBUITableViewCellStyleDefault" id="Odb-7y-PYi" customClass="RadioStyleTableViewCell">
+                                        <rect key="frame" x="0.0" y="213" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="0.0" width="300" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="180 Degrees" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="pwK-PD-irY">
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="90 Degrees" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="pwK-PD-irY">
+                                                    <rect key="frame" x="10" y="0.0" width="280" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="cIZ-hr-heI" style="IBUITableViewCellStyleDefault" id="rIU-wc-Uk6" customClass="RadioStyleTableViewCell">
+                                        <rect key="frame" x="0.0" y="257" width="320" height="45"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="180 Degrees" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cIZ-hr-heI">
                                                     <rect key="frame" x="10" y="0.0" width="280" height="43"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
@@ -402,8 +423,8 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Distance Units" id="OI9-5z-csI">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="Ul2-kE-5q5" style="IBUITableViewCellStyleDefault" id="4CJ-e7-Qdt">
-                                        <rect key="frame" x="0.0" y="302" width="320" height="45"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="Ul2-kE-5q5" style="IBUITableViewCellStyleDefault" id="4CJ-e7-Qdt" customClass="RadioStyleTableViewCell">
+                                        <rect key="frame" x="0.0" y="346" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -418,8 +439,8 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="Ybc-WM-jim" style="IBUITableViewCellStyleDefault" id="HMU-8u-N5e">
-                                        <rect key="frame" x="0.0" y="347" width="320" height="44"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="Ybc-WM-jim" style="IBUITableViewCellStyleDefault" id="HMU-8u-N5e" customClass="RadioStyleTableViewCell">
+                                        <rect key="frame" x="0.0" y="391" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="0.0" width="300" height="43"/>
@@ -434,8 +455,8 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="ypG-Pe-AQp" style="IBUITableViewCellStyleDefault" id="brC-x6-dYg">
-                                        <rect key="frame" x="0.0" y="391" width="320" height="45"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="ypG-Pe-AQp" style="IBUITableViewCellStyleDefault" id="brC-x6-dYg" customClass="RadioStyleTableViewCell">
+                                        <rect key="frame" x="0.0" y="435" width="320" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="0.0" width="300" height="43"/>
@@ -454,13 +475,22 @@
                             </tableViewSection>
                         </sections>
                         <connections>
-                            <outlet property="dataSource" destination="if6-sF-wsZ" id="smN-uz-aSh"/>
                             <outlet property="delegate" destination="if6-sF-wsZ" id="bGX-aJ-lWZ"/>
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Settings" id="6ER-gd-Xlm"/>
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <outlet property="clockwiseTVC" destination="fc1-Z0-AsP" id="fo2-RB-LJc"/>
+                        <outlet property="counterclockwiseTVC" destination="bNe-we-gfk" id="u7e-S7-nsS"/>
+                        <outlet property="deadAhead180TVC" destination="rIU-wc-Uk6" id="3kM-E4-tA8"/>
+                        <outlet property="deadAhead90TVC" destination="Odb-7y-PYi" id="c4D-Pe-ieg"/>
+                        <outlet property="deadAheadZeroTVC" destination="Vgn-mc-qhz" id="OQm-Te-JrF"/>
+                        <outlet property="feetTVC" destination="HMU-8u-N5e" id="Y9v-LY-YBO"/>
+                        <outlet property="metersTVC" destination="4CJ-e7-Qdt" id="Nj9-F7-WWl"/>
+                        <outlet property="yardsTVC" destination="brC-x6-dYg" id="EkM-Ex-gd8"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6nX-Kb-Lan" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -519,6 +549,26 @@
         <class className="AGSMapViewBase" superclassName="UIView">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/AGSMapViewBase.h"/>
         </class>
+        <class className="AngleDistanceSettingsTableViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/AngleDistanceSettingsTableViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="clockwiseTVC" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="counterclockwiseTVC" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="deadAhead180TVC" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="deadAhead90TVC" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="deadAheadZeroTVC" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="feetTVC" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="metersTVC" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="yardsTVC" candidateClass="UITableViewCell"/>
+            </relationships>
+        </class>
+        <class className="AngleDistanceViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/AngleDistanceViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="detailsLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="warningLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
         <class className="LocalMapsTableViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/LocalMapsTableViewController.h"/>
         </class>
@@ -529,15 +579,11 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
             <relationships>
                 <relationship kind="action" name="addObservation:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="addObservationAtGPS:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="hideBaseMap:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="resetNorth:" candidateClass="UIButton"/>
                 <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="tap:" candidateClass="UITapGestureRecognizer"/>
                 <relationship kind="action" name="toggleGps:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanStyle:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="toggleRecordMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="mapLoadingIndicator" candidateClass="UIActivityIndicatorView"/>
                 <relationship kind="outlet" name="mapView" candidateClass="AGSMapView"/>
                 <relationship kind="outlet" name="noMapLabel" candidateClass="UILabel"/>
@@ -547,6 +593,9 @@
                 <relationship kind="outlet" name="panStyleButton" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="recordButton" candidateClass="UIBarButtonItem"/>
             </relationships>
+        </class>
+        <class className="RadioStyleTableViewCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/RadioStyleTableViewCell.h"/>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

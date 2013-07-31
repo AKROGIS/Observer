@@ -96,11 +96,13 @@
 			<key>Titles</key>
 			<array>
 				<string>0 Degrees</string>
+				<string>90 Degrees</string>
 				<string>180 Degrees</string>
 			</array>
 			<key>Values</key>
 			<array>
 				<integer>0</integer>
+				<integer>90</integer>
 				<integer>180</integer>
 			</array>
 		</dict>

@@ -1,5 +1,5 @@
 //
-//  Protocol.h
+//  SurveyProtocol.h
 //  Observer
 //
 //  Created by Regan Sarwas on 7/29/13.
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "Enumerations.h"
 
-@interface Protocol : NSObject
+@interface SurveyProtocol : NSObject
 
 //Does the protocol define the units of measure for angle/distance observations
 @property (nonatomic) BOOL definesAngleDistanceMeasures;
