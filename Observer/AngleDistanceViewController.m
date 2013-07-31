@@ -8,10 +8,14 @@
 
 #import "AngleDistanceViewController.h"
 #import "AGSPoint+AKRAdditions.h"
+#import "Settings.h"
+#import "AngleDistanceSettingsTableViewController.h"
 
 @interface AngleDistanceViewController ()
 
 @property (weak, nonatomic) IBOutlet UILabel *warningLabel;
+@property (weak, nonatomic) IBOutlet UILabel *detailsLabel;
+@property (weak, nonatomic) IBOutlet UIButton *basisButton;
 
 @end
 
@@ -21,7 +25,9 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        self.course = -1;
+        self.angle = [Settings manager].angleDistanceLastAngle;
+        self.distance = [Settings manager].angleDistanceLastDistance;
     }
     return self;
 }
@@ -29,112 +35,42 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    [self getDefaults];
+    [self hideControls];
 }
 
-
-/*
- - (void) viewDidAppear:(BOOL)animated
+- (void) viewWillAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
-    [self setContentSizeForViewInPopover:CGSizeMake(320, 500)];
+    [self settingsDidChange:nil];
+    self.contentSizeForViewInPopover = CGSizeMake(320,250.0);
+    self.navigationController.contentSizeForViewInPopover = self.contentSizeForViewInPopover;
+    [super viewWillAppear:animated];
 }
-*/
+
+- (void) viewDidAppear:(BOOL)animated {
+    NSLog(@"View Did Appear");
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(settingsDidChange:) name:NSUserDefaultsDidChangeNotification object:nil];
+    [super viewDidAppear:animated];
+    [self.popover setPopoverContentSize:self.contentSizeForViewInPopover animated:YES];
+}
+
+- (void) viewDidDisappear:(BOOL)animated
+{
+    NSLog(@"View Did Disappear");
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSUserDefaultsDidChangeNotification object:nil];
+    [super viewDidDisappear:animated];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-
-#pragma mark - Delegate Methods: UIPickerViewDelegate
-
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    switch (pickerView.tag) {
-        case 1:
-            switch (component) {
-                case 0:
-                    return row == 0 ? @"+" : @"-";
-                case 4:
-                    return row == 0 ? @"CW" : @"CCW";
-                default:
-                    return [NSString stringWithFormat:@"%u",row];
-            }
-            break;
-        case 2:
-            switch (component) {
-                case 3:
-                    switch (row) {
-                        case 0:
-                            return @"Feet";
-                        case 1:
-                            return @"Yards";
-                        case 2:
-                            return @"Meters";
-                        default:
-                            return nil;
-                    };
-                default:
-                    return [NSString stringWithFormat:@"%u",row];
-            }
-        default:
-            return nil;
-    }
-    
-}
-
-
-#pragma mark - Delegate Methods: UIPickerViewDataSource
-
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
-{
-    //tag 1 = angle picker, tag 2 = distance picker
-    switch (pickerView.tag) {
-        case 1:
-            return 5;
-        case 2:
-            return 4;
-        default:
-            return 0;
-    }
-}
-
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
-{
-    switch (pickerView.tag) {
-        case 1:
-            switch (component) {
-                case 0:
-                    return 2;
-                case 1:
-                    return 4;
-                case 2:
-                    return 10;
-                case 3:
-                    return 10;
-                case 4:
-                    return 2;
-                default:
-                    return 0;
-            }
-            break;
-        case 2:
-            switch (component) {
-                case 0:
-                    return 10;
-                case 1:
-                    return 10;
-                case 2:
-                    return 10;
-                case 3:
-                    return 3;
-                default:
-                    return 0;
-            }
-        default:
-            return 0;
+    if ([segue.identifier isEqualToString:@"PushAngleDistanceSettings"]) {
+        AngleDistanceSettingsTableViewController *vc = (AngleDistanceSettingsTableViewController *)segue.destinationViewController;
+        vc.protocol = self.protocol;
     }
 }
 
@@ -144,35 +80,62 @@
 {
     if (_course == course)
         return;
-    if (course < 0)
-    {
-        self.warningLabel.hidden = NO;
-        _course = 0; //Use North as baseline
-    }
-    else
-    {
-        self.warningLabel.hidden = YES;
-        _course = course;
-    }
+    _course = course;
+    [self hideControls];
+}
+
+- (void) setProtocol:(SurveyProtocol *)protocol
+{
+    _protocol = protocol;
+    [self settingsDidChange:nil];
+    [self hideControls];
 }
 
 - (AGSPoint *)observationPoint
 {
-    double angle  = self.course + self.angle - self.referenceAngle;
+    double course = self.course < 0 ? 0 : self.course;
+    double angle  = course + self.angle - self.referenceAngle;
     return [self.gpsPoint pointWithAngle:angle distance:self.distance units:self.distanceUnits];   
 }
 
 
 #pragma mark - Private Methods
 
-- (void) getDefaults
+- (void) hideControls
 {
-    //FIXME
-    self.angle = 225.0;
-    self.referenceAngle = 180.0;
-    self.distance = 20;
-    self.distanceUnits = AGSSRUnitMeter;
+    self.warningLabel.hidden = (0 <= self.course);
+    self.basisButton.hidden = (self.protocol && self.protocol.definesAngleDistanceMeasures);
 }
 
+- (void) settingsDidChange:(NSNotification *)notification
+{
+    if (self.protocol && self.protocol.definesAngleDistanceMeasures)
+    {
+        self.distanceUnits = self.protocol.distanceUnits;
+        self.referenceAngle = self.protocol.angleBaseline;
+        self.angleDirection = self.protocol.angleDirection;
+    }
+    else
+    {
+        self.distanceUnits = [Settings manager].distanceUnitsForSightings;
+        self.referenceAngle = [Settings manager].angleDistanceDeadAhead;
+        self.angleDirection = [Settings manager].angleDistanceAngleDirection;
+    }
+    [self updateLabel];
+}
+
+- (void) updateLabel
+{
+    self.detailsLabel.text = [NSString stringWithFormat:@"Angle increases %@ with %@ equal to %u degrees%@.  Distance is in %@.",
+                              self.angleDirection == 0 ? @"clockwise" : @"counter-clockwise",
+                              self.course < 0 ? @"true north" : @"dead ahead",
+                              (int)self.referenceAngle,
+                              self.course < 0 ? @" (heading is unavailable)" : @"",
+                              self.distanceUnits == AGSSRUnitMeter ? @"meters" :
+                              self.distanceUnits == AGSSRUnitFoot ? @"feet" :
+                              self.distanceUnits == AGSSRUnitInternationalYard ? @"yards" : @"unknown units"
+                              ];
+    [self.detailsLabel sizeToFit];
+}
 
 @end

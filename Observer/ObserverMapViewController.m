@@ -264,9 +264,13 @@ typedef enum {
     {
         AngleDistanceViewController *vc = [segue destinationViewController];
         vc.gpsPoint = self.mapView.locationDisplay.mapLocation;
-        vc.course = self.mapView.locationDisplay.location.course;
+        //vc.course = self.mapView.locationDisplay.location.course;
+        vc.course = -1;
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
         pop.popoverController.delegate = self;
+        vc.popover = pop.popoverController;
+        //FIXME get protocol
+        vc.protocol = nil;
     }
 }
 

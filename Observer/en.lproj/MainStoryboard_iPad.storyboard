@@ -212,7 +212,7 @@
             <objects>
                 <viewController id="XgC-zb-GAl" customClass="AngleDistanceViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="cpS-cq-Xbt">
-                        <rect key="frame" x="0.0" y="44" width="320" height="400"/>
+                        <rect key="frame" x="0.0" y="44" width="320" height="250"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Angle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ljc-mH-gmu">
@@ -222,7 +222,7 @@
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Distance" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CtF-Tj-71V">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="77" id="3Mt-Zb-S17"/>
+                                    <constraint firstAttribute="width" constant="71" id="gCz-Po-C7m"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -236,30 +236,9 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="phonePad" returnKeyType="done"/>
                             </textField>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" usesAttributedText="YES" lineBreakMode="wordWrap" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="X9z-CU-JZw">
-                                <attributedString key="attributedText">
-                                    <fragment content="Angle increases counter-clockwise with dead ahead ">
-                                        <attributes>
-                                            <color key="NSColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <font key="NSFont" size="13" name="Helvetica"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
-                                        </attributes>
-                                    </fragment>
-                                    <fragment content="equal to 180 degrees (heading is unavailable).  ">
-                                        <attributes>
-                                            <color key="NSColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="calibratedRGB"/>
-                                            <font key="NSFont" size="13" name="Helvetica"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
-                                        </attributes>
-                                    </fragment>
-                                    <fragment content=" Distance is in meters.">
-                                        <attributes>
-                                            <color key="NSColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <font key="NSFont" size="13" name="Helvetica"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
-                                        </attributes>
-                                    </fragment>
-                                </attributedString>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Angle increases counter-clockwise with dead ahead equal to 180 degrees (heading is unavailable).   Distance is in meters." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="X9z-CU-JZw">
+                                <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="13"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Heading is unavailable" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="172" translatesAutoresizingMaskIntoConstraints="NO" id="0hv-A6-tOW">
@@ -277,27 +256,28 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="if6-sF-wsZ" kind="push" id="qJW-Am-JKQ"/>
+                                    <segue destination="if6-sF-wsZ" kind="push" identifier="PushAngleDistanceSettings" id="qJW-Am-JKQ"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="nb8-8h-uWj" firstAttribute="top" secondItem="X9z-CU-JZw" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="6BB-nw-8tm"/>
+                            <constraint firstItem="nb8-8h-uWj" firstAttribute="trailing" secondItem="X9z-CU-JZw" secondAttribute="trailing" type="user" id="Aq8-dA-NpM"/>
+                            <constraint firstItem="X9z-CU-JZw" firstAttribute="top" secondItem="PZH-M5-KGF" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="Cbw-rJ-5mD"/>
+                            <constraint firstAttribute="trailing" secondItem="PZH-M5-KGF" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="JuF-tl-Ywq"/>
+                            <constraint firstItem="nb8-8h-uWj" firstAttribute="leading" secondItem="X9z-CU-JZw" secondAttribute="leading" type="user" id="MCH-cZ-lhi"/>
                             <constraint firstItem="CtF-Tj-71V" firstAttribute="leading" secondItem="ljc-mH-gmu" secondAttribute="leading" type="user" id="MWq-vP-1He"/>
-                            <constraint firstItem="GnW-yn-rjl" firstAttribute="top" secondItem="cpS-cq-Xbt" secondAttribute="top" constant="20" symbolic="YES" type="user" id="OdX-Hz-TTd"/>
-                            <constraint firstItem="X9z-CU-JZw" firstAttribute="top" secondItem="PZH-M5-KGF" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="SPG-ut-Efg"/>
-                            <constraint firstItem="GnW-yn-rjl" firstAttribute="baseline" secondItem="ljc-mH-gmu" secondAttribute="baseline" type="default" id="Sej-z7-sm4"/>
+                            <constraint firstItem="0hv-A6-tOW" firstAttribute="leading" secondItem="nb8-8h-uWj" secondAttribute="leading" type="user" id="OWd-ZX-REi"/>
+                            <constraint firstItem="PZH-M5-KGF" firstAttribute="top" secondItem="GnW-yn-rjl" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="Whq-jJ-y40"/>
+                            <constraint firstItem="GnW-yn-rjl" firstAttribute="top" secondItem="cpS-cq-Xbt" secondAttribute="top" constant="20" symbolic="YES" type="user" id="WyF-Qu-qkH"/>
                             <constraint firstItem="PZH-M5-KGF" firstAttribute="trailing" secondItem="X9z-CU-JZw" secondAttribute="trailing" type="user" id="XGp-9Y-cCi"/>
                             <constraint firstItem="PZH-M5-KGF" firstAttribute="leading" secondItem="CtF-Tj-71V" secondAttribute="trailing" constant="8" symbolic="YES" type="user" id="b0Y-dY-ciQ"/>
-                            <constraint firstAttribute="trailing" secondItem="nb8-8h-uWj" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="bh0-aa-4Wf"/>
-                            <constraint firstItem="0hv-A6-tOW" firstAttribute="leading" secondItem="cpS-cq-Xbt" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="cvC-oz-sve"/>
                             <constraint firstItem="GnW-yn-rjl" firstAttribute="leading" secondItem="PZH-M5-KGF" secondAttribute="leading" type="user" id="dLb-se-lN3"/>
-                            <constraint firstItem="PZH-M5-KGF" firstAttribute="top" secondItem="GnW-yn-rjl" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="ebK-Rt-Odi"/>
-                            <constraint firstAttribute="trailing" secondItem="PZH-M5-KGF" secondAttribute="trailing" constant="20" symbolic="YES" type="user" id="gbZ-JY-HjJ"/>
-                            <constraint firstItem="0hv-A6-tOW" firstAttribute="top" secondItem="nb8-8h-uWj" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="inb-eJ-xLd"/>
-                            <constraint firstItem="nb8-8h-uWj" firstAttribute="top" secondItem="X9z-CU-JZw" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="jff-EL-Yvg"/>
-                            <constraint firstItem="CtF-Tj-71V" firstAttribute="baseline" secondItem="PZH-M5-KGF" secondAttribute="baseline" type="default" id="nVh-nQ-8n1"/>
-                            <constraint firstItem="nb8-8h-uWj" firstAttribute="leading" secondItem="cpS-cq-Xbt" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="s3H-Rv-FeG"/>
+                            <constraint firstItem="GnW-yn-rjl" firstAttribute="baseline" secondItem="ljc-mH-gmu" secondAttribute="baseline" type="user" id="kQt-Tb-4PF"/>
+                            <constraint firstItem="CtF-Tj-71V" firstAttribute="baseline" secondItem="PZH-M5-KGF" secondAttribute="baseline" type="user" id="lTq-kQ-8d8"/>
+                            <constraint firstItem="ljc-mH-gmu" firstAttribute="top" secondItem="cpS-cq-Xbt" secondAttribute="top" constant="20" symbolic="YES" type="default" id="pC6-g7-jlv"/>
+                            <constraint firstItem="0hv-A6-tOW" firstAttribute="top" secondItem="nb8-8h-uWj" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="rVF-9Q-1Et"/>
                             <constraint firstItem="X9z-CU-JZw" firstAttribute="leading" secondItem="CtF-Tj-71V" secondAttribute="leading" type="user" id="x8O-IJ-SPU"/>
                             <constraint firstAttribute="trailing" secondItem="GnW-yn-rjl" secondAttribute="trailing" constant="20" symbolic="YES" type="user" id="xW6-Oa-f3T"/>
                             <constraint firstItem="ljc-mH-gmu" firstAttribute="leading" secondItem="cpS-cq-Xbt" secondAttribute="leading" constant="20" symbolic="YES" type="user" id="yMe-d9-TjG"/>
@@ -307,10 +287,10 @@
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="5wA-7f-RnG"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="dnX-oN-GR4"/>
                     </navigationItem>
-                    <value key="contentSizeForViewInPopover" type="size" width="320" height="200"/>
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="basisButton" destination="nb8-8h-uWj" id="jxU-eq-bDx"/>
                         <outlet property="detailsLabel" destination="X9z-CU-JZw" id="PWj-1x-LFM"/>
                         <outlet property="warningLabel" destination="0hv-A6-tOW" id="KZb-nB-Rdf"/>
                     </connections>
@@ -517,11 +497,10 @@
         <!--Navigation Controller-->
         <scene sceneID="jX8-in-SFR">
             <objects>
-                <navigationController id="x7W-Nj-vNE" sceneMemberID="viewController">
+                <navigationController modalPresentationStyle="currentContext" id="x7W-Nj-vNE" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <value key="contentSizeForViewInPopover" type="size" width="320" height="400"/>
+                    <value key="contentSizeForViewInPopover" type="size" width="320" height="250"/>
                     <nil key="simulatedStatusBarMetrics"/>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="zuV-np-FRM">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -565,6 +544,7 @@
         <class className="AngleDistanceViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/AngleDistanceViewController.h"/>
             <relationships>
+                <relationship kind="outlet" name="basisButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="detailsLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="warningLabel" candidateClass="UILabel"/>
             </relationships>
@@ -579,11 +559,15 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
             <relationships>
                 <relationship kind="action" name="addObservation:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="addObservationAtGPS:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="hideBaseMap:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="resetNorth:" candidateClass="UIButton"/>
                 <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="tap:" candidateClass="UITapGestureRecognizer"/>
                 <relationship kind="action" name="toggleGps:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanStyle:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="toggleRecordMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="mapLoadingIndicator" candidateClass="UIActivityIndicatorView"/>
                 <relationship kind="outlet" name="mapView" candidateClass="AGSMapView"/>
                 <relationship kind="outlet" name="noMapLabel" candidateClass="UILabel"/>

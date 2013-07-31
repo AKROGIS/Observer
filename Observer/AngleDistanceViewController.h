@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <ArcGIS/ArcGIS.h>
+#import "SurveyProtocol.h"
+#import "Enumerations.h"
 
-@interface AngleDistanceViewController : UIViewController <UIPickerViewDelegate, UIPickerViewDataSource>
+@interface AngleDistanceViewController : UIViewController
+
+@property (weak, nonatomic) UIPopoverController *popover;
 
 @property (strong, nonatomic) AGSPoint *gpsPoint;
 @property (nonatomic) double course;
@@ -17,8 +21,10 @@
 @property (strong, nonatomic, readonly) AGSPoint *observationPoint;
 
 @property (nonatomic) double angle;
-@property (nonatomic) double referenceAngle;
 @property (nonatomic) double distance;
+@property (nonatomic) SurveyProtocol *protocol;
+@property (nonatomic) double referenceAngle;
 @property (nonatomic) AGSSRUnit distanceUnits;
+@property (nonatomic) AngleDirection angleDirection;
 
 @end
