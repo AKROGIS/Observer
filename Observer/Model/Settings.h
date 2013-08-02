@@ -43,8 +43,7 @@
 @property (nonatomic) AGSSRUnit distanceUnitsForMeasuring;
 @property (nonatomic) AngleDirection angleDistanceAngleDirection;
 @property (nonatomic) double angleDistanceDeadAhead;
-@property (nonatomic) double angleDistanceLastDistance;
-@property (nonatomic) double angleDistanceLastAngle;
-
+@property (nonatomic) NSNumber *angleDistanceLastDistance;
+@property (nonatomic) NSNumber *angleDistanceLastAngle;
 
 @end

@@ -268,11 +268,14 @@ typedef enum {
         //vc.course = self.mapView.locationDisplay.location.course;
         vc.course = 35.4;
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
-        pop.popoverController.delegate = self;
         vc.popover = pop.popoverController;
+        vc.completionBlock = ^(AngleDistanceViewController *sender) {
+            [self addObservationAtPoint:sender.observationPoint];
+        };
         //FIXME get protocol
         SurveyProtocol *protocol = [[SurveyProtocol alloc] init];
         protocol.definesAngleDistanceMeasures = YES;
+        protocol = nil;
         vc.protocol = protocol;
     }
 }
@@ -298,18 +301,6 @@ typedef enum {
             [self resetBasemap];
     }
 }
-
-#pragma mark - Delegate Methods: UIPopoverControllerDelegate (all optional)
-
-- (void) popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
-{
-    UINavigationController *nav = (UINavigationController *)popoverController.contentViewController;
-    AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
-    if (!vc.isCanceled) {
-        [self addObservationAtPoint:vc.observationPoint];
-    }
-}
-
 
 #pragma mark - Delegate Methods: AGSLayerDelegate (all optional)
 
@@ -624,6 +615,9 @@ typedef enum {
 
 - (void) addObservationAtPoint:(AGSPoint *)mapPoint
 {
+    if (!mapPoint)
+        return;
+    
     NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
     //        AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
     //[symbol setSize:CGSizeMake(7,7)];
@@ -631,7 +625,6 @@ typedef enum {
     [self.observationsLayer addGraphic:graphic];
     //[self.observationsLayer refresh];
     NSLog(@"Graphic added to map");
-    
 }
 
 @end

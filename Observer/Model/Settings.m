@@ -48,10 +48,10 @@
 #define DEFAULTS_DEFAULT_ANGLE_DISTANCE_DEAD_AHEAD 0
 
 #define DEFAULTS_KEY_ANGLE_DISTANCE_LAST_DISTANCE @"angle_distance_last_distance"
-#define DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_DISTANCE 100
+#define DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_DISTANCE nil
 
 #define DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE @"angle_distance_last_angle"
-#define DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_ANGLE 0
+#define DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_ANGLE nil
 
 
 @implementation Settings
@@ -273,41 +273,41 @@ static Settings * _manager;
 
 @synthesize angleDistanceLastDistance = _angleDistanceLastDistance;
 
-- (double) angleDistanceLastDistance
+- (NSNumber *) angleDistanceLastDistance
 {
-    double value = [[NSUserDefaults standardUserDefaults] doubleForKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_DISTANCE];
-    return value ?: DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_DISTANCE;
+    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_DISTANCE];
+    return [value isKindOfClass:[NSNumber class]] ? (NSNumber *)value: DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_DISTANCE;
 }
 
-- (void) setAngleDistanceLastDistance:(double)angleDistanceLastDistance
+- (void) setAngleDistanceLastDistance:(NSNumber *)angleDistanceLastDistance
 {
     if (angleDistanceLastDistance == DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_DISTANCE)
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_DISTANCE];
     else
-        [[NSUserDefaults standardUserDefaults] setDouble:angleDistanceLastDistance forKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_DISTANCE];
+        [[NSUserDefaults standardUserDefaults] setObject:angleDistanceLastDistance forKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_DISTANCE];
 }
 
 
 
 @synthesize angleDistanceLastAngle = _angleDistanceLastAngle;
 
-- (double) angleDistanceLastAngle
+- (NSNumber *) angleDistanceLastAngle
 {
-    double value = [[NSUserDefaults standardUserDefaults] doubleForKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE];
-    return value ?: DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_ANGLE;
+    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE];
+    return [value isKindOfClass:[NSNumber class]] ? (NSNumber *)value: DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_ANGLE;
 }
 
-- (void) setAngleDistanceLastAngle:(double)angleDistanceLastAngle
+- (void) setAngleDistanceLastAngle:(NSNumber *)angleDistanceLastAngle
 {
     if (angleDistanceLastAngle == DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_ANGLE)
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE];
     else
-        [[NSUserDefaults standardUserDefaults] setDouble:angleDistanceLastAngle forKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE];
+        [[NSUserDefaults standardUserDefaults] setObject:angleDistanceLastAngle forKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE];
 }
 
 
 
-#pragma mark - Apple Sample Code
+#pragma mark - Seed NSDefaults from Settings.Bundle
 
 //The following two methods were borrowed from the AppPrefs Sample
 

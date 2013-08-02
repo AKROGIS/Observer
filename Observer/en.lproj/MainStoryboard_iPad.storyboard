@@ -284,8 +284,16 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Angle/Distance" id="rCK-0d-n7m">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="5wA-7f-RnG"/>
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="dnX-oN-GR4"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="5wA-7f-RnG">
+                            <connections>
+                                <action selector="cancel:" destination="XgC-zb-GAl" id="Skb-Jp-hBZ"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="dnX-oN-GR4">
+                            <connections>
+                                <action selector="done:" destination="XgC-zb-GAl" id="Xeg-iT-JDN"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -545,6 +553,8 @@
         <class className="AngleDistanceViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/AngleDistanceViewController.h"/>
             <relationships>
+                <relationship kind="action" name="cancel:"/>
+                <relationship kind="action" name="done:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="angleTextField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="basisButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="detailsLabel" candidateClass="UILabel"/>
@@ -562,12 +572,10 @@
             <relationships>
                 <relationship kind="action" name="addObservation:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="resetNorth:" candidateClass="UIButton"/>
-                <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="tap:" candidateClass="UITapGestureRecognizer"/>
                 <relationship kind="action" name="toggleGps:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanStyle:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="toggleRecordMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="mapLoadingIndicator" candidateClass="UIActivityIndicatorView"/>
                 <relationship kind="outlet" name="mapView" candidateClass="AGSMapView"/>
                 <relationship kind="outlet" name="noMapLabel" candidateClass="UILabel"/>

@@ -20,6 +20,8 @@
 @property (strong, nonatomic) NSPredicate *angleRegex;
 @property (strong, nonatomic) NSPredicate *distanceRegex;
 
+@property (nonatomic, readwrite) BOOL isCanceled;
+
 @end
 
 @implementation AngleDistanceViewController
@@ -76,20 +78,22 @@
     }
 }
 
-#pragma mark - UITextField Delegate
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    if (textField == self.angleTextField) {
-        [self.distanceTextField becomeFirstResponder];
-        return NO;
+#pragma mark - IBActions
+
+- (IBAction)done:(UIBarButtonItem *)sender {
+    if (self.completionBlock) {
+        self.completionBlock(self);
     }
-    if (textField == self.distanceTextField) {
-        [textField resignFirstResponder];
-        return NO;
-    }
-    return YES;
+    [self.popover dismissPopoverAnimated:YES];
 }
+
+- (IBAction)cancel:(id)sender {
+    [self.popover dismissPopoverAnimated:YES];
+}
+
+
+#pragma mark - UITextField Delegate
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
@@ -107,6 +111,40 @@
         return [self.distanceRegex evaluateWithObject:newText];
     }
     return NO;
+}
+
+- (void) textFieldDidEndEditing:(UITextField *)textField
+{
+    NSNumberFormatter *parser = [[NSNumberFormatter alloc] init];
+    [parser setNumberStyle:NSNumberFormatterDecimalStyle];
+    [parser setLocale:[NSLocale currentLocale]];
+    NSNumber *number = [parser numberFromString:textField.text];
+    if (textField == self.angleTextField) {
+        [Settings manager].angleDistanceLastAngle = number;
+        self.distanceTextField.returnKeyType = number ? UIReturnKeyDone : UIReturnKeyNext;
+    }
+    if (textField == self.distanceTextField) {
+        [Settings manager].angleDistanceLastDistance = number;
+        self.distanceTextField.returnKeyType = number ? UIReturnKeyDone : UIReturnKeyNext;
+    }
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if (textField.returnKeyType == UIReturnKeyNext) {
+        if (textField == self.angleTextField) {
+            [self.distanceTextField becomeFirstResponder];
+        }
+        if (textField == self.distanceTextField) {
+            [self.angleTextField becomeFirstResponder];
+        }
+        return NO;
+    }
+    if (textField.returnKeyType == UIReturnKeyDone) {
+        [textField resignFirstResponder];
+        return NO;
+    }
+    return YES;
 }
 
 
@@ -127,10 +165,34 @@
     [self hideControls];
 }
 
+- (double) angle
+{
+    NSNumberFormatter *parser = [[NSNumberFormatter alloc] init];
+    [parser setNumberStyle:NSNumberFormatterDecimalStyle];
+    [parser setLocale:[NSLocale currentLocale]];
+    NSNumber *number = [parser numberFromString:self.angleTextField.text];
+    return [number doubleValue];
+}
+
+- (double) distance
+{
+    NSNumberFormatter *parser = [[NSNumberFormatter alloc] init];
+    [parser setNumberStyle:NSNumberFormatterDecimalStyle];
+    [parser setLocale:[NSLocale currentLocale]];
+    NSNumber *number = [parser numberFromString:self.distanceTextField.text];
+    return [number doubleValue];
+}
+
 - (AGSPoint *)observationPoint
 {
+    if (!self.gpsPoint || !self.distanceTextField.text.length || !self.angleTextField.text.length)
+        return nil;
+    if ([self.angleTextField.text isEqualToString:@"-"])
+        return nil;
+    
     double course = self.course < 0 ? 0 : self.course;
-    double angle  = course + self.angle - self.referenceAngle;
+    double direction = self.angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
+    double angle  = course + direction * (self.angle - self.referenceAngle);
     return [self.gpsPoint pointWithAngle:angle distance:self.distance units:self.distanceUnits];   
 }
 
@@ -140,8 +202,10 @@
 - (void) initDefaults
 {
     self.course = -1;
-    self.angle = [Settings manager].angleDistanceLastAngle;
-    self.distance = [Settings manager].angleDistanceLastDistance;
+    NSNumber *angle = [Settings manager].angleDistanceLastAngle;
+    self.angleTextField.text = angle ? [NSString stringWithFormat:@"%@", angle] : nil;
+    NSNumber *distance = [Settings manager].angleDistanceLastDistance;
+    self.distanceTextField.text = distance ? [NSString stringWithFormat:@"%@", distance] : nil;
 }
 
 - (void) initRegexPredicates
