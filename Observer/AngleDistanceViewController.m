@@ -103,7 +103,7 @@
 
 - (void) hideControls
 {
-    self.warningLabel.hidden = (0 <= self.course);
+    self.warningLabel.hidden = self.course < 0;
     self.basisButton.hidden = (self.protocol && self.protocol.definesAngleDistanceMeasures);
 }
 

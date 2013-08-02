@@ -262,7 +262,8 @@ typedef enum {
     }
     if ([[segue identifier] isEqualToString:@"AngleDistancePopOver"])
     {
-        AngleDistanceViewController *vc = [segue destinationViewController];
+        UINavigationController *nav = [segue destinationViewController];
+        AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
         vc.gpsPoint = self.mapView.locationDisplay.mapLocation;
         //vc.course = self.mapView.locationDisplay.location.course;
         vc.course = -1;
