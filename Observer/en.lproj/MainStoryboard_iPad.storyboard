@@ -230,20 +230,21 @@
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="GnW-yn-rjl">
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="phonePad" returnKeyType="next"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="next"/>
+                                <connections>
+                                    <outlet property="delegate" destination="XgC-zb-GAl" id="GcQ-FJ-0DP"/>
+                                </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="PZH-M5-KGF">
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="phonePad" returnKeyType="done"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done"/>
+                                <connections>
+                                    <outlet property="delegate" destination="XgC-zb-GAl" id="ZK8-93-lOn"/>
+                                </connections>
                             </textField>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Angle increases counter-clockwise with dead ahead equal to 180 degrees (heading is unavailable).   Distance is in meters." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="X9z-CU-JZw">
                                 <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="13"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Heading is unavailable" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="172" translatesAutoresizingMaskIntoConstraints="NO" id="0hv-A6-tOW">
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="1" green="0.1464223322" blue="0.16207191230000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nb8-8h-uWj">
@@ -265,19 +266,18 @@
                             <constraint firstItem="nb8-8h-uWj" firstAttribute="top" secondItem="X9z-CU-JZw" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="6BB-nw-8tm"/>
                             <constraint firstItem="nb8-8h-uWj" firstAttribute="trailing" secondItem="X9z-CU-JZw" secondAttribute="trailing" type="user" id="Aq8-dA-NpM"/>
                             <constraint firstItem="X9z-CU-JZw" firstAttribute="top" secondItem="PZH-M5-KGF" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="Cbw-rJ-5mD"/>
-                            <constraint firstAttribute="trailing" secondItem="PZH-M5-KGF" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="JuF-tl-Ywq"/>
+                            <constraint firstItem="GnW-yn-rjl" firstAttribute="trailing" secondItem="X9z-CU-JZw" secondAttribute="trailing" type="user" id="LnA-Ln-eya"/>
                             <constraint firstItem="nb8-8h-uWj" firstAttribute="leading" secondItem="X9z-CU-JZw" secondAttribute="leading" type="user" id="MCH-cZ-lhi"/>
                             <constraint firstItem="CtF-Tj-71V" firstAttribute="leading" secondItem="ljc-mH-gmu" secondAttribute="leading" type="user" id="MWq-vP-1He"/>
-                            <constraint firstItem="0hv-A6-tOW" firstAttribute="leading" secondItem="nb8-8h-uWj" secondAttribute="leading" type="user" id="OWd-ZX-REi"/>
                             <constraint firstItem="PZH-M5-KGF" firstAttribute="top" secondItem="GnW-yn-rjl" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="Whq-jJ-y40"/>
-                            <constraint firstItem="GnW-yn-rjl" firstAttribute="top" secondItem="cpS-cq-Xbt" secondAttribute="top" constant="20" symbolic="YES" type="user" id="WyF-Qu-qkH"/>
                             <constraint firstItem="PZH-M5-KGF" firstAttribute="trailing" secondItem="X9z-CU-JZw" secondAttribute="trailing" type="user" id="XGp-9Y-cCi"/>
                             <constraint firstItem="PZH-M5-KGF" firstAttribute="leading" secondItem="CtF-Tj-71V" secondAttribute="trailing" constant="8" symbolic="YES" type="user" id="b0Y-dY-ciQ"/>
                             <constraint firstItem="GnW-yn-rjl" firstAttribute="leading" secondItem="PZH-M5-KGF" secondAttribute="leading" type="user" id="dLb-se-lN3"/>
                             <constraint firstItem="GnW-yn-rjl" firstAttribute="baseline" secondItem="ljc-mH-gmu" secondAttribute="baseline" type="user" id="kQt-Tb-4PF"/>
                             <constraint firstItem="CtF-Tj-71V" firstAttribute="baseline" secondItem="PZH-M5-KGF" secondAttribute="baseline" type="user" id="lTq-kQ-8d8"/>
+                            <constraint firstItem="GnW-yn-rjl" firstAttribute="trailing" secondItem="PZH-M5-KGF" secondAttribute="trailing" type="user" id="mdQ-w3-haW"/>
                             <constraint firstItem="ljc-mH-gmu" firstAttribute="top" secondItem="cpS-cq-Xbt" secondAttribute="top" constant="20" symbolic="YES" type="default" id="pC6-g7-jlv"/>
-                            <constraint firstItem="0hv-A6-tOW" firstAttribute="top" secondItem="nb8-8h-uWj" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="rVF-9Q-1Et"/>
+                            <constraint firstItem="GnW-yn-rjl" firstAttribute="top" secondItem="cpS-cq-Xbt" secondAttribute="top" constant="20" symbolic="YES" type="default" id="s2V-YI-Pe9"/>
                             <constraint firstItem="X9z-CU-JZw" firstAttribute="leading" secondItem="CtF-Tj-71V" secondAttribute="leading" type="user" id="x8O-IJ-SPU"/>
                             <constraint firstAttribute="trailing" secondItem="GnW-yn-rjl" secondAttribute="trailing" constant="20" symbolic="YES" type="user" id="xW6-Oa-f3T"/>
                             <constraint firstItem="ljc-mH-gmu" firstAttribute="leading" secondItem="cpS-cq-Xbt" secondAttribute="leading" constant="20" symbolic="YES" type="user" id="yMe-d9-TjG"/>
@@ -290,14 +290,15 @@
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="angleTextField" destination="GnW-yn-rjl" id="T4C-c5-0Q3"/>
                         <outlet property="basisButton" destination="nb8-8h-uWj" id="jxU-eq-bDx"/>
                         <outlet property="detailsLabel" destination="X9z-CU-JZw" id="PWj-1x-LFM"/>
-                        <outlet property="warningLabel" destination="0hv-A6-tOW" id="KZb-nB-Rdf"/>
+                        <outlet property="distanceTextField" destination="PZH-M5-KGF" id="QsG-bO-zsz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G0R-Lu-0Tm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4976" y="2168"/>
+            <point key="canvasLocation" x="4938" y="2192"/>
         </scene>
         <!--Angle Distance Settings Table View Controller - Settings-->
         <scene sceneID="2CV-xr-awp">
@@ -544,9 +545,10 @@
         <class className="AngleDistanceViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/AngleDistanceViewController.h"/>
             <relationships>
+                <relationship kind="outlet" name="angleTextField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="basisButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="detailsLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="warningLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="distanceTextField" candidateClass="UITextField"/>
             </relationships>
         </class>
         <class className="LocalMapsTableViewController" superclassName="UITableViewController">
@@ -559,8 +561,6 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
             <relationships>
                 <relationship kind="action" name="addObservation:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="addObservationAtGPS:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="hideBaseMap:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="resetNorth:" candidateClass="UIButton"/>
                 <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="tap:" candidateClass="UITapGestureRecognizer"/>

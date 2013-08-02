@@ -13,9 +13,12 @@
 
 @interface AngleDistanceViewController ()
 
-@property (weak, nonatomic) IBOutlet UILabel *warningLabel;
 @property (weak, nonatomic) IBOutlet UILabel *detailsLabel;
 @property (weak, nonatomic) IBOutlet UIButton *basisButton;
+@property (weak, nonatomic) IBOutlet UITextField *angleTextField;
+@property (weak, nonatomic) IBOutlet UITextField *distanceTextField;
+@property (strong, nonatomic) NSPredicate *angleRegex;
+@property (strong, nonatomic) NSPredicate *distanceRegex;
 
 @end
 
@@ -25,9 +28,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.course = -1;
-        self.angle = [Settings manager].angleDistanceLastAngle;
-        self.distance = [Settings manager].angleDistanceLastDistance;
     }
     return self;
 }
@@ -35,6 +35,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self initDefaults];
+    [self initRegexPredicates];
     [self hideControls];
 }
 
@@ -74,6 +76,40 @@
     }
 }
 
+#pragma mark - UITextField Delegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if (textField == self.angleTextField) {
+        [self.distanceTextField becomeFirstResponder];
+        return NO;
+    }
+    if (textField == self.distanceTextField) {
+        [textField resignFirstResponder];
+        return NO;
+    }
+    return YES;
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    NSString *newText = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    if (4 < newText.length)
+        return NO;
+    if ([newText isEqualToString:@""])
+        return YES;
+    if (textField == self.angleTextField) {
+        if ([newText isEqualToString:@"-"])
+            return YES;
+        return [self.angleRegex evaluateWithObject:newText];
+    }
+    if (textField == self.distanceTextField) {
+        return [self.distanceRegex evaluateWithObject:newText];
+    }
+    return NO;
+}
+
+
 #pragma mark - Public Properties
 
 - (void) setCourse:(double)course
@@ -101,9 +137,21 @@
 
 #pragma mark - Private Methods
 
+- (void) initDefaults
+{
+    self.course = -1;
+    self.angle = [Settings manager].angleDistanceLastAngle;
+    self.distance = [Settings manager].angleDistanceLastDistance;
+}
+
+- (void) initRegexPredicates
+{
+    self.angleRegex =[NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^-?\\d+$"];
+    self.distanceRegex =[NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^\\d*$"];
+}
+
 - (void) hideControls
 {
-    self.warningLabel.hidden = self.course < 0;
     self.basisButton.hidden = (self.protocol && self.protocol.definesAngleDistanceMeasures);
 }
 
@@ -126,15 +174,32 @@
 
 - (void) updateLabel
 {
-    self.detailsLabel.text = [NSString stringWithFormat:@"Angle increases %@ with %@ equal to %u degrees%@.  Distance is in %@.",
-                              self.angleDirection == 0 ? @"clockwise" : @"counter-clockwise",
-                              self.course < 0 ? @"true north" : @"dead ahead",
-                              (int)self.referenceAngle,
-                              self.course < 0 ? @" (heading is unavailable)" : @"",
-                              self.distanceUnits == AGSSRUnitMeter ? @"meters" :
-                              self.distanceUnits == AGSSRUnitFoot ? @"feet" :
-                              self.distanceUnits == AGSSRUnitInternationalYard ? @"yards" : @"unknown units"
-                              ];
+    NSString *part1 = [NSString stringWithFormat:@"Angle increases %@ with %@ equal to %u degrees",
+                       self.angleDirection == 0 ? @"clockwise" : @"counter-clockwise",
+                       self.course < 0 ? @"true north" : @"dead ahead",
+                       (int)self.referenceAngle
+                       ];
+    
+    NSString *part2 = [NSString stringWithFormat:@"Distance is in %@.",
+                       self.distanceUnits == AGSSRUnitMeter ? @"meters" :
+                       self.distanceUnits == AGSSRUnitFoot ? @"feet" :
+                       self.distanceUnits == AGSSRUnitInternationalYard ? @"yards" : @"unknown units"
+                       ];
+    
+    if (self.course < 0) {
+        NSString *text = [NSString stringWithFormat:@"%@ (heading is unavailable). %@", part1, part2];
+        NSRange range = NSMakeRange(part1.length + 2, 22);
+        NSDictionary *attribs = @{
+                                  NSForegroundColorAttributeName: self.detailsLabel.textColor,
+                                  NSFontAttributeName: self.detailsLabel.font
+                                  };
+        NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text attributes:attribs];
+        [attributedText setAttributes:@{NSForegroundColorAttributeName:[UIColor redColor]} range:range];
+        self.detailsLabel.attributedText = attributedText;
+    }
+    else {
+        self.detailsLabel.text = [NSString stringWithFormat:@"%@. %@", part1, part2];
+    }
     [self.detailsLabel sizeToFit];
 }
 

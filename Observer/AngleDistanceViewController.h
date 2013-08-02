@@ -11,7 +11,7 @@
 #import "SurveyProtocol.h"
 #import "Enumerations.h"
 
-@interface AngleDistanceViewController : UIViewController
+@interface AngleDistanceViewController : UIViewController <UITextFieldDelegate>
 
 @property (weak, nonatomic) UIPopoverController *popover;
 

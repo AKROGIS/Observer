@@ -266,12 +266,14 @@ typedef enum {
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
         vc.gpsPoint = self.mapView.locationDisplay.mapLocation;
         //vc.course = self.mapView.locationDisplay.location.course;
-        vc.course = -1;
+        vc.course = 35.4;
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
         pop.popoverController.delegate = self;
         vc.popover = pop.popoverController;
         //FIXME get protocol
-        vc.protocol = nil;
+        SurveyProtocol *protocol = [[SurveyProtocol alloc] init];
+        protocol.definesAngleDistanceMeasures = YES;
+        vc.protocol = protocol;
     }
 }
 
@@ -301,7 +303,8 @@ typedef enum {
 
 - (void) popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
 {
-    AngleDistanceViewController *vc = (AngleDistanceViewController *)popoverController.contentViewController;
+    UINavigationController *nav = (UINavigationController *)popoverController.contentViewController;
+    AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
     if (!vc.isCanceled) {
         [self addObservationAtPoint:vc.observationPoint];
     }
