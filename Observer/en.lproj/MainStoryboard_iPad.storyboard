@@ -228,17 +228,19 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="GnW-yn-rjl">
+                            <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="GnW-yn-rjl">
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="next"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
+                                    <action selector="textFieldEditingDidChange:" destination="XgC-zb-GAl" eventType="editingChanged" id="tfN-jK-cT6"/>
                                     <outlet property="delegate" destination="XgC-zb-GAl" id="GcQ-FJ-0DP"/>
                                 </connections>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="PZH-M5-KGF">
+                            <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="PZH-M5-KGF">
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
+                                    <action selector="textFieldEditingDidChange:" destination="XgC-zb-GAl" eventType="editingChanged" id="YHK-cn-Wa1"/>
                                     <outlet property="delegate" destination="XgC-zb-GAl" id="ZK8-93-lOn"/>
                                 </connections>
                             </textField>
@@ -555,6 +557,7 @@
             <relationships>
                 <relationship kind="action" name="cancel:"/>
                 <relationship kind="action" name="done:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="textFieldEditingDidChange:" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="angleTextField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="basisButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="detailsLabel" candidateClass="UILabel"/>
@@ -571,11 +574,15 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
             <relationships>
                 <relationship kind="action" name="addObservation:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="addObservationAtGPS:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="hideBaseMap:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="resetNorth:" candidateClass="UIButton"/>
+                <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="tap:" candidateClass="UITapGestureRecognizer"/>
                 <relationship kind="action" name="toggleGps:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanStyle:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="toggleRecordMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="mapLoadingIndicator" candidateClass="UIActivityIndicatorView"/>
                 <relationship kind="outlet" name="mapView" candidateClass="AGSMapView"/>
                 <relationship kind="outlet" name="noMapLabel" candidateClass="UILabel"/>

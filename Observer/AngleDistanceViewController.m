@@ -19,47 +19,40 @@
 @property (weak, nonatomic) IBOutlet UITextField *distanceTextField;
 @property (strong, nonatomic) NSPredicate *angleRegex;
 @property (strong, nonatomic) NSPredicate *distanceRegex;
-
-@property (nonatomic, readwrite) BOOL isCanceled;
+@property (strong, nonatomic) NSNumberFormatter *parser;
+@property (strong, nonatomic) NSArray * textFields; //of UITextField
 
 @end
 
 @implementation AngleDistanceViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self initDefaults];
-    [self initRegexPredicates];
     [self hideControls];
+    [self updateControlState:[self.textFields lastObject]];
+    //FIXME remove the basisButton if there is using protocol
 }
 
 - (void) viewWillAppear:(BOOL)animated
 {
     [self settingsDidChange:nil];
+    //FIXME - do a better job resizing.
     self.contentSizeForViewInPopover = CGSizeMake(320,250.0);
     self.navigationController.contentSizeForViewInPopover = self.contentSizeForViewInPopover;
     [super viewWillAppear:animated];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
-    NSLog(@"View Did Appear");
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(settingsDidChange:) name:NSUserDefaultsDidChangeNotification object:nil];
     [super viewDidAppear:animated];
+    //FIXME - may need a resize if protocol changes or if settings change.
     [self.popover setPopoverContentSize:self.contentSizeForViewInPopover animated:YES];
+    [[self.view viewWithTag:1] becomeFirstResponder];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
 {
-    NSLog(@"View Did Disappear");
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSUserDefaultsDidChangeNotification object:nil];
     [super viewDidDisappear:animated];
 }
@@ -74,6 +67,7 @@
 {
     if ([segue.identifier isEqualToString:@"PushAngleDistanceSettings"]) {
         AngleDistanceSettingsTableViewController *vc = (AngleDistanceSettingsTableViewController *)segue.destinationViewController;
+        //FIXME - does this VC need a protocol? only open the VC it if is appropriate for the protocol.
         vc.protocol = self.protocol;
     }
 }
@@ -90,6 +84,10 @@
 
 - (IBAction)cancel:(id)sender {
     [self.popover dismissPopoverAnimated:YES];
+}
+
+- (IBAction)textFieldEditingDidChange:(UITextField *)sender {
+    [self updateControlState:sender];
 }
 
 
@@ -113,35 +111,20 @@
     return NO;
 }
 
-- (void) textFieldDidEndEditing:(UITextField *)textField
-{
-    NSNumberFormatter *parser = [[NSNumberFormatter alloc] init];
-    [parser setNumberStyle:NSNumberFormatterDecimalStyle];
-    [parser setLocale:[NSLocale currentLocale]];
-    NSNumber *number = [parser numberFromString:textField.text];
-    if (textField == self.angleTextField) {
-        [Settings manager].angleDistanceLastAngle = number;
-        self.distanceTextField.returnKeyType = number ? UIReturnKeyDone : UIReturnKeyNext;
-    }
-    if (textField == self.distanceTextField) {
-        [Settings manager].angleDistanceLastDistance = number;
-        self.distanceTextField.returnKeyType = number ? UIReturnKeyDone : UIReturnKeyNext;
-    }
-}
+//See the IBAction for the textDidChangeEvent
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if (textField.returnKeyType == UIReturnKeyNext) {
-        if (textField == self.angleTextField) {
-            [self.distanceTextField becomeFirstResponder];
-        }
-        if (textField == self.distanceTextField) {
-            [self.angleTextField becomeFirstResponder];
-        }
+        NSInteger nextTag = textField.tag + 1;
+        if (nextTag > self.textFields.count)
+            nextTag = 1;
+        [[self.view viewWithTag:nextTag] becomeFirstResponder];
         return NO;
     }
     if (textField.returnKeyType == UIReturnKeyDone) {
         [textField resignFirstResponder];
+        [self done:nil];
         return NO;
     }
     return YES;
@@ -150,14 +133,6 @@
 
 #pragma mark - Public Properties
 
-- (void) setCourse:(double)course
-{
-    if (_course == course)
-        return;
-    _course = course;
-    [self hideControls];
-}
-
 - (void) setProtocol:(SurveyProtocol *)protocol
 {
     _protocol = protocol;
@@ -165,106 +140,177 @@
     [self hideControls];
 }
 
-- (double) angle
+- (void) setDefaultAngle:(NSNumber *)defaultAngle
 {
-    NSNumberFormatter *parser = [[NSNumberFormatter alloc] init];
-    [parser setNumberStyle:NSNumberFormatterDecimalStyle];
-    [parser setLocale:[NSLocale currentLocale]];
-    NSNumber *number = [parser numberFromString:self.angleTextField.text];
-    return [number doubleValue];
+    if (defaultAngle) {
+        self.angleTextField.text = [NSString stringWithFormat:@"%@", defaultAngle];
+    }
 }
 
-- (double) distance
+- (void) setDefaultDistance:(NSNumber *)defaultDistance
 {
-    NSNumberFormatter *parser = [[NSNumberFormatter alloc] init];
-    [parser setNumberStyle:NSNumberFormatterDecimalStyle];
-    [parser setLocale:[NSLocale currentLocale]];
-    NSNumber *number = [parser numberFromString:self.distanceTextField.text];
-    return [number doubleValue];
+    if (defaultDistance) {
+        double distance = [defaultDistance doubleValue];
+        if (distance > 0)
+        self.distanceTextField.text = [NSString stringWithFormat:@"%f", distance];
+    }
+}
+
+- (NSNumber *) angle
+{
+    NSNumber *number = [self.parser numberFromString:self.angleTextField.text];
+    return number;
+}
+
+- (NSNumber *) distance
+{
+    NSNumber *number = [self.parser numberFromString:self.distanceTextField.text];
+    if ([number doubleValue] <= 0)
+        return nil;
+    return number;
 }
 
 - (AGSPoint *)observationPoint
 {
-    if (!self.gpsPoint || !self.distanceTextField.text.length || !self.angleTextField.text.length)
-        return nil;
-    if ([self.angleTextField.text isEqualToString:@"-"])
+    if (self.missingReferenceFrame || !self.distance || !self.angle)
         return nil;
     
-    double course = self.course < 0 ? 0 : self.course;
-    double direction = self.angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
-    double angle  = course + direction * (self.angle - self.referenceAngle);
-    return [self.gpsPoint pointWithAngle:angle distance:self.distance units:self.distanceUnits];   
+    double referenceAngle = self.usesProtocol ? self.protocol.angleBaseline : [Settings manager].angleDistanceDeadAhead;
+    AGSSRUnit distanceUnits = self.usesProtocol ? self.protocol.distanceUnits : [Settings manager].distanceUnitsForSightings;
+    AngleDirection angleDirection = self.usesProtocol ? self.protocol.angleDirection : [Settings manager].angleDistanceAngleDirection;
+
+    double course = [self.deadAhead doubleValue];
+    double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
+    double angle  = course + direction * ([self.angle doubleValue]- referenceAngle);
+    return [self.gpsPoint pointWithAngle:angle distance:[self.distance doubleValue] units:distanceUnits];
 }
 
 
 #pragma mark - Private Methods
 
-- (void) initDefaults
+- (NSPredicate *) angleRegex
 {
-    self.course = -1;
-    NSNumber *angle = [Settings manager].angleDistanceLastAngle;
-    self.angleTextField.text = angle ? [NSString stringWithFormat:@"%@", angle] : nil;
-    NSNumber *distance = [Settings manager].angleDistanceLastDistance;
-    self.distanceTextField.text = distance ? [NSString stringWithFormat:@"%@", distance] : nil;
+    if (!_angleRegex)
+        _angleRegex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^-?\\d+$"];
+    return _angleRegex;
 }
 
-- (void) initRegexPredicates
+- (NSPredicate *) distanceRegex
 {
-    self.angleRegex =[NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^-?\\d+$"];
-    self.distanceRegex =[NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^\\d*$"];
+    if (!_distanceRegex)
+        _distanceRegex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^\\d*$"];
+    return _distanceRegex;
+}
+
+- (NSNumberFormatter *)parser
+{
+    if (!_parser)
+    {
+        _parser = [[NSNumberFormatter alloc] init];
+        [_parser setNumberStyle:NSNumberFormatterDecimalStyle];
+        [_parser setLocale:[NSLocale currentLocale]];
+    }
+    return _parser;
+}
+
+- (NSArray *) textFields
+{
+    if (!_textFields) {
+        NSMutableArray *textFields = [[NSMutableArray alloc] init];
+        for (UIView *view in self.view.subviews) {
+            if ([view isKindOfClass:[UITextField class]]) {
+                [textFields addObject:view];
+            }
+        }
+        _textFields = [textFields copy];
+    }
+    return _textFields;
 }
 
 - (void) hideControls
 {
-    self.basisButton.hidden = (self.protocol && self.protocol.definesAngleDistanceMeasures);
+    //FIXME remove the basisButton if there is using protocol
+    self.basisButton.hidden = self.usesProtocol;
+    //FIXME - resize the view/popover
+}
+
+- (BOOL) usesProtocol
+{
+    return self.protocol && self.protocol.definesAngleDistanceMeasures;
 }
 
 - (void) settingsDidChange:(NSNotification *)notification
 {
-    if (self.protocol && self.protocol.definesAngleDistanceMeasures)
-    {
-        self.distanceUnits = self.protocol.distanceUnits;
-        self.referenceAngle = self.protocol.angleBaseline;
-        self.angleDirection = self.protocol.angleDirection;
-    }
-    else
-    {
-        self.distanceUnits = [Settings manager].distanceUnitsForSightings;
-        self.referenceAngle = [Settings manager].angleDistanceDeadAhead;
-        self.angleDirection = [Settings manager].angleDistanceAngleDirection;
-    }
     [self updateLabel];
 }
 
 - (void) updateLabel
 {
-    NSString *part1 = [NSString stringWithFormat:@"Angle increases %@ with %@ equal to %u degrees",
-                       self.angleDirection == 0 ? @"clockwise" : @"counter-clockwise",
-                       self.course < 0 ? @"true north" : @"dead ahead",
-                       (int)self.referenceAngle
-                       ];
-    
-    NSString *part2 = [NSString stringWithFormat:@"Distance is in %@.",
-                       self.distanceUnits == AGSSRUnitMeter ? @"meters" :
-                       self.distanceUnits == AGSSRUnitFoot ? @"feet" :
-                       self.distanceUnits == AGSSRUnitInternationalYard ? @"yards" : @"unknown units"
-                       ];
-    
-    if (self.course < 0) {
-        NSString *text = [NSString stringWithFormat:@"%@ (heading is unavailable). %@", part1, part2];
-        NSRange range = NSMakeRange(part1.length + 2, 22);
-        NSDictionary *attribs = @{
-                                  NSForegroundColorAttributeName: self.detailsLabel.textColor,
-                                  NSFontAttributeName: self.detailsLabel.font
-                                  };
-        NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text attributes:attribs];
-        [attributedText setAttributes:@{NSForegroundColorAttributeName:[UIColor redColor]} range:range];
-        self.detailsLabel.attributedText = attributedText;
+    if (self.missingReferenceFrame)
+    {
+        self.detailsLabel.text = @"Give up.  The current location and/or heading is unknown";
+        self.detailsLabel.textColor = [UIColor redColor];
     }
-    else {
-        self.detailsLabel.text = [NSString stringWithFormat:@"%@. %@", part1, part2];
+    else
+    {
+        double referenceAngle = self.usesProtocol ? self.protocol.angleBaseline : [Settings manager].angleDistanceDeadAhead;
+        AGSSRUnit distanceUnits = self.usesProtocol ? self.protocol.distanceUnits : [Settings manager].distanceUnitsForSightings;
+        AngleDirection angleDirection = self.usesProtocol ? self.protocol.angleDirection : [Settings manager].angleDistanceAngleDirection;
+        
+        self.detailsLabel.text =
+        [NSString stringWithFormat:@"Angle increases %@ with dead ahead equal to %u degrees. Distance is in %@.",
+           angleDirection == 0 ? @"clockwise" : @"counter-clockwise",
+           (int)referenceAngle,
+           distanceUnits == AGSSRUnitMeter ? @"meters" :
+           distanceUnits == AGSSRUnitFoot ? @"feet" :
+           distanceUnits == AGSSRUnitInternationalYard ? @"yards" : @"unknown units"
+           ];
+        self.detailsLabel.textColor = [UIColor darkTextColor];
     }
     [self.detailsLabel sizeToFit];
+    //FIXME - resize the view/popover
+}
+
+- (void) updateControlState:(UITextField *)textField
+{
+    BOOL userHasProgressed = [self anyInputFieldHasChanged] && !self.missingReferenceFrame ;
+    self.modalInPopover = userHasProgressed;
+    
+    BOOL inputIsComplete = self.angle && self.distance;
+    BOOL canBeDone = inputIsComplete && !self.missingReferenceFrame;
+    self.navigationItem.rightBarButtonItem.enabled = canBeDone;
+    textField.returnKeyType = canBeDone ? UIReturnKeyDone : UIReturnKeyNext;
+    //FIXME - keyboard view does not update until focus changes to new view
+    //FIXME - other textfields should also be updated to UIReturnKeyDone without requiring a text changed event
+}
+
+- (BOOL) missingReferenceFrame
+{
+    return !self.gpsPoint || !self.deadAhead;
+}
+
+- (BOOL) anyInputFieldHasChanged
+{
+    NSNumber *angle = self.angle; //cached so that I do not parse the text field multiple times
+    NSNumber *distance = self.distance; //cached so that I do not parse the text field multiple times
+    
+    //Caution: nils require special consideration
+    return (!angle && self.defaultAngle) ||
+           (angle && (!self.defaultAngle || ![angle isEqualToNumber:self.defaultAngle])) ||
+           (!distance && self.defaultDistance) ||
+           (distance && (!self.defaultDistance || ![distance isEqualToNumber:self.defaultDistance]));
+}
+
+- (BOOL) validTextField:(UITextField *)textField
+{
+    switch (textField.tag) {
+        case 1:
+            return self.angle ? YES : NO;
+        case 2:
+            return self.distance ? YES : NO;
+        default:
+            return NO;
+    }
 }
 
 @end

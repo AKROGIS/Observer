@@ -262,11 +262,18 @@ typedef enum {
     }
     if ([[segue identifier] isEqualToString:@"AngleDistancePopOver"])
     {
+        
         UINavigationController *nav = [segue destinationViewController];
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
+
+        //FIXME - If current location is unknown pop alert
+        //FIXME - If course is unknown, use compass heading, if heading is unknown pop alert
+
         vc.gpsPoint = self.mapView.locationDisplay.mapLocation;
-        //vc.course = self.mapView.locationDisplay.location.course;
-        vc.course = 35.4;
+        //vc.deadAhead = [NSNumber numberWithDouble:self.mapView.locationDisplay.location.course];
+        //vc.deadAhead = [NSNumber numberWithDouble:self.locationManager.heading.trueHeading];
+        vc.deadAhead = [NSNumber numberWithDouble:35.4];
+        
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
         vc.popover = pop.popoverController;
         vc.completionBlock = ^(AngleDistanceViewController *sender) {
