@@ -29,38 +29,29 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self hideControls];
+    [self setBasisButton];
+    [self updateLabel];
     [self updateControlState:[self.textFields lastObject]];
-    //FIXME remove the basisButton if there is using protocol
 }
 
 - (void) viewWillAppear:(BOOL)animated
 {
-    [self settingsDidChange:nil];
-    //FIXME - do a better job resizing.
-    self.contentSizeForViewInPopover = CGSizeMake(320,250.0);
-    self.navigationController.contentSizeForViewInPopover = self.contentSizeForViewInPopover;
     [super viewWillAppear:animated];
+    //FIXME - this is here because we may have changed it in the navigation seque, use a completionBlock instead.
+    [self updateLabel];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(settingsDidChange:) name:NSUserDefaultsDidChangeNotification object:nil];
     [super viewDidAppear:animated];
-    //FIXME - may need a resize if protocol changes or if settings change.
-    [self.popover setPopoverContentSize:self.contentSizeForViewInPopover animated:YES];
-    [[self.view viewWithTag:1] becomeFirstResponder];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(settingsDidChange:) name:NSUserDefaultsDidChangeNotification object:nil];
+    [self resizeContainer];
+    //[[self.view viewWithTag:1] becomeFirstResponder];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSUserDefaultsDidChangeNotification object:nil];
     [super viewDidDisappear:animated];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -136,8 +127,10 @@
 - (void) setProtocol:(SurveyProtocol *)protocol
 {
     _protocol = protocol;
-    [self settingsDidChange:nil];
-    [self hideControls];
+    [self setBasisButton];
+    [self updateLabel];
+    //FIXME - resize should not be called before the view is loaded.
+    //[self resizeContainer];
 }
 
 - (void) setDefaultAngle:(NSNumber *)defaultAngle
@@ -227,11 +220,51 @@
     return _textFields;
 }
 
-- (void) hideControls
+- (void) setBasisButton
 {
-    //FIXME remove the basisButton if there is using protocol
-    self.basisButton.hidden = self.usesProtocol;
-    //FIXME - resize the view/popover
+    if (self.usesProtocol) {
+        if ([self.basisButton isDescendantOfView:self.view]) {
+            [self removeButton];
+        }
+    }
+    else {
+        if (![self.basisButton isDescendantOfView:self.view]) {
+            [self addButton];
+        }
+    }
+}
+
+- (void) addButton
+{
+    //FIXME - add button to view heiracrcy
+    //FIXME - add constraints??
+    //FIXME - resize view
+}
+
+- (void) removeButton
+{
+    [self.basisButton removeFromSuperview];
+}
+
+- (void) resizeContainer
+{
+    [self.view layoutSubviews];
+    CGRect frame = self.view.frame;
+    CGFloat height;
+    if ([self.basisButton isDescendantOfView:self.view]) {
+        height = self.basisButton.frame.origin.y + self.basisButton.frame.size.height + 20;
+    }
+    else {
+        height = self.detailsLabel.frame.origin.y + self.detailsLabel.frame.size.height + 20;
+    }
+    //FIXME - This still isn't working right
+    self.view.frame = frame;
+    self.contentSizeForViewInPopover = self.view.frame.size;
+    frame.size.height = height + 37; //for nav bar??
+    self.navigationController.contentSizeForViewInPopover = frame.size;
+    //FIXME - only animate the resize when removing button or changing label while view is visible
+    //[self.popover setPopoverContentSize:self.contentSizeForViewInPopover animated:YES];
+    [self.popover setPopoverContentSize:self.navigationController.contentSizeForViewInPopover animated:YES];
 }
 
 - (BOOL) usesProtocol
@@ -242,6 +275,7 @@
 - (void) settingsDidChange:(NSNotification *)notification
 {
     [self updateLabel];
+    [self resizeContainer];
 }
 
 - (void) updateLabel
@@ -268,7 +302,6 @@
         self.detailsLabel.textColor = [UIColor darkTextColor];
     }
     [self.detailsLabel sizeToFit];
-    //FIXME - resize the view/popover
 }
 
 - (void) updateControlState:(UITextField *)textField

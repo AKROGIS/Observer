@@ -210,9 +210,9 @@
         <!--Angle Distance View Controller - Angle/Distance-->
         <scene sceneID="jYe-T7-uyT">
             <objects>
-                <viewController id="XgC-zb-GAl" customClass="AngleDistanceViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="cpS-cq-Xbt">
-                        <rect key="frame" x="0.0" y="44" width="320" height="250"/>
+                <viewController modalPresentationStyle="currentContext" id="XgC-zb-GAl" customClass="AngleDistanceViewController" sceneMemberID="viewController">
+                    <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1" id="cpS-cq-Xbt">
+                        <rect key="frame" x="0.0" y="44" width="320" height="216"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Angle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ljc-mH-gmu">
@@ -244,7 +244,7 @@
                                     <outlet property="delegate" destination="XgC-zb-GAl" id="ZK8-93-lOn"/>
                                 </connections>
                             </textField>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Angle increases counter-clockwise with dead ahead equal to 180 degrees (heading is unavailable).   Distance is in meters." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="X9z-CU-JZw">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="750" text="Angle increases counter-clockwise with dead ahead equal to 180 degrees. Distance is in meters." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="X9z-CU-JZw">
                                 <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="13"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -297,6 +297,7 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <value key="contentSizeForViewInPopover" type="size" width="320" height="216"/>
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
@@ -313,9 +314,9 @@
         <!--Angle Distance Settings Table View Controller - Settings-->
         <scene sceneID="2CV-xr-awp">
             <objects>
-                <tableViewController modalTransitionStyle="flipHorizontal" clearsSelectionOnViewWillAppear="NO" id="if6-sF-wsZ" customClass="AngleDistanceSettingsTableViewController" sceneMemberID="viewController">
+                <tableViewController modalTransitionStyle="flipHorizontal" modalPresentationStyle="currentContext" clearsSelectionOnViewWillAppear="NO" id="if6-sF-wsZ" customClass="AngleDistanceSettingsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="syN-66-Y2W">
-                        <rect key="frame" x="0.0" y="44" width="320" height="488"/>
+                        <rect key="frame" x="0.0" y="44" width="320" height="492"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -470,6 +471,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Settings" id="6ER-gd-Xlm"/>
+                    <value key="contentSizeForViewInPopover" type="size" width="320" height="492"/>
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
@@ -510,8 +512,9 @@
             <objects>
                 <navigationController modalPresentationStyle="currentContext" id="x7W-Nj-vNE" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <value key="contentSizeForViewInPopover" type="size" width="320" height="250"/>
+                    <value key="contentSizeForViewInPopover" type="size" width="320" height="216"/>
                     <nil key="simulatedStatusBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="zuV-np-FRM">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -573,16 +576,12 @@
         <class className="ObserverMapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
             <relationships>
-                <relationship kind="action" name="addObservation:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="addObservationAtGPS:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="hideBaseMap:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="resetNorth:" candidateClass="UIButton"/>
                 <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="tap:" candidateClass="UITapGestureRecognizer"/>
-                <relationship kind="action" name="toggleGps:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="togglePanMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanStyle:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="toggleRecordMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="mapLoadingIndicator" candidateClass="UIActivityIndicatorView"/>
                 <relationship kind="outlet" name="mapView" candidateClass="AGSMapView"/>
                 <relationship kind="outlet" name="noMapLabel" candidateClass="UILabel"/>
