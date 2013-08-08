@@ -43,6 +43,7 @@ typedef enum {
 @property (strong, nonatomic) AGSGraphicsLayer *gpsPointsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsTracksLayer;
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
+@property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 
 @end
 
@@ -256,6 +257,12 @@ typedef enum {
 
 - (BOOL) shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 {
+    if ([identifier isEqualToString:@"Push Local Map Table"])
+    {
+        if (self.mapsPopoverController) {
+            return NO;
+        }
+    }
     if ([identifier isEqualToString:@"AngleDistancePopOver"])
     {
         if (self.angleDistancePopoverController) {
@@ -270,7 +277,11 @@ typedef enum {
     {
         LocalMapsTableViewController *dvc = [segue destinationViewController];
         dvc.maps = self.maps;
-        dvc.popover = ((UIStoryboardPopoverSegue*)segue).popoverController;
+        UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
+        self.mapsPopoverController = pop.popoverController;
+        self.mapsPopoverController.delegate = self;
+        //FIXME - need to clear self.mapsPopoverController when popover is dismissed programatically.
+        dvc.popover = pop.popoverController;
     }
     if ([[segue identifier] isEqualToString:@"AngleDistancePopOver"])
     {
@@ -332,8 +343,10 @@ typedef enum {
 //This is not called if the popover is programatically dismissed.
 - (void) popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
 {
-    if (self.angleDistancePopoverController == popoverController)
+    if (popoverController == self.angleDistancePopoverController)
         self.angleDistancePopoverController = nil;
+    if (popoverController == self.mapsPopoverController)
+        self.mapsPopoverController = nil;
 }
 
 
