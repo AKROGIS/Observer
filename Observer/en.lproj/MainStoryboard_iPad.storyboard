@@ -263,7 +263,7 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.89239999999999997" green="0.90298000000000012" blue="0.92000000000000004" alpha="1" colorSpace="deviceRGB"/>
                         <constraints>
                             <constraint firstItem="nb8-8h-uWj" firstAttribute="top" secondItem="X9z-CU-JZw" secondAttribute="bottom" constant="8" symbolic="YES" type="user" id="6BB-nw-8tm"/>
                             <constraint firstItem="nb8-8h-uWj" firstAttribute="trailing" secondItem="X9z-CU-JZw" secondAttribute="trailing" type="user" id="Aq8-dA-NpM"/>
@@ -309,7 +309,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G0R-Lu-0Tm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4938" y="2192"/>
+            <point key="canvasLocation" x="4917" y="2118"/>
         </scene>
         <!--Angle Distance Settings Table View Controller - Settings-->
         <scene sceneID="2CV-xr-awp">
@@ -576,12 +576,16 @@
         <class className="ObserverMapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ObserverMapViewController.h"/>
             <relationships>
+                <relationship kind="action" name="addObservation:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="addObservationAtGPS:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="hideBaseMap:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="resetNorth:" candidateClass="UIButton"/>
                 <relationship kind="action" name="setNorthUp:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="tap:" candidateClass="UITapGestureRecognizer"/>
+                <relationship kind="action" name="toggleGps:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="togglePanMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="action" name="togglePanStyle:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="toggleRecordMode:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="mapLoadingIndicator" candidateClass="UIActivityIndicatorView"/>
                 <relationship kind="outlet" name="mapView" candidateClass="AGSMapView"/>
                 <relationship kind="outlet" name="noMapLabel" candidateClass="UILabel"/>
