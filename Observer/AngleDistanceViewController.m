@@ -34,18 +34,11 @@
     [self updateControlState:[self.textFields lastObject]];
 }
 
-- (void) viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    //FIXME - this is here because we may have changed it in the navigation seque, use a completionBlock instead.
-    [self updateLabel];
-}
-
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(settingsDidChange:) name:NSUserDefaultsDidChangeNotification object:nil];
-    [self resizeContainer];
-    //[[self.view viewWithTag:1] becomeFirstResponder];
+    [self resizeView];
+    [[self.view viewWithTag:1] becomeFirstResponder];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
@@ -58,8 +51,12 @@
 {
     if ([segue.identifier isEqualToString:@"PushAngleDistanceSettings"]) {
         AngleDistanceSettingsTableViewController *vc = (AngleDistanceSettingsTableViewController *)segue.destinationViewController;
-        //FIXME - does this VC need a protocol? only open the VC it if is appropriate for the protocol.
-        vc.protocol = self.protocol;
+        vc.completionBlock = ^(AngleDistanceSettingsTableViewController *sender) {
+            [self updateLabel];
+            [self resizeView];
+            //If the view size doesn't change, thenwe will be stuck at the sub VC size, this will ensure we are resized.
+            [self.popover setPopoverContentSize:self.contentSizeForViewInPopover animated:YES];
+        };
     }
 }
 
@@ -130,7 +127,7 @@
     [self setBasisButton];
     [self updateLabel];
     //FIXME - resize should not be called before the view is loaded.
-    //[self resizeContainer];
+    //[self resizeView];
 }
 
 - (void) setDefaultAngle:(NSNumber *)defaultAngle
@@ -245,28 +242,6 @@
 {
     [self.basisButton removeFromSuperview];
 }
-
-- (void) resizeContainer
-{
-    [self.view layoutSubviews];
-    CGRect frame = self.view.frame;
-    CGFloat height;
-    if ([self.basisButton isDescendantOfView:self.view]) {
-        height = self.basisButton.frame.origin.y + self.basisButton.frame.size.height + 20;
-    }
-    else {
-        height = self.detailsLabel.frame.origin.y + self.detailsLabel.frame.size.height + 20;
-    }
-    //FIXME - This still isn't working right
-    self.view.frame = frame;
-    self.contentSizeForViewInPopover = self.view.frame.size;
-    frame.size.height = height + 37; //for nav bar??
-    self.navigationController.contentSizeForViewInPopover = frame.size;
-    //FIXME - only animate the resize when removing button or changing label while view is visible
-    //[self.popover setPopoverContentSize:self.contentSizeForViewInPopover animated:YES];
-    [self.popover setPopoverContentSize:self.navigationController.contentSizeForViewInPopover animated:YES];
-}
-
 - (BOOL) usesProtocol
 {
     return self.protocol && self.protocol.definesAngleDistanceMeasures;
@@ -275,7 +250,7 @@
 - (void) settingsDidChange:(NSNotification *)notification
 {
     [self updateLabel];
-    [self resizeContainer];
+    [self resizeView];
 }
 
 - (void) updateLabel
@@ -302,6 +277,24 @@
         self.detailsLabel.textColor = [UIColor darkTextColor];
     }
     [self.detailsLabel sizeToFit];
+}
+
+
+- (void) resizeView
+{
+    [self.view layoutSubviews];
+    CGRect frame = self.view.frame;
+    CGFloat height;
+    if ([self.basisButton isDescendantOfView:self.view]) {
+        height = self.basisButton.frame.origin.y + self.basisButton.frame.size.height + 20;
+    }
+    else {
+        height = self.detailsLabel.frame.origin.y + self.detailsLabel.frame.size.height + 20;
+    }
+    frame.size.height = height;
+    self.view.frame = frame;
+    //only if contentSizeForViewInPopover values change will the popover will resize
+    self.contentSizeForViewInPopover = self.view.frame.size;
 }
 
 - (void) updateControlState:(UITextField *)textField
