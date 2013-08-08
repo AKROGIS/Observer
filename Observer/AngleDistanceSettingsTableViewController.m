@@ -24,15 +24,6 @@
 
 @implementation AngleDistanceSettingsTableViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -40,32 +31,28 @@
 }
 
 - (void) viewDidAppear:(BOOL)animated {
-    NSLog(@"View Did Appear");
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(settingsDidChange:) name:NSUserDefaultsDidChangeNotification object:nil];
     [super viewDidAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(settingsDidChange:) name:NSUserDefaultsDidChangeNotification object:nil];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
 {
-    NSLog(@"View Did Disappear");
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSUserDefaultsDidChangeNotification object:nil];
     [super viewDidDisappear:animated];
 }
 
-
-- (void)didReceiveMemoryWarning
+- (void) didMoveToParentViewController:(UIViewController *)parent
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    //called with parent == nil when we are removed from a view controller (i.e. popped from the nav controller)
+    if (!parent)
+        if (self.completionBlock)
+            self.completionBlock(self);
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.protocol && self.protocol.definesAngleDistanceMeasures)
-        return;  //deny ability to change settings
-
     switch (indexPath.section) {
         case 0:
             [self selectAngleDirection:indexPath.row];
@@ -79,13 +66,20 @@
     }
 }
 
+#pragma mark - Public API
+
+- (void) setProtocol:(SurveyProtocol *)protocol
+{
+    _protocol = protocol;
+    [self settingsDidChange:nil];
+}
+
+
 #pragma mark - private Methods
 
 - (void) settingsDidChange:(NSNotification *)notification
 {
-    NSLog(@"settingsDidChange:%@", notification);
-    
-    if (self.protocol && self.protocol.definesAngleDistanceMeasures)
+    if (self.protocol)
     {
         [self selectSettingsWithDistanceUnits:self.protocol.distanceUnits
                                 angleBaseline:self.protocol.angleBaseline
@@ -96,7 +90,6 @@
         [self selectSettingsWithDistanceUnits:[Settings manager].distanceUnitsForSightings
                                 angleBaseline:[Settings manager].angleDistanceDeadAhead
                                angleDirection:[Settings manager].angleDistanceAngleDirection];
-        
     }    
 }
 
@@ -122,7 +115,7 @@
         case 0:
             if (self.clockwiseTVC.accessoryType == UITableViewCellAccessoryNone)
             {
-                [Settings manager].angleDistanceAngleDirection = AngleDirectionClockwise;
+                [self updateAngleDirection:AngleDirectionClockwise];
                 [self.tableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:1] animated:YES];
             }
             self.clockwiseTVC.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -130,7 +123,7 @@
             break;
         case 1:
             if (self.counterclockwiseTVC.accessoryType == UITableViewCellAccessoryNone)
-                [Settings manager].angleDistanceAngleDirection = AngleDirectionCounterClockwise;
+                [self updateAngleDirection:AngleDirectionCounterClockwise];
             self.counterclockwiseTVC.accessoryType = UITableViewCellAccessoryCheckmark;
             self.clockwiseTVC.accessoryType = UITableViewCellAccessoryNone;
             break;
@@ -142,21 +135,21 @@
     switch (row) {
         case 0:
             if (self.deadAheadZeroTVC.accessoryType == UITableViewCellAccessoryNone)
-                [Settings manager].angleDistanceDeadAhead = 0.0;
+                [self updateAngleBaseline:0.0];
             self.deadAheadZeroTVC.accessoryType = UITableViewCellAccessoryCheckmark;
             self.deadAhead90TVC.accessoryType = UITableViewCellAccessoryNone;
             self.deadAhead180TVC.accessoryType = UITableViewCellAccessoryNone;
             break;
         case 1:
             if (self.deadAhead90TVC.accessoryType == UITableViewCellAccessoryNone)
-                [Settings manager].angleDistanceDeadAhead = 90.0;
+                [self updateAngleBaseline:90.0];
             self.deadAhead90TVC.accessoryType = UITableViewCellAccessoryCheckmark;
             self.deadAheadZeroTVC.accessoryType = UITableViewCellAccessoryNone;
             self.deadAhead180TVC.accessoryType = UITableViewCellAccessoryNone;
             break;
         case 2:
             if (self.deadAhead180TVC.accessoryType == UITableViewCellAccessoryNone)
-                [Settings manager].angleDistanceDeadAhead = 180.0;
+                [self updateAngleBaseline:180.0];
             self.deadAhead180TVC.accessoryType = UITableViewCellAccessoryCheckmark;
             self.deadAhead90TVC.accessoryType = UITableViewCellAccessoryNone;
             self.deadAheadZeroTVC.accessoryType = UITableViewCellAccessoryNone;
@@ -169,21 +162,21 @@
     switch (row) {
         case 0:
             if (self.metersTVC.accessoryType == UITableViewCellAccessoryNone)
-                [Settings manager].distanceUnitsForSightings = AGSSRUnitMeter;
+                [self updateDistanceUnits:AGSSRUnitMeter];
             self.metersTVC.accessoryType = UITableViewCellAccessoryCheckmark;
             self.feetTVC.accessoryType = UITableViewCellAccessoryNone;
             self.yardsTVC.accessoryType = UITableViewCellAccessoryNone;
             break;
         case 1:
             if (self.feetTVC.accessoryType == UITableViewCellAccessoryNone)
-                [Settings manager].distanceUnitsForSightings = AGSSRUnitFoot;
+                [self updateDistanceUnits:AGSSRUnitFoot];
             self.feetTVC.accessoryType = UITableViewCellAccessoryCheckmark;
             self.metersTVC.accessoryType = UITableViewCellAccessoryNone;
             self.yardsTVC.accessoryType = UITableViewCellAccessoryNone;
             break;
         case 2:
             if (self.yardsTVC.accessoryType == UITableViewCellAccessoryNone)
-                [Settings manager].distanceUnitsForSightings = AGSSRUnitInternationalYard;
+                [self updateDistanceUnits:AGSSRUnitInternationalYard];
             self.yardsTVC.accessoryType = UITableViewCellAccessoryCheckmark;
             self.feetTVC.accessoryType = UITableViewCellAccessoryNone;
             self.metersTVC.accessoryType = UITableViewCellAccessoryNone;
@@ -191,5 +184,28 @@
     }
 }
 
+- (void) updateAngleDirection: (AngleDirection)angleDirection
+{
+    if (self.protocol)
+        self.protocol.angleDirection = angleDirection;
+    else
+        [Settings manager].angleDistanceAngleDirection = angleDirection;
+}
+
+- (void) updateAngleBaseline:(double)baseline
+{
+    if (self.protocol)
+        self.protocol.angleBaseline = baseline;
+    else
+        [Settings manager].angleDistanceDeadAhead = baseline;
+}
+
+- (void) updateDistanceUnits:(AGSSRUnit)units
+{
+    if (self.protocol)
+        self.protocol.distanceUnits = units;
+    else
+        [Settings manager].distanceUnitsForSightings = units;
+}
 
 @end
