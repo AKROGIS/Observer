@@ -41,5 +41,7 @@
 @property (weak, nonatomic) UIPopoverController *popover;
 //a method to call when the VC is done.  Not called if the user cancels or quits the VC
 @property (strong, nonatomic) void(^completionBlock)(AngleDistanceViewController *);
+//a method to call when the VC is cancelled.  Not called if the user cancels or quits the VC
+@property (strong, nonatomic) void(^cancellationBlock)(AngleDistanceViewController *);
 
 @end

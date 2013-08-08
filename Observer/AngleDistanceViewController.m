@@ -74,6 +74,9 @@
 }
 
 - (IBAction)cancel:(id)sender {
+    if (self.cancellationBlock) {
+        self.cancellationBlock(self);
+    }
     [self.popover dismissPopoverAnimated:YES];
 }
 

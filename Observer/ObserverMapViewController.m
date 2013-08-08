@@ -42,6 +42,7 @@ typedef enum {
 @property (strong, nonatomic) AGSGraphicsLayer *observationsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsPointsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsTracksLayer;
+@property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 
 @end
 
@@ -253,6 +254,17 @@ typedef enum {
     // Dispose of any resources that can be recreated.
 }
 
+- (BOOL) shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+    if ([identifier isEqualToString:@"AngleDistancePopOver"])
+    {
+        if (self.angleDistancePopoverController) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:@"Push Local Map Table"])
     {
@@ -262,7 +274,6 @@ typedef enum {
     }
     if ([[segue identifier] isEqualToString:@"AngleDistancePopOver"])
     {
-        
         UINavigationController *nav = [segue destinationViewController];
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
 
@@ -275,9 +286,15 @@ typedef enum {
         vc.deadAhead = [NSNumber numberWithDouble:35.4];
         
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
+        self.angleDistancePopoverController = pop.popoverController;
+        self.angleDistancePopoverController.delegate = self;
         vc.popover = pop.popoverController;
         vc.completionBlock = ^(AngleDistanceViewController *sender) {
+            self.angleDistancePopoverController = nil;
             [self addObservationAtPoint:sender.observationPoint];
+        };
+        vc.cancellationBlock = ^(AngleDistanceViewController *sender) {
+            self.angleDistancePopoverController = nil;
         };
         //FIXME get protocol
         SurveyProtocol *protocol = [[SurveyProtocol alloc] init];
@@ -308,6 +325,17 @@ typedef enum {
             [self resetBasemap];
     }
 }
+
+
+#pragma mark - Delegate Methods: UIPopoverControllerDelegate
+
+//This is not called if the popover is programatically dismissed.
+- (void) popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
+    if (self.angleDistancePopoverController == popoverController)
+        self.angleDistancePopoverController = nil;
+}
+
 
 #pragma mark - Delegate Methods: AGSLayerDelegate (all optional)
 
