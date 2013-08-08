@@ -50,8 +50,11 @@
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:@"PushAngleDistanceSettings"]) {
+        self.modalInPopover = YES; //disable tap outside popover when sub VC is shown
         AngleDistanceSettingsTableViewController *vc = (AngleDistanceSettingsTableViewController *)segue.destinationViewController;
         vc.completionBlock = ^(AngleDistanceSettingsTableViewController *sender) {
+            BOOL userHasProgressed = [self anyInputFieldHasChanged] && !self.missingReferenceFrame ;
+            self.modalInPopover = userHasProgressed;
             [self updateLabel];
             [self resizeView];
             //If the view size doesn't change, thenwe will be stuck at the sub VC size, this will ensure we are resized.
