@@ -12,6 +12,7 @@
 #import "BaseMapManager.h"
 #import "AGSPoint+AKRAdditions.h"
 #import "Settings.h"
+#import "LocationAngleDistance.h"
 
 #define MINIMUM_NAVIGATION_SPEED 1.5  //speed in meters per second at which to switch map orientation from compass heading to course direction
 
@@ -290,11 +291,18 @@ typedef enum {
 
         //FIXME - If current location is unknown pop alert
         //FIXME - If course is unknown, use compass heading, if heading is unknown pop alert
-
-        vc.gpsPoint = self.mapView.locationDisplay.mapLocation;
+        
+        vc.location = [[LocationAngleDistance alloc] init];
+        vc.location.gpsPoint = self.mapView.locationDisplay.mapLocation;
         //vc.deadAhead = [NSNumber numberWithDouble:self.mapView.locationDisplay.location.course];
         //vc.deadAhead = [NSNumber numberWithDouble:self.locationManager.heading.trueHeading];
-        vc.deadAhead = [NSNumber numberWithDouble:35.4];
+        vc.location.deadAhead = [NSNumber numberWithDouble:35.4];
+        //FIXME get protocol
+        SurveyProtocol *protocol = [[SurveyProtocol alloc] init];
+        protocol.definesAngleDistanceMeasures = YES;
+        protocol = nil;
+        vc.location.protocol = protocol;
+        
         
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
         self.angleDistancePopoverController = pop.popoverController;
@@ -302,16 +310,11 @@ typedef enum {
         vc.popover = pop.popoverController;
         vc.completionBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
-            [self addObservationAtPoint:sender.observationPoint];
+            [self addObservationAtPoint:sender.location.observationPoint];
         };
         vc.cancellationBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
         };
-        //FIXME get protocol
-        SurveyProtocol *protocol = [[SurveyProtocol alloc] init];
-        protocol.definesAngleDistanceMeasures = YES;
-        protocol = nil;
-        vc.protocol = protocol;
     }
 }
 
