@@ -292,16 +292,20 @@ typedef enum {
         //FIXME - If current location is unknown pop alert
         //FIXME - If course is unknown, use compass heading, if heading is unknown pop alert
         
-        vc.location = [[LocationAngleDistance alloc] init];
-        vc.location.gpsPoint = self.mapView.locationDisplay.mapLocation;
-        //vc.deadAhead = [NSNumber numberWithDouble:self.mapView.locationDisplay.location.course];
-        //vc.deadAhead = [NSNumber numberWithDouble:self.locationManager.heading.trueHeading];
-        vc.location.deadAhead = [NSNumber numberWithDouble:35.4];
+        LocationAngleDistance *location = [[LocationAngleDistance alloc] init];
+        location.gpsPoint = self.mapView.locationDisplay.mapLocation;
+        location.deadAhead = [NSNumber numberWithDouble:self.mapView.locationDisplay.location.course];
+        //location.deadAhead = [NSNumber numberWithDouble:self.locationManager.heading.trueHeading];
+        //location.deadAhead = [NSNumber numberWithDouble:35.4];
         //FIXME get protocol
         SurveyProtocol *protocol = [[SurveyProtocol alloc] init];
+        protocol.distanceUnits = AGSSRUnitMeter;
+        protocol.angleBaseline = 45;
+        protocol.angleDirection = AngleDirectionClockwise;
         protocol.definesAngleDistanceMeasures = YES;
-        protocol = nil;
-        vc.location.protocol = protocol;
+        //protocol = nil;
+        location.protocol = protocol;
+        vc.location = location;
         
         
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
