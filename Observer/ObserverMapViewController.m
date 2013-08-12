@@ -314,16 +314,19 @@ typedef enum {
         UINavigationController *nav = [segue destinationViewController];
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
 
-        LocationAngleDistance *location = [[LocationAngleDistance alloc] init];
-        location.gpsPoint = self.mapView.locationDisplay.mapLocation;
+        LocationAngleDistance *location;
         if (0 <= self.mapView.locationDisplay.location.course) {
-            location.deadAhead = [NSNumber numberWithDouble:self.mapView.locationDisplay.location.course];
+            location = [[LocationAngleDistance alloc] initWithCourse:self.mapView.locationDisplay.location.course];
         }
         else {
             if (0 <= self.locationManager.heading.trueHeading) {
-                location.deadAhead = [NSNumber numberWithDouble:self.locationManager.heading.trueHeading];
+                location = [[LocationAngleDistance alloc] initWithCourse:self.locationManager.heading.trueHeading];
+            }
+            else {
+                location = [[LocationAngleDistance alloc] init]; //deadAhead = North
             }
         }
+        location.gpsPoint = self.mapView.locationDisplay.mapLocation;
         location.protocol = self.protocol;
         vc.location = location;
         

@@ -10,8 +10,37 @@
 #import "AGSPoint+AKRAdditions.h"
 #import "Settings.h"
 
+@interface LocationAngleDistance ()
+
+@end
+
 @implementation LocationAngleDistance
 
+- (id) init
+{
+    return [self initWithCourse:0.0];
+}
+
+- (id) initWithCourse:(double)course
+{
+    return [self initWithCourse:course Angle:-1.0 Distance:-1.0];
+}
+
+- (id) initWithCourse:(double)course Angle:(double)angle Distance:(double)distance
+{
+    self = [super init];
+    if (self)
+    {
+        _deadAhead = course;
+        _absoluteAngle = angle;
+        _defaultAngle = [self numberFromAbsoluteAngle:angle];
+        _angle = _defaultAngle;
+        _distanceMeters = distance;
+        _defaultDistance = [self numberFromDistanceMeters:distance];
+        _distance = _defaultDistance;
+    }
+    return self;
+}
 
 #pragma mark - Public Properties
 
@@ -32,39 +61,17 @@
     return description;
 }
 
-//FIXME - write custom setter and getter for angle and distance to only return valid values
-
-/*
-- (void) setDefaultAngle:(NSNumber *)defaultAngle
+- (void) setAngle:(NSNumber *)angle
 {
-    if (defaultAngle) {
-        self.angleTextField.text = [NSString stringWithFormat:@"%@", defaultAngle];
-    }
+    _angle = angle;
+    _absoluteAngle = [self doubleFromAngle:angle];
 }
 
-- (void) setDefaultDistance:(NSNumber *)defaultDistance
+- (void) setDistance:(NSNumber *)distance
 {
-    if (defaultDistance) {
-        double distance = [defaultDistance doubleValue];
-        if (distance > 0)
-            self.distanceTextField.text = [NSString stringWithFormat:@"%f", distance];
-    }
+    _distance = distance;
+    _distanceMeters = [self doubleFromDistance:distance];
 }
-
-- (NSNumber *) angle
-{
-    NSNumber *number = [self.parser numberFromString:self.angleTextField.text];
-    return number;
-}
-
-- (NSNumber *) distance
-{
-    NSNumber *number = [self.parser numberFromString:self.distanceTextField.text];
-    if ([number doubleValue] <= 0)
-        return nil;
-    return number;
-}
-*/
 
 - (BOOL) usesProtocol
 {
@@ -73,12 +80,12 @@
 
 - (BOOL) isValid
 {
-    return self.gpsPoint && self.deadAhead;
+    return self.gpsPoint && 0 <= self.deadAhead;
 }
 
 - (BOOL) isComplete
 {
-    return self.distance && self.angle;
+    return (0 < self.distanceMeters)  && (0 <= self.absoluteAngle);
 }
 
 - (AGSPoint *)observationPoint
@@ -86,15 +93,54 @@
     if (!self.isValid || !self.isComplete)
         return nil;
     
-    double referenceAngle = self.usesProtocol ? self.protocol.angleBaseline : [Settings manager].angleDistanceDeadAhead;
-    AGSSRUnit distanceUnits = self.usesProtocol ? self.protocol.distanceUnits : [Settings manager].distanceUnitsForSightings;
-    AngleDirection angleDirection = self.usesProtocol ? self.protocol.angleDirection : [Settings manager].angleDistanceAngleDirection;
-    
-    double course = [self.deadAhead doubleValue];
-    double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
-    double angle  = course + direction * ([self.angle doubleValue]- referenceAngle);
-    return [self.gpsPoint pointWithAngle:angle distance:[self.distance doubleValue] units:distanceUnits];
+    return [self.gpsPoint pointWithAngle:self.absoluteAngle distance:self.distanceMeters units:AGSSRUnitMeter];
 }
 
+
+#pragma mark - Private Methods
+
+- (NSNumber *) numberFromAbsoluteAngle:(double)angle
+{
+    if (angle < 0)
+        return nil;
+
+    double referenceAngle = self.usesProtocol ? self.protocol.angleBaseline : [Settings manager].angleDistanceDeadAhead;
+    AngleDirection angleDirection = self.usesProtocol ? self.protocol.angleDirection : [Settings manager].angleDistanceAngleDirection;
+    double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
+    double localAngle = referenceAngle + direction * (angle - self.deadAhead);
+    return [NSNumber numberWithDouble:localAngle];
+}
+
+- (NSNumber *) numberFromDistanceMeters:(double)distance
+{
+    if (distance <= 0)
+        return nil;
+
+    AGSSRUnit distanceUnits = self.usesProtocol ? self.protocol.distanceUnits : [Settings manager].distanceUnitsForSightings;
+    //ESRI web mercator has units of meters
+    double localDistance = [[AGSSpatialReference webMercatorSpatialReference] convertValue:distance toUnit:distanceUnits];
+    return [NSNumber numberWithDouble:localDistance];
+}
+
+- (double) doubleFromAngle:(NSNumber*)angle
+{
+    if (!angle || [angle doubleValue] < 0)
+        return -1.0;
+
+    double referenceAngle = self.usesProtocol ? self.protocol.angleBaseline : [Settings manager].angleDistanceDeadAhead;
+    AngleDirection angleDirection = self.usesProtocol ? self.protocol.angleDirection : [Settings manager].angleDistanceAngleDirection;
+    double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
+    return self.deadAhead + direction * ([angle doubleValue]- referenceAngle);
+}
+
+- (double) doubleFromDistance:(NSNumber *)distance
+{
+    if (!distance || [distance doubleValue] <= 0)
+        return -1.0;
+    
+    AGSSRUnit distanceUnits = self.usesProtocol ? self.protocol.distanceUnits : [Settings manager].distanceUnitsForSightings;
+    //ESRI web mercator has units of meters
+    return [[AGSSpatialReference webMercatorSpatialReference] convertValue:[distance doubleValue] fromUnit:distanceUnits];
+}
 
 @end
