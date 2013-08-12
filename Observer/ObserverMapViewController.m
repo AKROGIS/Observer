@@ -269,6 +269,17 @@ typedef enum {
         if (self.angleDistancePopoverController) {
             return NO;
         }
+        if (!self.mapView.locationDisplay.mapLocation) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Location Unknown" message:@"Unable to calculate a location with a current location for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+            [alert show];
+            return NO;
+        }
+        
+        if (self.mapView.locationDisplay.location.course < 0 && self.locationManager.heading.trueHeading < 0) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Heading Unknown" message:@"Unable to calculate a location with a current heading for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+            [alert show];
+            return NO;
+        }
     }
     return YES;
 }
@@ -289,14 +300,16 @@ typedef enum {
         UINavigationController *nav = [segue destinationViewController];
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
 
-        //FIXME - If current location is unknown pop alert
-        //FIXME - If course is unknown, use compass heading, if heading is unknown pop alert
-        
         LocationAngleDistance *location = [[LocationAngleDistance alloc] init];
         location.gpsPoint = self.mapView.locationDisplay.mapLocation;
-        location.deadAhead = [NSNumber numberWithDouble:self.mapView.locationDisplay.location.course];
-        //location.deadAhead = [NSNumber numberWithDouble:self.locationManager.heading.trueHeading];
-        //location.deadAhead = [NSNumber numberWithDouble:35.4];
+        if (0 <= self.mapView.locationDisplay.location.course) {
+            location.deadAhead = [NSNumber numberWithDouble:self.mapView.locationDisplay.location.course];
+        }
+        else {
+            if (0 <= self.locationManager.heading.trueHeading) {
+                location.deadAhead = [NSNumber numberWithDouble:self.locationManager.heading.trueHeading];
+            }
+        }
         //FIXME get protocol
         SurveyProtocol *protocol = [[SurveyProtocol alloc] init];
         protocol.distanceUnits = AGSSRUnitMeter;
@@ -305,8 +318,8 @@ typedef enum {
         protocol.definesAngleDistanceMeasures = YES;
         //protocol = nil;
         location.protocol = protocol;
-        vc.location = location;
         
+        vc.location = location;
         
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
         self.angleDistancePopoverController = pop.popoverController;
