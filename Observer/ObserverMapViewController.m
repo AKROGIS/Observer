@@ -26,6 +26,7 @@ typedef enum {
 @interface ObserverMapViewController ()
 
 @property (strong, nonatomic) BaseMapManager *maps;
+@property (strong, nonatomic) SurveyProtocol *protocol;
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
 @property (weak, nonatomic) IBOutlet UILabel *noMapLabel;
@@ -114,6 +115,19 @@ typedef enum {
         [Settings manager].autoPanMode = savedAutoPanMode;
         [self checkIfMapIsRotated];
     }
+}
+
+- (SurveyProtocol *)protocol
+{
+    if (!_protocol) {
+        _protocol = [[SurveyProtocol alloc] init];
+        _protocol.distanceUnits = AGSSRUnitMeter;
+        _protocol.angleBaseline = 180;
+        _protocol.angleDirection = AngleDirectionClockwise;
+        _protocol.definesAngleDistanceMeasures = YES;
+        //_protocol = nil;
+    }
+    return _protocol;
 }
 
 
@@ -310,15 +324,7 @@ typedef enum {
                 location.deadAhead = [NSNumber numberWithDouble:self.locationManager.heading.trueHeading];
             }
         }
-        //FIXME get protocol
-        SurveyProtocol *protocol = [[SurveyProtocol alloc] init];
-        protocol.distanceUnits = AGSSRUnitMeter;
-        protocol.angleBaseline = 45;
-        protocol.angleDirection = AngleDirectionClockwise;
-        protocol.definesAngleDistanceMeasures = YES;
-        //protocol = nil;
-        location.protocol = protocol;
-        
+        location.protocol = self.protocol;
         vc.location = location;
         
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
