@@ -22,6 +22,7 @@
 
 @property (strong, nonatomic) NSString *initialAngle;
 @property (strong, nonatomic) NSString *initialDistance;
+@property (nonatomic) BOOL isViewLayout;
 
 @end
 
@@ -44,6 +45,11 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSUserDefaultsDidChangeNotification object:nil];
     [super viewDidDisappear:animated];
+}
+
+- (void) viewDidLayoutSubviews
+{
+    self.isViewLayout = YES;
 }
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -131,8 +137,7 @@
 - (void) setLocation:(LocationAngleDistance *)location {
     _location = location;
     [self updateView];
-    if (self.isViewLoaded) {
-        //FIXME - check that the view is not only loaded, but has also finished layout
+    if (self.isViewLayout) {
         [self resizeView];
     }
 }
