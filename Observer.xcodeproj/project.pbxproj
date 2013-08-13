@@ -75,6 +75,7 @@
 		39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */; };
 		39B92FD517A87D9300C62145 /* BlueSelectionForTableViewCell.png in Resources */ = {isa = PBXBuildFile; fileRef = 39B92FD417A87D9300C62145 /* BlueSelectionForTableViewCell.png */; };
 		39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94B17B464B40014C68F /* LocationAngleDistance.m */; };
+		39D1D94F17B9A8280014C68F /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -165,6 +166,8 @@
 		39B92FD417A87D9300C62145 /* BlueSelectionForTableViewCell.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlueSelectionForTableViewCell.png; sourceTree = "<group>"; };
 		39D1D94A17B464B40014C68F /* LocationAngleDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocationAngleDistance.h; path = Model/LocationAngleDistance.h; sourceTree = "<group>"; };
 		39D1D94B17B464B40014C68F /* LocationAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LocationAngleDistance.m; path = Model/LocationAngleDistance.m; sourceTree = "<group>"; };
+		39D1D94D17B9A8280014C68F /* LocationAngleDistanceTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationAngleDistanceTests.h; sourceTree = "<group>"; };
+		39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationAngleDistanceTests.m; sourceTree = "<group>"; };
 		59119861178906FD00B2331B /* MapMonitoring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MapMonitoring.h; path = Model/MapMonitoring.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -296,6 +299,8 @@
 				39955E83178334C000D225D7 /* Supporting Files */,
 				396775A617A0911E009ECD34 /* AGSPointTests.h */,
 				396775A717A0911E009ECD34 /* AGSPointTests.m */,
+				39D1D94D17B9A8280014C68F /* LocationAngleDistanceTests.h */,
+				39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */,
 			);
 			path = ObserverTests;
 			sourceTree = "<group>";
@@ -514,6 +519,7 @@
 			files = (
 				39955E8A178334C000D225D7 /* ObserverTests.m in Sources */,
 				396775A817A0911E009ECD34 /* AGSPointTests.m in Sources */,
+				39D1D94F17B9A8280014C68F /* LocationAngleDistanceTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

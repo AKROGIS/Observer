@@ -139,6 +139,8 @@
         return -1.0;
     
     AGSSRUnit distanceUnits = self.usesProtocol ? self.protocol.distanceUnits : [Settings manager].distanceUnitsForSightings;
+    if (distanceUnits == AGSSRUnitMeter)
+        return [distance doubleValue];
     //ESRI web mercator has units of meters
     return [[AGSSpatialReference webMercatorSpatialReference] convertValue:[distance doubleValue] fromUnit:distanceUnits];
 }
