@@ -32,7 +32,7 @@ UIColor *_buttonBlue;
     if (!_buttonBlue) {
         //_buttonBlue = [[[UIButton alloc] init] titleColorForState: UIControlStateNormal];
         _buttonBlue = [UIColor colorWithRed:0.19607843459999999 green:0.30980393290000002 blue:0.52156865600000002 alpha:1.0]; //From the story board file for a default button
-        NSLog(@"Set Blue = %@", _buttonBlue);
+        //NSLog(@"Set Blue = %@", _buttonBlue);
     }
     return _buttonBlue;
 }

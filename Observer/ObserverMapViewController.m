@@ -125,7 +125,7 @@ typedef enum {
         _protocol.angleBaseline = 180;
         _protocol.angleDirection = AngleDirectionClockwise;
         _protocol.definesAngleDistanceMeasures = YES;
-        //_protocol = nil;
+        _protocol = nil;
     }
     return _protocol;
 }
@@ -314,8 +314,9 @@ typedef enum {
         UINavigationController *nav = [segue destinationViewController];
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
 
-        AGSPoint *currentPoint = self.mapView.locationDisplay.mapLocation;
-        double currentCourse = self.mapView.locationDisplay.location.course;
+        AGSPoint *mapPoint = self.mapView.locationDisplay.mapLocation;
+        CLLocation *gpsData = self.locationManager.location;
+        double currentCourse = gpsData.course;
         
         LocationAngleDistance *location;
         if (0 <= currentCourse) {
@@ -327,7 +328,7 @@ typedef enum {
                 location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocol:self.protocol];
             }
             else {
-                location = [[LocationAngleDistance alloc] initWithDeadAhead:0.0 protocol:self.protocol];
+                location = [[LocationAngleDistance alloc] initWithDeadAhead:35.0 protocol:self.protocol];
             }
         }
         vc.location = location;
@@ -338,7 +339,8 @@ typedef enum {
         vc.popover = pop.popoverController;
         vc.completionBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
-            [self addObservationAtPoint:[sender.location pointFromPoint:currentPoint]];
+            [self addObservationAtPoint:[sender.location pointFromPoint:mapPoint]];
+            NSLog(@"Save Angle = %f, Distance = %f, Course = %f @ %@",sender.location.absoluteAngle, sender.location.distanceMeters, sender.location.deadAhead, gpsData.timestamp);
         };
         vc.cancellationBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
@@ -536,7 +538,7 @@ typedef enum {
     if (!location || location.speed < 0)
         return;
     
-    NSLog(@"Got a new location %@",location);
+    //NSLog(@"Got a new location %@",location);
     
     if (location.speed < MINIMUM_NAVIGATION_SPEED &&
         self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation)
@@ -703,7 +705,7 @@ typedef enum {
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
     [self.observationsLayer addGraphic:graphic];
     //[self.observationsLayer refresh];
-    NSLog(@"Graphic added to map");
+    //NSLog(@"Graphic added to map");
 }
 
 @end
