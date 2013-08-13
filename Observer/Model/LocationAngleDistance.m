@@ -12,6 +12,8 @@
 
 @interface LocationAngleDistance ()
 
+@property (nonatomic,strong) AGSSpatialReference *srWithMeters;
+
 @end
 
 @implementation LocationAngleDistance
@@ -96,6 +98,15 @@
 
 #pragma mark - Private Methods
 
+- (AGSSpatialReference *) srWithMeters
+{
+    if (!_srWithMeters) {
+        //ESRI web mercator has units of meters
+        _srWithMeters = [AGSSpatialReference webMercatorSpatialReference];
+    }
+    return _srWithMeters;
+}
+
 - (NSNumber *) numberFromAbsoluteAngle:(double)angle
 {
     if (angle < 0)
@@ -114,20 +125,24 @@
         return nil;
 
     AGSSRUnit distanceUnits = self.usesProtocol ? self.protocol.distanceUnits : [Settings manager].distanceUnitsForSightings;
-    //ESRI web mercator has units of meters
-    double localDistance = [[AGSSpatialReference webMercatorSpatialReference] convertValue:distance toUnit:distanceUnits];
+    double localDistance = [self.srWithMeters convertValue:distance toUnit:distanceUnits];
     return [NSNumber numberWithDouble:localDistance];
 }
 
 - (double) doubleFromAngle:(NSNumber*)angle
 {
-    if (!angle || [angle doubleValue] < 0)
+    if (!angle)
         return -1.0;
 
     double referenceAngle = self.usesProtocol ? self.protocol.angleBaseline : [Settings manager].angleDistanceDeadAhead;
     AngleDirection angleDirection = self.usesProtocol ? self.protocol.angleDirection : [Settings manager].angleDistanceAngleDirection;
     double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
-    return self.deadAhead + direction * ([angle doubleValue]- referenceAngle);
+    double absoluteAngle = self.deadAhead + direction * ([angle doubleValue] - referenceAngle);
+    if (absoluteAngle < 0)
+        absoluteAngle = fmod(absoluteAngle, 360.0) + 360.0;
+    if (360.0 < absoluteAngle)
+        absoluteAngle = fmod(absoluteAngle, 360.0);
+    return absoluteAngle;
 }
 
 - (double) doubleFromDistance:(NSNumber *)distance
@@ -136,10 +151,11 @@
         return -1.0;
     
     AGSSRUnit distanceUnits = self.usesProtocol ? self.protocol.distanceUnits : [Settings manager].distanceUnitsForSightings;
-    if (distanceUnits == AGSSRUnitMeter)
-        return [distance doubleValue];
-    //ESRI web mercator has units of meters
-    return [[AGSSpatialReference webMercatorSpatialReference] convertValue:[distance doubleValue] fromUnit:distanceUnits];
+    //Despite working in the debugger, the following fails with EXC_BAD_ACCESS in production.
+    //return [self.srWithMeters convertValue:[distance doubleValue] fromUnit:distanceUnits];
+    //My simple workaround
+    double factor = [self.srWithMeters convertValue:1.0 toUnit:distanceUnits];
+    return [distance doubleValue]/factor;
 }
 
 @end
