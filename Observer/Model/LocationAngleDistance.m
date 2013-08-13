@@ -18,26 +18,25 @@
 
 - (id) init
 {
-    return [self initWithCourse:0.0];
+    return [self initWithDeadAhead:0.0 protocol:nil absoluteAngle:-1.0 distance:-1.0];
 }
 
-- (id) initWithCourse:(double)course
+- (id) initWithDeadAhead:(double)deadAhead protocol:(SurveyProtocol *)protocol
 {
-    return [self initWithCourse:course Angle:-1.0 Distance:-1.0];
+    return [self initWithDeadAhead:deadAhead protocol:protocol absoluteAngle:-1.0 distance:-1.0];
 }
 
-- (id) initWithCourse:(double)course Angle:(double)angle Distance:(double)distance
+- (id) initWithDeadAhead:(double)deadAhead protocol:(SurveyProtocol *)protocol absoluteAngle:(double)angle distance:(double)distance
 {
     self = [super init];
     if (self)
     {
-        _deadAhead = course;
-        _absoluteAngle = angle;
-        _defaultAngle = [self numberFromAbsoluteAngle:angle];
-        _angle = _defaultAngle;
-        _distanceMeters = distance;
-        _defaultDistance = [self numberFromDistanceMeters:distance];
-        _distance = _defaultDistance;
+        _protocol = protocol;
+        _deadAhead = deadAhead;
+        _angle = [self numberFromAbsoluteAngle:angle];
+        _defaultAngle = _angle;
+        _distance = [self numberFromDistanceMeters:distance];
+        _defaultDistance = _distance;
     }
     return self;
 }
@@ -61,16 +60,14 @@
     return description;
 }
 
-- (void) setAngle:(NSNumber *)angle
+- (double) absoluteAngle
 {
-    _angle = angle;
-    _absoluteAngle = [self doubleFromAngle:angle];
+    return [self doubleFromAngle:self.angle];
 }
 
-- (void) setDistance:(NSNumber *)distance
+- (double) distanceMeters
 {
-    _distance = distance;
-    _distanceMeters = [self doubleFromDistance:distance];
+    return [self doubleFromDistance:self.distance];
 }
 
 - (BOOL) usesProtocol
@@ -80,7 +77,7 @@
 
 - (BOOL) isValid
 {
-    return self.gpsPoint && 0 <= self.deadAhead;
+    return 0 <= self.deadAhead;
 }
 
 - (BOOL) isComplete
@@ -88,12 +85,12 @@
     return (0 < self.distanceMeters)  && (0 <= self.absoluteAngle);
 }
 
-- (AGSPoint *)observationPoint
+- (AGSPoint *)pointFromPoint:(AGSPoint *)point
 {
     if (!self.isValid || !self.isComplete)
         return nil;
     
-    return [self.gpsPoint pointWithAngle:self.absoluteAngle distance:self.distanceMeters units:AGSSRUnitMeter];
+    return [point pointWithAngle:self.absoluteAngle distance:self.distanceMeters units:AGSSRUnitMeter];
 }
 
 

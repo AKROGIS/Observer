@@ -314,20 +314,22 @@ typedef enum {
         UINavigationController *nav = [segue destinationViewController];
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
 
+        AGSPoint *currentPoint = self.mapView.locationDisplay.mapLocation;
+        double currentCourse = self.mapView.locationDisplay.location.course;
+        
         LocationAngleDistance *location;
-        if (0 <= self.mapView.locationDisplay.location.course) {
-            location = [[LocationAngleDistance alloc] initWithCourse:self.mapView.locationDisplay.location.course];
+        if (0 <= currentCourse) {
+            location = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocol:self.protocol];
         }
         else {
-            if (0 <= self.locationManager.heading.trueHeading) {
-                location = [[LocationAngleDistance alloc] initWithCourse:self.locationManager.heading.trueHeading];
+            double currentHeading = self.locationManager.heading.trueHeading;
+            if (0 <= currentHeading) {
+                location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocol:self.protocol];
             }
             else {
-                location = [[LocationAngleDistance alloc] init]; //deadAhead = North
+                location = [[LocationAngleDistance alloc] initWithDeadAhead:0.0 protocol:self.protocol];
             }
         }
-        location.gpsPoint = self.mapView.locationDisplay.mapLocation;
-        location.protocol = self.protocol;
         vc.location = location;
         
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
@@ -336,7 +338,7 @@ typedef enum {
         vc.popover = pop.popoverController;
         vc.completionBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
-            [self addObservationAtPoint:sender.location.observationPoint];
+            [self addObservationAtPoint:[sender.location pointFromPoint:currentPoint]];
         };
         vc.cancellationBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
