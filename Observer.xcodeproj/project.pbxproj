@@ -76,6 +76,7 @@
 		39B92FD517A87D9300C62145 /* BlueSelectionForTableViewCell.png in Resources */ = {isa = PBXBuildFile; fileRef = 39B92FD417A87D9300C62145 /* BlueSelectionForTableViewCell.png */; };
 		39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94B17B464B40014C68F /* LocationAngleDistance.m */; };
 		39D1D94F17B9A8280014C68F /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */; };
+		39D1D95217BAF0FD0014C68F /* ObserverModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D95017BAF0FD0014C68F /* ObserverModel.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -168,6 +169,7 @@
 		39D1D94B17B464B40014C68F /* LocationAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LocationAngleDistance.m; path = Model/LocationAngleDistance.m; sourceTree = "<group>"; };
 		39D1D94D17B9A8280014C68F /* LocationAngleDistanceTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationAngleDistanceTests.h; sourceTree = "<group>"; };
 		39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationAngleDistanceTests.m; sourceTree = "<group>"; };
+		39D1D95117BAF0FD0014C68F /* ObserverModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ObserverModel.xcdatamodel; sourceTree = "<group>"; };
 		59119861178906FD00B2331B /* MapMonitoring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MapMonitoring.h; path = Model/MapMonitoring.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -360,6 +362,7 @@
 				39B92FC917A7380B00C62145 /* SurveyProtocol.m */,
 				39D1D94A17B464B40014C68F /* LocationAngleDistance.h */,
 				39D1D94B17B464B40014C68F /* LocationAngleDistance.m */,
+				39D1D95017BAF0FD0014C68F /* ObserverModel.xcdatamodeld */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -510,6 +513,7 @@
 				39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */,
 				39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */,
 				39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */,
+				39D1D95217BAF0FD0014C68F /* ObserverModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -730,6 +734,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		39D1D95017BAF0FD0014C68F /* ObserverModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				39D1D95117BAF0FD0014C68F /* ObserverModel.xcdatamodel */,
+			);
+			currentVersion = 39D1D95117BAF0FD0014C68F /* ObserverModel.xcdatamodel */;
+			name = ObserverModel.xcdatamodeld;
+			path = Model/ObserverModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 39955E3F178334BF00D225D7 /* Project object */;
 }

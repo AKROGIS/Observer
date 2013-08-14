@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12E55" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="AdhocLocations" syncable="YES">
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="gpsPoint" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GpsPoints" inverseName="adhocLocation" inverseEntity="GpsPoints" syncable="YES"/>
+        <compoundIndexes>
+            <compoundIndex>
+                <index value="timestamp"/>
+            </compoundIndex>
+        </compoundIndexes>
+    </entity>
+    <entity name="AngleDistanceLocations" syncable="YES">
+        <attribute name="angle" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="direction" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="gpsPoint" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="GpsPoints" inverseName="angleDistanceLocation" inverseEntity="GpsPoints" syncable="YES"/>
+        <compoundIndexes>
+            <compoundIndex>
+                <index value="timestamp"/>
+            </compoundIndex>
+        </compoundIndexes>
+    </entity>
+    <entity name="Features" syncable="YES">
+        <attribute name="attribute1" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="attribute2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="locationType" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="timestamp" attributeType="Date" indexed="YES" syncable="YES"/>
+        <relationship name="gpsPoint" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="GpsPoints" inverseName="feature" inverseEntity="GpsPoints" syncable="YES"/>
+        <compoundIndexes>
+            <compoundIndex>
+                <index value="timestamp"/>
+            </compoundIndex>
+        </compoundIndexes>
+    </entity>
+    <entity name="GpsPoints" syncable="YES">
+        <attribute name="altitude" optional="YES" attributeType="Double" defaultValueString="-1" syncable="YES"/>
+        <attribute name="course" optional="YES" attributeType="Double" defaultValueString="-1" syncable="YES"/>
+        <attribute name="horizontalAccuracy" optional="YES" attributeType="Double" defaultValueString="-1" syncable="YES"/>
+        <attribute name="latitude" attributeType="Double" minValueString="90" maxValueString="-90" indexed="YES" syncable="YES"/>
+        <attribute name="longitude" attributeType="Double" minValueString="-180" maxValueString="180" indexed="YES" syncable="YES"/>
+        <attribute name="speed" optional="YES" attributeType="Double" defaultValueString="-1" syncable="YES"/>
+        <attribute name="timestamp" attributeType="Date" indexed="YES" syncable="YES"/>
+        <attribute name="verticalAccuracy" optional="YES" attributeType="Double" defaultValueString="-1" syncable="YES"/>
+        <relationship name="adhocLocation" optional="YES" maxCount="1" deletionRule="Deny" destinationEntity="AdhocLocations" inverseName="gpsPoint" inverseEntity="AdhocLocations" syncable="YES"/>
+        <relationship name="angleDistanceLocation" optional="YES" maxCount="1" deletionRule="Deny" destinationEntity="AngleDistanceLocations" inverseName="gpsPoint" inverseEntity="AngleDistanceLocations" syncable="YES"/>
+        <relationship name="feature" optional="YES" maxCount="1" deletionRule="Deny" destinationEntity="Features" inverseName="gpsPoint" inverseEntity="Features" syncable="YES"/>
+        <compoundIndexes>
+            <compoundIndex>
+                <index value="timestamp"/>
+            </compoundIndex>
+        </compoundIndexes>
+    </entity>
+    <elements>
+        <element name="AdhocLocations" positionX="396" positionY="198" width="128" height="105"/>
+        <element name="AngleDistanceLocations" positionX="387" positionY="368" width="128" height="120"/>
+        <element name="Features" positionX="360" positionY="531" width="128" height="120"/>
+        <element name="GpsPoints" positionX="160" positionY="192" width="128" height="210"/>
+    </elements>
+</model>
