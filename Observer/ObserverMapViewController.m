@@ -13,6 +13,8 @@
 #import "AGSPoint+AKRAdditions.h"
 #import "Settings.h"
 #import "LocationAngleDistance.h"
+#import "AngleDistanceLocations.h"
+#import "GpsPoints.h"
 
 #define MINIMUM_NAVIGATION_SPEED 1.5  //speed in meters per second at which to switch map orientation from compass heading to course direction
 
@@ -46,6 +48,7 @@ typedef enum {
 @property (strong, nonatomic) AGSGraphicsLayer *gpsTracksLayer;
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
+@property (strong, nonatomic) GpsPoints *lastGpsPointSaved;
 
 @end
 
@@ -315,8 +318,9 @@ typedef enum {
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
 
         AGSPoint *mapPoint = self.mapView.locationDisplay.mapLocation;
-        CLLocation *gpsData = self.locationManager.location;
-        double currentCourse = gpsData.course;
+        GpsPoints *currentGpsPoint = self.lastGpsPointSaved; //cache this since new Gps point may arrive while getting angle/distance
+                                                             //CLLocation *gpsData = self.locationManager.location;
+        double currentCourse = currentGpsPoint.course;
         
         LocationAngleDistance *location;
         if (0 <= currentCourse) {
@@ -340,7 +344,7 @@ typedef enum {
         vc.completionBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
             [self addObservationAtPoint:[sender.location pointFromPoint:mapPoint]];
-            NSLog(@"Save Angle = %f, Distance = %f, Course = %f @ %@",sender.location.absoluteAngle, sender.location.distanceMeters, sender.location.deadAhead, gpsData.timestamp);
+            [self saveAngleDistanceLocation:sender.location gpsPoint:currentGpsPoint];
         };
         vc.cancellationBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
@@ -707,5 +711,42 @@ typedef enum {
     //[self.observationsLayer refresh];
     //NSLog(@"Graphic added to map");
 }
+
+- (void)saveGpsPoint:(CLLocation *)gpsData
+{
+    NSLog(@"Saving GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
+    GpsPoints *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:@"GpsPoints"
+                                                                          inManagedObjectContext:self.context];
+    gpsPoint.altitude = gpsData.altitude;
+    gpsPoint.course = gpsData.course;
+    gpsPoint.horizontalAccuracy = gpsData.horizontalAccuracy;
+    gpsPoint.latitude = gpsData.coordinate.latitude;
+    gpsPoint.longitude = gpsData.coordinate.longitude;
+    gpsPoint.speed = gpsData.speed;
+    gpsPoint.timestamp = gpsData.timestamp;
+    gpsPoint.verticalAccuracy = gpsData.verticalAccuracy;
+    self.lastGpsPointSaved = gpsPoint;
+}
+
+-(void)saveAngleDistanceLocation:(LocationAngleDistance *)location gpsPoint:(GpsPoints *)gpsPoint
+{
+    NSLog(@"Saving Angle = %f, Distance = %f, Course = %f @ %@",location.absoluteAngle, location.distanceMeters, location.deadAhead, gpsPoint.timestamp);
+    AngleDistanceLocations *angleDistance = [NSEntityDescription insertNewObjectForEntityForName:@"AngleDistanceLocations"
+                                                            inManagedObjectContext:self.context];
+    angleDistance.angle = location.absoluteAngle;
+    angleDistance.distance = location.distanceMeters;
+    angleDistance.direction = location.deadAhead;
+    angleDistance.timestamp = gpsPoint.timestamp;
+    angleDistance.gpsPoint = gpsPoint;
+}
+
+- (GpsPoints *)gpsPointAtTimestamp:(NSDate *)timestamp
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoints"];
+    request.predicate = [NSPredicate predicateWithFormat:@"timestamp = %@",timestamp];
+    NSArray *results = [self.context executeFetchRequest:request error:nil];
+    return (GpsPoints *)[results lastObject]; // will return null if there was an error, or no results
+}
+
 
 @end
