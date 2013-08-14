@@ -9,4 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface ObserverMapViewController : UIViewController <UIPopoverControllerDelegate, CLLocationManagerDelegate, AGSMapViewLayerDelegate, AGSMapViewTouchDelegate, AGSMapViewCalloutDelegate, AGSLayerDelegate>
+
+@property (nonatomic) BOOL busy;
+@property (nonatomic,weak) NSManagedObjectContext *context;
+
 @end

@@ -39,7 +39,7 @@
         <attribute name="altitude" optional="YES" attributeType="Double" defaultValueString="-1" syncable="YES"/>
         <attribute name="course" optional="YES" attributeType="Double" defaultValueString="-1" syncable="YES"/>
         <attribute name="horizontalAccuracy" optional="YES" attributeType="Double" defaultValueString="-1" syncable="YES"/>
-        <attribute name="latitude" attributeType="Double" minValueString="90" maxValueString="-90" indexed="YES" syncable="YES"/>
+        <attribute name="latitude" attributeType="Double" minValueString="-90" maxValueString="90" indexed="YES" syncable="YES"/>
         <attribute name="longitude" attributeType="Double" minValueString="-180" maxValueString="180" indexed="YES" syncable="YES"/>
         <attribute name="speed" optional="YES" attributeType="Double" defaultValueString="-1" syncable="YES"/>
         <attribute name="timestamp" attributeType="Date" indexed="YES" syncable="YES"/>
