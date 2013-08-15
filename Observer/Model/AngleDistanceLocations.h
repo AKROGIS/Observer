@@ -9,14 +9,13 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class GpsPoints;
+@class Observations;
 
 @interface AngleDistanceLocations : NSManagedObject
 
 @property (nonatomic) double angle;
 @property (nonatomic) double direction;
 @property (nonatomic) double distance;
-@property (nonatomic, strong) NSDate *timestamp;
-@property (nonatomic, retain) GpsPoints *gpsPoint;
+@property (nonatomic, retain) Observations *observation;
 
 @end

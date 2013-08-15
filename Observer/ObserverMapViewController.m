@@ -9,12 +9,6 @@
 #import "ObserverMapViewController.h"
 #import "LocalMapsTableViewController.h"
 #import "AngleDistanceViewController.h"
-#import "BaseMapManager.h"
-#import "AGSPoint+AKRAdditions.h"
-#import "Settings.h"
-#import "LocationAngleDistance.h"
-#import "AngleDistanceLocations.h"
-#import "GpsPoints.h"
 
 #define MINIMUM_NAVIGATION_SPEED 1.5  //speed in meters per second at which to switch map orientation from compass heading to course direction
 
@@ -49,6 +43,7 @@ typedef enum {
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 @property (strong, nonatomic) GpsPoints *lastGpsPointSaved;
+@property (strong, nonatomic) AGSSpatialReference *wgs84;
 
 @end
 
@@ -57,6 +52,11 @@ typedef enum {
 
 #pragma mark - Public Properties
 
+- (void) setContext:(NSManagedObjectContext *)context
+{
+    _context = context;
+    [self reloadGraphics];
+}
 
 #pragma mark - Private Properties
 
@@ -133,6 +133,14 @@ typedef enum {
     return _protocol;
 }
 
+- (AGSSpatialReference *) wgs84
+{
+    if (!_wgs84) {
+        _wgs84 = [AGSSpatialReference wgs84SpatialReference];
+    }
+    return _wgs84;
+}
+
 
 #pragma mark - IBActions
 
@@ -206,12 +214,16 @@ typedef enum {
 
 - (IBAction)addObservation:(UIBarButtonItem *)sender
 {
-    [self addObservationAtPoint:self.mapView.mapAnchor];
+    Observations *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:self.mapView.mapAnchor];
+    [self drawObservation:observation atPoint:self.mapView.mapAnchor];
+    //FIXME - seque to popover to populate observation.attributes
 }
 
 - (IBAction)addObservationAtGPS:(UIBarButtonItem *)sender
 {
-    [self addObservationAtPoint:self.mapView.locationDisplay.mapLocation];
+    Observations *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved];
+    [self drawObservation:observation atPoint:self.mapView.locationDisplay.mapLocation];
+    //FIXME - seque to popover to populate observation.attributes
 }
 
 #pragma mark - Public Methods: Initializers
@@ -319,7 +331,7 @@ typedef enum {
 
         AGSPoint *mapPoint = self.mapView.locationDisplay.mapLocation;
         GpsPoints *currentGpsPoint = self.lastGpsPointSaved; //cache this since new Gps point may arrive while getting angle/distance
-                                                             //CLLocation *gpsData = self.locationManager.location;
+        //CLLocation *gpsData = self.locationManager.location;
         double currentCourse = currentGpsPoint.course;
         
         LocationAngleDistance *location;
@@ -343,8 +355,9 @@ typedef enum {
         vc.popover = pop.popoverController;
         vc.completionBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
-            [self addObservationAtPoint:[sender.location pointFromPoint:mapPoint]];
-            [self saveAngleDistanceLocation:sender.location gpsPoint:currentGpsPoint];
+            Observations *observation = [self createObservationAtGpsPoint:currentGpsPoint withAngleDistanceLocation:sender.location];
+            [self drawObservation:observation atPoint:[sender.location pointFromPoint:mapPoint]];
+            //FIXME - seque to popover to populate observation.attributes
         };
         vc.cancellationBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
@@ -453,7 +466,9 @@ typedef enum {
     }
     else
     {
-        [self addObservationAtPoint:mappoint];
+        Observations *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
+        [self drawObservation:observation atPoint:mappoint];
+        //FIXME - seque to popover to populate observation.attributes
     }
 }
 
@@ -556,12 +571,8 @@ typedef enum {
         self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
         self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
     }
-    
-    NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
-    AGSPoint *mapPoint = self.mapView.locationDisplay.mapLocation;
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
-    [self.gpsPointsLayer addGraphic:graphic];
-    
+    GpsPoints *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    [self drawGpsPoint:gpsPoint];
 }
 
 
@@ -678,6 +689,20 @@ typedef enum {
     }
 }
 
+- (void) reloadGraphics
+{
+    [self.observationsLayer removeAllGraphics];
+    [self.gpsPointsLayer removeAllGraphics];
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoints"];
+    NSArray *results = [self.context executeFetchRequest:request error:nil];
+    for (GpsPoints *gpsPoint in results) {
+        [self drawGpsPoint:gpsPoint];
+        if (gpsPoint.observation) {
+            [self loadObservation:gpsPoint.observation];
+        }
+    }    
+}
+
 - (void) initializeGraphicsLayer
 {
     //FIXME - Each graphic is created with the SR of the current basemap.  Is this a problem?
@@ -698,21 +723,62 @@ typedef enum {
     
 }
 
-- (void) addObservationAtPoint:(AGSPoint *)mapPoint
+- (void) loadObservation:(Observations *)observation
+{
+    if (!observation)
+        return;
+    
+    AGSPoint *point;
+    if (observation.angleDistanceLocation) {
+        LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:observation.angleDistanceLocation.direction
+                                                                                  protocol:self.protocol
+                                                                             absoluteAngle:observation.angleDistanceLocation.angle
+                                                                                  distance:observation.angleDistanceLocation.distance];
+        
+        point = [location pointFromPoint:[AGSPoint pointWithX:observation.gpsPoint.longitude y:observation.gpsPoint.latitude spatialReference:self.wgs84]];
+    }
+    else if (observation.adhocLocation) {
+        point = [AGSPoint pointWithX:observation.adhocLocation.longitude y:observation.adhocLocation.latitude spatialReference:self.wgs84];
+    }
+    else {
+        point = [AGSPoint pointWithX:observation.gpsPoint.longitude y:observation.gpsPoint.latitude spatialReference:self.wgs84];
+    }
+    [self drawObservation:observation atPoint:point];
+}
+
+
+- (void) drawObservation:(Observations *)observation atPoint:(AGSPoint *)mapPoint
 {
     if (!mapPoint)
         return;
     
-    NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
-    //        AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
-    //[symbol setSize:CGSizeMake(7,7)];
+    NSDictionary *attributes = observation.attributes ? [self createAttributesFromObservation:observation] : nil;
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
     [self.observationsLayer addGraphic:graphic];
-    //[self.observationsLayer refresh];
-    //NSLog(@"Graphic added to map");
 }
 
-- (void)saveGpsPoint:(CLLocation *)gpsData
+- (NSDictionary *) createAttributesFromObservation:(Observations *)observation
+{
+    //FIXME - need to define the attributes
+    NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
+    return attributes;
+}
+
+- (void) drawGpsPoint:(GpsPoints *)gpsPoint
+{
+    if (!gpsPoint)
+        return;
+    
+    //FIXME - figure out which attributes to show with GPS points
+    NSDictionary *attributes = @{@"date":gpsPoint.timestamp?:[NSNull null]};
+    AGSPoint *point = [AGSPoint pointWithX:gpsPoint.longitude y:gpsPoint.latitude spatialReference:self.wgs84];
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:point symbol:nil attributes:attributes infoTemplateDelegate:nil];
+    [self.gpsPointsLayer addGraphic:graphic];
+    
+    //FIXME draw a tracklog polyline
+}
+
+- (GpsPoints *)createGpsPoint:(CLLocation *)gpsData
 {
     NSLog(@"Saving GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
     GpsPoints *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:@"GpsPoints"
@@ -726,18 +792,47 @@ typedef enum {
     gpsPoint.timestamp = gpsData.timestamp;
     gpsPoint.verticalAccuracy = gpsData.verticalAccuracy;
     self.lastGpsPointSaved = gpsPoint;
+    return gpsPoint;
 }
 
--(void)saveAngleDistanceLocation:(LocationAngleDistance *)location gpsPoint:(GpsPoints *)gpsPoint
+- (Observations *)createObservationAtGpsPoint:(GpsPoints *)gpsPoint
 {
-    NSLog(@"Saving Angle = %f, Distance = %f, Course = %f @ %@",location.absoluteAngle, location.distanceMeters, location.deadAhead, gpsPoint.timestamp);
+    NSLog(@"Saving Observation at GPS point");
+    Observations *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observations"
+                                                                          inManagedObjectContext:self.context];
+    observation.gpsPoint = gpsPoint;
+    //We don't have any attributes yet, that will get created/added later depending on the protocol
+    return observation;
+}
+
+- (Observations *)createObservationAtGpsPoint:(GpsPoints *)gpsPoint withAdhocLocation:(AGSPoint *)mapPoint
+{
+    Observations *observation = [self createObservationAtGpsPoint:gpsPoint];
+    NSLog(@"Adding Adhoc Location to Observation");
+    
+    AdhocLocations *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:@"AdhocLocations"
+                                                                          inManagedObjectContext:self.context];
+    
+    //FIXME - mapPoint is in the map coordinates, convert to WGS84
+    adhocLocation.latitude = 0.0;
+    adhocLocation.longitude = 0.0;
+    observation.adhocLocation = adhocLocation;
+    return observation;
+}
+
+- (Observations *)createObservationAtGpsPoint:(GpsPoints *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)location
+{
+    Observations *observation = [self createObservationAtGpsPoint:gpsPoint];
+    NSLog(@"Adding Angle = %f, Distance = %f, Course = %f to observation",
+          location.absoluteAngle, location.distanceMeters, location.deadAhead);
+    
     AngleDistanceLocations *angleDistance = [NSEntityDescription insertNewObjectForEntityForName:@"AngleDistanceLocations"
-                                                            inManagedObjectContext:self.context];
+                                                                          inManagedObjectContext:self.context];
     angleDistance.angle = location.absoluteAngle;
     angleDistance.distance = location.distanceMeters;
     angleDistance.direction = location.deadAhead;
-    angleDistance.timestamp = gpsPoint.timestamp;
-    angleDistance.gpsPoint = gpsPoint;
+    observation.angleDistanceLocation = angleDistance;
+    return observation;
 }
 
 - (GpsPoints *)gpsPointAtTimestamp:(NSDate *)timestamp

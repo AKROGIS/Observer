@@ -7,7 +7,7 @@
 //
 
 #import "AngleDistanceLocations.h"
-#import "GpsPoints.h"
+#import "Observations.h"
 
 
 @implementation AngleDistanceLocations
@@ -15,7 +15,6 @@
 @dynamic angle;
 @dynamic direction;
 @dynamic distance;
-@dynamic timestamp;
-@dynamic gpsPoint;
+@dynamic observation;
 
 @end
