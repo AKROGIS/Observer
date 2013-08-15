@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3929196517BD5A3B008B0FFC /* AdhocLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 3929196417BD5A3B008B0FFC /* AdhocLocations.m */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
 		393E8B0217A32C59009AD0AC /* NSArray+Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8B0117A32C59009AD0AC /* NSArray+Map.m */; };
@@ -80,7 +81,6 @@
 		39D1D95A17BC21D00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
 		39D1D95B17BC21E00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
 		39D1D96A17BC4F080014C68F /* Observations.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D96917BC4F080014C68F /* Observations.m */; };
-		39D1D96D17BC4F670014C68F /* AdhocLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D96C17BC4F670014C68F /* AdhocLocations.m */; };
 		39D1D97317BC4F8D0014C68F /* Attributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D97217BC4F8D0014C68F /* Attributes.m */; };
 		39D1D97617BC4FC10014C68F /* AngleDistanceLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D97517BC4FC00014C68F /* AngleDistanceLocations.m */; };
 		39D1D97917BC50230014C68F /* GpsPoints.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D97817BC50230014C68F /* GpsPoints.m */; };
@@ -97,6 +97,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3929196317BD5A3B008B0FFC /* AdhocLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdhocLocations.h; path = Model/AdhocLocations.h; sourceTree = "<group>"; };
+		3929196417BD5A3B008B0FFC /* AdhocLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdhocLocations.m; path = Model/AdhocLocations.m; sourceTree = "<group>"; };
 		393E8AFA17A2E1D8009AD0AC /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = Model/Settings.h; sourceTree = "<group>"; };
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
 		393E8AFD17A30012009AD0AC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -180,8 +182,6 @@
 		39D1D95917BC21D00014C68F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		39D1D96817BC4F080014C68F /* Observations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Observations.h; path = Model/Observations.h; sourceTree = "<group>"; };
 		39D1D96917BC4F080014C68F /* Observations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Observations.m; path = Model/Observations.m; sourceTree = "<group>"; };
-		39D1D96B17BC4F670014C68F /* AdhocLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdhocLocations.h; path = Model/AdhocLocations.h; sourceTree = "<group>"; };
-		39D1D96C17BC4F670014C68F /* AdhocLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdhocLocations.m; path = Model/AdhocLocations.m; sourceTree = "<group>"; };
 		39D1D97117BC4F8D0014C68F /* Attributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Attributes.h; path = Model/Attributes.h; sourceTree = "<group>"; };
 		39D1D97217BC4F8D0014C68F /* Attributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Attributes.m; path = Model/Attributes.m; sourceTree = "<group>"; };
 		39D1D97417BC4FC00014C68F /* AngleDistanceLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AngleDistanceLocations.h; path = Model/AngleDistanceLocations.h; sourceTree = "<group>"; };
@@ -368,8 +368,6 @@
 		39955EC6178732B500D225D7 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				39D1D96B17BC4F670014C68F /* AdhocLocations.h */,
-				39D1D96C17BC4F670014C68F /* AdhocLocations.m */,
 				396775A317A083E8009ECD34 /* AGSPoint+AKRAdditions.h */,
 				396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */,
 				39D1D97417BC4FC00014C68F /* AngleDistanceLocations.h */,
@@ -392,6 +390,8 @@
 				39D1D96917BC4F080014C68F /* Observations.m */,
 				39D1D97B17BC51630014C68F /* ObserverModel.h */,
 				39D1D95017BAF0FD0014C68F /* ObserverModel.xcdatamodeld */,
+				3929196317BD5A3B008B0FFC /* AdhocLocations.h */,
+				3929196417BD5A3B008B0FFC /* AdhocLocations.m */,
 				393E8AFA17A2E1D8009AD0AC /* Settings.h */,
 				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
 				39B92FC817A7380B00C62145 /* SurveyProtocol.h */,
@@ -548,10 +548,10 @@
 				39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */,
 				39D1D95217BAF0FD0014C68F /* ObserverModel.xcdatamodeld in Sources */,
 				39D1D96A17BC4F080014C68F /* Observations.m in Sources */,
-				39D1D96D17BC4F670014C68F /* AdhocLocations.m in Sources */,
 				39D1D97317BC4F8D0014C68F /* Attributes.m in Sources */,
 				39D1D97617BC4FC10014C68F /* AngleDistanceLocations.m in Sources */,
 				39D1D97917BC50230014C68F /* GpsPoints.m in Sources */,
+				3929196517BD5A3B008B0FFC /* AdhocLocations.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
