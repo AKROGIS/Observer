@@ -431,10 +431,10 @@ typedef enum {
 {
     //Tells the delegate the map is loaded and ready for use. Fires when the map’s base layer loads.
     NSLog(@"mapViewDidLoad");
-    [self.mapLoadingIndicator stopAnimating];
     self.noMapLabel.hidden = YES;
     [self initializeGraphicsLayer];
     [self turnOnGPS];
+    [self.mapLoadingIndicator stopAnimating];
 }
 
 - (BOOL)mapView:(AGSMapView *)mapView shouldFindGraphicsInLayer:(AGSGraphicsLayer *)graphicsLayer atPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint
@@ -694,12 +694,24 @@ typedef enum {
     [self.observationsLayer removeAllGraphics];
     [self.gpsPointsLayer removeAllGraphics];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoints"];
-    NSArray *results = [self.context executeFetchRequest:request error:nil];
+    NSError *error = [[NSError alloc] init];
+    NSArray *results = [self.context executeFetchRequest:request error:&error];
+    if (!results && error.code)
+        NSLog(@"Error Fetching GpsPoints %@",error);
     for (GpsPoints *gpsPoint in results) {
         [self drawGpsPoint:gpsPoint];
         if (gpsPoint.observation) {
             [self loadObservation:gpsPoint.observation];
         }
+    }
+    //Get adhoc observations (gpsPoint is null and adhocLocation is non nil
+    request = [NSFetchRequest fetchRequestWithEntityName:@"Observations"];
+    request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint == NIL AND adhocLocation != NIL"];
+    results = [self.context executeFetchRequest:request error:&error];
+    if (!results && error.code)
+        NSLog(@"Error Fetching Observations %@",error);
+    for (Observations *observation in results) {
+        [self loadObservation:observation];
     }    
 }
 
@@ -720,28 +732,27 @@ typedef enum {
     [symbol setSize:CGSizeMake(18,18)];
     [self.observationsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
     [self.mapView addMapLayer:self.observationsLayer withName:@"observations"];
-    
 }
 
 - (void) loadObservation:(Observations *)observation
 {
-    if (!observation)
-        return;
-    
     AGSPoint *point;
     if (observation.angleDistanceLocation) {
         LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:observation.angleDistanceLocation.direction
                                                                                   protocol:self.protocol
                                                                              absoluteAngle:observation.angleDistanceLocation.angle
                                                                                   distance:observation.angleDistanceLocation.distance];
-        
         point = [location pointFromPoint:[AGSPoint pointWithX:observation.gpsPoint.longitude y:observation.gpsPoint.latitude spatialReference:self.wgs84]];
     }
     else if (observation.adhocLocation) {
         point = [AGSPoint pointWithX:observation.adhocLocation.longitude y:observation.adhocLocation.latitude spatialReference:self.wgs84];
     }
-    else {
+    else if (observation.gpsPoint) {
         point = [AGSPoint pointWithX:observation.gpsPoint.longitude y:observation.gpsPoint.latitude spatialReference:self.wgs84];
+    }
+    if (point) {
+        //point is in WGS84, convert to the map coordinates
+        point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:point toSpatialReference:self.mapView.spatialReference];
     }
     [self drawObservation:observation atPoint:point];
 }
@@ -749,9 +760,10 @@ typedef enum {
 
 - (void) drawObservation:(Observations *)observation atPoint:(AGSPoint *)mapPoint
 {
-    if (!mapPoint)
+    if (!observation || !mapPoint) {
+        NSLog(@"Cannot draw observation (%@).  It has no location", observation);
         return;
-    
+    }
     NSDictionary *attributes = observation.attributes ? [self createAttributesFromObservation:observation] : nil;
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
     [self.observationsLayer addGraphic:graphic];
@@ -795,33 +807,56 @@ typedef enum {
     return gpsPoint;
 }
 
+- (Observations *)createObservation
+{
+    NSLog(@"Saving Observation");
+    Observations *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observations"
+                                                              inManagedObjectContext:self.context];
+    //We don't have any attributes yet, that will get created/added later depending on the protocol
+    return observation;
+}
+
 - (Observations *)createObservationAtGpsPoint:(GpsPoints *)gpsPoint
 {
+    if (!gpsPoint) {
+        NSLog(@"Can't save Observation at GPS point without a GPS Point");
+        return nil;
+    }
     NSLog(@"Saving Observation at GPS point");
-    Observations *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observations"
-                                                                          inManagedObjectContext:self.context];
+    Observations *observation = [self createObservation];
     observation.gpsPoint = gpsPoint;
-    //We don't have any attributes yet, that will get created/added later depending on the protocol
     return observation;
 }
 
 - (Observations *)createObservationAtGpsPoint:(GpsPoints *)gpsPoint withAdhocLocation:(AGSPoint *)mapPoint
 {
-    Observations *observation = [self createObservationAtGpsPoint:gpsPoint];
+    if (!mapPoint) {
+        NSLog(@"Can't save Observation at Adhoc Location without a Map Point");
+        return nil;
+    }
+    Observations *observation = [self createObservation];
     NSLog(@"Adding Adhoc Location to Observation");
-    
     AdhocLocations *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:@"AdhocLocations"
                                                                           inManagedObjectContext:self.context];
-    
-    //FIXME - mapPoint is in the map coordinates, convert to WGS84
-    adhocLocation.latitude = 0.0;
-    adhocLocation.longitude = 0.0;
+    //mapPoint is in the map coordinates, convert to WGS84
+    AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:self.wgs84];
+    adhocLocation.latitude = wgs84Point.y;
+    adhocLocation.longitude = wgs84Point.x;
+    if (gpsPoint) {
+        observation.gpsPoint = gpsPoint; //optional
+    } else {
+        adhocLocation.timestamp = [NSDate date];
+    }
     observation.adhocLocation = adhocLocation;
     return observation;
 }
 
 - (Observations *)createObservationAtGpsPoint:(GpsPoints *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)location
 {
+    if (!gpsPoint) {
+        NSLog(@"Can't save Observation at Angle/Distance without a GPS Point");
+        return nil;
+    }
     Observations *observation = [self createObservationAtGpsPoint:gpsPoint];
     NSLog(@"Adding Angle = %f, Distance = %f, Course = %f to observation",
           location.absoluteAngle, location.distanceMeters, location.deadAhead);
