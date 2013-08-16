@@ -27,9 +27,9 @@
         <relationship name="observation" optional="YES" maxCount="1" deletionRule="Deny" destinationEntity="Observations" inverseName="gpsPoint" inverseEntity="Observations" syncable="YES"/>
     </entity>
     <entity name="Observations" representedClassName="Observations" syncable="YES">
-        <relationship name="adhocLocation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AdhocLocations" inverseName="observation" inverseEntity="AdhocLocations" syncable="YES"/>
-        <relationship name="angleDistanceLocation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AngleDistanceLocations" inverseName="observation" inverseEntity="AngleDistanceLocations" syncable="YES"/>
-        <relationship name="attributes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Attributes" inverseName="observation" inverseEntity="Attributes" syncable="YES"/>
+        <relationship name="adhocLocation" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AdhocLocations" inverseName="observation" inverseEntity="AdhocLocations" syncable="YES"/>
+        <relationship name="angleDistanceLocation" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AngleDistanceLocations" inverseName="observation" inverseEntity="AngleDistanceLocations" syncable="YES"/>
+        <relationship name="attributes" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Attributes" inverseName="observation" inverseEntity="Attributes" syncable="YES"/>
         <relationship name="gpsPoint" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GpsPoints" inverseName="observation" inverseEntity="GpsPoints" syncable="YES"/>
     </entity>
     <elements>

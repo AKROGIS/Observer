@@ -22,6 +22,8 @@
 
 //FIXME - if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
 
+
+
 #import "ObserverMapViewController.h"
 #import "LocalMapsTableViewController.h"
 #import "AngleDistanceViewController.h"
@@ -267,6 +269,12 @@ typedef enum {
     //FIXME - seque to popover to populate observation.attributes
 }
 
+- (IBAction)clearData:(UIBarButtonItem *)sender
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete Data" message:@"This will delete all observations and tracklogs, and cannot be undone." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Delete", nil];
+    [alert show];
+}
+
 #pragma mark - Public Methods: Initializers
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -443,6 +451,18 @@ typedef enum {
         self.mapsPopoverController = nil;
 }
 
+#pragma mark - Delegate Methods - UIAlertViewDelegate
+
+- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if ([alertView.title isEqualToString:@"Delete Data"] && buttonIndex == 1) {
+        self.busy = YES;
+        //FIXME - Clear data on a background thread if it takes some time.
+        [self clearData];
+        [self clearGraphics];
+        self.busy = NO;
+    }
+}
 
 #pragma mark - Delegate Methods: AGSLayerDelegate (all optional)
 
@@ -627,8 +647,6 @@ typedef enum {
 }
 
 
-
-
 #pragma mark - Private Methods
 
 - (IBAction)toggleGps:(UIBarButtonItem *)sender {
@@ -743,8 +761,7 @@ typedef enum {
         NSLog(@"Can't load Graphics now context and/or map is not available.");
         return;
     }
-    [self.observationsLayer removeAllGraphics];
-    [self.gpsPointsLayer removeAllGraphics];
+    [self clearGraphics];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoints"];
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.context executeFetchRequest:request error:&error];
@@ -969,6 +986,36 @@ typedef enum {
     AGSPoint *point = [AGSPoint pointWithX:gpsPoint.longitude y:gpsPoint.latitude spatialReference:self.wgs84];
     point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:point toSpatialReference:self.mapView.spatialReference];
     return point;
+}
+
+- (void) clearGraphics
+{
+    [self.observationsLayer removeAllGraphics];
+    [self.gpsPointsLayer removeAllGraphics];    
+}
+
+- (void) clearData
+{
+    if (!self.context) {
+        return;
+    }
+    
+    //Get adhoc observations (gpsPoint is null and adhocLocation is non nil
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Observations"];
+    NSError *error = [[NSError alloc] init];
+    NSArray *results = [self.context executeFetchRequest:request error:&error];
+    if (!results && error.code)
+        NSLog(@"Error Fetching Observations %@",error);
+    for (Observations *observation in results) {
+        [self.context deleteObject:observation];
+    }
+    request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoints"];
+    results = [self.context executeFetchRequest:request error:&error];
+    if (!results && error.code)
+        NSLog(@"Error Fetching GpsPoints %@",error);
+    for (GpsPoints *gpsPoint in results) {
+        [self.context deleteObject:gpsPoint];        
+    }
 }
 
 @end
