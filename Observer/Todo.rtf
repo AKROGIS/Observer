@@ -27,10 +27,9 @@
 \ls1\ilvl0\cf0 {\listtext	\'95	}Disable/Remove AngleDistance if map is in geographic projection\
 {\listtext	\'95	}If AngleDistancePopup has content changed, then disallow dismissal by clicking on AD button\
 {\listtext	\'95	}AngleDistance popover: Distance label is truncated on the device (looks fine in the simulator)\
-{\listtext	\'95	}\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\sl480\slmult1\pardirnatural
 
-\b\fs28 \cf0 \ul \ulc0 Ideas
+\b\fs28 \cf0 \ul Ideas
 \b0\fs24 \ulnone \
 \pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural
 \ls2\ilvl0\cf0 {\listtext	\'95	}Draw lines for Gps points\
@@ -84,7 +83,7 @@
 {\listtext	\uc0\u8259 	}How far and which direction until the current location is on the map\
 \pard\tx560\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\sl480\slmult1\pardirnatural
 
-\b\fs28 \cf0 \ul \ulc0 Questions
+\b\fs28 \cf0 \ul Questions
 \b0\fs24 \ulnone \
 \pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural
 \ls4\ilvl0\cf0 {\listtext	\'95	}How does changing the map or the protocol change the data context\
@@ -115,7 +114,7 @@
 \ls4\ilvl0\cf0 {\listtext	\'95	}Do we need ability to review list of observations, or track log segments?\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\sl480\slmult1\pardirnatural
 
-\b\fs28 \cf0 \ul \ulc0 Design Notes
+\b\fs28 \cf0 \ul Design Notes
 \b0\fs24 \ulnone \
 \pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural
 \ls5\ilvl0\cf0 {\listtext	\'95	}Basemaps\
@@ -125,8 +124,7 @@
 \ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}provide guidance on extents, scales, projection\
 \pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}Support tile caches created with TileMill?\
-\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
-\ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}Provide facility for uploading tile cache to a well known server\
+{\listtext	\uc0\u8259 	}Provide facility for uploading tile cache to a well known server\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
 \ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}set this server URL in the app settings, allow it to be changed\
 \pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
@@ -173,14 +171,14 @@
 \ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}Surveys\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
 \ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}1 Protocol\
-{\listtext	\uc0\u8259 	}0-inf Maps\
-{\listtext	\uc0\u8259 	}0-inf Missions\
+{\listtext	\uc0\u8259 	}0..many Maps\
+{\listtext	\uc0\u8259 	}0..many Missions\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}Protocols\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
 \ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}Name, Version\
 {\listtext	\uc0\u8259 	}1 MissionAttributeSet\
-{\listtext	\uc0\u8259 	}1-inf ObservationAttributeSet\
+{\listtext	\uc0\u8259 	}1..many  ObservationAttributeSet\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}Maps\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
@@ -188,30 +186,28 @@
 \pard\tx940\tx1440\tx1680\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}Missions\
 \pard\tx1660\tx2160\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}2-inf MissionProperties (minimum start/stop mission properties)\
-{\listtext	\uc0\u8259 	}0-inf GpsPoints\
-{\listtext	\uc0\u8259 	}0-inf Observations\
+\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}2..many MissionProperties (minimum start/stop mission properties)\
+{\listtext	\uc0\u8259 	}0..many GpsPoints\
+{\listtext	\uc0\u8259 	}0..many Observations\
 \pard\tx940\tx1440\tx1680\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls6\ilvl1\cf0 {\listtext	\uc0\u8259 	}MissionAttributeSet\
 \pard\tx1660\tx2160\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}1-inf Attributes\
+\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}1..many Attributes\
 \pard\tx940\tx1440\tx1680\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}ObservationAttributeSet\
 \pard\tx1660\tx2160\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}1-inf Attributes\
+\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}1..many Attributes\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}0-1 ObservationLocationRequirements\
+\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}0..1 ObservationLocationRequirements\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls6\ilvl1\cf0 {\listtext	\uc0\u8259 	}MissionProperties\
-\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}all mission properties are defined by the MissionAttributeSet defined for the Protocol\
 \pard\tx1660\tx2160\tx2240\tx2800\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}All will have a location, time\
+\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}All will have a location and time\
 \pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
 \ls6\ilvl3\cf0 {\listtext	\uc0\u8259 	}Most will get this from a related GPS record\
-{\listtext	\uc0\u8259 	}If the GPS point is unavailable, they will use an adhoc location\
+{\listtext	\uc0\u8259 	}If a GPS point is unavailable, they will use an adhoc location and the current time\
 \pard\tx1660\tx2160\tx2240\tx2800\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}1 set of attribute values corresponding to the related MissionAttributeSet\
+\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}1 set of attribute values corresponding to the MissionAttributeSet defined for the Protocol\
 \pard\tx940\tx1440\tx1680\tx2240\tx2800\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls6\ilvl1\cf0 {\listtext	\uc0\u8259 	}GpsPoints\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
@@ -236,5 +232,10 @@
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
 \ls8\ilvl2\cf0 {\listtext	\uc0\u8259 	}Name, datatype, default value, nullable, constraints: domain, range, validation rule\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
-\ls8\ilvl1\cf0 {\listtext	\uc0\u8259 	}\
+\ls8\ilvl1\cf0 {\listtext	\uc0\u8259 	}ObservationLocationRequirements\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls8\ilvl2\cf0 {\listtext	\uc0\u8259 	}adhoc allowed? angleDistance allowed?, at gps allowed? \
+{\listtext	\uc0\u8259 	}protocol sets/requires angleDistance properties?: distance units, positive angle direction, angle value of dead ahead\
+\pard\tx560\tx1120\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
 }
