@@ -5,12 +5,28 @@
 //  Created by Regan Sarwas on 7/5/13.
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
+/*
+ Note that I only use esri's LocationDisplay for the graphic display, and the autopan features.
+ I use Apple's CLLocationManager for all the Gps information.
+ This is because the LocationDisplay does not provide a delegate or any messages when locations change,
+ and the location information is insufficent (missing timestamp, accuracy and altitude).
+ The LocationDisplay does have a nice feature of providing the current location in map coordinates.
+ I am not using that due to the potential for getting different locations when calling the two
+ different objects.  Therefore all my locations will come from CLLocationManager, and be converted
+ to map coordinates by me.
+ 
+ All features are saved in wgs84, and converted to the projection of the base map (mapview) when
+ instantiated as graphics.  If the basemap changes, then the graphics layers are discared and
+ recreated from the saved features.
+ */
+
+//FIXME - if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
 
 #import "ObserverMapViewController.h"
 #import "LocalMapsTableViewController.h"
 #import "AngleDistanceViewController.h"
 
-#define MINIMUM_NAVIGATION_SPEED 1.5  //speed in meters per second at which to switch map orientation from compass heading to course direction
+#define MINIMUM_NAVIGATION_SPEED 1.0  //speed in meters per second (1mps = 2.2mph) at which to switch map orientation from compass heading to course direction
 
 typedef enum {
     LocationStyleOff,
@@ -44,6 +60,7 @@ typedef enum {
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 @property (strong, nonatomic) GpsPoints *lastGpsPointSaved;
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
+@property (nonatomic) int busyCount;
 
 @end
 
@@ -54,8 +71,26 @@ typedef enum {
 
 - (void) setContext:(NSManagedObjectContext *)context
 {
+    NSLog(@"Context Set");
     _context = context;
     [self reloadGraphics];
+}
+
+- (void) setBusy:(BOOL)busy
+{
+    if (busy) {
+        self.busyCount++;
+    } else {
+        self.busyCount--;
+    }
+    if (self.busyCount < 0)
+        self.busyCount = 0;
+    _busy = self.busyCount;
+    if (_busy) {
+        [self.mapLoadingIndicator startAnimating];
+    } else {
+        [self.mapLoadingIndicator stopAnimating];
+    }
 }
 
 #pragma mark - Private Properties
@@ -214,15 +249,21 @@ typedef enum {
 
 - (IBAction)addObservation:(UIBarButtonItem *)sender
 {
-    Observations *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:self.mapView.mapAnchor];
+    GpsPoints *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    //ignore the gpsPoint if it is over a second old
+    if ([gpsPoint.timestamp timeIntervalSinceNow] < -2.0)
+        gpsPoint = nil;
+    Observations *observation = [self createObservationAtGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
     //FIXME - seque to popover to populate observation.attributes
 }
 
 - (IBAction)addObservationAtGPS:(UIBarButtonItem *)sender
 {
-    Observations *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved];
-    [self drawObservation:observation atPoint:self.mapView.locationDisplay.mapLocation];
+    GpsPoints *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    Observations *observation = [self createObservationAtGpsPoint:gpsPoint];
+    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+    [self drawObservation:observation atPoint:mapPoint];
     //FIXME - seque to popover to populate observation.attributes
 }
 
@@ -251,7 +292,7 @@ typedef enum {
     NSLog(@"View Did Load");
     [super viewDidLoad];
     self.noMapLabel.hidden = YES;
-    [self.mapLoadingIndicator startAnimating];
+    self.busy = YES;
     self.mapView.layerDelegate = self;
     self.mapView.touchDelegate = self;
     self.mapView.calloutDelegate = self;
@@ -262,7 +303,6 @@ typedef enum {
             [self loadBaseMap];
         });
     });
-    
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -329,10 +369,10 @@ typedef enum {
         UINavigationController *nav = [segue destinationViewController];
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
 
-        AGSPoint *mapPoint = self.mapView.locationDisplay.mapLocation;
-        GpsPoints *currentGpsPoint = self.lastGpsPointSaved; //cache this since new Gps point may arrive while getting angle/distance
-        //CLLocation *gpsData = self.locationManager.location;
-        double currentCourse = currentGpsPoint.course;
+        //create/save current GpsPoint, because it may take a while for the user to enter an angle/distance
+        GpsPoints *gpsPoint = [self createGpsPoint:self.locationManager.location];
+        AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+        double currentCourse = gpsPoint.course;
         
         LocationAngleDistance *location;
         if (0 <= currentCourse) {
@@ -344,7 +384,7 @@ typedef enum {
                 location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocol:self.protocol];
             }
             else {
-                location = [[LocationAngleDistance alloc] initWithDeadAhead:35.0 protocol:self.protocol];
+                location = [[LocationAngleDistance alloc] initWithDeadAhead:0.0 protocol:self.protocol];
             }
         }
         vc.location = location;
@@ -355,7 +395,7 @@ typedef enum {
         vc.popover = pop.popoverController;
         vc.completionBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
-            Observations *observation = [self createObservationAtGpsPoint:currentGpsPoint withAngleDistanceLocation:sender.location];
+            Observations *observation = [self createObservationAtGpsPoint:gpsPoint withAngleDistanceLocation:sender.location];
             [self drawObservation:observation atPoint:[sender.location pointFromPoint:mapPoint]];
             //FIXME - seque to popover to populate observation.attributes
         };
@@ -406,7 +446,7 @@ typedef enum {
 {
     // Tells the delegate that the layer failed to load with the specified error.
     NSLog(@"layer %@ failed to load with error %@", layer, error);
-    [self.mapLoadingIndicator stopAnimating];
+    self.busy = NO;
     self.noMapLabel.hidden = NO;
 }
 
@@ -414,9 +454,7 @@ typedef enum {
 {
     // Tells the delegate that the layer is loaded and ready to use.
     NSLog(@"layer %@ did load", layer);
-    //stopping animation will be done in mapView's delegate
-    //[self.mapLoadingIndicator stopAnimating];
-    //self.noMapLabel.hidden = YES;
+    //real work will be done in mapView's delegate
 }
 
 - (void) layer:(AGSLayer *)layer didInitializeSpatialReferenceStatus:(BOOL)srStatusValid
@@ -433,8 +471,9 @@ typedef enum {
     NSLog(@"mapViewDidLoad");
     self.noMapLabel.hidden = YES;
     [self initializeGraphicsLayer];
+    [self reloadGraphics];
     [self turnOnGPS];
-    [self.mapLoadingIndicator stopAnimating];
+    self.busy = NO;
 }
 
 - (BOOL)mapView:(AGSMapView *)mapView shouldFindGraphicsInLayer:(AGSGraphicsLayer *)graphicsLayer atPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint
@@ -554,8 +593,18 @@ typedef enum {
     
     //monitor the velocity to auto switch between AGSLocation Auto Pan Mode between navigation and heading
     CLLocation *location = [locations lastObject];
-    if (!location || location.speed < 0)
+#pragma warn - simulator returns -1 for speed, so ignore it for testing.  remove from production code.
+    //if (!location || location.speed < 0)
+    if (!location)
         return;
+    
+    if (![self isNewLocation:location])
+        return;
+    
+    GpsPoints *gpsPoint = [self createGpsPoint:location];
+    //[self drawGpsPoint:gpsPoint atMapPoint:self.mapView.locationDisplay.mapLocation];
+    //requires a reprojection of the point, but i'm not sure mapLocation and CLlocation will be in sync.
+    [self drawGpsPoint:gpsPoint];
     
     //NSLog(@"Got a new location %@",location);
     
@@ -571,8 +620,6 @@ typedef enum {
         self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
         self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
     }
-    GpsPoints *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    [self drawGpsPoint:gpsPoint];
 }
 
 
@@ -646,16 +693,16 @@ typedef enum {
 
 - (void) loadBaseMap
 {
-    if (self.maps.currentMap.tileCache)
+    if (!self.maps.currentMap.tileCache)
+    {
+        self.noMapLabel.hidden = NO;
+        self.busy = NO;
+    }
+    else
     {
         //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
         self.maps.currentMap.tileCache.delegate = self;
         [self.mapView addMapLayer:self.maps.currentMap.tileCache withName:@"tilecache basemap"];
-    }
-    else
-    {
-        self.noMapLabel.hidden = NO;
-        [self.mapLoadingIndicator stopAnimating];
     }
     [self.maps addObserver:self forKeyPath:@"currentMap" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
 }
@@ -673,24 +720,25 @@ typedef enum {
     if (!self.maps.currentMap.tileCache)
     {
         self.noMapLabel.hidden = NO;
-        [self.mapLoadingIndicator stopAnimating];
+        self.busy = NO;
     }
     else
     {
         self.noMapLabel.hidden = YES;
-        [self.mapLoadingIndicator startAnimating];
+        self.busy = YES;
+        [self.mapView reset]; //remove all layers
+        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
         self.maps.currentMap.tileCache.delegate = self;
-        if (self.mapView.mapLayers.count > 0)
-            ((AGSLayer *)self.mapView.mapLayers[0]).delegate = nil;
-        [self.mapView reset];
-        //NSLog(@"Reset Map, loaded:%u, Layer count: %u", self.mapView.loaded, self.mapView.mapLayers.count);
-        //NSLog(@"Adding new basemap layer %@",self.maps.currentMap.tileCache);
         [self.mapView addMapLayer:self.maps.currentMap.tileCache withName:@"tilecache basemap"];
     }
 }
 
 - (void) reloadGraphics
 {
+    if (!self.context || !self.mapView.loaded) {
+        NSLog(@"Can't load Graphics now context and/or map is not available.");
+        return;
+    }
     [self.observationsLayer removeAllGraphics];
     [self.gpsPointsLayer removeAllGraphics];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoints"];
@@ -717,18 +765,13 @@ typedef enum {
 
 - (void) initializeGraphicsLayer
 {
-    //FIXME - Each graphic is created with the SR of the current basemap.  Is this a problem?
-    
     NSLog(@"Adding two graphics layers");
-    //AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[[UIColor purpleColor] colorWithAlphaComponent:.5]];
     AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
-    [symbol setSize:CGSizeMake(7,7)];
+    [symbol setSize:CGSizeMake(6,6)];
     [self.gpsPointsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
     [self.mapView addMapLayer:self.gpsPointsLayer withName:@"gpsPointsLayer"];
     
     symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[[UIColor purpleColor] colorWithAlphaComponent:.5]];
-    //symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor purpleColor]];
-    //symbol = [AGSPictureMarkerSymbol pictureMarkerSymbolWithImageNamed:@"compass.png"];
     [symbol setSize:CGSizeMake(18,18)];
     [self.observationsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
     [self.mapView addMapLayer:self.observationsLayer withName:@"observations"];
@@ -742,17 +785,15 @@ typedef enum {
                                                                                   protocol:self.protocol
                                                                              absoluteAngle:observation.angleDistanceLocation.angle
                                                                                   distance:observation.angleDistanceLocation.distance];
-        point = [location pointFromPoint:[AGSPoint pointWithX:observation.gpsPoint.longitude y:observation.gpsPoint.latitude spatialReference:self.wgs84]];
+        //The point must be in a projected coordinate system to apply an angle and distance
+        point = [location pointFromPoint:[self mapPointFromGpsPoint:observation.gpsPoint]];
     }
     else if (observation.adhocLocation) {
         point = [AGSPoint pointWithX:observation.adhocLocation.longitude y:observation.adhocLocation.latitude spatialReference:self.wgs84];
+        point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:point toSpatialReference:self.mapView.spatialReference];
     }
     else if (observation.gpsPoint) {
-        point = [AGSPoint pointWithX:observation.gpsPoint.longitude y:observation.gpsPoint.latitude spatialReference:self.wgs84];
-    }
-    if (point) {
-        //point is in WGS84, convert to the map coordinates
-        point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:point toSpatialReference:self.mapView.spatialReference];
+        point = [self mapPointFromGpsPoint:observation.gpsPoint];
     }
     [self drawObservation:observation atPoint:point];
 }
@@ -780,11 +821,20 @@ typedef enum {
 {
     if (!gpsPoint)
         return;
-    
+
+    AGSPoint *point = [self mapPointFromGpsPoint:gpsPoint];
+    [self drawGpsPoint:gpsPoint atMapPoint:point];
+}
+
+- (void) drawGpsPoint:(GpsPoints *)gpsPoint atMapPoint:(AGSPoint *)mapPoint
+{
+    if (!gpsPoint || !mapPoint) {
+        NSLog(@"Cannot draw gpsPoint (%@) @ mapPoint (%@)",gpsPoint, mapPoint);
+        return;
+    }
     //FIXME - figure out which attributes to show with GPS points
     NSDictionary *attributes = @{@"date":gpsPoint.timestamp?:[NSNull null]};
-    AGSPoint *point = [AGSPoint pointWithX:gpsPoint.longitude y:gpsPoint.latitude spatialReference:self.wgs84];
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:point symbol:nil attributes:attributes infoTemplateDelegate:nil];
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
     [self.gpsPointsLayer addGraphic:graphic];
     
     //FIXME draw a tracklog polyline
@@ -792,6 +842,13 @@ typedef enum {
 
 - (GpsPoints *)createGpsPoint:(CLLocation *)gpsData
 {
+    if (!self.context) {
+        NSLog(@"Can't create GPS point, there is no data context (file)");
+        return nil;
+    }
+    if (self.lastGpsPointSaved && [self.lastGpsPointSaved.timestamp timeIntervalSinceDate:gpsData.timestamp] == 0) {
+        return self.lastGpsPointSaved;
+    }
     NSLog(@"Saving GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
     GpsPoints *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:@"GpsPoints"
                                                                           inManagedObjectContext:self.context];
@@ -809,6 +866,10 @@ typedef enum {
 
 - (Observations *)createObservation
 {
+    if (!self.context) {
+        NSLog(@"Can't create Observation, there is no data context (file)");
+        return nil;
+    }
     NSLog(@"Saving Observation");
     Observations *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observations"
                                                               inManagedObjectContext:self.context];
@@ -835,6 +896,9 @@ typedef enum {
         return nil;
     }
     Observations *observation = [self createObservation];
+    if (!observation) {
+        return nil;
+    }
     NSLog(@"Adding Adhoc Location to Observation");
     AdhocLocations *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:@"AdhocLocations"
                                                                           inManagedObjectContext:self.context];
@@ -858,6 +922,9 @@ typedef enum {
         return nil;
     }
     Observations *observation = [self createObservationAtGpsPoint:gpsPoint];
+    if (!observation) {
+        return nil;
+    }
     NSLog(@"Adding Angle = %f, Distance = %f, Course = %f to observation",
           location.absoluteAngle, location.distanceMeters, location.deadAhead);
     
@@ -878,5 +945,26 @@ typedef enum {
     return (GpsPoints *)[results lastObject]; // will return null if there was an error, or no results
 }
 
+- (BOOL) isNewLocation:(CLLocation *)location
+{
+    if (!self.lastGpsPointSaved)
+        return YES;
+    //0.0001 deg in latitude is about 18cm (<1foot) assuming a mean radius of 6371m, and less in longitude away from the equator. 
+    if (fabs(location.coordinate.latitude - self.lastGpsPointSaved.latitude) > 0.0001)
+        return YES;
+    if (fabs(location.coordinate.latitude - self.lastGpsPointSaved.latitude) > 0.0001)
+        return YES;
+    //FIXME is 10 seconds a good default?  do I want a user setting? this gets called a lot, so I don't want to slow down with a lookup
+    if ([location.timestamp timeIntervalSinceDate:self.lastGpsPointSaved.timestamp] > 10.0)
+        return YES;
+    return NO;
+}
+
+- (AGSPoint *) mapPointFromGpsPoint:(GpsPoints *)gpsPoint
+{
+    AGSPoint *point = [AGSPoint pointWithX:gpsPoint.longitude y:gpsPoint.latitude spatialReference:self.wgs84];
+    point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:point toSpatialReference:self.mapView.spatialReference];
+    return point;
+}
 
 @end

@@ -12,6 +12,8 @@
 
 -(AGSPoint *)pointWithAngle:(double)angle distance:(double)distance units:(AGSSRUnit)units
 {
+    //distance will be nan if units and spatialreference.units are not similar (i.e. both linear, or both angular)
+    //that is, you cannot use meters with geographic points, or degrees with projected points.
     distance = [self.spatialReference convertValue:distance fromUnit:units];
     //angle is clockwise from North, convert to math angle: counterclockwise from East = 0
     angle = 90.0 - angle;
