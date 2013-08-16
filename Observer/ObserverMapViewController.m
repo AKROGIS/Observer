@@ -22,7 +22,7 @@
 
 //FIXME - if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
 
-
+//FIXME - 2013-08-16 10:52 Creating an adhoc point threw an error: Illegal attempt to crreate a relationship (gpspoints) between entities in different contexts
 
 #import "ObserverMapViewController.h"
 #import "LocalMapsTableViewController.h"
