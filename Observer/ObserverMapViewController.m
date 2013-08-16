@@ -22,8 +22,6 @@
 
 //FIXME - if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
 
-//FIXME - 2013-08-16 10:52 Creating an adhoc point threw an error: Illegal attempt to crreate a relationship (gpspoints) between entities in different contexts
-
 #import "ObserverMapViewController.h"
 #import "LocalMapsTableViewController.h"
 #import "AngleDistanceViewController.h"
@@ -1000,7 +998,6 @@ typedef enum {
         return;
     }
     
-    //Get adhoc observations (gpsPoint is null and adhocLocation is non nil
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Observations"];
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.context executeFetchRequest:request error:&error];
@@ -1016,6 +1013,7 @@ typedef enum {
     for (GpsPoints *gpsPoint in results) {
         [self.context deleteObject:gpsPoint];        
     }
+    self.lastGpsPointSaved = nil;
 }
 
 @end
