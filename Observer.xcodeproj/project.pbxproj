@@ -99,6 +99,7 @@
 /* Begin PBXFileReference section */
 		3929196317BD5A3B008B0FFC /* AdhocLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdhocLocations.h; path = Model/AdhocLocations.h; sourceTree = "<group>"; };
 		3929196417BD5A3B008B0FFC /* AdhocLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdhocLocations.m; path = Model/AdhocLocations.m; sourceTree = "<group>"; };
+		3929196617BEB6A8008B0FFC /* Todo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Todo.rtf; sourceTree = "<group>"; };
 		393E8AFA17A2E1D8009AD0AC /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = Model/Settings.h; sourceTree = "<group>"; };
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
 		393E8AFD17A30012009AD0AC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -311,6 +312,7 @@
 				39955E56178334C000D225D7 /* main.m */,
 				39955E58178334C000D225D7 /* Observer-Prefix.pch */,
 				393E8AFD17A30012009AD0AC /* Settings.bundle */,
+				3929196617BEB6A8008B0FFC /* Todo.rtf */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
