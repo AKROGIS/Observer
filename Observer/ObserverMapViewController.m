@@ -330,12 +330,16 @@ typedef enum {
     if ([identifier isEqualToString:@"Push Local Map Table"])
     {
         if (self.mapsPopoverController) {
+            [self.mapsPopoverController dismissPopoverAnimated:YES];
+            self.mapsPopoverController = nil;
             return NO;
         }
     }
     if ([identifier isEqualToString:@"AngleDistancePopOver"])
     {
         if (self.angleDistancePopoverController) {
+            [self.angleDistancePopoverController dismissPopoverAnimated:YES];
+            self.angleDistancePopoverController = nil;
             return NO;
         }
         if (!self.mapView.locationDisplay.mapLocation) {
