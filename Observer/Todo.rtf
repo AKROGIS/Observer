@@ -154,49 +154,64 @@
 \pard\tx220\tx720\tx1120\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural
 \ls5\ilvl0\cf0 {\listtext	\'95	}Data files\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
+\ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}A survey on a device has an immutable protocol\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}if there is a new protocol for the survey, then there is a new version of the survey\
+\pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
+\ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}The user picks an active survey (can be null) from the list of downloaded survey property files\
+{\listtext	\uc0\u8259 	}There is a coredata file built specifically for each survey (or version of a survey)\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}a coredata file is specific to a protocol\
+{\listtext	\uc0\u8259 	}entities are created in the coredata file to match the protocol.\
+\pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}How are data files organized in the client app\
 {\listtext	\uc0\u8259 	}Does the user need to review/browse older files\
 {\listtext	\uc0\u8259 	}How is synchronization handled?\
-{\listtext	\uc0\u8259 	}Datafile ultimately needs to end up in ArcGIS\
+{\listtext	\uc0\u8259 	}Datafile ultimately needs to end up in SqlServer, ArcGIS, R (or CSV text file) \
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}preferrably a central SqlServer/SDE instance that the user can extract from\
+\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}preferably a central SqlServer/SDE instance that the user can extract from\
 {\listtext	\uc0\u8259 	}might be we should support a local FGDB option for those without access to central server\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}Might be nice to package the data for email or upload to web server for processing by others\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
 \ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}Imagine a contractor getting data that is emailed to NPS for review/upload\
+\pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
+\ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}How can we backup datafiles during extended remote missions\
 \pard\tx220\tx720\tx1120\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural
-\ls5\ilvl0\cf0 {\listtext	\'95	}Potential Master database design\
+\ls5\ilvl0\cf0 {\listtext	\'95	}Potential database design (defined by objects, no UML or SQL)\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}Surveys\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}1 Protocol\
+\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}Name (key)\
+\ls5\ilvl2{\listtext	\uc0\u8259 	}0..1 Protocol\
 {\listtext	\uc0\u8259 	}0..many Maps\
 {\listtext	\uc0\u8259 	}0..many Missions\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}Protocols\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}Name, Version\
-{\listtext	\uc0\u8259 	}1 MissionAttributeSet\
-{\listtext	\uc0\u8259 	}1..many  ObservationAttributeSet\
+\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}Name, Version (key)\
+{\listtext	\uc0\u8259 	}0..1 MissionAttributeSet\
+{\listtext	\uc0\u8259 	}0..many  ObservationAttributeSet\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}Maps\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}name, version, url, min scale max-scale, extents, ...\
+\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}Name, Version (key)\
+\ls5\ilvl2{\listtext	\uc0\u8259 	}url, min scale max-scale, extents, ...\
 \pard\tx940\tx1440\tx1680\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls5\ilvl1\cf0 {\listtext	\uc0\u8259 	}Missions\
 \pard\tx1660\tx2160\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}2..many MissionProperties (minimum start/stop mission properties)\
+\ls5\ilvl2\cf0 {\listtext	\uc0\u8259 	}0..many MissionProperties (usually there will be at least two which provide the start and stop datetime of the mission)\
 {\listtext	\uc0\u8259 	}0..many GpsPoints\
 {\listtext	\uc0\u8259 	}0..many Observations\
 \pard\tx940\tx1440\tx1680\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls6\ilvl1\cf0 {\listtext	\uc0\u8259 	}MissionAttributeSet\
 \pard\tx1660\tx2160\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}1..many Attributes\
+\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}0..many Attributes\
 \pard\tx940\tx1440\tx1680\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}ObservationAttributeSet\
 \pard\tx1660\tx2160\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}1..many Attributes\
+\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}0..many Attributes\
+\ls6\ilvl2{\listtext	\uc0\u8259 	}0..many ValidationRules\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
 \ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}0..1 ObservationLocationRequirements\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
@@ -207,11 +222,11 @@
 \ls6\ilvl3\cf0 {\listtext	\uc0\u8259 	}Most will get this from a related GPS record\
 {\listtext	\uc0\u8259 	}If a GPS point is unavailable, they will use an adhoc location and the current time\
 \pard\tx1660\tx2160\tx2240\tx2800\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}1 set of attribute values corresponding to the MissionAttributeSet defined for the Protocol\
+\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}0..1 set of attribute values corresponding to the MissionAttributeSet defined for the Protocol (maybe as JSON, or as dynamic coredata objects)\
 \pard\tx940\tx1440\tx1680\tx2240\tx2800\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls6\ilvl1\cf0 {\listtext	\uc0\u8259 	}GpsPoints\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}time, lot, long, altitude, speed, course, accuracy\
+\ls6\ilvl2\cf0 {\listtext	\uc0\u8259 	}time, lat, long, altitude, speed, course, accuracy\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls6\ilvl1\cf0 {\listtext	\uc0\u8259 	}Observations\
 \pard\tx1660\tx2160\tx2240\tx2800\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
@@ -226,11 +241,15 @@
 {\listtext	\uc0\u8259 	}Some will also have an angle and distance from the GPS point to the object being observed\
 {\listtext	\uc0\u8259 	}Some may not have a GPS point, but they will have a location and time in an adhoc location\
 \pard\tx1660\tx2160\tx2240\tx2800\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
-\ls7\ilvl2\cf0 {\listtext	\uc0\u8259 	}1 set of attribute values corresponding to the related attribute set\
+\ls7\ilvl2\cf0 {\listtext	\uc0\u8259 	}0..1 set of attribute values corresponding to the related attribute set (maybe as JSON, or as dynamic coredata objects)\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls8\ilvl1\cf0 {\listtext	\uc0\u8259 	}Attributes\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
 \ls8\ilvl2\cf0 {\listtext	\uc0\u8259 	}Name, datatype, default value, nullable, constraints: domain, range, validation rule\
+\pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
+\ls8\ilvl1\cf0 {\listtext	\uc0\u8259 	}ValidationRules\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls8\ilvl2\cf0 {\listtext	\uc0\u8259 	}required for inter-attribute relationships, not sure how to define, store, or use these yet.\
 \pard\tx940\tx1440\tx1680\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
 \ls8\ilvl1\cf0 {\listtext	\uc0\u8259 	}ObservationLocationRequirements\
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
