@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		3929196517BD5A3B008B0FFC /* AdhocLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 3929196417BD5A3B008B0FFC /* AdhocLocations.m */; };
+		3937599A17C2EA7A00A86595 /* Missions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3937599917C2EA7A00A86595 /* Missions.m */; };
+		3937599D17C2EAB000A86595 /* MissionProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 3937599C17C2EAB000A86595 /* MissionProperties.m */; };
+		393759A017C2EB9F00A86595 /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 3937599F17C2EB9F00A86595 /* Map.m */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
 		393E8B0217A32C59009AD0AC /* NSArray+Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8B0117A32C59009AD0AC /* NSArray+Map.m */; };
@@ -100,6 +103,12 @@
 		3929196317BD5A3B008B0FFC /* AdhocLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdhocLocations.h; path = Model/AdhocLocations.h; sourceTree = "<group>"; };
 		3929196417BD5A3B008B0FFC /* AdhocLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdhocLocations.m; path = Model/AdhocLocations.m; sourceTree = "<group>"; };
 		3929196617BEB6A8008B0FFC /* Todo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Todo.rtf; sourceTree = "<group>"; };
+		3937599817C2EA7A00A86595 /* Missions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Missions.h; path = Model/Missions.h; sourceTree = "<group>"; };
+		3937599917C2EA7A00A86595 /* Missions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Missions.m; path = Model/Missions.m; sourceTree = "<group>"; };
+		3937599B17C2EAB000A86595 /* MissionProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MissionProperties.h; path = Model/MissionProperties.h; sourceTree = "<group>"; };
+		3937599C17C2EAB000A86595 /* MissionProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MissionProperties.m; path = Model/MissionProperties.m; sourceTree = "<group>"; };
+		3937599E17C2EB9F00A86595 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Map.h; path = Model/Map.h; sourceTree = "<group>"; };
+		3937599F17C2EB9F00A86595 /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Map.m; path = Model/Map.m; sourceTree = "<group>"; };
 		393E8AFA17A2E1D8009AD0AC /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = Model/Settings.h; sourceTree = "<group>"; };
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
 		393E8AFD17A30012009AD0AC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -370,6 +379,10 @@
 		39955EC6178732B500D225D7 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				3937599B17C2EAB000A86595 /* MissionProperties.h */,
+				3937599C17C2EAB000A86595 /* MissionProperties.m */,
+				3937599817C2EA7A00A86595 /* Missions.h */,
+				3937599917C2EA7A00A86595 /* Missions.m */,
 				396775A317A083E8009ECD34 /* AGSPoint+AKRAdditions.h */,
 				396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */,
 				39D1D97417BC4FC00014C68F /* AngleDistanceLocations.h */,
@@ -392,6 +405,8 @@
 				39D1D96917BC4F080014C68F /* Observations.m */,
 				39D1D97B17BC51630014C68F /* ObserverModel.h */,
 				39D1D95017BAF0FD0014C68F /* ObserverModel.xcdatamodeld */,
+				3937599E17C2EB9F00A86595 /* Map.h */,
+				3937599F17C2EB9F00A86595 /* Map.m */,
 				3929196317BD5A3B008B0FFC /* AdhocLocations.h */,
 				3929196417BD5A3B008B0FFC /* AdhocLocations.m */,
 				393E8AFA17A2E1D8009AD0AC /* Settings.h */,
@@ -554,6 +569,9 @@
 				39D1D97617BC4FC10014C68F /* AngleDistanceLocations.m in Sources */,
 				39D1D97917BC50230014C68F /* GpsPoints.m in Sources */,
 				3929196517BD5A3B008B0FFC /* AdhocLocations.m in Sources */,
+				3937599A17C2EA7A00A86595 /* Missions.m in Sources */,
+				3937599D17C2EAB000A86595 /* MissionProperties.m in Sources */,
+				393759A017C2EB9F00A86595 /* Map.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
