@@ -58,7 +58,7 @@ typedef enum {
 @property (strong, nonatomic) AGSGraphicsLayer *gpsTracksLayer;
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
-@property (strong, nonatomic) GpsPoints *lastGpsPointSaved;
+@property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
 @property (nonatomic) int busyCount;
 
@@ -249,19 +249,19 @@ typedef enum {
 
 - (IBAction)addObservation:(UIBarButtonItem *)sender
 {
-    GpsPoints *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     //ignore the gpsPoint if it is over a second old
     if ([gpsPoint.timestamp timeIntervalSinceNow] < -2.0)
         gpsPoint = nil;
-    Observations *observation = [self createObservationAtGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
+    Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
     //FIXME - seque to popover to populate observation.attributes
 }
 
 - (IBAction)addObservationAtGPS:(UIBarButtonItem *)sender
 {
-    GpsPoints *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    Observations *observation = [self createObservationAtGpsPoint:gpsPoint];
+    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    Observation *observation = [self createObservationAtGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self drawObservation:observation atPoint:mapPoint];
     //FIXME - seque to popover to populate observation.attributes
@@ -380,7 +380,7 @@ typedef enum {
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
 
         //create/save current GpsPoint, because it may take a while for the user to enter an angle/distance
-        GpsPoints *gpsPoint = [self createGpsPoint:self.locationManager.location];
+        GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
         AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
         double currentCourse = gpsPoint.course;
         
@@ -405,7 +405,7 @@ typedef enum {
         vc.popover = pop.popoverController;
         vc.completionBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
-            Observations *observation = [self createObservationAtGpsPoint:gpsPoint withAngleDistanceLocation:sender.location];
+            Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAngleDistanceLocation:sender.location];
             [self drawObservation:observation atPoint:[sender.location pointFromPoint:mapPoint]];
             //FIXME - seque to popover to populate observation.attributes
         };
@@ -527,7 +527,7 @@ typedef enum {
     }
     else
     {
-        Observations *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
+        Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
         [self drawObservation:observation atPoint:mappoint];
         //FIXME - seque to popover to populate observation.attributes
     }
@@ -623,7 +623,7 @@ typedef enum {
     if (![self isNewLocation:location])
         return;
     
-    GpsPoints *gpsPoint = [self createGpsPoint:location];
+    GpsPoint *gpsPoint = [self createGpsPoint:location];
     //[self drawGpsPoint:gpsPoint atMapPoint:self.mapView.locationDisplay.mapLocation];
     //requires a reprojection of the point, but i'm not sure mapLocation and CLlocation will be in sync.
     [self drawGpsPoint:gpsPoint];
@@ -764,8 +764,8 @@ typedef enum {
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
-        NSLog(@"Error Fetching GpsPoints %@",error);
-    for (GpsPoints *gpsPoint in results) {
+        NSLog(@"Error Fetching GpsPoint %@",error);
+    for (GpsPoint *gpsPoint in results) {
         [self drawGpsPoint:gpsPoint];
         if (gpsPoint.observation) {
             [self loadObservation:gpsPoint.observation];
@@ -777,7 +777,7 @@ typedef enum {
     results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
         NSLog(@"Error Fetching Observations %@",error);
-    for (Observations *observation in results) {
+    for (Observation *observation in results) {
         [self loadObservation:observation];
     }    
 }
@@ -796,7 +796,7 @@ typedef enum {
     [self.mapView addMapLayer:self.observationsLayer withName:@"observations"];
 }
 
-- (void) loadObservation:(Observations *)observation
+- (void) loadObservation:(Observation *)observation
 {
     AGSPoint *point;
     if (observation.angleDistanceLocation) {
@@ -818,25 +818,25 @@ typedef enum {
 }
 
 
-- (void) drawObservation:(Observations *)observation atPoint:(AGSPoint *)mapPoint
+- (void) drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
 {
     if (!observation || !mapPoint) {
         NSLog(@"Cannot draw observation (%@).  It has no location", observation);
         return;
     }
-    NSDictionary *attributes = observation.attributes ? [self createAttributesFromObservation:observation] : nil;
+    NSDictionary *attributes = observation.attributeSet ? [self createAttributesFromObservation:observation] : nil;
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
     [self.observationsLayer addGraphic:graphic];
 }
 
-- (NSDictionary *) createAttributesFromObservation:(Observations *)observation
+- (NSDictionary *) createAttributesFromObservation:(Observation *)observation
 {
     //FIXME - need to define the attributes
     NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
     return attributes;
 }
 
-- (void) drawGpsPoint:(GpsPoints *)gpsPoint
+- (void) drawGpsPoint:(GpsPoint *)gpsPoint
 {
     if (!gpsPoint)
         return;
@@ -845,7 +845,7 @@ typedef enum {
     [self drawGpsPoint:gpsPoint atMapPoint:point];
 }
 
-- (void) drawGpsPoint:(GpsPoints *)gpsPoint atMapPoint:(AGSPoint *)mapPoint
+- (void) drawGpsPoint:(GpsPoint *)gpsPoint atMapPoint:(AGSPoint *)mapPoint
 {
     if (!gpsPoint || !mapPoint) {
         NSLog(@"Cannot draw gpsPoint (%@) @ mapPoint (%@)",gpsPoint, mapPoint);
@@ -859,7 +859,7 @@ typedef enum {
     //FIXME draw a tracklog polyline
 }
 
-- (GpsPoints *)createGpsPoint:(CLLocation *)gpsData
+- (GpsPoint *)createGpsPoint:(CLLocation *)gpsData
 {
     if (!self.context) {
         NSLog(@"Can't create GPS point, there is no data context (file)");
@@ -869,7 +869,7 @@ typedef enum {
         return self.lastGpsPointSaved;
     }
     NSLog(@"Saving GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
-    GpsPoints *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:@"GpsPoints"
+    GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:@"GpsPoint"
                                                                           inManagedObjectContext:self.context];
     gpsPoint.altitude = gpsData.altitude;
     gpsPoint.course = gpsData.course;
@@ -883,43 +883,43 @@ typedef enum {
     return gpsPoint;
 }
 
-- (Observations *)createObservation
+- (Observation *)createObservation
 {
     if (!self.context) {
         NSLog(@"Can't create Observation, there is no data context (file)");
         return nil;
     }
     NSLog(@"Saving Observation");
-    Observations *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observations"
+    Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observation"
                                                               inManagedObjectContext:self.context];
     //We don't have any attributes yet, that will get created/added later depending on the protocol
     return observation;
 }
 
-- (Observations *)createObservationAtGpsPoint:(GpsPoints *)gpsPoint
+- (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint
 {
     if (!gpsPoint) {
         NSLog(@"Can't save Observation at GPS point without a GPS Point");
         return nil;
     }
     NSLog(@"Saving Observation at GPS point");
-    Observations *observation = [self createObservation];
+    Observation *observation = [self createObservation];
     observation.gpsPoint = gpsPoint;
     return observation;
 }
 
-- (Observations *)createObservationAtGpsPoint:(GpsPoints *)gpsPoint withAdhocLocation:(AGSPoint *)mapPoint
+- (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint withAdhocLocation:(AGSPoint *)mapPoint
 {
     if (!mapPoint) {
         NSLog(@"Can't save Observation at Adhoc Location without a Map Point");
         return nil;
     }
-    Observations *observation = [self createObservation];
+    Observation *observation = [self createObservation];
     if (!observation) {
         return nil;
     }
     NSLog(@"Adding Adhoc Location to Observation");
-    AdhocLocations *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:@"AdhocLocations"
+    AdhocLocation *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:@"AdhocLocation"
                                                                           inManagedObjectContext:self.context];
     //mapPoint is in the map coordinates, convert to WGS84
     AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:self.wgs84];
@@ -934,20 +934,20 @@ typedef enum {
     return observation;
 }
 
-- (Observations *)createObservationAtGpsPoint:(GpsPoints *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)location
+- (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)location
 {
     if (!gpsPoint) {
         NSLog(@"Can't save Observation at Angle/Distance without a GPS Point");
         return nil;
     }
-    Observations *observation = [self createObservationAtGpsPoint:gpsPoint];
+    Observation *observation = [self createObservationAtGpsPoint:gpsPoint];
     if (!observation) {
         return nil;
     }
     NSLog(@"Adding Angle = %f, Distance = %f, Course = %f to observation",
           location.absoluteAngle, location.distanceMeters, location.deadAhead);
     
-    AngleDistanceLocations *angleDistance = [NSEntityDescription insertNewObjectForEntityForName:@"AngleDistanceLocations"
+    AngleDistanceLocation *angleDistance = [NSEntityDescription insertNewObjectForEntityForName:@"AngleDistanceLocation"
                                                                           inManagedObjectContext:self.context];
     angleDistance.angle = location.absoluteAngle;
     angleDistance.distance = location.distanceMeters;
@@ -956,12 +956,12 @@ typedef enum {
     return observation;
 }
 
-- (GpsPoints *)gpsPointAtTimestamp:(NSDate *)timestamp
+- (GpsPoint *)gpsPointAtTimestamp:(NSDate *)timestamp
 {
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoints"];
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
     request.predicate = [NSPredicate predicateWithFormat:@"timestamp = %@",timestamp];
     NSArray *results = [self.context executeFetchRequest:request error:nil];
-    return (GpsPoints *)[results lastObject]; // will return null if there was an error, or no results
+    return (GpsPoint *)[results lastObject]; // will return null if there was an error, or no results
 }
 
 - (BOOL) isNewLocation:(CLLocation *)location
@@ -979,7 +979,7 @@ typedef enum {
     return NO;
 }
 
-- (AGSPoint *) mapPointFromGpsPoint:(GpsPoints *)gpsPoint
+- (AGSPoint *) mapPointFromGpsPoint:(GpsPoint *)gpsPoint
 {
     AGSPoint *point = [AGSPoint pointWithX:gpsPoint.longitude y:gpsPoint.latitude spatialReference:self.wgs84];
     point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:point toSpatialReference:self.mapView.spatialReference];
@@ -998,19 +998,19 @@ typedef enum {
         return;
     }
     
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Observations"];
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
-        NSLog(@"Error Fetching Observations %@",error);
-    for (Observations *observation in results) {
+        NSLog(@"Error Fetching Observation %@",error);
+    for (Observation *observation in results) {
         [self.context deleteObject:observation];
     }
-    request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoints"];
+    request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
     results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
-        NSLog(@"Error Fetching GpsPoints %@",error);
-    for (GpsPoints *gpsPoint in results) {
+        NSLog(@"Error Fetching GpsPoints%@",error);
+    for (GpsPoint *gpsPoint in results) {
         [self.context deleteObject:gpsPoint];        
     }
     self.lastGpsPointSaved = nil;
