@@ -300,6 +300,7 @@ typedef enum {
     self.mapView.layerDelegate = self;
     self.mapView.touchDelegate = self;
     self.mapView.calloutDelegate = self;
+    self.mapView.allowRotationByPinching = YES;
     dispatch_queue_t loadQueue = dispatch_queue_create("loadLocalMaps", NULL);
     dispatch_async(loadQueue, ^{
         [self.maps loadLocalMaps];
@@ -312,6 +313,7 @@ typedef enum {
 - (void) viewDidAppear:(BOOL)animated {
     NSLog(@"View Did Appear");
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapDidPan:) name:AGSMapViewDidEndPanningNotification object:self.mapView];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapDidZoom:) name:AGSMapViewDidEndZoomingNotification object:self.mapView];
     [super viewDidAppear:animated];
 }
 
@@ -640,12 +642,19 @@ typedef enum {
         self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
         self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
     }
+
+    [self rotateNorthArrowToDegrees:-1*self.mapView.rotationAngle];
+
 }
 
+- (void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
+{
+    [self rotateNorthArrowToDegrees:-1*self.mapView.rotationAngle];
+}
 
 #pragma mark - Private Methods
 
-- (IBAction)toggleGps:(UIBarButtonItem *)sender {
+- (void) toggleGps:(UIBarButtonItem *)sender {
     if (sender.style == UIBarButtonItemStyleDone)
         [self turnOffGPS];
     else
@@ -703,6 +712,14 @@ typedef enum {
     }
 }
 
+- (void) rotateNorthArrowToDegrees:(double)degrees
+{
+    NSLog(@"Rotating compass icon to %f degrees", degrees);
+    double radians = degrees * M_PI / 180.0;
+    //angle in radians with positive being counterclockwise (on iOS)
+    self.northButton2.transform = CGAffineTransformMakeRotation(radians);
+}
+
 - (void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     self.mapView.locationDisplay.interfaceOrientation = toInterfaceOrientation;
@@ -757,7 +774,7 @@ typedef enum {
         return;
     }
     [self clearGraphics];
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoints"];
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
@@ -769,7 +786,7 @@ typedef enum {
         }
     }
     //Get adhoc observations (gpsPoint is null and adhocLocation is non nil
-    request = [NSFetchRequest fetchRequestWithEntityName:@"Observations"];
+    request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
     request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint == NIL AND adhocLocation != NIL"];
     results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
