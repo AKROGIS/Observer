@@ -1,18 +1,18 @@
 //
-//  Missions.m
+//  Mission.m
 //  Observer
 //
 //  Created by Regan Sarwas on 8/19/13.
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
-#import "Missions.h"
-#import "GpsPoints.h"
-#import "MissionProperties.h"
-#import "Observations.h"
+#import "Mission.h"
+#import "GpsPoint.h"
+#import "MissionProperty.h"
+#import "Observation.h"
 
 
-@implementation Missions
+@implementation Mission
 
 @dynamic gpsPoints;
 @dynamic missionProperties;

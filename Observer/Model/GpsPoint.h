@@ -1,17 +1,17 @@
 //
-//  GpsPoints.h
+//  GpsPoint.h
 //  Observer
 //
-//  Created by Regan Sarwas on 8/14/13.
+//  Created by Regan Sarwas on 8/19/13.
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Observations;
+@class Mission, MissionProperty, Observation;
 
-@interface GpsPoints : NSManagedObject
+@interface GpsPoint : NSManagedObject
 
 @property (nonatomic) double altitude;
 @property (nonatomic) double course;
@@ -21,6 +21,8 @@
 @property (nonatomic) double speed;
 @property (nonatomic, retain) NSDate *timestamp;
 @property (nonatomic) double verticalAccuracy;
-@property (nonatomic, retain) Observations *observation;
+@property (nonatomic, retain) Mission *mission;
+@property (nonatomic, retain) MissionProperty *missionProperty;
+@property (nonatomic, retain) Observation *observation;
 
 @end

@@ -7,7 +7,7 @@
 //
 
 #import "Map.h"
-#import "AdhocLocations.h"
+#import "AdhocLocation.h"
 
 
 @implementation Map

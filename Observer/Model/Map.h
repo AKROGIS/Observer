@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class AdhocLocations;
+@class AdhocLocation;
 
 @interface Map : NSManagedObject
 
@@ -20,8 +20,8 @@
 
 @interface Map (CoreDataGeneratedAccessors)
 
-- (void)addAdhocLocationsObject:(AdhocLocations *)value;
-- (void)removeAdhocLocationsObject:(AdhocLocations *)value;
+- (void)addAdhocLocationsObject:(AdhocLocation *)value;
+- (void)removeAdhocLocationsObject:(AdhocLocation *)value;
 - (void)addAdhocLocations:(NSSet *)values;
 - (void)removeAdhocLocations:(NSSet *)values;
 

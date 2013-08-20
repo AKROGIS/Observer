@@ -9,17 +9,17 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-#import "AdhocLocations.h"
+#import "AdhocLocation.h"
 #import "AGSPoint+AKRAdditions.h"
-#import "AngleDistanceLocations.h"
-#import "Attributes.h"
+#import "AngleDistanceLocation.h"
+#import "AttributeSet.h"
 #import "BaseMap.h"
 #import "BaseMapManager.h"
 #import "Enumerations.h"
-#import "GpsPoints.h"
+#import "GpsPoint.h"
 #import "LocationAngleDistance.h"
 #import "NSArray+Map.h"
-#import "Observations.h"
+#import "Observation.h"
 #import "Settings.h"
 #import "SurveyProtocol.h"
 

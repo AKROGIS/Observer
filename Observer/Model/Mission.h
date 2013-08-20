@@ -1,5 +1,5 @@
 //
-//  Missions.h
+//  Mission.h
 //  Observer
 //
 //  Created by Regan Sarwas on 8/19/13.
@@ -9,29 +9,29 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class GpsPoints, MissionProperties, Observations;
+@class GpsPoint, MissionProperty, Observation;
 
-@interface Missions : NSManagedObject
+@interface Mission : NSManagedObject
 
 @property (nonatomic, retain) NSSet *gpsPoints;
 @property (nonatomic, retain) NSSet *missionProperties;
 @property (nonatomic, retain) NSSet *observations;
 @end
 
-@interface Missions (CoreDataGeneratedAccessors)
+@interface Mission (CoreDataGeneratedAccessors)
 
-- (void)addGpsPointsObject:(GpsPoints *)value;
-- (void)removeGpsPointsObject:(GpsPoints *)value;
+- (void)addGpsPointsObject:(GpsPoint *)value;
+- (void)removeGpsPointsObject:(GpsPoint *)value;
 - (void)addGpsPoints:(NSSet *)values;
 - (void)removeGpsPoints:(NSSet *)values;
 
-- (void)addMissionPropertiesObject:(MissionProperties *)value;
-- (void)removeMissionPropertiesObject:(MissionProperties *)value;
+- (void)addMissionPropertiesObject:(MissionProperty *)value;
+- (void)removeMissionPropertiesObject:(MissionProperty *)value;
 - (void)addMissionProperties:(NSSet *)values;
 - (void)removeMissionProperties:(NSSet *)values;
 
-- (void)addObservationsObject:(Observations *)value;
-- (void)removeObservationsObject:(Observations *)value;
+- (void)addObservationsObject:(Observation *)value;
+- (void)removeObservationsObject:(Observation *)value;
 - (void)addObservations:(NSSet *)values;
 - (void)removeObservations:(NSSet *)values;
 
