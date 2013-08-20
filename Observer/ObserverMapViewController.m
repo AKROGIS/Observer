@@ -45,7 +45,6 @@ typedef enum {
 
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem *gpsButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *panButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *northButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *panStyleButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *northButton2;
@@ -155,6 +154,7 @@ typedef enum {
     }
 }
 
+//FIXME - Used for testing, get from SurveyFile
 - (SurveyProtocol *)protocol
 {
     if (!_protocol) {
@@ -181,13 +181,6 @@ typedef enum {
 
 - (IBAction)tap:(UITapGestureRecognizer *)sender {
     NSLog(@"User Tap");
-}
-
-- (IBAction)hideBaseMap:(UIBarButtonItem *)sender {
-    if ([self.mapView.mapLayers count] > 0) {
-        AGSLayer *basemap = self.mapView.mapLayers[0];
-        basemap.visible = !basemap.visible;
-    }
 }
 
 - (IBAction)togglePanMode:(UIBarButtonItem *)sender {
@@ -218,12 +211,15 @@ typedef enum {
     if (sender.style == UIBarButtonItemStyleDone) {
         NSLog(@"stop recording");
         sender.style = UIBarButtonItemStyleBordered;
+        [self stopMission];
     }
     else{
         NSLog(@"start recording");
         sender.style = UIBarButtonItemStyleDone;
+        [self startMission];
     }
 }
+
 - (IBAction)resetNorth:(UIButton *)sender {
     [self.mapView setRotationAngle:0 animated:YES];
     CATransition *animation = [CATransition animation];
@@ -231,11 +227,6 @@ typedef enum {
     animation.duration = 0.4;
     [sender.layer addAnimation:animation forKey:nil];
     sender.hidden = YES;
-}
-
-- (IBAction)setNorthUp:(UIBarButtonItem *)sender {
-    [self.mapView setRotationAngle:0 animated:YES];
-    sender.enabled = NO;
 }
 
 - (IBAction)togglePanStyle:(UIBarButtonItem *)sender {
@@ -247,7 +238,14 @@ typedef enum {
     self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];    
 }
 
-- (IBAction)addObservation:(UIBarButtonItem *)sender
+- (IBAction)addMissionProperty:(UIBarButtonItem *)sender {
+    NSLog(@"Add Mission Property");
+    //FIXME
+    //if gps, then add at GPS else add adhoc at current location
+    //launch pop up to enter attributes, use existing as defaults
+}
+
+- (IBAction)addAdhocObservation:(UIBarButtonItem *)sender
 {
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     //ignore the gpsPoint if it is over a second old
@@ -258,7 +256,7 @@ typedef enum {
     //FIXME - seque to popover to populate observation.attributes
 }
 
-- (IBAction)addObservationAtGPS:(UIBarButtonItem *)sender
+- (IBAction)addGpsObservation:(UIBarButtonItem *)sender
 {
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     Observation *observation = [self createObservationAtGpsPoint:gpsPoint];
@@ -661,7 +659,7 @@ typedef enum {
     [self.mapView.locationDisplay startDataSource];
     //self.gpsButton.style = UIBarButtonItemStyleDone;
     self.panButton.enabled = YES;
-    self.northButton.enabled = NO;
+    self.northButton2.enabled = NO;
     self.recordButton.enabled = YES;
     
     self.userWantsAutoPanOn = [Settings manager].autoPanEnabled;
@@ -689,7 +687,6 @@ typedef enum {
 {
     if (self.mapView.rotationAngle != 0)
     {
-        self.northButton.enabled = YES;
         if (self.northButton2.hidden)
         {
             CATransition *animation = [CATransition animation];
@@ -702,7 +699,7 @@ typedef enum {
     if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation ||
         self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation)
     {
-        self.northButton.enabled = NO;
+        self.northButton2.enabled = NO;
     }
 }
 
@@ -1014,6 +1011,16 @@ typedef enum {
         [self.context deleteObject:gpsPoint];        
     }
     self.lastGpsPointSaved = nil;
+}
+
+- (void) startMission
+{
+    
+}
+
+- (void) stopMission
+{
+    
 }
 
 @end
