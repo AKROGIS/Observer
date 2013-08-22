@@ -612,7 +612,8 @@ typedef enum {
 
 - (void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    
+    [self rotateNorthArrow];
+
     //monitor the velocity to auto switch between AGSLocation Auto Pan Mode between navigation and heading
     CLLocation *location = [locations lastObject];
 #pragma warn - simulator returns -1 for speed, so ignore it for testing.  remove from production code.
@@ -643,13 +644,15 @@ typedef enum {
         self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
     }
 
-    [self rotateNorthArrowToDegrees:-1*self.mapView.rotationAngle];
-
 }
 
 - (void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
-    [self rotateNorthArrowToDegrees:-1*self.mapView.rotationAngle];
+    //This is choppy, because it isn't synchronized with the map rotation.  Unfortunately, subclassing AGSMapView
+    //didn't help, because it does the rotation in the c++ backend, not through the UIView or AGSMapView interface
+    //Maybe I should try turning off the AutoRotate mode of the mapView LocationDisplay and do the
+    //rotations myself.
+    [self rotateNorthArrow];
 }
 
 #pragma mark - Private Methods
@@ -712,8 +715,9 @@ typedef enum {
     }
 }
 
-- (void) rotateNorthArrowToDegrees:(double)degrees
+- (void) rotateNorthArrow
 {
+    double degrees = -1*self.mapView.rotationAngle;
     NSLog(@"Rotating compass icon to %f degrees", degrees);
     double radians = degrees * M_PI / 180.0;
     //angle in radians with positive being counterclockwise (on iOS)
