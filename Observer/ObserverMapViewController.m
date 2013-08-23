@@ -221,6 +221,7 @@ typedef enum {
 }
 
 - (IBAction)resetNorth:(UIButton *)sender {
+    NSLog(@"Reset North");
     [self.mapView setRotationAngle:0 animated:YES];
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionFade;
@@ -671,7 +672,6 @@ typedef enum {
     [self.mapView.locationDisplay startDataSource];
     //self.gpsButton.style = UIBarButtonItemStyleDone;
     self.panButton.enabled = YES;
-    self.northButton2.enabled = NO;
     self.recordButton.enabled = YES;
     
     self.userWantsAutoPanOn = [Settings manager].autoPanEnabled;
@@ -697,21 +697,23 @@ typedef enum {
 
 - (void) checkIfMapIsRotated
 {
+    //FIXME - there is too much delay before the compass appears 
     if (self.mapView.rotationAngle != 0)
     {
         if (self.northButton2.hidden)
         {
-            CATransition *animation = [CATransition animation];
-            animation.type = kCATransitionFade;
-            animation.duration = 0.4;
-            [self.northButton2.layer addAnimation:animation forKey:nil];
+            //CATransition *animation = [CATransition animation];
+            //animation.type = kCATransitionFade;
+            //animation.duration = 0.4;
+            //[self.northButton2.layer addAnimation:animation forKey:nil];
             self.northButton2.hidden = NO;
         }
     }
+    //FIXME - what was I trying to do here?
     if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation ||
         self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation)
     {
-        self.northButton2.enabled = NO;
+        //self.northButton2.enabled = NO;
     }
 }
 
