@@ -33,4 +33,17 @@
 @property (strong, nonatomic) NSArray *segmentAttributes;
 
 
+// Open the coredata model
+- (void) openModel;
+
+// Save the coredata model
+- (void) saveModel;
+
+// Close the coredata model
+- (void) closeModel;
+
+@property (nonatomic, weak) id delegate;
+
+@property (nonatomic, strong, readonly) NSManagedObjectContext *managedObjectContext;
+
 @end

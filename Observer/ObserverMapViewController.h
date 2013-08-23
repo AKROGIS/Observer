@@ -14,4 +14,9 @@
 @property (nonatomic) BOOL busy;
 @property (nonatomic,weak) NSManagedObjectContext *context;
 
+
+- (void) closeModel;
+
+- (void) saveModel;
+
 @end

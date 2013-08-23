@@ -1046,4 +1046,16 @@ typedef enum {
     
 }
 
+- (void) saveModel
+{
+    [self.protocol saveModel];
+}
+
+- (void) closeModel
+{
+    [self.protocol closeModel];
+}
+
+
+
 @end
