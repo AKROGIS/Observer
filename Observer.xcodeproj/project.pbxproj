@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		391EE9FA17C6EA48007B050B /* ProtocolManagedDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 391EE9F917C6EA48007B050B /* ProtocolManagedDocument.m */; };
 		393759A317C2EE4900A86595 /* AdhocLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759A217C2EE4900A86595 /* AdhocLocation.m */; };
 		393759A617C2EE5A00A86595 /* AngleDistanceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759A517C2EE5A00A86595 /* AngleDistanceLocation.m */; };
 		393759A917C2EE6A00A86595 /* AttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759A817C2EE6A00A86595 /* AttributeSet.m */; };
@@ -100,6 +101,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		391EE9F817C6EA48007B050B /* ProtocolManagedDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolManagedDocument.h; path = Model/ProtocolManagedDocument.h; sourceTree = "<group>"; };
+		391EE9F917C6EA48007B050B /* ProtocolManagedDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolManagedDocument.m; path = Model/ProtocolManagedDocument.m; sourceTree = "<group>"; };
 		3929196617BEB6A8008B0FFC /* Todo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Todo.rtf; sourceTree = "<group>"; };
 		393759A117C2EE4900A86595 /* AdhocLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdhocLocation.h; path = Model/AdhocLocation.h; sourceTree = "<group>"; };
 		393759A217C2EE4900A86595 /* AdhocLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdhocLocation.m; path = Model/AdhocLocation.m; sourceTree = "<group>"; };
@@ -413,6 +416,8 @@
 				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
 				39B92FC817A7380B00C62145 /* SurveyProtocol.h */,
 				39B92FC917A7380B00C62145 /* SurveyProtocol.m */,
+				391EE9F817C6EA48007B050B /* ProtocolManagedDocument.h */,
+				391EE9F917C6EA48007B050B /* ProtocolManagedDocument.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -572,6 +577,7 @@
 				393759B217C2EE9C00A86595 /* Mission.m in Sources */,
 				393759B517C2EEAD00A86595 /* MissionProperty.m in Sources */,
 				393759B817C2EEBD00A86595 /* Observation.m in Sources */,
+				391EE9FA17C6EA48007B050B /* ProtocolManagedDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

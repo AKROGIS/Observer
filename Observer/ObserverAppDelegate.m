@@ -9,6 +9,7 @@
 #import "ObserverAppDelegate.h"
 #import "ObserverMapViewController.h"
 #import <CoreData/CoreData.h>
+#import "ProtocolManagedDocument.h"
 
 #define FILE_NAME @"res_core_data"
 
@@ -124,7 +125,7 @@
 //Async Loader, wait for documentIsOpen, documentOpenFailed, or documentCreateFailed
 - (void) openDocument
 {
-    self.document = [[UIManagedDocument alloc] initWithFileURL:self.url];
+    self.document = [[ProtocolManagedDocument alloc] initWithFileURL:self.url];
     BOOL documentExists = [[NSFileManager defaultManager] fileExistsAtPath:[self.url path]];
     if (documentExists) {
         [self.document openWithCompletionHandler:^ (BOOL success) {
