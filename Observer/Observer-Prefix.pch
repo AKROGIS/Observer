@@ -13,4 +13,5 @@
     #import <Foundation/Foundation.h>
     #import <CoreData/CoreData.h>
     #import <ArcGIS/ArcGIS.h>
+    #import <QuickDialog/QuickDialog.h>
 #endif
