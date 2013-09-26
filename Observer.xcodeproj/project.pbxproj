@@ -274,6 +274,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		391D0EE017F4F99700D8C5DF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				39B92FD117A869B500C62145 /* RadioStyleTableViewCell.h */,
+				39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		391D0EE217F4F9A000D8C5DF /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				39955ECD1787336800D225D7 /* LocalMapsTableViewController.h */,
+				39955ECE1787336800D225D7 /* LocalMapsTableViewController.m */,
+				39955ED0178733B900D225D7 /* ObserverMapViewController.h */,
+				39955ED1178733B900D225D7 /* ObserverMapViewController.m */,
+				396775C617A1C7B5009ECD34 /* AngleDistanceViewController.h */,
+				396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */,
+				39B92FCE17A73F5700C62145 /* AngleDistanceSettingsTableViewController.h */,
+				39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
 		39955E3E178334BF00D225D7 = {
 			isa = PBXGroup;
 			children = (
@@ -319,22 +343,14 @@
 		39955E50178334BF00D225D7 /* Observer */ = {
 			isa = PBXGroup;
 			children = (
-				39955EC6178732B500D225D7 /* Model */,
+				391D0EE217F4F9A000D8C5DF /* ViewControllers */,
+				391D0EE017F4F99700D8C5DF /* Views */,
+				39955EC6178732B500D225D7 /* Models */,
 				39955E59178334C000D225D7 /* ObserverAppDelegate.h */,
 				39955E5A178334C000D225D7 /* ObserverAppDelegate.m */,
 				39955E62178334C000D225D7 /* MainStoryboard_iPhone.storyboard */,
 				39955E65178334C000D225D7 /* MainStoryboard_iPad.storyboard */,
 				39955E51178334C000D225D7 /* Supporting Files */,
-				39955ECD1787336800D225D7 /* LocalMapsTableViewController.h */,
-				39955ECE1787336800D225D7 /* LocalMapsTableViewController.m */,
-				39955ED0178733B900D225D7 /* ObserverMapViewController.h */,
-				39955ED1178733B900D225D7 /* ObserverMapViewController.m */,
-				396775C617A1C7B5009ECD34 /* AngleDistanceViewController.h */,
-				396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */,
-				39B92FCE17A73F5700C62145 /* AngleDistanceSettingsTableViewController.h */,
-				39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */,
-				39B92FD117A869B500C62145 /* RadioStyleTableViewCell.h */,
-				39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */,
 			);
 			path = Observer;
 			sourceTree = "<group>";
@@ -404,7 +420,7 @@
 			path = Images;
 			sourceTree = "<group>";
 		};
-		39955EC6178732B500D225D7 /* Model */ = {
+		39955EC6178732B500D225D7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				393759B617C2EEBD00A86595 /* Observation.h */,
@@ -444,7 +460,7 @@
 				391EE9F817C6EA48007B050B /* ProtocolManagedDocument.h */,
 				391EE9F917C6EA48007B050B /* ProtocolManagedDocument.m */,
 			);
-			name = Model;
+			name = Models;
 			sourceTree = "<group>";
 		};
 		39B8B10517E286AF00CF6458 /* Products */ = {

@@ -58,12 +58,7 @@
 
 - (ObserverMapViewController *)masterVC
 {
-    if (!_masterVC)
-    {
-        UINavigationController *rvc = (UINavigationController *)self.window.rootViewController;
-        _masterVC = (ObserverMapViewController *)rvc.viewControllers[0];
-    }
-    return _masterVC;
+    return (ObserverMapViewController *)self.window.rootViewController;
 }
 
 
