@@ -367,7 +367,8 @@ typedef enum {
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:@"Push Local Map Table"])
     {
-        LocalMapsTableViewController *dvc = [segue destinationViewController];
+        UINavigationController *nav1 = [segue destinationViewController];
+        LocalMapsTableViewController *dvc = (LocalMapsTableViewController *)nav1.viewControllers[0];
         dvc.maps = self.maps;
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
         self.mapsPopoverController = pop.popoverController;
