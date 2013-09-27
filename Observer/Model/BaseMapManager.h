@@ -23,7 +23,7 @@
 @property (weak, nonatomic) id <MapMonitoring> delegate;
 
 
-//A convenience to ensure that the maps are loaded, probably done on a background thread
+//A convenience to ensure that the maps are loaded, probably done on a background thread, at startup
 - (void) loadLocalMaps;
 
 - (NSUInteger) count;

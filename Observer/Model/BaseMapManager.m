@@ -72,21 +72,7 @@ static BaseMapManager * _sharedManager;
 //lazy instantiation
 - (NSMutableArray *)maps {
     if (!_maps) {
-        _maps = [[NSMutableArray alloc] init];
-        NSArray *localMapURLs = [Settings manager].maps;
-        NSMutableSet *files = [NSMutableSet setWithArray:[self mapURLsInFileManager]];
-        // create maps in order from urls saved in defaults  IFF they are found in filesystem
-        for (NSString *urlString in localMapURLs) {
-            NSURL *url = [NSURL URLWithString:urlString];
-            if ([files containsObject:url]) {
-                [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
-                [files removeObject:url];
-            }
-        }
-        //Add any other maps in filesystem (maybe added via iTunes) to end of list from defaults
-        for (NSURL *url in files) {
-            [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
-        }
+        _maps = [self getLocalMaps];
     }
     return _maps;
 }
@@ -96,7 +82,7 @@ static BaseMapManager * _sharedManager;
 
 - (void) loadLocalMaps
 {
-    [self currentMap]; //acessing the current map will lazy load it and the map list
+    _maps = [self getLocalMaps];
     return;
 }
 
@@ -300,6 +286,26 @@ static BaseMapManager * _sharedManager;
 
 
 #pragma mark - Private Methods
+
+- (NSMutableArray *) /* of Map */ getLocalMaps
+{
+    NSMutableArray *maps = [[NSMutableArray alloc] init];
+    NSArray *localMapURLs = [Settings manager].maps;
+    NSMutableSet *files = [NSMutableSet setWithArray:[self mapURLsInFileManager]];
+    // create maps in order from urls saved in defaults  IFF they are found in filesystem
+    for (NSString *urlString in localMapURLs) {
+        NSURL *url = [NSURL URLWithString:urlString];
+        if ([files containsObject:url]) {
+            [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
+            [files removeObject:url];
+        }
+    }
+    //Add any other maps in filesystem (maybe added via iTunes) to end of list from defaults
+    for (NSURL *url in files) {
+        [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
+    }
+    return maps;
+}
 
 - (NSArray *) /* of NSURL */ mapURLsInFileManager
 {
