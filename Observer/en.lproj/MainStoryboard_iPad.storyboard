@@ -68,7 +68,7 @@
                                     </barButtonItem>
                                     <barButtonItem title="+MP" id="Fdi-yp-sWi">
                                         <connections>
-                                            <action selector="addMissionProperty:" destination="TiC-11-YSU" id="m0v-ww-sUH"/>
+                                            <action selector="changeEnvironment:" destination="TiC-11-YSU" id="ICq-DA-pR3"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem title="+AD" id="XBC-1H-O73">
@@ -139,10 +139,8 @@
                         <outlet property="addObservationBarButton" destination="zVE-98-VDX" id="DG8-bz-NK6"/>
                         <outlet property="barTitle" destination="97o-hf-0bj" id="Ge6-pr-dwQ"/>
                         <outlet property="editEnvironmentBarButton" destination="Fdi-yp-sWi" id="cJv-sd-s4Y"/>
-                        <outlet property="environmentBarButton" destination="Fdi-yp-sWi" id="4uO-3x-LmQ"/>
                         <outlet property="mapLoadingIndicator" destination="zJv-q7-y2x" id="hBV-WL-ipD"/>
                         <outlet property="mapView" destination="gK6-lQ-eLV" id="1kI-MU-Eog"/>
-                        <outlet property="mapsButton" destination="gJK-vn-5w7" id="0li-so-zLz"/>
                         <outlet property="noMapLabel" destination="009-3q-8gq" id="t2W-18-0Iw"/>
                         <outlet property="northButton2" destination="fOP-b6-5IU" id="qxr-us-yGI"/>
                         <outlet property="panButton" destination="jXA-Ll-IBJ" id="ANP-0w-d3Q"/>
@@ -150,7 +148,6 @@
                         <outlet property="recordButton" destination="fCO-tO-IRq" id="qHA-uf-NP4"/>
                         <outlet property="selectMapButton" destination="gJK-vn-5w7" id="H0i-2C-naE"/>
                         <outlet property="selectSurveyButton" destination="SCL-a5-7Et" id="aeX-q0-EBn"/>
-                        <outlet property="surveysButton" destination="SCL-a5-7Et" id="weG-Ct-nHi"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dpZ-sC-Ovn" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -254,12 +254,12 @@ typedef enum {
     self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];    
 }
 
-- (IBAction)addMissionProperty:(UIBarButtonItem *)sender {
-    NSLog(@"Add Mission Property");
-    //FIXME
-    //if gps, then add at GPS else add adhoc at current location
-    //launch pop up to enter attributes, use existing as defaults
-}
+//- (IBAction)addMissionProperty:(UIBarButtonItem *)sender {
+//    NSLog(@"Add Mission Property");
+//    //FIXME
+//    //if gps, then add at GPS else add adhoc at current location
+//    //launch pop up to enter attributes, use existing as defaults
+//}
 
 - (IBAction)addAdhocObservation:(UIBarButtonItem *)sender
 {
@@ -269,7 +269,9 @@ typedef enum {
         gpsPoint = nil;
     Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
-    //FIXME - seque to popover to populate observation.attributes
+    //TODO: support more than one type of observation
+    [self collectObservation:sender];
+    //FIXME: - update observation.attributes
 }
 
 - (IBAction)addGpsObservation:(UIBarButtonItem *)sender
@@ -278,7 +280,9 @@ typedef enum {
     Observation *observation = [self createObservationAtGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self drawObservation:observation atPoint:mapPoint];
-    //FIXME - seque to popover to populate observation.attributes
+    //TODO: support more than one type of observation
+    [self collectObservation:sender];
+    //FIXME: - update observation.attributes
 }
 
 - (IBAction)clearData:(UIBarButtonItem *)sender
@@ -1193,6 +1197,11 @@ typedef enum {
 
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
+    NSLog(@"Add Mission Property");
+    //FIXME
+    //if gps, then add at GPS else add adhoc at current location
+    //launch pop up to enter attributes, use existing as defaults
+
     if (self.quickDialogPopoverController) {
         return;
     }
@@ -1207,7 +1216,7 @@ typedef enum {
     [self.quickDialogPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 }
 
-- (IBAction)collectObservation:(UIBarButtonItem *)sender
+- (void)collectObservation:(UIBarButtonItem *)barButton
 {
     if (self.quickDialogPopoverController) {
         return;
@@ -1224,7 +1233,7 @@ typedef enum {
     self.quickDialogPopoverController = [[UIPopoverController alloc] initWithContentViewController:navigationController];
     self.quickDialogPopoverController.delegate = self;
     //self.popover.popoverContentSize = CGSizeMake(644, 425);
-    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:barButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 }
 
 // not called when popover is dismissed programatically - use callbacks instead
