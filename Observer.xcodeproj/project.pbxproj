@@ -18,6 +18,9 @@
 		393759B817C2EEBD00A86595 /* Observation.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759B717C2EEBD00A86595 /* Observation.m */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
+		394CC22D1858D0EC00FA859C /* ProtocolDocumentIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 394CC22A1858D0EC00FA859C /* ProtocolDocumentIcon.png */; };
+		394CC22E1858D0EC00FA859C /* SurveyDocumentIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 394CC22B1858D0EC00FA859C /* SurveyDocumentIcon.png */; };
+		394CC22F1858D0EC00FA859C /* TilePackageIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 394CC22C1858D0EC00FA859C /* TilePackageIcon.png */; };
 		396775071798C800009ECD34 /* compass.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775031798C800009ECD34 /* compass.png */; };
 		396775081798C800009ECD34 /* compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775041798C800009ECD34 /* compass@2x.png */; };
 		396775091798C800009ECD34 /* heading.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775051798C800009ECD34 /* heading.png */; };
@@ -167,6 +170,9 @@
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
 		393E8AFD17A30012009AD0AC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		393E8AFF17A318F5009AD0AC /* Enumerations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Enumerations.h; path = Model/Enumerations.h; sourceTree = "<group>"; };
+		394CC22A1858D0EC00FA859C /* ProtocolDocumentIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ProtocolDocumentIcon.png; sourceTree = "<group>"; };
+		394CC22B1858D0EC00FA859C /* SurveyDocumentIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SurveyDocumentIcon.png; sourceTree = "<group>"; };
+		394CC22C1858D0EC00FA859C /* TilePackageIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TilePackageIcon.png; sourceTree = "<group>"; };
 		396775031798C800009ECD34 /* compass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = compass.png; sourceTree = "<group>"; };
 		396775041798C800009ECD34 /* compass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "compass@2x.png"; sourceTree = "<group>"; };
 		396775051798C800009ECD34 /* heading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = heading.png; sourceTree = "<group>"; };
@@ -543,6 +549,9 @@
 		39955EBD17838C2E00D225D7 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				394CC22A1858D0EC00FA859C /* ProtocolDocumentIcon.png */,
+				394CC22B1858D0EC00FA859C /* SurveyDocumentIcon.png */,
+				394CC22C1858D0EC00FA859C /* TilePackageIcon.png */,
 				39B92FD417A87D9300C62145 /* BlueSelectionForTableViewCell.png */,
 				3967759E17A065EE009ECD34 /* Crosshairs.png */,
 				3967759F17A065EE009ECD34 /* Crosshairs@2x.png */,
@@ -715,8 +724,10 @@
 				39955E55178334C000D225D7 /* InfoPlist.strings in Resources */,
 				39955E5D178334C000D225D7 /* Default.png in Resources */,
 				39955E5F178334C000D225D7 /* Default@2x.png in Resources */,
+				394CC22E1858D0EC00FA859C /* SurveyDocumentIcon.png in Resources */,
 				39890DA31858C99E007B3F67 /* Images.xcassets in Resources */,
 				39955E61178334C000D225D7 /* Default-568h@2x.png in Resources */,
+				394CC22D1858D0EC00FA859C /* ProtocolDocumentIcon.png in Resources */,
 				39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
 				39955E6C178334C000D225D7 /* first.png in Resources */,
@@ -738,6 +749,7 @@
 				393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */,
 				39B92FD517A87D9300C62145 /* BlueSelectionForTableViewCell.png in Resources */,
 				398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */,
+				394CC22F1858D0EC00FA859C /* TilePackageIcon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -966,6 +978,8 @@
 		39955E8E178334C000D225D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -975,6 +989,8 @@
 		39955E8F178334C000D225D7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
