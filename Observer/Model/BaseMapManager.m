@@ -296,13 +296,13 @@ static BaseMapManager * _sharedManager;
     for (NSString *urlString in localMapURLs) {
         NSURL *url = [NSURL URLWithString:urlString];
         if ([files containsObject:url]) {
-            [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
+            [maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
             [files removeObject:url];
         }
     }
     //Add any other maps in filesystem (maybe added via iTunes) to end of list from defaults
     for (NSURL *url in files) {
-        [_maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
+        [maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
     }
     return maps;
 }
@@ -318,7 +318,7 @@ static BaseMapManager * _sharedManager;
                           error:nil];
     
     NSArray *caches = [[NSFileManager defaultManager]
-                       contentsOfDirectoryAtURL:[BaseMapManager documentsDirectory]
+                       contentsOfDirectoryAtURL:[BaseMapManager cacheDirectory]
                        includingPropertiesForKeys:nil
                        options:NSDirectoryEnumerationSkipsHiddenFiles
                        error:nil];
