@@ -45,6 +45,13 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
 @property (weak, nonatomic) IBOutlet UILabel *noMapLabel;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *barTitle;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *selectSurveyButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *selectMapButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *addObservationBarButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *addGpsObservationBarButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *addAdObservationBarButton;
 
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem *gpsButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *panButton;
@@ -317,6 +324,72 @@ typedef enum {
             [self loadBaseMap];
         });
     });
+    [self configureView];
+}
+
+
+- (void) configureView
+{
+    self.selectSurveyButton.enabled = NO;
+    self.surveys = [[SurveyCollection alloc] init];
+    [self.surveys openWithCompletionHandler:^(BOOL success) {
+        //do any other background work;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.selectSurveyButton.enabled = YES;
+            if (self.surveys.selectedSurvey) {
+                self.barTitle.title = @"Loading Survey...";
+                [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
+                    //do any other background work;
+                    dispatch_async(dispatch_get_main_queue(), ^{[self setupNewSurvey];});
+                }];
+            } else {
+                [self updateView];
+            }
+        });
+    }];
+
+    self.selectMapButton.enabled = NO;
+    self.maps = [[MapCollection alloc] init];
+    [self.maps openWithCompletionHandler:^(BOOL success) {
+        //do any other background work;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.selectMapButton.enabled = YES;
+            [self updateView];
+        });
+    }];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self updateView];
+}
+
+- (void)updateView
+{
+    [self updateButtons];
+    [self updateTitle];
+}
+
+-(void) updateTitle
+{
+    self.barTitle.title = [NSString stringWithFormat:@"%@ - %@",
+                           (self.surveys.selectedSurvey ? self.surveys.selectedSurvey.title : @"Select Survey"),
+                           (self.maps.selectedLocalMap ? self.maps.selectedLocalMap.title : @"Select Map")];
+}
+
+-(void) updateButtons
+{
+    NSDictionary *dialogs = self.surveys.selectedSurvey.protocol.dialogs;
+    self.editEnvironmentBarButton.enabled = dialogs[@"MissionProperty"] != nil;
+    //TODO: support more than just one feature called "Observations"
+    self.addObservationBarButton.enabled = dialogs[@"Observation"] != nil;
+    self.addGpsObservationBarButton.enabled = dialogs[@"Observation"] != nil;
+    self.addAdObservationBarButton.enabled = dialogs[@"Observation"] != nil;
+}
+
+- (void)setupNewSurvey
+{
+    [self updateView];
 }
 
 - (void) viewDidAppear:(BOOL)animated {

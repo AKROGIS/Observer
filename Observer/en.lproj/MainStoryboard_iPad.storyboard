@@ -58,6 +58,8 @@
                                             <action selector="togglePanStyle:" destination="TiC-11-YSU" id="XjC-nk-PBr"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="kTL-5N-79y"/>
+                                    <barButtonItem title="Title" id="97o-hf-0bj"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="pyp-S6-0zm"/>
                                     <barButtonItem systemItem="play" id="fCO-tO-IRq">
                                         <connections>
@@ -132,13 +134,23 @@
                     </view>
                     <navigationItem key="navigationItem" title="Untitled Survey" id="DZH-KF-4La"/>
                     <connections>
+                        <outlet property="addAdObservationBarButton" destination="XBC-1H-O73" id="Xx8-Pi-TnE"/>
+                        <outlet property="addGpsObservationBarButton" destination="C8B-tf-jAe" id="KF1-bm-Whs"/>
+                        <outlet property="addObservationBarButton" destination="zVE-98-VDX" id="DG8-bz-NK6"/>
+                        <outlet property="barTitle" destination="97o-hf-0bj" id="Ge6-pr-dwQ"/>
+                        <outlet property="editEnvironmentBarButton" destination="Fdi-yp-sWi" id="cJv-sd-s4Y"/>
+                        <outlet property="environmentBarButton" destination="Fdi-yp-sWi" id="4uO-3x-LmQ"/>
                         <outlet property="mapLoadingIndicator" destination="zJv-q7-y2x" id="hBV-WL-ipD"/>
                         <outlet property="mapView" destination="gK6-lQ-eLV" id="1kI-MU-Eog"/>
+                        <outlet property="mapsButton" destination="gJK-vn-5w7" id="0li-so-zLz"/>
                         <outlet property="noMapLabel" destination="009-3q-8gq" id="t2W-18-0Iw"/>
                         <outlet property="northButton2" destination="fOP-b6-5IU" id="qxr-us-yGI"/>
                         <outlet property="panButton" destination="jXA-Ll-IBJ" id="ANP-0w-d3Q"/>
                         <outlet property="panStyleButton" destination="Q6g-O2-Fjg" id="dp0-lZ-ZWa"/>
                         <outlet property="recordButton" destination="fCO-tO-IRq" id="qHA-uf-NP4"/>
+                        <outlet property="selectMapButton" destination="gJK-vn-5w7" id="H0i-2C-naE"/>
+                        <outlet property="selectSurveyButton" destination="SCL-a5-7Et" id="aeX-q0-EBn"/>
+                        <outlet property="surveysButton" destination="SCL-a5-7Et" id="weG-Ct-nHi"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dpZ-sC-Ovn" userLabel="First Responder" sceneMemberID="firstResponder"/>
