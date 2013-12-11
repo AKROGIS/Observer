@@ -14,10 +14,6 @@
         <attribute name="distance" attributeType="Double" minValueString="0" defaultValueString="0.0" syncable="YES"/>
         <relationship name="observation" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Observation" inverseName="angleDistanceLocation" inverseEntity="Observation" syncable="YES"/>
     </entity>
-    <entity name="AttributeSet" representedClassName="AttributeSet" isAbstract="YES" syncable="YES">
-        <relationship name="missionProperty" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MissionProperty" inverseName="attributeSet" inverseEntity="MissionProperty" syncable="YES"/>
-        <relationship name="observation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Observation" inverseName="attributeSet" inverseEntity="Observation" syncable="YES"/>
-    </entity>
     <entity name="GpsPoint" representedClassName="GpsPoint" syncable="YES">
         <attribute name="altitude" optional="YES" attributeType="Double" defaultValueString="-1" syncable="YES"/>
         <attribute name="course" optional="YES" attributeType="Double" defaultValueString="-1" syncable="YES"/>
@@ -42,26 +38,24 @@
         <relationship name="observations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Observation" inverseName="mission" inverseEntity="Observation" syncable="YES"/>
     </entity>
     <entity name="MissionProperty" representedClassName="MissionProperty" syncable="YES">
+        <attribute name="observing" optional="YES" attributeType="Boolean" syncable="YES"/>
         <relationship name="adhocLocation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AdhocLocation" inverseName="missionProperty" inverseEntity="AdhocLocation" syncable="YES"/>
-        <relationship name="attributeSet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AttributeSet" inverseName="missionProperty" inverseEntity="AttributeSet" syncable="YES"/>
         <relationship name="gpsPoint" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GpsPoint" inverseName="missionProperty" inverseEntity="GpsPoint" syncable="YES"/>
         <relationship name="mission" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Mission" inverseName="missionProperties" inverseEntity="Mission" syncable="YES"/>
     </entity>
     <entity name="Observation" representedClassName="Observation" syncable="YES">
         <relationship name="adhocLocation" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AdhocLocation" inverseName="observation" inverseEntity="AdhocLocation" syncable="YES"/>
         <relationship name="angleDistanceLocation" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AngleDistanceLocation" inverseName="observation" inverseEntity="AngleDistanceLocation" syncable="YES"/>
-        <relationship name="attributeSet" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AttributeSet" inverseName="observation" inverseEntity="AttributeSet" syncable="YES"/>
         <relationship name="gpsPoint" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GpsPoint" inverseName="observation" inverseEntity="GpsPoint" syncable="YES"/>
         <relationship name="mission" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Mission" inverseName="observations" inverseEntity="Mission" syncable="YES"/>
     </entity>
     <elements>
-        <element name="AdhocLocation" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="AngleDistanceLocation" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="AttributeSet" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="GpsPoint" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="Map" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="Mission" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="MissionProperty" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="Observation" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="AdhocLocation" positionX="70" positionY="-97" width="128" height="133"/>
+        <element name="AngleDistanceLocation" positionX="81" positionY="104" width="144" height="103"/>
+        <element name="GpsPoint" positionX="25" positionY="-361" width="128" height="208"/>
+        <element name="Map" positionX="-198" positionY="-151" width="101" height="88"/>
+        <element name="Mission" positionX="-135" positionY="-484" width="110" height="88"/>
+        <element name="MissionProperty" positionX="-315" positionY="-319" width="128" height="103"/>
+        <element name="Observation" positionX="376" positionY="-316" width="128" height="103"/>
     </elements>
 </model>

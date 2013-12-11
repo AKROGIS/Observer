@@ -965,7 +965,8 @@ typedef enum {
         NSLog(@"Cannot draw observation (%@).  It has no location", observation);
         return;
     }
-    NSDictionary *attributes = observation.attributeSet ? [self createAttributesFromObservation:observation] : nil;
+    //NSDictionary *attributes = observation.attributeSet ? [self createAttributesFromObservation:observation] : nil;
+    NSDictionary *attributes = nil;
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
     [self.observationsLayer addGraphic:graphic];
 }

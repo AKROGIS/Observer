@@ -8,20 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		391EE9FA17C6EA48007B050B /* ProtocolManagedDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 391EE9F917C6EA48007B050B /* ProtocolManagedDocument.m */; };
-		393759A317C2EE4900A86595 /* AdhocLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759A217C2EE4900A86595 /* AdhocLocation.m */; };
-		393759A617C2EE5A00A86595 /* AngleDistanceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759A517C2EE5A00A86595 /* AngleDistanceLocation.m */; };
-		393759A917C2EE6A00A86595 /* AttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759A817C2EE6A00A86595 /* AttributeSet.m */; };
-		393759AC17C2EE7B00A86595 /* GpsPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759AB17C2EE7B00A86595 /* GpsPoint.m */; };
-		393759AF17C2EE8C00A86595 /* MapReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759AE17C2EE8C00A86595 /* MapReference.m */; };
-		393759B217C2EE9C00A86595 /* Mission.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759B117C2EE9C00A86595 /* Mission.m */; };
-		393759B517C2EEAD00A86595 /* MissionProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759B417C2EEAD00A86595 /* MissionProperty.m */; };
-		393759B817C2EEBD00A86595 /* Observation.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759B717C2EEBD00A86595 /* Observation.m */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
 		394CC22D1858D0EC00FA859C /* ProtocolDocumentIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 394CC22A1858D0EC00FA859C /* ProtocolDocumentIcon.png */; };
 		394CC22E1858D0EC00FA859C /* SurveyDocumentIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 394CC22B1858D0EC00FA859C /* SurveyDocumentIcon.png */; };
 		394CC22F1858D0EC00FA859C /* TilePackageIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 394CC22C1858D0EC00FA859C /* TilePackageIcon.png */; };
 		394CC2381858E05F00FA859C /* libQuickDialog.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 394CC2351858DFFA00FA859C /* libQuickDialog.a */; };
+		394CC23E1858EF5800FA859C /* ObserverModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 394CC23C1858EF5800FA859C /* ObserverModel.xcdatamodeld */; };
+		394CC2411858F11700FA859C /* MapReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC2401858F11700FA859C /* MapReference.m */; };
+		394CC2441858F11800FA859C /* MissionProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC2431858F11800FA859C /* MissionProperty.m */; };
+		394CC2471858F11800FA859C /* GpsPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC2461858F11800FA859C /* GpsPoint.m */; };
+		394CC24A1858F11800FA859C /* AdhocLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC2491858F11800FA859C /* AdhocLocation.m */; };
+		394CC24D1858F11800FA859C /* Mission.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC24C1858F11800FA859C /* Mission.m */; };
+		394CC2501858F11800FA859C /* AngleDistanceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC24F1858F11800FA859C /* AngleDistanceLocation.m */; };
+		394CC2531858F11800FA859C /* Observation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC2521858F11800FA859C /* Observation.m */; };
 		396775071798C800009ECD34 /* compass.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775031798C800009ECD34 /* compass.png */; };
 		396775081798C800009ECD34 /* compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775041798C800009ECD34 /* compass@2x.png */; };
 		396775091798C800009ECD34 /* heading.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775051798C800009ECD34 /* heading.png */; };
@@ -110,7 +110,6 @@
 		39B92FD517A87D9300C62145 /* BlueSelectionForTableViewCell.png in Resources */ = {isa = PBXBuildFile; fileRef = 39B92FD417A87D9300C62145 /* BlueSelectionForTableViewCell.png */; };
 		39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94B17B464B40014C68F /* LocationAngleDistance.m */; };
 		39D1D94F17B9A8280014C68F /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */; };
-		39D1D95217BAF0FD0014C68F /* ObserverModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D95017BAF0FD0014C68F /* ObserverModel.xcdatamodeld */; };
 		39D1D95A17BC21D00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
 		39D1D95B17BC21E00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
 /* End PBXBuildFile section */
@@ -130,6 +129,13 @@
 			remoteGlobalIDString = 2C542392145ADEBD0026A152;
 			remoteInfo = QuickDialog;
 		};
+		394CC23A1858EF0500FA859C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D80B0E3313E052DF00FA85CA;
+			remoteInfo = QuickDialogExample;
+		};
 		39955E80178334C000D225D7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 39955E3F178334BF00D225D7 /* Project object */;
@@ -143,22 +149,6 @@
 		391EE9F817C6EA48007B050B /* ProtocolManagedDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolManagedDocument.h; path = Model/ProtocolManagedDocument.h; sourceTree = "<group>"; };
 		391EE9F917C6EA48007B050B /* ProtocolManagedDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolManagedDocument.m; path = Model/ProtocolManagedDocument.m; sourceTree = "<group>"; };
 		3929196617BEB6A8008B0FFC /* Todo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Todo.rtf; sourceTree = "<group>"; };
-		393759A117C2EE4900A86595 /* AdhocLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdhocLocation.h; path = Model/AdhocLocation.h; sourceTree = "<group>"; };
-		393759A217C2EE4900A86595 /* AdhocLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdhocLocation.m; path = Model/AdhocLocation.m; sourceTree = "<group>"; };
-		393759A417C2EE5A00A86595 /* AngleDistanceLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AngleDistanceLocation.h; path = Model/AngleDistanceLocation.h; sourceTree = "<group>"; };
-		393759A517C2EE5A00A86595 /* AngleDistanceLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AngleDistanceLocation.m; path = Model/AngleDistanceLocation.m; sourceTree = "<group>"; };
-		393759A717C2EE6A00A86595 /* AttributeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AttributeSet.h; path = Model/AttributeSet.h; sourceTree = "<group>"; };
-		393759A817C2EE6A00A86595 /* AttributeSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AttributeSet.m; path = Model/AttributeSet.m; sourceTree = "<group>"; };
-		393759AA17C2EE7B00A86595 /* GpsPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GpsPoint.h; path = Model/GpsPoint.h; sourceTree = "<group>"; };
-		393759AB17C2EE7B00A86595 /* GpsPoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GpsPoint.m; path = Model/GpsPoint.m; sourceTree = "<group>"; };
-		393759AD17C2EE8C00A86595 /* MapReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapReference.h; path = Model/MapReference.h; sourceTree = "<group>"; };
-		393759AE17C2EE8C00A86595 /* MapReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MapReference.m; path = Model/MapReference.m; sourceTree = "<group>"; };
-		393759B017C2EE9C00A86595 /* Mission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mission.h; path = Model/Mission.h; sourceTree = "<group>"; };
-		393759B117C2EE9C00A86595 /* Mission.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Mission.m; path = Model/Mission.m; sourceTree = "<group>"; };
-		393759B317C2EEAD00A86595 /* MissionProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MissionProperty.h; path = Model/MissionProperty.h; sourceTree = "<group>"; };
-		393759B417C2EEAD00A86595 /* MissionProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MissionProperty.m; path = Model/MissionProperty.m; sourceTree = "<group>"; };
-		393759B617C2EEBD00A86595 /* Observation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Observation.h; path = Model/Observation.h; sourceTree = "<group>"; };
-		393759B717C2EEBD00A86595 /* Observation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Observation.m; path = Model/Observation.m; sourceTree = "<group>"; };
 		393E8AFA17A2E1D8009AD0AC /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = Model/Settings.h; sourceTree = "<group>"; };
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
 		393E8AFD17A30012009AD0AC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -167,6 +157,21 @@
 		394CC22B1858D0EC00FA859C /* SurveyDocumentIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SurveyDocumentIcon.png; sourceTree = "<group>"; };
 		394CC22C1858D0EC00FA859C /* TilePackageIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TilePackageIcon.png; sourceTree = "<group>"; };
 		394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = QuickDialog.xcodeproj; path = QuickDialog/QuickDialog.xcodeproj; sourceTree = "<group>"; };
+		394CC23D1858EF5800FA859C /* ObserverModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ObserverModel.xcdatamodel; sourceTree = "<group>"; };
+		394CC23F1858F11700FA859C /* MapReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapReference.h; path = Model/MapReference.h; sourceTree = "<group>"; };
+		394CC2401858F11700FA859C /* MapReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MapReference.m; path = Model/MapReference.m; sourceTree = "<group>"; };
+		394CC2421858F11800FA859C /* MissionProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MissionProperty.h; path = Model/MissionProperty.h; sourceTree = "<group>"; };
+		394CC2431858F11800FA859C /* MissionProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MissionProperty.m; path = Model/MissionProperty.m; sourceTree = "<group>"; };
+		394CC2451858F11800FA859C /* GpsPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GpsPoint.h; path = Model/GpsPoint.h; sourceTree = "<group>"; };
+		394CC2461858F11800FA859C /* GpsPoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GpsPoint.m; path = Model/GpsPoint.m; sourceTree = "<group>"; };
+		394CC2481858F11800FA859C /* AdhocLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdhocLocation.h; path = Model/AdhocLocation.h; sourceTree = "<group>"; };
+		394CC2491858F11800FA859C /* AdhocLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdhocLocation.m; path = Model/AdhocLocation.m; sourceTree = "<group>"; };
+		394CC24B1858F11800FA859C /* Mission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mission.h; path = Model/Mission.h; sourceTree = "<group>"; };
+		394CC24C1858F11800FA859C /* Mission.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Mission.m; path = Model/Mission.m; sourceTree = "<group>"; };
+		394CC24E1858F11800FA859C /* AngleDistanceLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AngleDistanceLocation.h; path = Model/AngleDistanceLocation.h; sourceTree = "<group>"; };
+		394CC24F1858F11800FA859C /* AngleDistanceLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AngleDistanceLocation.m; path = Model/AngleDistanceLocation.m; sourceTree = "<group>"; };
+		394CC2511858F11800FA859C /* Observation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Observation.h; path = Model/Observation.h; sourceTree = "<group>"; };
+		394CC2521858F11800FA859C /* Observation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Observation.m; path = Model/Observation.m; sourceTree = "<group>"; };
 		396775031798C800009ECD34 /* compass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = compass.png; sourceTree = "<group>"; };
 		396775041798C800009ECD34 /* compass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "compass@2x.png"; sourceTree = "<group>"; };
 		396775051798C800009ECD34 /* heading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = heading.png; sourceTree = "<group>"; };
@@ -287,7 +292,6 @@
 		39D1D94B17B464B40014C68F /* LocationAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LocationAngleDistance.m; path = Model/LocationAngleDistance.m; sourceTree = "<group>"; };
 		39D1D94D17B9A8280014C68F /* LocationAngleDistanceTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationAngleDistanceTests.h; sourceTree = "<group>"; };
 		39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationAngleDistanceTests.m; sourceTree = "<group>"; };
-		39D1D95117BAF0FD0014C68F /* ObserverModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ObserverModel.xcdatamodel; sourceTree = "<group>"; };
 		39D1D95917BC21D00014C68F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		39D1D97B17BC51630014C68F /* ObserverModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObserverModel.h; path = Model/ObserverModel.h; sourceTree = "<group>"; };
 		59119861178906FD00B2331B /* MapMonitoring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MapMonitoring.h; path = Model/MapMonitoring.h; sourceTree = "<group>"; };
@@ -368,6 +372,7 @@
 		394CC2311858DFFA00FA859C /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				394CC23B1858EF0500FA859C /* QuickDialogExample.app */,
 				394CC2351858DFFA00FA859C /* libQuickDialog.a */,
 			);
 			name = Products;
@@ -580,20 +585,21 @@
 		39955EC6178732B500D225D7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				393759B617C2EEBD00A86595 /* Observation.h */,
-				393759B717C2EEBD00A86595 /* Observation.m */,
-				393759B317C2EEAD00A86595 /* MissionProperty.h */,
-				393759B417C2EEAD00A86595 /* MissionProperty.m */,
-				393759B017C2EE9C00A86595 /* Mission.h */,
-				393759B117C2EE9C00A86595 /* Mission.m */,
-				393759AD17C2EE8C00A86595 /* MapReference.h */,
-				393759AE17C2EE8C00A86595 /* MapReference.m */,
-				393759AA17C2EE7B00A86595 /* GpsPoint.h */,
-				393759AB17C2EE7B00A86595 /* GpsPoint.m */,
-				393759A717C2EE6A00A86595 /* AttributeSet.h */,
-				393759A817C2EE6A00A86595 /* AttributeSet.m */,
-				393759A417C2EE5A00A86595 /* AngleDistanceLocation.h */,
-				393759A517C2EE5A00A86595 /* AngleDistanceLocation.m */,
+				394CC23C1858EF5800FA859C /* ObserverModel.xcdatamodeld */,
+				394CC2511858F11800FA859C /* Observation.h */,
+				394CC2521858F11800FA859C /* Observation.m */,
+				394CC24E1858F11800FA859C /* AngleDistanceLocation.h */,
+				394CC24F1858F11800FA859C /* AngleDistanceLocation.m */,
+				394CC24B1858F11800FA859C /* Mission.h */,
+				394CC24C1858F11800FA859C /* Mission.m */,
+				394CC2481858F11800FA859C /* AdhocLocation.h */,
+				394CC2491858F11800FA859C /* AdhocLocation.m */,
+				394CC2451858F11800FA859C /* GpsPoint.h */,
+				394CC2461858F11800FA859C /* GpsPoint.m */,
+				394CC2421858F11800FA859C /* MissionProperty.h */,
+				394CC2431858F11800FA859C /* MissionProperty.m */,
+				394CC23F1858F11700FA859C /* MapReference.h */,
+				394CC2401858F11700FA859C /* MapReference.m */,
 				39955EC7178732DE00D225D7 /* BaseMap.h */,
 				39955EC8178732DE00D225D7 /* BaseMap.m */,
 				39955ECA1787332400D225D7 /* BaseMapManager.h */,
@@ -603,9 +609,6 @@
 				39D1D94B17B464B40014C68F /* LocationAngleDistance.m */,
 				59119861178906FD00B2331B /* MapMonitoring.h */,
 				39D1D97B17BC51630014C68F /* ObserverModel.h */,
-				39D1D95017BAF0FD0014C68F /* ObserverModel.xcdatamodeld */,
-				393759A117C2EE4900A86595 /* AdhocLocation.h */,
-				393759A217C2EE4900A86595 /* AdhocLocation.m */,
 				393E8AFA17A2E1D8009AD0AC /* Settings.h */,
 				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
 				39B92FC817A7380B00C62145 /* SurveyProtocol.h */,
@@ -699,6 +702,13 @@
 			remoteRef = 394CC2341858DFFA00FA859C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		394CC23B1858EF0500FA859C /* QuickDialogExample.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = QuickDialogExample.app;
+			remoteRef = 394CC23A1858EF0500FA859C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -771,10 +781,13 @@
 			files = (
 				39955E57178334C000D225D7 /* main.m in Sources */,
 				3989085E1857EDE1007B3F67 /* NSArray+map.m in Sources */,
+				394CC24D1858F11800FA859C /* Mission.m in Sources */,
 				398908251857EB2F007B3F67 /* MapSelectViewController.m in Sources */,
 				39955E5B178334C000D225D7 /* ObserverAppDelegate.m in Sources */,
 				398908231857EB2F007B3F67 /* MapCollection.m in Sources */,
+				394CC2471858F11800FA859C /* GpsPoint.m in Sources */,
 				3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */,
+				394CC2411858F11700FA859C /* MapReference.m in Sources */,
 				39955EC9178732DE00D225D7 /* BaseMap.m in Sources */,
 				39955ECC1787332400D225D7 /* BaseMapManager.m in Sources */,
 				3989085F1857EDE1007B3F67 /* NSDate+Formatting.m in Sources */,
@@ -783,33 +796,29 @@
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
 				398908601857EDE1007B3F67 /* NSIndexSet+indexPath.m in Sources */,
+				394CC2501858F11800FA859C /* AngleDistanceLocation.m in Sources */,
 				3989084D1857ED00007B3F67 /* Survey.m in Sources */,
 				398908611857EDE1007B3F67 /* NSURL+unique.m in Sources */,
 				3989083D1857EBF6007B3F67 /* ProtocolSelectViewController.m in Sources */,
 				3989083E1857EBF6007B3F67 /* ProtocolTableViewCell.m in Sources */,
+				394CC2441858F11800FA859C /* MissionProperty.m in Sources */,
 				393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */,
+				394CC24A1858F11800FA859C /* AdhocLocation.m in Sources */,
 				39B92FCA17A7380B00C62145 /* SurveyProtocol.m in Sources */,
 				398908221857EB2F007B3F67 /* Map.m in Sources */,
 				39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */,
+				394CC23E1858EF5800FA859C /* ObserverModel.xcdatamodeld in Sources */,
 				39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */,
 				39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */,
-				39D1D95217BAF0FD0014C68F /* ObserverModel.xcdatamodeld in Sources */,
-				393759A317C2EE4900A86595 /* AdhocLocation.m in Sources */,
-				393759A617C2EE5A00A86595 /* AngleDistanceLocation.m in Sources */,
-				393759A917C2EE6A00A86595 /* AttributeSet.m in Sources */,
 				398908681857F192007B3F67 /* SurveyDetailViewController.m in Sources */,
 				398908691857F192007B3F67 /* SurveyEntryCell.m in Sources */,
 				398908411857ECE4007B3F67 /* SProtocol.m in Sources */,
 				3989083B1857EBF6007B3F67 /* ProtocolCollection.m in Sources */,
-				393759AC17C2EE7B00A86595 /* GpsPoint.m in Sources */,
 				3989085D1857EDE1007B3F67 /* AGSPoint+AKRAdditions.m in Sources */,
+				394CC2531858F11800FA859C /* Observation.m in Sources */,
 				398908511857ED00007B3F67 /* SurveySelectViewController.m in Sources */,
 				3989084E1857ED00007B3F67 /* SurveyCollection.m in Sources */,
 				398908241857EB2F007B3F67 /* MapDetailViewController.m in Sources */,
-				393759AF17C2EE8C00A86595 /* MapReference.m in Sources */,
-				393759B217C2EE9C00A86595 /* Mission.m in Sources */,
-				393759B517C2EEAD00A86595 /* MissionProperty.m in Sources */,
-				393759B817C2EEBD00A86595 /* Observation.m in Sources */,
 				398908261857EB2F007B3F67 /* MapTableViewCell.m in Sources */,
 				3989083C1857EBF6007B3F67 /* ProtocolDetailViewController.m in Sources */,
 				398908501857ED00007B3F67 /* SurveyObjectModel.m in Sources */,
@@ -1049,12 +1058,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		39D1D95017BAF0FD0014C68F /* ObserverModel.xcdatamodeld */ = {
+		394CC23C1858EF5800FA859C /* ObserverModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				39D1D95117BAF0FD0014C68F /* ObserverModel.xcdatamodel */,
+				394CC23D1858EF5800FA859C /* ObserverModel.xcdatamodel */,
 			);
-			currentVersion = 39D1D95117BAF0FD0014C68F /* ObserverModel.xcdatamodel */;
+			currentVersion = 394CC23D1858EF5800FA859C /* ObserverModel.xcdatamodel */;
 			name = ObserverModel.xcdatamodeld;
 			path = Model/ObserverModel.xcdatamodeld;
 			sourceTree = "<group>";
