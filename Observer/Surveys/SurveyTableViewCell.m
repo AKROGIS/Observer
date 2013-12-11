@@ -1,14 +1,14 @@
 //
-//  SurveyEntryCell.m
+//  SurveyTableViewCell.m
 //  Observer
 //
 //  Created by Regan Sarwas on 11/7/13.
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
-#import "SurveyEntryCell.h"
+#import "SurveyTableViewCell.h"
 
-@implementation SurveyEntryCell
+@implementation SurveyTableViewCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

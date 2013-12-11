@@ -340,7 +340,8 @@ static MapCollection *_sharedCollection = nil;
     Map *map = [[Map alloc] initWithURL:newUrl];
     if (!map.tileCache) {
         NSLog(@"data in %@ was not a valid map object",url.lastPathComponent);
-        [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+        //TODO: remove when tilecaceh is implemented
+        //[[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
         return nil;
     }
@@ -483,8 +484,8 @@ static MapCollection *_sharedCollection = nil;
 - (BOOL)refreshRemoteMaps;
 {
     //FIXME: get URL from settings
-    NSURL *url = [NSURL URLWithString:@"file:///Users/regan/Downloads/maplist.json"];
-    //NSURL *url = [NSURL URLWithString:@"http://akrgis.nps.gov/observer/maps/maplist.json"];
+    //NSURL *url = [NSURL URLWithString:@"file:///Users/regan/Downloads/maplist.json"];
+    NSURL *url = [NSURL URLWithString:@"http://akrgis.nps.gov/observer/maps/maplist.json"];
     NSMutableArray *serverMaps = [self fetchMapListFromURL:url];
     if (serverMaps) {
         [self syncCacheWithServerMaps:serverMaps];

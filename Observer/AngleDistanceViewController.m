@@ -63,7 +63,7 @@
             [self updateLabel];
             [self resizeView];
             //If the view size doesn't change, thenwe will be stuck at the sub VC size, this will ensure we are resized.
-            [self.popover setPopoverContentSize:self.contentSizeForViewInPopover animated:YES];
+            [self.popover setPopoverContentSize:self.preferredContentSize animated:YES];
         };
     }
 }
@@ -283,7 +283,7 @@
     frame.size.height = height;
     self.view.frame = frame;
     //only if contentSizeForViewInPopover values change will the popover will resize
-    self.contentSizeForViewInPopover = self.view.frame.size;
+    self.preferredContentSize = self.view.frame.size;
 }
 
 - (BOOL) anyInputFieldHasChanged

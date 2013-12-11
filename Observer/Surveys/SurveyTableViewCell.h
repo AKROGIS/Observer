@@ -1,5 +1,5 @@
 //
-//  SurveyEntryCell.h
+//  SurveyTableViewCell.h
 //  Observer
 //
 //  Created by Regan Sarwas on 11/7/13.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SurveyEntryCell : UITableViewCell
+@interface SurveyTableViewCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UIImageView *thumbnailImageView;
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;

@@ -293,8 +293,8 @@ static BaseMapManager * _sharedManager;
     NSArray *localMapURLs = [Settings manager].maps;
     NSMutableSet *files = [NSMutableSet setWithArray:[self mapURLsInFileManager]];
     // create maps in order from urls saved in defaults  IFF they are found in filesystem
-    for (NSString *urlString in localMapURLs) {
-        NSURL *url = [NSURL URLWithString:urlString];
+    for (NSURL *url in localMapURLs) {
+        //NSURL *url = [NSURL fileURLWithPath:urlString];
         if ([files containsObject:url]) {
             [maps addObject:[[BaseMap alloc] initWithLocalURL:url]];
             [files removeObject:url];

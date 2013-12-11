@@ -321,7 +321,7 @@ typedef enum {
     self.busy = YES;
     self.mapView.layerDelegate = self;
     self.mapView.touchDelegate = self;
-    self.mapView.calloutDelegate = self;
+    self.mapView.callout.delegate = self;
     self.mapView.allowRotationByPinching = YES;
     dispatch_queue_t loadQueue = dispatch_queue_create("loadLocalMaps", NULL);
     dispatch_async(loadQueue, ^{
@@ -967,7 +967,7 @@ typedef enum {
     }
     //NSDictionary *attributes = observation.attributeSet ? [self createAttributesFromObservation:observation] : nil;
     NSDictionary *attributes = nil;
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
     [self.observationsLayer addGraphic:graphic];
 }
 
@@ -995,7 +995,7 @@ typedef enum {
     }
     //FIXME - figure out which attributes to show with GPS points
     NSDictionary *attributes = @{@"date":gpsPoint.timestamp?:[NSNull null]};
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes infoTemplateDelegate:nil];
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
     [self.gpsPointsLayer addGraphic:graphic];
     
     //FIXME draw a tracklog polyline

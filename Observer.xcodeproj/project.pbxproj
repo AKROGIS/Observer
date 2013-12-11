@@ -52,7 +52,7 @@
 		398908601857EDE1007B3F67 /* NSIndexSet+indexPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989085A1857EDE1007B3F67 /* NSIndexSet+indexPath.m */; };
 		398908611857EDE1007B3F67 /* NSURL+unique.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989085C1857EDE1007B3F67 /* NSURL+unique.m */; };
 		398908681857F192007B3F67 /* SurveyDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908651857F192007B3F67 /* SurveyDetailViewController.m */; };
-		398908691857F192007B3F67 /* SurveyEntryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908671857F192007B3F67 /* SurveyEntryCell.m */; };
+		398908691857F192007B3F67 /* SurveyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908671857F192007B3F67 /* SurveyTableViewCell.m */; };
 		3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989086B1857F399007B3F67 /* AKRDownloadView.m */; };
 		39890DA31858C99E007B3F67 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39890DA21858C99E007B3F67 /* Images.xcassets */; };
 		39955E4B178334BF00D225D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
@@ -228,8 +228,8 @@
 		398908631857F087007B3F67 /* AKRCollectionChanged.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRCollectionChanged.h; sourceTree = "<group>"; };
 		398908641857F192007B3F67 /* SurveyDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyDetailViewController.h; path = Surveys/SurveyDetailViewController.h; sourceTree = "<group>"; };
 		398908651857F192007B3F67 /* SurveyDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyDetailViewController.m; path = Surveys/SurveyDetailViewController.m; sourceTree = "<group>"; };
-		398908661857F192007B3F67 /* SurveyEntryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyEntryCell.h; path = Surveys/SurveyEntryCell.h; sourceTree = "<group>"; };
-		398908671857F192007B3F67 /* SurveyEntryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyEntryCell.m; path = Surveys/SurveyEntryCell.m; sourceTree = "<group>"; };
+		398908661857F192007B3F67 /* SurveyTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyTableViewCell.h; path = Surveys/SurveyTableViewCell.h; sourceTree = "<group>"; };
+		398908671857F192007B3F67 /* SurveyTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyTableViewCell.m; path = Surveys/SurveyTableViewCell.m; sourceTree = "<group>"; };
 		3989086A1857F399007B3F67 /* AKRDownloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDownloadView.h; sourceTree = "<group>"; };
 		3989086B1857F399007B3F67 /* AKRDownloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDownloadView.m; sourceTree = "<group>"; };
 		39890DA21858C99E007B3F67 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -417,8 +417,8 @@
 			children = (
 				398908641857F192007B3F67 /* SurveyDetailViewController.h */,
 				398908651857F192007B3F67 /* SurveyDetailViewController.m */,
-				398908661857F192007B3F67 /* SurveyEntryCell.h */,
-				398908671857F192007B3F67 /* SurveyEntryCell.m */,
+				398908661857F192007B3F67 /* SurveyTableViewCell.h */,
+				398908671857F192007B3F67 /* SurveyTableViewCell.m */,
 				398908431857ED00007B3F67 /* Survey.h */,
 				398908441857ED00007B3F67 /* Survey.m */,
 				398908451857ED00007B3F67 /* SurveyCollection.h */,
@@ -811,7 +811,7 @@
 				39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */,
 				39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */,
 				398908681857F192007B3F67 /* SurveyDetailViewController.m in Sources */,
-				398908691857F192007B3F67 /* SurveyEntryCell.m in Sources */,
+				398908691857F192007B3F67 /* SurveyTableViewCell.m in Sources */,
 				398908411857ECE4007B3F67 /* SProtocol.m in Sources */,
 				3989083B1857EBF6007B3F67 /* ProtocolCollection.m in Sources */,
 				3989085D1857EDE1007B3F67 /* AGSPoint+AKRAdditions.m in Sources */,

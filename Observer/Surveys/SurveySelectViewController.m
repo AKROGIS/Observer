@@ -7,7 +7,7 @@
 //
 
 #import "SurveyDetailViewController.h"
-#import "SurveyEntryCell.h"
+#import "SurveyTableViewCell.h"
 #import "ProtocolSelectViewController.h"
 #import "SurveySelectViewController.h"
 #import "SProtocol.h"
@@ -103,7 +103,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    SurveyEntryCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    SurveyTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SurveyCell" forIndexPath:indexPath];
     id<FSTableViewItem> item = [self.items surveyAtIndex:indexPath.row];
     cell.titleTextField.text = item.title;
     cell.detailsLabel.text = item.subtitle;
@@ -213,10 +213,10 @@
 
 - (void)textChanged:(UITextField *)textField {
     UIView * view = textField.superview;
-    while( ![view isKindOfClass: [SurveyEntryCell class]]){
+    while( ![view isKindOfClass: [SurveyTableViewCell class]]){
         view = view.superview;
     }
-    SurveyEntryCell *cell = (SurveyEntryCell *) view;
+    SurveyTableViewCell *cell = (SurveyTableViewCell *) view;
     NSIndexPath * indexPath = [self.tableView indexPathForCell:cell];
     Survey *survey = [self.items surveyAtIndex:indexPath.row];
     NSLog(@"Going to rename %@ to %@", survey.title, textField.text);
