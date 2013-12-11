@@ -21,6 +21,7 @@
 		394CC22D1858D0EC00FA859C /* ProtocolDocumentIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 394CC22A1858D0EC00FA859C /* ProtocolDocumentIcon.png */; };
 		394CC22E1858D0EC00FA859C /* SurveyDocumentIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 394CC22B1858D0EC00FA859C /* SurveyDocumentIcon.png */; };
 		394CC22F1858D0EC00FA859C /* TilePackageIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 394CC22C1858D0EC00FA859C /* TilePackageIcon.png */; };
+		394CC2381858E05F00FA859C /* libQuickDialog.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 394CC2351858DFFA00FA859C /* libQuickDialog.a */; };
 		396775071798C800009ECD34 /* compass.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775031798C800009ECD34 /* compass.png */; };
 		396775081798C800009ECD34 /* compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775041798C800009ECD34 /* compass@2x.png */; };
 		396775091798C800009ECD34 /* heading.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775051798C800009ECD34 /* heading.png */; };
@@ -103,7 +104,6 @@
 		39955ECC1787332400D225D7 /* BaseMapManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ECB1787332400D225D7 /* BaseMapManager.m */; };
 		39955ECF1787336900D225D7 /* LocalMapsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ECE1787336800D225D7 /* LocalMapsTableViewController.m */; };
 		39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ED1178733B900D225D7 /* ObserverMapViewController.m */; };
-		39B8B10D17E286EA00CF6458 /* libQuickDialog.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 39B8B10C17E286AF00CF6458 /* libQuickDialog.a */; };
 		39B92FCA17A7380B00C62145 /* SurveyProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FC917A7380B00C62145 /* SurveyProtocol.m */; };
 		39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */; };
 		39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */; };
@@ -116,33 +116,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		394CC2341858DFFA00FA859C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2C542393145ADEBD0026A152;
+			remoteInfo = QuickDialog;
+		};
+		394CC2361858E05000FA859C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2C542392145ADEBD0026A152;
+			remoteInfo = QuickDialog;
+		};
 		39955E80178334C000D225D7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 39955E3F178334BF00D225D7 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 39955E46178334BF00D225D7;
 			remoteInfo = Observer;
-		};
-		39B8B10917E286AF00CF6458 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 39B8B10417E286AF00CF6458 /* QuickDialog.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D80B0E3313E052DF00FA85CA;
-			remoteInfo = QuickDialogExample;
-		};
-		39B8B10B17E286AF00CF6458 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 39B8B10417E286AF00CF6458 /* QuickDialog.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2C542393145ADEBD0026A152;
-			remoteInfo = QuickDialog;
-		};
-		39B8B10E17E2870C00CF6458 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 39B8B10417E286AF00CF6458 /* QuickDialog.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 2C542392145ADEBD0026A152;
-			remoteInfo = QuickDialog;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -173,6 +166,7 @@
 		394CC22A1858D0EC00FA859C /* ProtocolDocumentIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ProtocolDocumentIcon.png; sourceTree = "<group>"; };
 		394CC22B1858D0EC00FA859C /* SurveyDocumentIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SurveyDocumentIcon.png; sourceTree = "<group>"; };
 		394CC22C1858D0EC00FA859C /* TilePackageIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TilePackageIcon.png; sourceTree = "<group>"; };
+		394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = QuickDialog.xcodeproj; path = QuickDialog/QuickDialog.xcodeproj; sourceTree = "<group>"; };
 		396775031798C800009ECD34 /* compass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = compass.png; sourceTree = "<group>"; };
 		396775041798C800009ECD34 /* compass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "compass@2x.png"; sourceTree = "<group>"; };
 		396775051798C800009ECD34 /* heading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = heading.png; sourceTree = "<group>"; };
@@ -282,7 +276,6 @@
 		39955ECE1787336800D225D7 /* LocalMapsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalMapsTableViewController.m; sourceTree = "<group>"; };
 		39955ED0178733B900D225D7 /* ObserverMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverMapViewController.h; sourceTree = "<group>"; };
 		39955ED1178733B900D225D7 /* ObserverMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObserverMapViewController.m; sourceTree = "<group>"; };
-		39B8B10417E286AF00CF6458 /* QuickDialog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = QuickDialog.xcodeproj; path = QuickDialog/QuickDialog.xcodeproj; sourceTree = "<group>"; };
 		39B92FC817A7380B00C62145 /* SurveyProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyProtocol.h; path = Model/SurveyProtocol.h; sourceTree = "<group>"; };
 		39B92FC917A7380B00C62145 /* SurveyProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyProtocol.m; path = Model/SurveyProtocol.m; sourceTree = "<group>"; };
 		39B92FCE17A73F5700C62145 /* AngleDistanceSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AngleDistanceSettingsTableViewController.h; sourceTree = "<group>"; };
@@ -305,7 +298,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39B8B10D17E286EA00CF6458 /* libQuickDialog.a in Frameworks */,
+				394CC2381858E05F00FA859C /* libQuickDialog.a in Frameworks */,
 				39D1D95A17BC21D00014C68F /* CoreData.framework in Frameworks */,
 				39955EA41783388600D225D7 /* OpenGLES.framework in Frameworks */,
 				39955EA21783382200D225D7 /* libz.dylib in Frameworks */,
@@ -370,6 +363,14 @@
 				39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */,
 			);
 			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		394CC2311858DFFA00FA859C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				394CC2351858DFFA00FA859C /* libQuickDialog.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		398908071857EA05007B3F67 /* Protocol */ = {
@@ -467,8 +468,8 @@
 		39955E49178334BF00D225D7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */,
 				39D1D95917BC21D00014C68F /* CoreData.framework */,
-				39B8B10417E286AF00CF6458 /* QuickDialog.xcodeproj */,
 				39955EA31783388600D225D7 /* OpenGLES.framework */,
 				39955EA11783382200D225D7 /* libz.dylib */,
 				39955E9F178337F700D225D7 /* libc++.dylib */,
@@ -615,15 +616,6 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
-		39B8B10517E286AF00CF6458 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				39B8B10A17E286AF00CF6458 /* QuickDialogExample.app */,
-				39B8B10C17E286AF00CF6458 /* libQuickDialog.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -638,7 +630,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				39B8B10F17E2870C00CF6458 /* PBXTargetDependency */,
+				394CC2371858E05000FA859C /* PBXTargetDependency */,
 			);
 			name = Observer;
 			productName = Observer;
@@ -687,8 +679,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 39B8B10517E286AF00CF6458 /* Products */;
-					ProjectRef = 39B8B10417E286AF00CF6458 /* QuickDialog.xcodeproj */;
+					ProductGroup = 394CC2311858DFFA00FA859C /* Products */;
+					ProjectRef = 394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -700,18 +692,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		39B8B10A17E286AF00CF6458 /* QuickDialogExample.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = QuickDialogExample.app;
-			remoteRef = 39B8B10917E286AF00CF6458 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		39B8B10C17E286AF00CF6458 /* libQuickDialog.a */ = {
+		394CC2351858DFFA00FA859C /* libQuickDialog.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libQuickDialog.a;
-			remoteRef = 39B8B10B17E286AF00CF6458 /* PBXContainerItemProxy */;
+			remoteRef = 394CC2341858DFFA00FA859C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -845,15 +830,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		394CC2371858E05000FA859C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = QuickDialog;
+			targetProxy = 394CC2361858E05000FA859C /* PBXContainerItemProxy */;
+		};
 		39955E81178334C000D225D7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 39955E46178334BF00D225D7 /* Observer */;
 			targetProxy = 39955E80178334C000D225D7 /* PBXContainerItemProxy */;
-		};
-		39B8B10F17E2870C00CF6458 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = QuickDialog;
-			targetProxy = 39B8B10E17E2870C00CF6458 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -66,6 +66,7 @@ typedef enum {
 
 @property (strong, nonatomic) SurveyCollection* surveys;
 @property (strong, nonatomic) MapCollection* maps;
+@property (strong, nonatomic) UIPopoverController *quickDialogPopoverController;
 
 @end
 
@@ -456,6 +457,9 @@ typedef enum {
         self.angleDistancePopoverController = nil;
     if (popoverController == self.mapsPopoverController)
         self.mapsPopoverController = nil;
+    if (popoverController == self.quickDialogPopoverController) {
+        [self dismissQuickDialogPopover:popoverController];
+    }
 }
 
 #pragma mark - Delegate Methods - UIAlertViewDelegate
@@ -1112,6 +1116,74 @@ typedef enum {
     return success;
 }
 
+#pragma mark - Support for Testing Quick Dialog
+
+- (IBAction)changeEnvironment:(UIBarButtonItem *)sender
+{
+    if (self.quickDialogPopoverController) {
+        return;
+    }
+    //create VC from QDialog json in protocol, add newController to popover, display popover
+    NSDictionary *dialog = self.surveys.selectedSurvey.protocol.dialogs[@"MissionProperty"];
+    QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
+    QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
+    //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    self.quickDialogPopoverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
+    self.quickDialogPopoverController.delegate = self;
+    //self.popover.popoverContentSize = CGSizeMake(644, 425);
+    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+}
+
+- (IBAction)collectObservation:(UIBarButtonItem *)sender
+{
+    if (self.quickDialogPopoverController) {
+        return;
+    }
+    //create VC from QDialog json in protocol, add newController to popover, display popover
+    //TODO: support more than just one feature called Observations
+    NSDictionary *dialog = self.surveys.selectedSurvey.protocol.dialogs[@"Observation"];
+    QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
+    QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
+
+    //MapDetailViewController *vc = [[MapDetailViewController alloc] init];
+    //vc.map = self.maps.selectedLocalMap;
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    self.quickDialogPopoverController = [[UIPopoverController alloc] initWithContentViewController:navigationController];
+    self.quickDialogPopoverController.delegate = self;
+    //self.popover.popoverContentSize = CGSizeMake(644, 425);
+    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+}
+
+// not called when popover is dismissed programatically - use callbacks instead
+-(void)dismissQuickDialogPopover:(UIPopoverController *)popoverController
+{
+    UIViewController * vc = popoverController.contentViewController;
+    QuickDialogController *qd;
+    //[self updateTitle];
+    self.quickDialogPopoverController = nil;
+    if ([vc isKindOfClass:[QuickDialogController class]]) {
+        qd = (QuickDialogController *)vc;
+    }
+    if ([vc isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *nav = (UINavigationController *)vc;
+        if ([[nav.viewControllers firstObject] isKindOfClass:[QuickDialogController class]]) {
+            qd = [nav.viewControllers firstObject];
+        }
+    }
+    if (!qd) {
+        return;
+    }
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    [qd.root fetchValueUsingBindingsIntoObject:dict];
+
+    NSString *msg = @"Form Values:";
+    for (NSString *aKey in dict){
+        msg = [msg stringByAppendingFormat:@"\n %@ = %@", aKey, [dict valueForKey:aKey]];
+    }
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Testing Info"
+                                                    message:msg delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+}
 
 
 @end
