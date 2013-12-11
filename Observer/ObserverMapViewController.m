@@ -28,6 +28,8 @@
 #import "SurveyCollection.h"
 #import "MapCollection.h"
 #import "ProtocolCollection.h"
+#import "SurveySelectViewController.h"
+#import "MapSelectViewController.h"
 
 #define MINIMUM_NAVIGATION_SPEED 1.0  //speed in meters per second (1mps = 2.2mph) at which to switch map orientation from compass heading to course direction
 
@@ -450,10 +452,11 @@ typedef enum {
 }
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    UINavigationController *nav = [segue destinationViewController];
+
     if ([[segue identifier] isEqualToString:@"Push Local Map Table"])
     {
-        UINavigationController *nav1 = [segue destinationViewController];
-        LocalMapsTableViewController *dvc = (LocalMapsTableViewController *)nav1.viewControllers[0];
+        LocalMapsTableViewController *dvc = (LocalMapsTableViewController *)nav.viewControllers[0];
         dvc.maps = self.oldMapList;
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
         self.mapsPopoverController = pop.popoverController;
@@ -461,9 +464,9 @@ typedef enum {
         //FIXME - need to clear self.mapsPopoverController when popover is dismissed programatically.
         dvc.popover = pop.popoverController;
     }
+
     if ([[segue identifier] isEqualToString:@"AngleDistancePopOver"])
     {
-        UINavigationController *nav = [segue destinationViewController];
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
 
         //create/save current GpsPoint, because it may take a while for the user to enter an angle/distance
@@ -500,7 +503,36 @@ typedef enum {
             self.angleDistancePopoverController = nil;
         };
     }
-}
+
+    if ([segue.identifier isEqualToString:@"Select Survey"]){
+        SurveySelectViewController *vc = (SurveySelectViewController *)nav.childViewControllers[0];
+        vc.title = segue.identifier;
+        vc.items = self.surveys;
+        if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
+            vc.popover = ((UIStoryboardPopoverSegue *)segue).popoverController;
+            vc.popover.delegate = self;
+            vc.popoverDismissedCallback = ^{
+                self.barTitle.title = @"Loading Survey...";
+                [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
+                    //do any other background work;
+                    dispatch_async(dispatch_get_main_queue(), ^{[self setupNewSurvey];});
+                }];
+            };
+        }
+        return;
+    }
+
+    if ([segue.identifier isEqualToString:@"Select Map"]) {
+        MapSelectViewController *vc = (MapSelectViewController *)nav.childViewControllers[0];
+        vc.title = segue.identifier;
+        vc.items = self.maps;
+        if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
+            vc.popover = ((UIStoryboardPopoverSegue *)segue).popoverController;
+            vc.popover.delegate = self;
+            vc.rowSelectedCallback = ^(NSIndexPath*indexPath){[self updateTitle];};
+        }
+        return;
+    }}
 
 
 #pragma mark - Public Methods: Call backs for KVO and notifications
