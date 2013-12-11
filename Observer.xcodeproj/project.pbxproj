@@ -28,6 +28,7 @@
 		396775A517A083E8009ECD34 /* AGSPoint+AKRAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */; };
 		396775A817A0911E009ECD34 /* AGSPointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775A717A0911E009ECD34 /* AGSPointTests.m */; };
 		396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */; };
+		398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 398908041857DDFD007B3F67 /* ArcGIS.bundle */; };
 		39955E4B178334BF00D225D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
 		39955E4D178334BF00D225D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4C178334BF00D225D7 /* Foundation.framework */; };
 		39955E4F178334BF00D225D7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4E178334BF00D225D7 /* CoreGraphics.framework */; };
@@ -57,8 +58,6 @@
 		39955EA0178337F700D225D7 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9F178337F700D225D7 /* libc++.dylib */; };
 		39955EA21783382200D225D7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA11783382200D225D7 /* libz.dylib */; };
 		39955EA41783388600D225D7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA31783388600D225D7 /* OpenGLES.framework */; };
-		39955EA617833A7B00D225D7 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 39955EA517833A7B00D225D7 /* ArcGIS.bundle */; };
-		39955EA717833A7B00D225D7 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 39955EA517833A7B00D225D7 /* ArcGIS.bundle */; };
 		39955EA817833CE900D225D7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4E178334BF00D225D7 /* CoreGraphics.framework */; };
 		39955EA917833CFD00D225D7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E931783377E00D225D7 /* CoreLocation.framework */; };
 		39955EAA17833D0E00D225D7 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E951783379400D225D7 /* CoreText.framework */; };
@@ -161,6 +160,7 @@
 		396775C517A09B4D009ECD34 /* ObserverTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ObserverTests copy-Info.plist"; path = "/Users/regan_sarwas/Documents/Developer/ArcGIS iOS/Observer/ObserverTests copy-Info.plist"; sourceTree = "<absolute>"; };
 		396775C617A1C7B5009ECD34 /* AngleDistanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AngleDistanceViewController.h; sourceTree = "<group>"; };
 		396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AngleDistanceViewController.m; sourceTree = "<group>"; };
+		398908041857DDFD007B3F67 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
 		39955E47178334BF00D225D7 /* Observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Observer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39955E4A178334BF00D225D7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39955E4C178334BF00D225D7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -195,7 +195,6 @@
 		39955E9F178337F700D225D7 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		39955EA11783382200D225D7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		39955EA31783388600D225D7 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		39955EA517833A7B00D225D7 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
 		39955EB5178382D600D225D7 /* map.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = map.png; sourceTree = "<group>"; };
 		39955EB6178382D600D225D7 /* map@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "map@2x.png"; sourceTree = "<group>"; };
 		39955EBE17838C7E00D225D7 /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
@@ -358,8 +357,8 @@
 		39955E51178334C000D225D7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				398908041857DDFD007B3F67 /* ArcGIS.bundle */,
 				39955EBD17838C2E00D225D7 /* Images */,
-				39955EA517833A7B00D225D7 /* ArcGIS.bundle */,
 				39955E52178334C000D225D7 /* Observer-Info.plist */,
 				39955E53178334C000D225D7 /* InfoPlist.strings */,
 				39955E56178334C000D225D7 /* main.m */,
@@ -578,7 +577,6 @@
 				39955E6E178334C000D225D7 /* first@2x.png in Resources */,
 				39955E73178334C000D225D7 /* second.png in Resources */,
 				39955E75178334C000D225D7 /* second@2x.png in Resources */,
-				39955EA617833A7B00D225D7 /* ArcGIS.bundle in Resources */,
 				39955EB7178382D600D225D7 /* map.png in Resources */,
 				39955EB8178382D600D225D7 /* map@2x.png in Resources */,
 				39955EC017838C7E00D225D7 /* settings.png in Resources */,
@@ -593,6 +591,7 @@
 				396775A117A065EE009ECD34 /* Crosshairs@2x.png in Resources */,
 				393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */,
 				39B92FD517A87D9300C62145 /* BlueSelectionForTableViewCell.png in Resources */,
+				398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -601,7 +600,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				39955E87178334C000D225D7 /* InfoPlist.strings in Resources */,
-				39955EA717833A7B00D225D7 /* ArcGIS.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -721,6 +719,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -743,18 +742,19 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
-					"-all_load",
 					"-ObjC",
 					"-framework",
 					ArcGIS,
+					"-l",
+					"c++",
 				);
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/QuickDialog\"/**";
-				VALID_ARCHS = armv7;
+				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Debug;
 		};
@@ -763,6 +763,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -778,19 +779,20 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = (
-					"-all_load",
 					"-ObjC",
 					"-framework",
 					ArcGIS,
+					"-l",
+					"c++",
 				);
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/QuickDialog\"/**";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = armv7;
+				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Release;
 		};
