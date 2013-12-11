@@ -38,7 +38,7 @@
                                 <rect key="frame" x="366" y="494" width="37" height="37"/>
                             </activityIndicatorView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" misplaced="YES" barStyle="blackTranslucent" translatesAutoresizingMaskIntoConstraints="NO" id="3Af-C7-mib">
-                                <rect key="frame" x="0.0" y="981" width="768" height="44"/>
+                                <rect key="frame" x="0.0" y="985" width="768" height="44"/>
                                 <items>
                                     <barButtonItem title="Survey" id="SCL-a5-7Et"/>
                                     <barButtonItem title="Maps" id="gJK-vn-5w7">

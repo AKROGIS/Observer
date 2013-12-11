@@ -11,14 +11,14 @@
 
 @class AdhocLocation;
 
-@interface Map : NSManagedObject
+@interface MapReference : NSManagedObject
 
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * version;
 @property (nonatomic, retain) NSSet *adhocLocations;
 @end
 
-@interface Map (CoreDataGeneratedAccessors)
+@interface MapReference (CoreDataGeneratedAccessors)
 
 - (void)addAdhocLocationsObject:(AdhocLocation *)value;
 - (void)removeAdhocLocationsObject:(AdhocLocation *)value;

@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
-#import "Map.h"
+#import "MapReference.h"
 #import "AdhocLocation.h"
 
 
-@implementation Map
+@implementation MapReference
 
 @dynamic name;
 @dynamic version;

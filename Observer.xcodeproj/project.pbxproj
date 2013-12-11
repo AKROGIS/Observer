@@ -12,23 +12,45 @@
 		393759A617C2EE5A00A86595 /* AngleDistanceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759A517C2EE5A00A86595 /* AngleDistanceLocation.m */; };
 		393759A917C2EE6A00A86595 /* AttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759A817C2EE6A00A86595 /* AttributeSet.m */; };
 		393759AC17C2EE7B00A86595 /* GpsPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759AB17C2EE7B00A86595 /* GpsPoint.m */; };
-		393759AF17C2EE8C00A86595 /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759AE17C2EE8C00A86595 /* Map.m */; };
+		393759AF17C2EE8C00A86595 /* MapReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759AE17C2EE8C00A86595 /* MapReference.m */; };
 		393759B217C2EE9C00A86595 /* Mission.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759B117C2EE9C00A86595 /* Mission.m */; };
 		393759B517C2EEAD00A86595 /* MissionProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759B417C2EEAD00A86595 /* MissionProperty.m */; };
 		393759B817C2EEBD00A86595 /* Observation.m in Sources */ = {isa = PBXBuildFile; fileRef = 393759B717C2EEBD00A86595 /* Observation.m */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
-		393E8B0217A32C59009AD0AC /* NSArray+Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8B0117A32C59009AD0AC /* NSArray+Map.m */; };
 		396775071798C800009ECD34 /* compass.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775031798C800009ECD34 /* compass.png */; };
 		396775081798C800009ECD34 /* compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775041798C800009ECD34 /* compass@2x.png */; };
 		396775091798C800009ECD34 /* heading.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775051798C800009ECD34 /* heading.png */; };
 		3967750A1798C800009ECD34 /* heading@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 396775061798C800009ECD34 /* heading@2x.png */; };
 		396775A017A065EE009ECD34 /* Crosshairs.png in Resources */ = {isa = PBXBuildFile; fileRef = 3967759E17A065EE009ECD34 /* Crosshairs.png */; };
 		396775A117A065EE009ECD34 /* Crosshairs@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3967759F17A065EE009ECD34 /* Crosshairs@2x.png */; };
-		396775A517A083E8009ECD34 /* AGSPoint+AKRAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */; };
 		396775A817A0911E009ECD34 /* AGSPointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775A717A0911E009ECD34 /* AGSPointTests.m */; };
 		396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */; };
 		398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 398908041857DDFD007B3F67 /* ArcGIS.bundle */; };
+		398908221857EB2F007B3F67 /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908191857EB2F007B3F67 /* Map.m */; };
+		398908231857EB2F007B3F67 /* MapCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989081B1857EB2F007B3F67 /* MapCollection.m */; };
+		398908241857EB2F007B3F67 /* MapDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989081D1857EB2F007B3F67 /* MapDetailViewController.m */; };
+		398908251857EB2F007B3F67 /* MapSelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989081F1857EB2F007B3F67 /* MapSelectViewController.m */; };
+		398908261857EB2F007B3F67 /* MapTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908211857EB2F007B3F67 /* MapTableViewCell.m */; };
+		3989083B1857EBF6007B3F67 /* ProtocolCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908341857EBF6007B3F67 /* ProtocolCollection.m */; };
+		3989083C1857EBF6007B3F67 /* ProtocolDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908361857EBF6007B3F67 /* ProtocolDetailViewController.m */; };
+		3989083D1857EBF6007B3F67 /* ProtocolSelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908381857EBF6007B3F67 /* ProtocolSelectViewController.m */; };
+		3989083E1857EBF6007B3F67 /* ProtocolTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989083A1857EBF6007B3F67 /* ProtocolTableViewCell.m */; };
+		398908411857ECE4007B3F67 /* SProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908401857ECE4007B3F67 /* SProtocol.m */; };
+		3989084D1857ED00007B3F67 /* Survey.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908441857ED00007B3F67 /* Survey.m */; };
+		3989084E1857ED00007B3F67 /* SurveyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908461857ED00007B3F67 /* SurveyCollection.m */; };
+		3989084F1857ED00007B3F67 /* SurveyCoreDataDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908481857ED00007B3F67 /* SurveyCoreDataDocument.m */; };
+		398908501857ED00007B3F67 /* SurveyObjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989084A1857ED00007B3F67 /* SurveyObjectModel.m */; };
+		398908511857ED00007B3F67 /* SurveySelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989084C1857ED00007B3F67 /* SurveySelectViewController.m */; };
+		3989085D1857EDE1007B3F67 /* AGSPoint+AKRAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908541857EDE1007B3F67 /* AGSPoint+AKRAdditions.m */; };
+		3989085E1857EDE1007B3F67 /* NSArray+map.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908561857EDE1007B3F67 /* NSArray+map.m */; };
+		3989085F1857EDE1007B3F67 /* NSDate+Formatting.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908581857EDE1007B3F67 /* NSDate+Formatting.m */; };
+		398908601857EDE1007B3F67 /* NSIndexSet+indexPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989085A1857EDE1007B3F67 /* NSIndexSet+indexPath.m */; };
+		398908611857EDE1007B3F67 /* NSURL+unique.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989085C1857EDE1007B3F67 /* NSURL+unique.m */; };
+		398908681857F192007B3F67 /* SurveyDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908651857F192007B3F67 /* SurveyDetailViewController.m */; };
+		398908691857F192007B3F67 /* SurveyEntryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908671857F192007B3F67 /* SurveyEntryCell.m */; };
+		3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989086B1857F399007B3F67 /* AKRDownloadView.m */; };
+		39890DA31858C99E007B3F67 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39890DA21858C99E007B3F67 /* Images.xcassets */; };
 		39955E4B178334BF00D225D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
 		39955E4D178334BF00D225D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4C178334BF00D225D7 /* Foundation.framework */; };
 		39955E4F178334BF00D225D7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4E178334BF00D225D7 /* CoreGraphics.framework */; };
@@ -133,8 +155,8 @@
 		393759A817C2EE6A00A86595 /* AttributeSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AttributeSet.m; path = Model/AttributeSet.m; sourceTree = "<group>"; };
 		393759AA17C2EE7B00A86595 /* GpsPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GpsPoint.h; path = Model/GpsPoint.h; sourceTree = "<group>"; };
 		393759AB17C2EE7B00A86595 /* GpsPoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GpsPoint.m; path = Model/GpsPoint.m; sourceTree = "<group>"; };
-		393759AD17C2EE8C00A86595 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Map.h; path = Model/Map.h; sourceTree = "<group>"; };
-		393759AE17C2EE8C00A86595 /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Map.m; path = Model/Map.m; sourceTree = "<group>"; };
+		393759AD17C2EE8C00A86595 /* MapReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapReference.h; path = Model/MapReference.h; sourceTree = "<group>"; };
+		393759AE17C2EE8C00A86595 /* MapReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MapReference.m; path = Model/MapReference.m; sourceTree = "<group>"; };
 		393759B017C2EE9C00A86595 /* Mission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mission.h; path = Model/Mission.h; sourceTree = "<group>"; };
 		393759B117C2EE9C00A86595 /* Mission.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Mission.m; path = Model/Mission.m; sourceTree = "<group>"; };
 		393759B317C2EEAD00A86595 /* MissionProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MissionProperty.h; path = Model/MissionProperty.h; sourceTree = "<group>"; };
@@ -145,22 +167,67 @@
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
 		393E8AFD17A30012009AD0AC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		393E8AFF17A318F5009AD0AC /* Enumerations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Enumerations.h; path = Model/Enumerations.h; sourceTree = "<group>"; };
-		393E8B0017A32C59009AD0AC /* NSArray+Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Map.h"; path = "Model/NSArray+Map.h"; sourceTree = "<group>"; };
-		393E8B0117A32C59009AD0AC /* NSArray+Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+Map.m"; path = "Model/NSArray+Map.m"; sourceTree = "<group>"; };
 		396775031798C800009ECD34 /* compass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = compass.png; sourceTree = "<group>"; };
 		396775041798C800009ECD34 /* compass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "compass@2x.png"; sourceTree = "<group>"; };
 		396775051798C800009ECD34 /* heading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = heading.png; sourceTree = "<group>"; };
 		396775061798C800009ECD34 /* heading@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "heading@2x.png"; sourceTree = "<group>"; };
 		3967759E17A065EE009ECD34 /* Crosshairs.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Crosshairs.png; sourceTree = "<group>"; };
 		3967759F17A065EE009ECD34 /* Crosshairs@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Crosshairs@2x.png"; sourceTree = "<group>"; };
-		396775A317A083E8009ECD34 /* AGSPoint+AKRAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AGSPoint+AKRAdditions.h"; path = "Model/AGSPoint+AKRAdditions.h"; sourceTree = "<group>"; };
-		396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "AGSPoint+AKRAdditions.m"; path = "Model/AGSPoint+AKRAdditions.m"; sourceTree = "<group>"; };
 		396775A617A0911E009ECD34 /* AGSPointTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGSPointTests.h; sourceTree = "<group>"; };
 		396775A717A0911E009ECD34 /* AGSPointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGSPointTests.m; sourceTree = "<group>"; };
 		396775C517A09B4D009ECD34 /* ObserverTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ObserverTests copy-Info.plist"; path = "/Users/regan_sarwas/Documents/Developer/ArcGIS iOS/Observer/ObserverTests copy-Info.plist"; sourceTree = "<absolute>"; };
 		396775C617A1C7B5009ECD34 /* AngleDistanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AngleDistanceViewController.h; sourceTree = "<group>"; };
 		396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AngleDistanceViewController.m; sourceTree = "<group>"; };
 		398908041857DDFD007B3F67 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
+		398908181857EB2F007B3F67 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
+		398908191857EB2F007B3F67 /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Map.m; sourceTree = "<group>"; };
+		3989081A1857EB2F007B3F67 /* MapCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapCollection.h; sourceTree = "<group>"; };
+		3989081B1857EB2F007B3F67 /* MapCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapCollection.m; sourceTree = "<group>"; };
+		3989081C1857EB2F007B3F67 /* MapDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapDetailViewController.h; sourceTree = "<group>"; };
+		3989081D1857EB2F007B3F67 /* MapDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapDetailViewController.m; sourceTree = "<group>"; };
+		3989081E1857EB2F007B3F67 /* MapSelectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapSelectViewController.h; sourceTree = "<group>"; };
+		3989081F1857EB2F007B3F67 /* MapSelectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapSelectViewController.m; sourceTree = "<group>"; };
+		398908201857EB2F007B3F67 /* MapTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapTableViewCell.h; sourceTree = "<group>"; };
+		398908211857EB2F007B3F67 /* MapTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapTableViewCell.m; sourceTree = "<group>"; };
+		398908331857EBF5007B3F67 /* ProtocolCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolCollection.h; path = Protocols/ProtocolCollection.h; sourceTree = "<group>"; };
+		398908341857EBF6007B3F67 /* ProtocolCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolCollection.m; path = Protocols/ProtocolCollection.m; sourceTree = "<group>"; };
+		398908351857EBF6007B3F67 /* ProtocolDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolDetailViewController.h; path = Protocols/ProtocolDetailViewController.h; sourceTree = "<group>"; };
+		398908361857EBF6007B3F67 /* ProtocolDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolDetailViewController.m; path = Protocols/ProtocolDetailViewController.m; sourceTree = "<group>"; };
+		398908371857EBF6007B3F67 /* ProtocolSelectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolSelectViewController.h; path = Protocols/ProtocolSelectViewController.h; sourceTree = "<group>"; };
+		398908381857EBF6007B3F67 /* ProtocolSelectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolSelectViewController.m; path = Protocols/ProtocolSelectViewController.m; sourceTree = "<group>"; };
+		398908391857EBF6007B3F67 /* ProtocolTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolTableViewCell.h; path = Protocols/ProtocolTableViewCell.h; sourceTree = "<group>"; };
+		3989083A1857EBF6007B3F67 /* ProtocolTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolTableViewCell.m; path = Protocols/ProtocolTableViewCell.m; sourceTree = "<group>"; };
+		3989083F1857ECE4007B3F67 /* SProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SProtocol.h; path = Protocols/SProtocol.h; sourceTree = "<group>"; };
+		398908401857ECE4007B3F67 /* SProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SProtocol.m; path = Protocols/SProtocol.m; sourceTree = "<group>"; };
+		398908431857ED00007B3F67 /* Survey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Survey.h; path = Surveys/Survey.h; sourceTree = "<group>"; };
+		398908441857ED00007B3F67 /* Survey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Survey.m; path = Surveys/Survey.m; sourceTree = "<group>"; };
+		398908451857ED00007B3F67 /* SurveyCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyCollection.h; path = Surveys/SurveyCollection.h; sourceTree = "<group>"; };
+		398908461857ED00007B3F67 /* SurveyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyCollection.m; path = Surveys/SurveyCollection.m; sourceTree = "<group>"; };
+		398908471857ED00007B3F67 /* SurveyCoreDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyCoreDataDocument.h; path = Surveys/SurveyCoreDataDocument.h; sourceTree = "<group>"; };
+		398908481857ED00007B3F67 /* SurveyCoreDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyCoreDataDocument.m; path = Surveys/SurveyCoreDataDocument.m; sourceTree = "<group>"; };
+		398908491857ED00007B3F67 /* SurveyObjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyObjectModel.h; path = Surveys/SurveyObjectModel.h; sourceTree = "<group>"; };
+		3989084A1857ED00007B3F67 /* SurveyObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyObjectModel.m; path = Surveys/SurveyObjectModel.m; sourceTree = "<group>"; };
+		3989084B1857ED00007B3F67 /* SurveySelectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveySelectViewController.h; path = Surveys/SurveySelectViewController.h; sourceTree = "<group>"; };
+		3989084C1857ED00007B3F67 /* SurveySelectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveySelectViewController.m; path = Surveys/SurveySelectViewController.m; sourceTree = "<group>"; };
+		398908531857EDE1007B3F67 /* AGSPoint+AKRAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AGSPoint+AKRAdditions.h"; path = "Categories/AGSPoint+AKRAdditions.h"; sourceTree = "<group>"; };
+		398908541857EDE1007B3F67 /* AGSPoint+AKRAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "AGSPoint+AKRAdditions.m"; path = "Categories/AGSPoint+AKRAdditions.m"; sourceTree = "<group>"; };
+		398908551857EDE1007B3F67 /* NSArray+map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+map.h"; path = "Categories/NSArray+map.h"; sourceTree = "<group>"; };
+		398908561857EDE1007B3F67 /* NSArray+map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+map.m"; path = "Categories/NSArray+map.m"; sourceTree = "<group>"; };
+		398908571857EDE1007B3F67 /* NSDate+Formatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDate+Formatting.h"; path = "Categories/NSDate+Formatting.h"; sourceTree = "<group>"; };
+		398908581857EDE1007B3F67 /* NSDate+Formatting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDate+Formatting.m"; path = "Categories/NSDate+Formatting.m"; sourceTree = "<group>"; };
+		398908591857EDE1007B3F67 /* NSIndexSet+indexPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSIndexSet+indexPath.h"; path = "Categories/NSIndexSet+indexPath.h"; sourceTree = "<group>"; };
+		3989085A1857EDE1007B3F67 /* NSIndexSet+indexPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSIndexSet+indexPath.m"; path = "Categories/NSIndexSet+indexPath.m"; sourceTree = "<group>"; };
+		3989085B1857EDE1007B3F67 /* NSURL+unique.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURL+unique.h"; path = "Categories/NSURL+unique.h"; sourceTree = "<group>"; };
+		3989085C1857EDE1007B3F67 /* NSURL+unique.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURL+unique.m"; path = "Categories/NSURL+unique.m"; sourceTree = "<group>"; };
+		398908621857EFF3007B3F67 /* AKRTableViewItemCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRTableViewItemCollection.h; sourceTree = "<group>"; };
+		398908631857F087007B3F67 /* AKRCollectionChanged.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRCollectionChanged.h; sourceTree = "<group>"; };
+		398908641857F192007B3F67 /* SurveyDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyDetailViewController.h; path = Surveys/SurveyDetailViewController.h; sourceTree = "<group>"; };
+		398908651857F192007B3F67 /* SurveyDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyDetailViewController.m; path = Surveys/SurveyDetailViewController.m; sourceTree = "<group>"; };
+		398908661857F192007B3F67 /* SurveyEntryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyEntryCell.h; path = Surveys/SurveyEntryCell.h; sourceTree = "<group>"; };
+		398908671857F192007B3F67 /* SurveyEntryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyEntryCell.m; path = Surveys/SurveyEntryCell.m; sourceTree = "<group>"; };
+		3989086A1857F399007B3F67 /* AKRDownloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDownloadView.h; sourceTree = "<group>"; };
+		3989086B1857F399007B3F67 /* AKRDownloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDownloadView.m; sourceTree = "<group>"; };
+		39890DA21858C99E007B3F67 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		39955E47178334BF00D225D7 /* Observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Observer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39955E4A178334BF00D225D7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39955E4C178334BF00D225D7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -276,6 +343,8 @@
 		391D0EE017F4F99700D8C5DF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				3989086A1857F399007B3F67 /* AKRDownloadView.h */,
+				3989086B1857F399007B3F67 /* AKRDownloadView.m */,
 				39B92FD117A869B500C62145 /* RadioStyleTableViewCell.h */,
 				39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */,
 			);
@@ -295,6 +364,78 @@
 				39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */,
 			);
 			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		398908071857EA05007B3F67 /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				3989083F1857ECE4007B3F67 /* SProtocol.h */,
+				398908401857ECE4007B3F67 /* SProtocol.m */,
+				398908331857EBF5007B3F67 /* ProtocolCollection.h */,
+				398908341857EBF6007B3F67 /* ProtocolCollection.m */,
+				398908351857EBF6007B3F67 /* ProtocolDetailViewController.h */,
+				398908361857EBF6007B3F67 /* ProtocolDetailViewController.m */,
+				398908371857EBF6007B3F67 /* ProtocolSelectViewController.h */,
+				398908381857EBF6007B3F67 /* ProtocolSelectViewController.m */,
+				398908391857EBF6007B3F67 /* ProtocolTableViewCell.h */,
+				3989083A1857EBF6007B3F67 /* ProtocolTableViewCell.m */,
+			);
+			name = Protocol;
+			sourceTree = "<group>";
+		};
+		398908081857EAB8007B3F67 /* Maps */ = {
+			isa = PBXGroup;
+			children = (
+				398908181857EB2F007B3F67 /* Map.h */,
+				398908191857EB2F007B3F67 /* Map.m */,
+				3989081A1857EB2F007B3F67 /* MapCollection.h */,
+				3989081B1857EB2F007B3F67 /* MapCollection.m */,
+				3989081C1857EB2F007B3F67 /* MapDetailViewController.h */,
+				3989081D1857EB2F007B3F67 /* MapDetailViewController.m */,
+				3989081E1857EB2F007B3F67 /* MapSelectViewController.h */,
+				3989081F1857EB2F007B3F67 /* MapSelectViewController.m */,
+				398908201857EB2F007B3F67 /* MapTableViewCell.h */,
+				398908211857EB2F007B3F67 /* MapTableViewCell.m */,
+			);
+			path = Maps;
+			sourceTree = "<group>";
+		};
+		398908421857ECEB007B3F67 /* Surveys */ = {
+			isa = PBXGroup;
+			children = (
+				398908641857F192007B3F67 /* SurveyDetailViewController.h */,
+				398908651857F192007B3F67 /* SurveyDetailViewController.m */,
+				398908661857F192007B3F67 /* SurveyEntryCell.h */,
+				398908671857F192007B3F67 /* SurveyEntryCell.m */,
+				398908431857ED00007B3F67 /* Survey.h */,
+				398908441857ED00007B3F67 /* Survey.m */,
+				398908451857ED00007B3F67 /* SurveyCollection.h */,
+				398908461857ED00007B3F67 /* SurveyCollection.m */,
+				398908471857ED00007B3F67 /* SurveyCoreDataDocument.h */,
+				398908481857ED00007B3F67 /* SurveyCoreDataDocument.m */,
+				398908491857ED00007B3F67 /* SurveyObjectModel.h */,
+				3989084A1857ED00007B3F67 /* SurveyObjectModel.m */,
+				3989084B1857ED00007B3F67 /* SurveySelectViewController.h */,
+				3989084C1857ED00007B3F67 /* SurveySelectViewController.m */,
+			);
+			name = Surveys;
+			sourceTree = "<group>";
+		};
+		398908521857ED27007B3F67 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				398908531857EDE1007B3F67 /* AGSPoint+AKRAdditions.h */,
+				398908541857EDE1007B3F67 /* AGSPoint+AKRAdditions.m */,
+				398908551857EDE1007B3F67 /* NSArray+map.h */,
+				398908561857EDE1007B3F67 /* NSArray+map.m */,
+				398908571857EDE1007B3F67 /* NSDate+Formatting.h */,
+				398908581857EDE1007B3F67 /* NSDate+Formatting.m */,
+				398908591857EDE1007B3F67 /* NSIndexSet+indexPath.h */,
+				3989085A1857EDE1007B3F67 /* NSIndexSet+indexPath.m */,
+				3989085B1857EDE1007B3F67 /* NSURL+unique.h */,
+				3989085C1857EDE1007B3F67 /* NSURL+unique.m */,
+			);
+			name = Categories;
 			sourceTree = "<group>";
 		};
 		39955E3E178334BF00D225D7 = {
@@ -342,6 +483,12 @@
 		39955E50178334BF00D225D7 /* Observer */ = {
 			isa = PBXGroup;
 			children = (
+				398908631857F087007B3F67 /* AKRCollectionChanged.h */,
+				398908621857EFF3007B3F67 /* AKRTableViewItemCollection.h */,
+				398908521857ED27007B3F67 /* Categories */,
+				398908421857ECEB007B3F67 /* Surveys */,
+				398908081857EAB8007B3F67 /* Maps */,
+				398908071857EA05007B3F67 /* Protocol */,
 				391D0EE217F4F9A000D8C5DF /* ViewControllers */,
 				391D0EE017F4F99700D8C5DF /* Views */,
 				39955EC6178732B500D225D7 /* Models */,
@@ -357,6 +504,7 @@
 		39955E51178334C000D225D7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				39890DA21858C99E007B3F67 /* Images.xcassets */,
 				398908041857DDFD007B3F67 /* ArcGIS.bundle */,
 				39955EBD17838C2E00D225D7 /* Images */,
 				39955E52178334C000D225D7 /* Observer-Info.plist */,
@@ -428,16 +576,14 @@
 				393759B417C2EEAD00A86595 /* MissionProperty.m */,
 				393759B017C2EE9C00A86595 /* Mission.h */,
 				393759B117C2EE9C00A86595 /* Mission.m */,
-				393759AD17C2EE8C00A86595 /* Map.h */,
-				393759AE17C2EE8C00A86595 /* Map.m */,
+				393759AD17C2EE8C00A86595 /* MapReference.h */,
+				393759AE17C2EE8C00A86595 /* MapReference.m */,
 				393759AA17C2EE7B00A86595 /* GpsPoint.h */,
 				393759AB17C2EE7B00A86595 /* GpsPoint.m */,
 				393759A717C2EE6A00A86595 /* AttributeSet.h */,
 				393759A817C2EE6A00A86595 /* AttributeSet.m */,
 				393759A417C2EE5A00A86595 /* AngleDistanceLocation.h */,
 				393759A517C2EE5A00A86595 /* AngleDistanceLocation.m */,
-				396775A317A083E8009ECD34 /* AGSPoint+AKRAdditions.h */,
-				396775A417A083E8009ECD34 /* AGSPoint+AKRAdditions.m */,
 				39955EC7178732DE00D225D7 /* BaseMap.h */,
 				39955EC8178732DE00D225D7 /* BaseMap.m */,
 				39955ECA1787332400D225D7 /* BaseMapManager.h */,
@@ -446,8 +592,6 @@
 				39D1D94A17B464B40014C68F /* LocationAngleDistance.h */,
 				39D1D94B17B464B40014C68F /* LocationAngleDistance.m */,
 				59119861178906FD00B2331B /* MapMonitoring.h */,
-				393E8B0017A32C59009AD0AC /* NSArray+Map.h */,
-				393E8B0117A32C59009AD0AC /* NSArray+Map.m */,
 				39D1D97B17BC51630014C68F /* ObserverModel.h */,
 				39D1D95017BAF0FD0014C68F /* ObserverModel.xcdatamodeld */,
 				393759A117C2EE4900A86595 /* AdhocLocation.h */,
@@ -527,6 +671,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 39955E3E178334BF00D225D7;
 			productRefGroup = 39955E48178334BF00D225D7 /* Products */;
@@ -570,6 +715,7 @@
 				39955E55178334C000D225D7 /* InfoPlist.strings in Resources */,
 				39955E5D178334C000D225D7 /* Default.png in Resources */,
 				39955E5F178334C000D225D7 /* Default@2x.png in Resources */,
+				39890DA31858C99E007B3F67 /* Images.xcassets in Resources */,
 				39955E61178334C000D225D7 /* Default-568h@2x.png in Resources */,
 				39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
@@ -627,16 +773,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				39955E57178334C000D225D7 /* main.m in Sources */,
+				3989085E1857EDE1007B3F67 /* NSArray+map.m in Sources */,
+				398908251857EB2F007B3F67 /* MapSelectViewController.m in Sources */,
 				39955E5B178334C000D225D7 /* ObserverAppDelegate.m in Sources */,
+				398908231857EB2F007B3F67 /* MapCollection.m in Sources */,
+				3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */,
 				39955EC9178732DE00D225D7 /* BaseMap.m in Sources */,
 				39955ECC1787332400D225D7 /* BaseMapManager.m in Sources */,
+				3989085F1857EDE1007B3F67 /* NSDate+Formatting.m in Sources */,
 				39955ECF1787336900D225D7 /* LocalMapsTableViewController.m in Sources */,
+				3989084F1857ED00007B3F67 /* SurveyCoreDataDocument.m in Sources */,
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
-				396775A517A083E8009ECD34 /* AGSPoint+AKRAdditions.m in Sources */,
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
+				398908601857EDE1007B3F67 /* NSIndexSet+indexPath.m in Sources */,
+				3989084D1857ED00007B3F67 /* Survey.m in Sources */,
+				398908611857EDE1007B3F67 /* NSURL+unique.m in Sources */,
+				3989083D1857EBF6007B3F67 /* ProtocolSelectViewController.m in Sources */,
+				3989083E1857EBF6007B3F67 /* ProtocolTableViewCell.m in Sources */,
 				393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */,
-				393E8B0217A32C59009AD0AC /* NSArray+Map.m in Sources */,
 				39B92FCA17A7380B00C62145 /* SurveyProtocol.m in Sources */,
+				398908221857EB2F007B3F67 /* Map.m in Sources */,
 				39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */,
 				39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */,
 				39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */,
@@ -644,11 +800,22 @@
 				393759A317C2EE4900A86595 /* AdhocLocation.m in Sources */,
 				393759A617C2EE5A00A86595 /* AngleDistanceLocation.m in Sources */,
 				393759A917C2EE6A00A86595 /* AttributeSet.m in Sources */,
+				398908681857F192007B3F67 /* SurveyDetailViewController.m in Sources */,
+				398908691857F192007B3F67 /* SurveyEntryCell.m in Sources */,
+				398908411857ECE4007B3F67 /* SProtocol.m in Sources */,
+				3989083B1857EBF6007B3F67 /* ProtocolCollection.m in Sources */,
 				393759AC17C2EE7B00A86595 /* GpsPoint.m in Sources */,
-				393759AF17C2EE8C00A86595 /* Map.m in Sources */,
+				3989085D1857EDE1007B3F67 /* AGSPoint+AKRAdditions.m in Sources */,
+				398908511857ED00007B3F67 /* SurveySelectViewController.m in Sources */,
+				3989084E1857ED00007B3F67 /* SurveyCollection.m in Sources */,
+				398908241857EB2F007B3F67 /* MapDetailViewController.m in Sources */,
+				393759AF17C2EE8C00A86595 /* MapReference.m in Sources */,
 				393759B217C2EE9C00A86595 /* Mission.m in Sources */,
 				393759B517C2EEAD00A86595 /* MissionProperty.m in Sources */,
 				393759B817C2EEBD00A86595 /* Observation.m in Sources */,
+				398908261857EB2F007B3F67 /* MapTableViewCell.m in Sources */,
+				3989083C1857EBF6007B3F67 /* ProtocolDetailViewController.m in Sources */,
+				398908501857ED00007B3F67 /* SurveyObjectModel.m in Sources */,
 				391EE9FA17C6EA48007B050B /* ProtocolManagedDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
