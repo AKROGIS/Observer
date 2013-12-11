@@ -14,6 +14,8 @@
 @property (nonatomic) BOOL busy;
 @property (nonatomic,weak) NSManagedObjectContext *context;
 
+//To assist App delegate in opening urls from mail/web
+- (BOOL) openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation;
 
 - (void) openModel;
 

@@ -56,12 +56,25 @@
     [self.masterVC closeModel];
 }
 
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    NSLog(@"%@ asked me to open %@", sourceApplication, url);
+    return [self.masterVC openURL:url sourceApplication:sourceApplication annotation:annotation];
+}
 
 - (ObserverMapViewController *)masterVC
 {
-    return (ObserverMapViewController *)self.window.rootViewController;
+    UIViewController *vc;
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        vc = self.window.rootViewController;
+    } else {
+        UINavigationController *nav = (UINavigationController *)self.window.rootViewController;
+        vc = nav.viewControllers[0];
+    }
+    if ([vc isKindOfClass:[ObserverMapViewController class]]) {
+        return (ObserverMapViewController *)vc;
+    }
+    return nil;
 }
-
-
 
 @end

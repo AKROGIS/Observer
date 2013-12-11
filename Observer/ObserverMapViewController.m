@@ -25,6 +25,9 @@
 #import "ObserverMapViewController.h"
 #import "LocalMapsTableViewController.h"
 #import "AngleDistanceViewController.h"
+#import "SurveyCollection.h"
+#import "MapCollection.h"
+#import "ProtocolCollection.h"
 
 #define MINIMUM_NAVIGATION_SPEED 1.0  //speed in meters per second (1mps = 2.2mph) at which to switch map orientation from compass heading to course direction
 
@@ -37,7 +40,7 @@ typedef enum {
 
 @interface ObserverMapViewController ()
 
-@property (strong, nonatomic) BaseMapManager *maps;
+@property (strong, nonatomic) BaseMapManager *oldMapList;
 @property (strong, nonatomic) SurveyProtocol *protocol;
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
@@ -60,6 +63,9 @@ typedef enum {
 @property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
 @property (nonatomic) int busyCount;
+
+@property (strong, nonatomic) SurveyCollection* surveys;
+@property (strong, nonatomic) MapCollection* maps;
 
 @end
 
@@ -95,12 +101,12 @@ typedef enum {
 #pragma mark - Private Properties
 
 //lazy instantiation
-- (BaseMapManager *)maps
+- (BaseMapManager *)oldMapList
 {
-    if (!_maps) {
-        _maps = [BaseMapManager sharedManager];
+    if (!_oldMapList) {
+        _oldMapList = [BaseMapManager sharedManager];
     }
-    return _maps;
+    return _oldMapList;
 }
 
 - (CLLocationManager *)locationManager
@@ -305,7 +311,7 @@ typedef enum {
     self.mapView.allowRotationByPinching = YES;
     dispatch_queue_t loadQueue = dispatch_queue_create("loadLocalMaps", NULL);
     dispatch_async(loadQueue, ^{
-        [self.maps loadLocalMaps];
+        [self.oldMapList loadLocalMaps];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self loadBaseMap];
         });
@@ -370,7 +376,7 @@ typedef enum {
     {
         UINavigationController *nav1 = [segue destinationViewController];
         LocalMapsTableViewController *dvc = (LocalMapsTableViewController *)nav1.viewControllers[0];
-        dvc.maps = self.maps;
+        dvc.maps = self.oldMapList;
         UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
         self.mapsPopoverController = pop.popoverController;
         self.mapsPopoverController.delegate = self;
@@ -432,9 +438,9 @@ typedef enum {
 //Use receptionist pattern: http://developer.apple.com/library/ios/#documentation/general/conceptual/CocoaEncyclopedia/ReceptionistPattern/ReceptionistPattern.html
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (self.maps == object && [keyPath isEqualToString:@"currentMap"])
+    if (self.oldMapList == object && [keyPath isEqualToString:@"currentMap"])
     {
-        NSLog(@"self.maps.currentMap has changed; old: %@, new: %@", change[NSKeyValueChangeOldKey], change[NSKeyValueChangeNewKey]);
+        NSLog(@"self.oldMapList.currentMap has changed; old: %@, new: %@", change[NSKeyValueChangeOldKey], change[NSKeyValueChangeNewKey]);
         if (change[NSKeyValueChangeOldKey] != change[NSKeyValueChangeNewKey])
             [self resetBasemap];
     }
@@ -735,7 +741,7 @@ typedef enum {
 
 - (void) loadBaseMap
 {
-    if (!self.maps.currentMap.tileCache)
+    if (!self.oldMapList.currentMap.tileCache)
     {
         self.noMapLabel.hidden = NO;
         self.busy = NO;
@@ -743,10 +749,10 @@ typedef enum {
     else
     {
         //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
-        self.maps.currentMap.tileCache.delegate = self;
-        [self.mapView addMapLayer:self.maps.currentMap.tileCache withName:@"tilecache basemap"];
+        self.oldMapList.currentMap.tileCache.delegate = self;
+        [self.mapView addMapLayer:self.oldMapList.currentMap.tileCache withName:@"tilecache basemap"];
     }
-    [self.maps addObserver:self forKeyPath:@"currentMap" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
+    [self.oldMapList addObserver:self forKeyPath:@"currentMap" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
 }
 
 - (void) resetBasemap
@@ -759,7 +765,7 @@ typedef enum {
     //to reset the mapView extents/SR, we need to call reset, then re-add the layers.
     //first we need to get the layers, so we can re-add them after setting the new basemap
     NSLog(@"Reseting the basemap");
-    if (!self.maps.currentMap.tileCache)
+    if (!self.oldMapList.currentMap.tileCache)
     {
         self.noMapLabel.hidden = NO;
         self.busy = NO;
@@ -770,8 +776,8 @@ typedef enum {
         self.busy = YES;
         [self.mapView reset]; //remove all layers
         //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
-        self.maps.currentMap.tileCache.delegate = self;
-        [self.mapView addMapLayer:self.maps.currentMap.tileCache withName:@"tilecache basemap"];
+        self.oldMapList.currentMap.tileCache.delegate = self;
+        [self.mapView addMapLayer:self.oldMapList.currentMap.tileCache withName:@"tilecache basemap"];
     }
 }
 
@@ -1061,6 +1067,49 @@ typedef enum {
 - (void) closeModel
 {
     [self.protocol closeModel];
+}
+
+
+- (BOOL) openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    BOOL success = NO;
+    if ([SurveyCollection collectsURL:url]) {
+        success = [self.surveys openURL:url];
+        if (!success) {
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        } else {
+            //FIXME: update UI for new survey)
+            [[[UIAlertView alloc] initWithTitle:@"Thanks" message:@"I should do something now." delegate:nil cancelButtonTitle:@"Do it later" otherButtonTitles:nil] show];
+        }
+    }
+    if ([MapCollection collectsURL:url]) {
+        success = ![self.maps openURL:url];
+        if (!success) {
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        } else {
+            //FIXME: update UI for new map)
+            [[[UIAlertView alloc] initWithTitle:@"Thanks" message:@"I should do something now." delegate:nil cancelButtonTitle:@"Do it later" otherButtonTitles:nil] show];
+        }
+    }
+
+    //FIXME: this isn't working when the Protocol view is up
+    //I need to make sure I am getting the protocol collection it is using, and make sure updates are going to the delegate.
+    if ([ProtocolCollection collectsURL:url]) {
+        ProtocolCollection *protocols = [ProtocolCollection sharedCollection];
+        [protocols openWithCompletionHandler:^(BOOL success) {
+            SProtocol *protocol = [protocols openURL:url];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (protocol) {
+                    [[[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to create a new survey file with this protocol?" delegate:nil cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil] show];
+                    //FIXME: read the response, and acta accordingly
+                } else {
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                }
+            });
+        }];
+    }
+
+    return success;
 }
 
 
