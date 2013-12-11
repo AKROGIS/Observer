@@ -15,6 +15,8 @@
 @property (nonatomic,weak) NSManagedObjectContext *context;
 
 
+- (void) openModel;
+
 - (void) closeModel;
 
 - (void) saveModel;

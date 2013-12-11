@@ -163,7 +163,8 @@ typedef enum {
         _protocol.angleBaseline = 180;
         _protocol.angleDirection = AngleDirectionClockwise;
         _protocol.definesAngleDistanceMeasures = YES;
-        _protocol = nil;
+        _protocol.delegate = self;
+        //_protocol = nil;
     }
     return _protocol;
 }
@@ -1045,6 +1046,11 @@ typedef enum {
 - (void) stopMission
 {
     
+}
+
+- (void) openModel
+{
+    [self.protocol openModel];
 }
 
 - (void) saveModel
