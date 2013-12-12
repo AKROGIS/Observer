@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "AKRTableViewItemCollection.h"
+#import <ArcGIS/ArcGIS.h>
+
+#define MAP_EXT @"tpk"
 
 @interface Map : NSObject <NSCoding, FSTableViewItem>
 
@@ -18,7 +21,8 @@
 @property (nonatomic, strong, readonly) NSString *author;
 @property (nonatomic, strong, readonly) NSDate *date;
 @property (nonatomic, readonly) NSUInteger byteCount;
-@property (nonatomic, readonly) CGRect extents;
+@property (nonatomic, readonly) AGSEnvelope *extents;
+@property (nonatomic, strong, readonly) NSURL *thumbnailUrl;
 
 // Helpers for details view
 - (NSString *)byteSizeString;
@@ -34,7 +38,7 @@
 //To avoid the potential delay, call openPropertiesWithCompletionHandler first
 @property (nonatomic, strong, readonly) UIImage *thumbnail;
 //FIXME: get correct type for tilecache and validate usage
-@property (nonatomic, strong, readonly) id tileCache;
+@property (nonatomic, strong, readonly) AGSLocalTiledLayer *tileCache;
 
 
 //YES if two Maps are the same (same title, version and date)
@@ -45,6 +49,7 @@
 //- (id) initWithURL:(id)url title:(id)title author:(id)author date:(id)date size:(id)size description:(id)description thumbnail:(id)thumbnail xmin:(id)xmin ymin:(id)ymin xmax:(id)xmax ymax:(id)ymax;
 - (id)initWithURL:(NSURL *)url;
 - (id)initWithDictionary:(NSDictionary *)dictionary;
+- (id)initWithLocalTileCache:(NSURL *)url;
 - (id) init __attribute__((unavailable("Must use initWithURL: instead.")));
 
 // download the Map from the remote URL to a local file...

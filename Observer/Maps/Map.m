@@ -15,6 +15,7 @@
 
 #import "Map.h"
 #import "NSDate+Formatting.h"
+#import "NSURL+unique.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -34,12 +35,12 @@
 @property (nonatomic, strong, readwrite) NSString *author;
 @property (nonatomic, strong, readwrite) NSDate *date;
 @property (nonatomic, readwrite) NSUInteger byteCount;
-@property (nonatomic, readwrite) CGRect extents;
+@property (nonatomic, readwrite) AGSEnvelope *extents;
 
 @property (nonatomic) BOOL downloading;
 @property (nonatomic, strong, readwrite) UIImage *thumbnail;
-@property (nonatomic, strong, readwrite) id tileCache;
-@property (nonatomic, strong) NSURL *thumbnailUrl;
+@property (nonatomic, strong, readwrite) AGSLocalTiledLayer *tileCache;
+@property (nonatomic, strong, readwrite) NSURL *thumbnailUrl;
 @property (nonatomic) BOOL thumbnailIsLoaded;
 @property (nonatomic) BOOL tileCacheIsLoaded;
 
@@ -56,6 +57,34 @@
         _url = url;
     }
     return self;
+}
+
+- (id)initWithLocalTileCache:(NSURL *)url
+{
+    Map *map = [self initWithURL:url];
+    if (map) {
+        if (!map.tileCache) {
+            return nil;
+        }
+        if (map.tileCache.name && ![map.tileCache.name isEqualToString:@""]) {
+            map.title = map.tileCache.name;
+        } else {
+            map.title = [[url lastPathComponent] stringByDeletingPathExtension];
+        }
+        map.author = @"Unknown"; //TODO: get the author from the esriinfo.xml file in the zipped tpk
+        NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:[url path] error:nil];
+        map.byteCount = [fileAttributes fileSize];
+        map.date = [fileAttributes fileCreationDate];  //TODO: Get the date from the esriinfo.xml file in the zipped tpk
+        map.description = @"Not available."; //TODO: get the description from the esriinfo.xml file in the zipped tpk
+        map.thumbnailUrl = [self thumbnailUrlForMapName:map.title];
+        [UIImagePNGRepresentation(map.tileCache.thumbnail) writeToURL:map.thumbnailUrl atomically:YES];
+        map.thumbnail = map.tileCache.thumbnail;
+        map.thumbnailIsLoaded = YES;
+        map.extents = map.tileCache.fullEnvelope;
+        //exclude map from being backed up to iCloud/iTunes
+        [url setResourceValue:[NSNumber numberWithBool:YES] forKey:NSURLIsExcludedFromBackupKey error:nil];
+    }
+    return map;
 }
 
 - (id)initWithDictionary:(NSDictionary *)dictionary
@@ -90,7 +119,7 @@
         CGFloat xmax = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
         item =  dictionary[@"ymax"];
         CGFloat ymax = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-        map.extents = CGRectMake(xmin, ymin, xmax - xmin, ymax - ymin);
+        map.extents = [[AGSEnvelope alloc] initWithXmin:xmin ymin:ymin xmax:xmax ymax:ymax spatialReference:[AGSSpatialReference wgs84SpatialReference]];
     }
     return map;
 }
@@ -110,7 +139,7 @@
                 map.description = [aDecoder decodeObjectForKey:kDescriptionKey];
                 map.byteCount = [aDecoder decodeIntegerForKey:kSizeKey];
                 map.thumbnailUrl = [aDecoder decodeObjectForKey:kThumbnailUrlKey];
-                map.extents = [[aDecoder decodeObjectForKey:kExtentsKey] CGRectValue];
+                map.extents = [[AGSEnvelope alloc] initWithJSON:[aDecoder decodeObjectForKey:kExtentsKey]];
             }
             return map;
         }
@@ -129,7 +158,7 @@
     [aCoder encodeObject:_description forKey:kDescriptionKey];
     [aCoder encodeInteger:_byteCount forKey:kSizeKey];
     [aCoder encodeObject:_thumbnailUrl forKey:kThumbnailUrlKey];
-    [aCoder encodeObject:[NSValue valueWithCGRect:_extents] forKey:kExtentsKey];
+    [aCoder encodeObject:[_extents encodeToJSON] forKey:kExtentsKey];
 }
 
 #pragma mark - Lazy property initiallizers
@@ -171,7 +200,7 @@
     return _thumbnail;
 }
 
-- (id)tileCache
+- (AGSLocalTiledLayer *)tileCache
 {
     if (!_tileCache && !self.tileCacheIsLoaded) {
         [self loadTileCache];
@@ -279,22 +308,14 @@
 
 - (NSString *)arealSizeString
 {
-    if (self.extents.size.height == 0 || self.extents.size.width == 0) {
+    if (!self.extents) {
         return @"Unknown";
     }
-    double midLatitude = self.extents.origin.y + self.extents.size.height / 2;
-    double widthScale = cos(midLatitude * M_PI / 180.0);
-    double radius = 6371.0;
-    double circumfrence = M_PI * 2 * radius;
-    double width = circumfrence * self.extents.size.width / 360 * widthScale;
-    double height = circumfrence * self.extents.size.height / 360;
-    double areakm = height * width;
+    double areakm = [[AGSGeometryEngine defaultGeometryEngine] shapePreservingAreaOfGeometry:self.extents inUnit:AGSAreaUnitsSquareKilometers];
     double areami = areakm * 1200/3937 *1200/3937;
     NSString *format = areami < 100 ? @"%0.2f sq. mi (%0.2f sq km)" : @"%0.0f sq. mi (%0.0f sq km)";
     return [NSString stringWithFormat:format, areami, areakm];
 }
-
-
 
 - (BOOL)loadThumbnail
 {
@@ -309,8 +330,19 @@
 - (BOOL)loadTileCache
 {
     self.tileCacheIsLoaded = YES;
-    _tileCache = nil; //FIXME: Get tilecache when linked to ArcGIS
-    return !_tileCache;
+    _tileCache = [[AGSLocalTiledLayer alloc] initWithPath:[self.url path]];
+    return _tileCache != nil;
+}
+
+- (NSURL *)thumbnailUrlForMapName:(NSString *)name
+{
+    NSURL *library = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask][0];
+    NSURL *folder = [library URLByAppendingPathComponent:@"mapthumbs" isDirectory:YES];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:[folder path]]) {
+        [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSURL *thumb = [[[folder URLByAppendingPathComponent:name] URLByAppendingPathExtension:@"png"] URLByUniquingPath];
+    return thumb;
 }
 
 @end

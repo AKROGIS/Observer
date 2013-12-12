@@ -11,9 +11,6 @@
 #import "Map.h"
 #import "AKRCollectionChanged.h"
 
-#define MAP_EXT @"tpk"
-#define MAP_DIR @"maps"
-
 @interface MapCollection : NSObject
 
 @property (nonatomic, weak) id<CollectionChanged> delegate;

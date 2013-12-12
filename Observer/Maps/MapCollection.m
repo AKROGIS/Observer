@@ -15,8 +15,6 @@
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of Map
 @property (nonatomic) NSUInteger selectedLocalIndex;
 @property (nonatomic, strong) NSURL *documentsDirectory;
-@property (nonatomic, strong) NSURL *mapDirectory;
-@property (nonatomic, strong) NSURL *inboxDirectory;
 @property (nonatomic, strong) NSURL *cacheFile;
 @property (nonatomic) BOOL isLoaded;
 @end
@@ -48,27 +46,6 @@
         _documentsDirectory = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
     }
     return _documentsDirectory;
-}
-
-- (NSURL *)mapDirectory
-{
-    if (!_mapDirectory) {
-        _mapDirectory = [self.documentsDirectory URLByAppendingPathComponent:MAP_DIR];
-        if(![[NSFileManager defaultManager] fileExistsAtPath:[_mapDirectory path]]) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:[_mapDirectory path]
-                                      withIntermediateDirectories:YES attributes:nil error:nil];
-            //TODO: set this directory to not backup
-        }
-    }
-    return _mapDirectory;
-}
-
-- (NSURL *)inboxDirectory
-{
-    if (!_inboxDirectory) {
-        _inboxDirectory = [self.documentsDirectory URLByAppendingPathComponent:@"Inbox"];
-    }
-    return _inboxDirectory;
 }
 
 - (NSURL *)cacheFile
@@ -110,6 +87,7 @@
     //if (self.localItems.count <= index) return; //safety check
     Map *item = [self localMapAtIndex:index];
     [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:item.thumbnailUrl error:nil];
     [self.localItems removeObjectAtIndex:index];
     [self saveCache];
     if (index < self.selectedLocalIndex) {
@@ -259,7 +237,7 @@ static MapCollection *_sharedCollection = nil;
     //if (self.remoteItems.count <= index) return; //safety check
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
         Map *map = [self remoteMapAtIndex:index];
-        NSURL *newUrl = [self.mapDirectory URLByAppendingPathComponent:map.url.lastPathComponent];
+        NSURL *newUrl = [self.documentsDirectory URLByAppendingPathComponent:map.url.lastPathComponent];
         newUrl = [newUrl URLByUniquingPath];
         BOOL success = [map downloadToURL:newUrl];
         if (success) {
@@ -329,7 +307,7 @@ static MapCollection *_sharedCollection = nil;
 //done on callers thread
 - (Map *)openURL:(NSURL *)url saveCache:(BOOL)shouldSaveCache
 {
-    NSURL *newUrl = [self.mapDirectory URLByAppendingPathComponent:url.lastPathComponent];
+    NSURL *newUrl = [self.documentsDirectory URLByAppendingPathComponent:url.lastPathComponent];
     newUrl = [newUrl URLByUniquingPath];
     NSError *error = nil;
     [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
@@ -337,11 +315,10 @@ static MapCollection *_sharedCollection = nil;
         NSLog(@"MapCollection.openURL: Unable to copy %@ to %@; error: %@",url, newUrl, error);
         return nil;
     }
-    Map *map = [[Map alloc] initWithURL:newUrl];
+    Map *map = [[Map alloc] initWithLocalTileCache:newUrl];
     if (!map.tileCache) {
         NSLog(@"data in %@ was not a valid map object",url.lastPathComponent);
-        //TODO: remove when tilecaceh is implemented
-        //[[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+        [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
         return nil;
     }
@@ -393,64 +370,36 @@ static MapCollection *_sharedCollection = nil;
 //done on background thread
 - (BOOL)refreshLocalMaps;
 {
-    [self moveIncomingDocuments];
     [self syncWithFileSystem];
     return YES;
-}
-
-
-//done on background thread
-- (void) moveIncomingDocuments
-{
-    //If a file is added to the inbox, then the mapcollection was created to add the inbox object, it will not be there when openURL is called.
-    //OpenURL returns a map whcih can't be found if the URL is gone. therefore we cannot add Inbox items on open.
-    //for (NSURL *directory in @[self.inboxDirectory, self.documentsDirectory]) {
-    for (NSURL *directory in @[self.documentsDirectory]) {
-        NSError *error = nil;
-        NSArray *array = [[NSFileManager defaultManager]
-                          contentsOfDirectoryAtURL:directory
-                          includingPropertiesForKeys:nil
-                          options:(NSDirectoryEnumerationSkipsHiddenFiles)
-                          error:&error];
-        if (array == nil) {
-            NSLog(@"Unable to enumerate %@: %@",[directory lastPathComponent], error.localizedDescription);
-        } else {
-            for (NSURL *doc in array) {
-                if ([doc.pathExtension isEqualToString:MAP_EXT]) {
-                    [self openURL:doc saveCache:NO];
-                }
-            }
-        }
-    }
 }
 
 //done on background thread
 - (void)syncWithFileSystem
 {
     //urls in the maps directory
-    NSMutableArray *urls = [NSMutableArray arrayWithArray:[[NSFileManager defaultManager]
-                                                           contentsOfDirectoryAtURL:self.mapDirectory
-                                                           includingPropertiesForKeys:nil
-                                                           options:NSDirectoryEnumerationSkipsSubdirectoryDescendants
-                                                           error:nil]];
+    NSMutableArray *mapUrlsInDocumentsFolder = [self mapURLsInFileManager];
+
     //remove cache items not in filesystem
     NSMutableIndexSet *itemsToRemove = [NSMutableIndexSet new];
     for (int i = 0; i < self.localItems.count; i++) {
         Map *p = self.localItems[i];
         if (p.isLocal) {
-            NSUInteger index = [urls indexOfObject:p.url];
+            NSUInteger index = [mapUrlsInDocumentsFolder indexOfObject:p.url];
             if (index == NSNotFound) {
                 [itemsToRemove addIndex:i];
+                //deleting a map with iTunes will leave the thumbnail behind
+                [[NSFileManager defaultManager] removeItemAtURL:p.thumbnailUrl error:nil];
             } else {
-                [urls removeObjectAtIndex:index];
+                [mapUrlsInDocumentsFolder removeObjectAtIndex:index];
             }
         }
     }
 
     //add filesystem urls not in cache
     NSMutableArray *mapsToAdd = [NSMutableArray new];
-    for (NSURL *url in urls) {
-        Map *map = [[Map alloc] initWithURL:url];
+    for (NSURL *url in mapUrlsInDocumentsFolder) {
+        Map *map = [[Map alloc] initWithLocalTileCache:url];
         if (!map.tileCache) {
             NSLog(@"data at %@ was not a valid map object",url);
             [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
@@ -458,7 +407,7 @@ static MapCollection *_sharedCollection = nil;
         [mapsToAdd addObject:map];
     }
 
-    //update lists and UI synchronosly on UI thread if there is a delegate
+    //update lists and UI synchronously on UI thread if there is a delegate
     if (self.delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (0 < itemsToRemove.count) {
@@ -477,6 +426,25 @@ static MapCollection *_sharedCollection = nil;
         [self.localItems addObjectsFromArray:mapsToAdd];
         [self checkAndFixSelectedIndex];
     }
+}
+
+- (NSMutableArray *) /* of NSURL */ mapURLsInFileManager
+{
+    NSMutableArray *localUrls = [[NSMutableArray alloc] init];
+
+    NSArray *documents = [[NSFileManager defaultManager]
+                          contentsOfDirectoryAtURL:self.documentsDirectory
+                          includingPropertiesForKeys:nil
+                          options:NSDirectoryEnumerationSkipsHiddenFiles
+                          error:nil];
+    if (documents) {
+        for (NSURL *url in documents) {
+            if ([[url pathExtension] isEqualToString:MAP_EXT]) {
+                [localUrls addObject:url];
+            }
+        }
+    }
+    return localUrls;
 }
 
 
