@@ -104,6 +104,7 @@
 		39955ECC1787332400D225D7 /* BaseMapManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ECB1787332400D225D7 /* BaseMapManager.m */; };
 		39955ECF1787336900D225D7 /* LocalMapsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ECE1787336800D225D7 /* LocalMapsTableViewController.m */; };
 		39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ED1178733B900D225D7 /* ObserverMapViewController.m */; };
+		39A836C4185A668D008BF4E3 /* AKRAngleDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */; };
 		39B92FCA17A7380B00C62145 /* SurveyProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FC917A7380B00C62145 /* SurveyProtocol.m */; };
 		39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */; };
 		39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */; };
@@ -281,6 +282,8 @@
 		39955ECE1787336800D225D7 /* LocalMapsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalMapsTableViewController.m; sourceTree = "<group>"; };
 		39955ED0178733B900D225D7 /* ObserverMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverMapViewController.h; sourceTree = "<group>"; };
 		39955ED1178733B900D225D7 /* ObserverMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObserverMapViewController.m; sourceTree = "<group>"; };
+		39A836C2185A668D008BF4E3 /* AKRAngleDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRAngleDistance.h; sourceTree = "<group>"; };
+		39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRAngleDistance.m; sourceTree = "<group>"; };
 		39B92FC817A7380B00C62145 /* SurveyProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyProtocol.h; path = Model/SurveyProtocol.h; sourceTree = "<group>"; };
 		39B92FC917A7380B00C62145 /* SurveyProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyProtocol.m; path = Model/SurveyProtocol.m; sourceTree = "<group>"; };
 		39B92FCE17A73F5700C62145 /* AngleDistanceSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AngleDistanceSettingsTableViewController.h; sourceTree = "<group>"; };
@@ -398,6 +401,8 @@
 		398908081857EAB8007B3F67 /* Maps */ = {
 			isa = PBXGroup;
 			children = (
+				39A836C2185A668D008BF4E3 /* AKRAngleDistance.h */,
+				39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */,
 				398908181857EB2F007B3F67 /* Map.h */,
 				398908191857EB2F007B3F67 /* Map.m */,
 				3989081A1857EB2F007B3F67 /* MapCollection.h */,
@@ -789,6 +794,7 @@
 				3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */,
 				394CC2411858F11700FA859C /* MapReference.m in Sources */,
 				39955EC9178732DE00D225D7 /* BaseMap.m in Sources */,
+				39A836C4185A668D008BF4E3 /* AKRAngleDistance.m in Sources */,
 				39955ECC1787332400D225D7 /* BaseMapManager.m in Sources */,
 				3989085F1857EDE1007B3F67 /* NSDate+Formatting.m in Sources */,
 				39955ECF1787336900D225D7 /* LocalMapsTableViewController.m in Sources */,

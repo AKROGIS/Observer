@@ -119,7 +119,9 @@
         CGFloat xmax = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
         item =  dictionary[@"ymax"];
         CGFloat ymax = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-        map.extents = [[AGSEnvelope alloc] initWithXmin:xmin ymin:ymin xmax:xmax ymax:ymax spatialReference:[AGSSpatialReference wgs84SpatialReference]];
+        if (xmin != 0  || ymin != 0 || xmax != 0 || ymax != 0 ) {
+            map.extents = [[AGSEnvelope alloc] initWithXmin:xmin ymin:ymin xmax:xmax ymax:ymax spatialReference:[AGSSpatialReference wgs84SpatialReference]];
+        }
     }
     return map;
 }
@@ -165,7 +167,7 @@
 
 
 
-#pragma mark - FSTableViewItem
+#pragma mark - AKRTableViewItem
 
 @synthesize title = _title;
 
@@ -268,7 +270,37 @@
 }
 
 
-#pragma mark - date formatters
+- (BOOL)loadThumbnail
+{
+    self.thumbnailIsLoaded = YES;
+    //TODO: if thumbnailUrl is not local, then download it, cache it, and update the url, let collection know the cache needs to be updated.
+
+    //_thumbnail = [[UIImage alloc] initWithContentsOfFile:[self.thumbnailUrl path]];
+    _thumbnail = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:self.thumbnailUrl]];
+    if (!_thumbnail)
+        _thumbnail = [UIImage imageNamed:@"TilePackage"];
+    return !_thumbnail;
+}
+
+- (NSURL *)thumbnailUrlForMapName:(NSString *)name
+{
+    NSURL *library = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask][0];
+    NSURL *folder = [library URLByAppendingPathComponent:@"mapthumbs" isDirectory:YES];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:[folder path]]) {
+        [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSURL *thumb = [[[folder URLByAppendingPathComponent:name] URLByAppendingPathExtension:@"png"] URLByUniquingPath];
+    return thumb;
+}
+
+
+- (NSString *)details
+{
+    return @"get details from the tilecache";
+}
+
+
+#pragma mark - formatters
 
 //cached date formatters per xcdoc://ios/documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html
 - (NSDate *) dateFromString:(NSString *)date
@@ -286,46 +318,33 @@
     return [dateFormatter dateFromString:date];
 }
 
-- (NSString *)details
++ (NSString *)formatBytes:(long long)bytes
 {
-    return @"get details from the tilecache";
+    static NSByteCountFormatter *formatter = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        formatter = [NSByteCountFormatter new];
+    });
+    return [formatter stringFromByteCount:bytes];
+}
+
++ (NSString *)formatArea:(double)area
+{
+    static NSNumberFormatter *formatter = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        formatter = [NSNumberFormatter new];
+        formatter.maximumSignificantDigits = 3;
+    });
+    return [formatter stringFromNumber:[NSNumber numberWithDouble:area]];
 }
 
 - (NSString *)byteSizeString
 {
-    if (self.byteCount == 0) {
-        return @"Unknown";
-    } else if (self.byteCount < 1024) {
-        return [NSString stringWithFormat:@"%d Bytes", self.byteCount];
-    } else if (self.byteCount < 1024*1024) {
-        return [NSString stringWithFormat:@"%d KB", self.byteCount / 1024];
-    } else if (self.byteCount < 1024*1024*1024) {
-        return [NSString stringWithFormat:@"%d MB", self.byteCount / 1024 / 1024];
-    } else {
-        return [NSString stringWithFormat:@"%0.2f GB", self.byteCount / 1024.0 / 1024 / 1024];
-    }
+    return [Map formatBytes:self.byteCount];
 }
 
-- (NSString *)arealSizeString
-{
-    if (!self.extents) {
-        return @"Unknown";
-    }
-    double areakm = [[AGSGeometryEngine defaultGeometryEngine] shapePreservingAreaOfGeometry:self.extents inUnit:AGSAreaUnitsSquareKilometers];
-    double areami = areakm * 1200/3937 *1200/3937;
-    NSString *format = areami < 100 ? @"%0.2f sq. mi (%0.2f sq km)" : @"%0.0f sq. mi (%0.0f sq km)";
-    return [NSString stringWithFormat:format, areami, areakm];
-}
-
-- (BOOL)loadThumbnail
-{
-    self.thumbnailIsLoaded = YES;
-    //_thumbnail = [[UIImage alloc] initWithContentsOfFile:[self.thumbnailUrl path]];
-    _thumbnail = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:self.thumbnailUrl]];
-    if (!_thumbnail)
-        _thumbnail = [UIImage imageNamed:@"TilePackage"];
-    return !_thumbnail;
-}
+#pragma mark - tilecache (ESRI functionality)
 
 - (BOOL)loadTileCache
 {
@@ -334,15 +353,26 @@
     return _tileCache != nil;
 }
 
-- (NSURL *)thumbnailUrlForMapName:(NSString *)name
+- (NSString *)arealSizeString
 {
-    NSURL *library = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask][0];
-    NSURL *folder = [library URLByAppendingPathComponent:@"mapthumbs" isDirectory:YES];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:[folder path]]) {
-        [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
+    if (!self.extents || self.extents.isEmpty) {
+        return @"Unknown";
     }
-    NSURL *thumb = [[[folder URLByAppendingPathComponent:name] URLByAppendingPathExtension:@"png"] URLByUniquingPath];
-    return thumb;
+
+    double areakm = [[AGSGeometryEngine defaultGeometryEngine] shapePreservingAreaOfGeometry:self.extents inUnit:AGSAreaUnitsSquareKilometers];
+    //TODO: query settings for a metric/SI preference
+    if (YES) {
+        return [NSString stringWithFormat:@"%@ sq km", [Map formatArea:areakm]];
+    } else {
+        double areami = areakm * 0.386102;
+        return [NSString stringWithFormat:@"%@ sq mi", [Map formatArea:areami]];
+    }
+}
+
+
+- (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location
+{
+    return [AKRAngleDistance angleDistanceFromLocation:location toGeometry:self.extents];
 }
 
 @end

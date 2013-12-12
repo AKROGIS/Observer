@@ -13,7 +13,7 @@
 
 @interface SurveyCollection : NSObject
 
-//<FSTableViewItemCollection>
+//<AKRTableViewItemCollection>
 //@property (nonatomic, strong) NSIndexPath * selectedIndex;
 //@property (nonatomic, strong, readonly) Survey *selectedSurvey;
 

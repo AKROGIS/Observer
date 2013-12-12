@@ -21,7 +21,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
     kSaved    = 4
 };
 
-@interface Survey : NSObject <FSTableViewItem>
+@interface Survey : NSObject <AKRTableViewItem>
 
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, readonly) SurveyState state;

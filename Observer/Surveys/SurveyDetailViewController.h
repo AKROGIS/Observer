@@ -11,6 +11,6 @@
 
 @interface SurveyDetailViewController : UIViewController <UISplitViewControllerDelegate>
 
-@property (strong, nonatomic) id<FSTableViewItem> detailItem;
+@property (strong, nonatomic) id<AKRTableViewItem> detailItem;
 
 @end

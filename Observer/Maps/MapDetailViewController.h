@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Map.h"
 
-@interface MapDetailViewController : UIViewController
+@interface MapDetailViewController : UIViewController <CLLocationManagerDelegate>
 
 @property (nonatomic, strong) Map *map;
 

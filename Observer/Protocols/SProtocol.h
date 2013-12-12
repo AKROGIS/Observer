@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "AKRTableViewItemCollection.h"
 
-@interface SProtocol : NSObject <NSCoding, FSTableViewItem>
+@interface SProtocol : NSObject <NSCoding, AKRTableViewItem>
 
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, strong, readonly) NSNumber *version;

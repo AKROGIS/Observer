@@ -78,7 +78,7 @@
 }
 
 
-#pragma mark - FSTableViewItem
+#pragma mark - AKRTableViewItem
 
 - (NSString *)title
 {
