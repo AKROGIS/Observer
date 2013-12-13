@@ -48,9 +48,8 @@
         CGContextRef context = UIGraphicsGetCurrentContext();
 
         //Set color
-        CGContextSetRGBStrokeColor(context, 0.0, 0.0, 1.0, 1.0); //rgba (0..1)
-        CGContextSetRGBFillColor(context, 0.0, 0.0, 1.0, 1.0); //rgba (0..1)
-
+        [self.tintColor set];
+ 
         CGFloat width = self.bounds.size.width;
         CGFloat height = self.bounds.size.height;
         CGContextTranslateCTM(context, width/2.0, height/2.0);
