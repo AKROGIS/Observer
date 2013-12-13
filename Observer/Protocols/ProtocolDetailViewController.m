@@ -20,10 +20,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //FIXME: Autolayout bug? - title height in landscape is set by title height in portrait
+    //FIXME: Remove this magic number, but keep the autolayout height of uilabel with 0 lines
+    self.nameLabel.preferredMaxLayoutWidth = 320;
     self.nameLabel.text = self.protocol.version ? [NSString stringWithFormat:@"%@, v. %@", self.protocol.title, self.protocol.version] : self.protocol.title;
     self.dateLabel.text = self.protocol.dateString;
-    //FIXME: AutoLayout issue - details not taking all available space in popover
+    //FIXME: Remove this magic number, but keep the autolayout height of uilabel with 0 lines
+    self.descriptionLabel.preferredMaxLayoutWidth = 320;
     self.descriptionLabel.text = self.protocol.isLocal ? self.protocol.details : @"Download the protocol for more details.";
 }
 

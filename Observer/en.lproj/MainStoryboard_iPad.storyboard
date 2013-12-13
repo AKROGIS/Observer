@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13A2093" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="TiC-11-YSU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="TiC-11-YSU">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
@@ -802,7 +802,6 @@
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="75" sectionHeaderHeight="22" sectionFooterHeight="22" id="M4V-cd-WRB">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="LocalMapCell" rowHeight="75" id="Dyb-It-6mO" customClass="MapTableViewCell">
                                 <rect key="frame" x="0.0" y="86" width="768" height="75"/>
@@ -1003,7 +1002,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="50" text="Protocol Name" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="718" translatesAutoresizingMaskIntoConstraints="NO" id="yca-f2-e4v">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="50" text="Protocol Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yca-f2-e4v">
                                 <rect key="frame" x="30" y="96" width="718" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -1058,7 +1057,7 @@
                             <constraint firstItem="bgf-Zp-z5z" firstAttribute="leading" secondItem="zr6-sP-XxY" secondAttribute="leading" constant="20" symbolic="YES" id="bqA-kV-3bB"/>
                             <constraint firstItem="A0U-Ra-11I" firstAttribute="top" secondItem="rL2-Vv-6Za" secondAttribute="bottom" constant="8" symbolic="YES" id="eEJ-7L-yBw"/>
                             <constraint firstItem="bgf-Zp-z5z" firstAttribute="leading" secondItem="Pr4-q9-Zrc" secondAttribute="leading" id="eW8-LW-tHS"/>
-                            <constraint firstItem="UPa-el-xBy" firstAttribute="top" secondItem="VzK-CE-nNm" secondAttribute="bottom" priority="200" constant="20" symbolic="YES" id="ixO-Ax-ten"/>
+                            <constraint firstItem="UPa-el-xBy" firstAttribute="top" relation="greaterThanOrEqual" secondItem="VzK-CE-nNm" secondAttribute="bottom" priority="200" constant="20" symbolic="YES" id="ixO-Ax-ten"/>
                             <constraint firstItem="VzK-CE-nNm" firstAttribute="leading" secondItem="rL2-Vv-6Za" secondAttribute="leading" id="oTp-ub-uV4"/>
                             <constraint firstItem="VzK-CE-nNm" firstAttribute="leading" secondItem="yca-f2-e4v" secondAttribute="leading" id="p01-ul-JmB"/>
                             <constraint firstItem="yca-f2-e4v" firstAttribute="top" secondItem="bgf-Zp-z5z" secondAttribute="bottom" constant="8" symbolic="YES" id="piN-YT-bJb"/>
@@ -1173,11 +1172,11 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="etr-cP-jqI">
-                                <rect key="frame" x="339" y="937" width="100" height="67"/>
+                                <rect key="frame" x="289" y="871" width="200" height="133"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="BNa-1I-5jU"/>
-                                    <constraint firstAttribute="height" constant="67" id="kza-bB-s8f"/>
+                                    <constraint firstAttribute="width" constant="200" id="BNa-1I-5jU"/>
+                                    <constraint firstAttribute="height" constant="133" id="kza-bB-s8f"/>
                                 </constraints>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YhK-3E-dzC" customClass="AKRDirectionIndicatorView">

@@ -30,13 +30,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //FIXME: Autolayout bug? - title height in landscape is set by title height in portrait
+    //FIXME: Remove this magic number, but keep the autolayout height of uilabel with 0 lines
+    self.nameLabel.preferredMaxLayoutWidth = 360;
     self.nameLabel.text = self.map.title;
     self.authorLabel.text = self.map.author;
     self.dateLabel.text = [self.map.date stringWithMediumDateFormat];
     self.sizeLabel.text = [NSString stringWithFormat:@"%@ on %@\n%@", self.map.byteSizeString, (self.map.isLocal ? @"device" : @"server"), self.map.arealSizeString];
     [self setLocationText];
-    //FIXME: AutoLayout issue - details not taking all available space in popover
+    //FIXME: Remove this magic number, but keep the autolayout height of uilabel with 0 lines
+    self.descriptionLabel.preferredMaxLayoutWidth = 360;
     self.descriptionLabel.text = self.map.description;
     self.thumbnailImageView.image = self.map.thumbnail;
 }
