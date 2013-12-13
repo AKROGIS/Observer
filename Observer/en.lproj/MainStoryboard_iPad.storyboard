@@ -1180,6 +1180,15 @@
                                     <constraint firstAttribute="height" constant="67" id="kza-bB-s8f"/>
                                 </constraints>
                             </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YhK-3E-dzC" customClass="AKRDirectionIndicatorView">
+                                <rect key="frame" x="111" y="309" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="Xtr-JV-lcT"/>
+                                    <constraint firstAttribute="width" constant="20" id="prL-VS-Rz9"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -1198,6 +1207,7 @@
                             <constraint firstItem="ToG-tX-HLP" firstAttribute="top" secondItem="MhS-DH-0no" secondAttribute="bottom" constant="8" symbolic="YES" id="IMh-So-p2Z"/>
                             <constraint firstItem="MhS-DH-0no" firstAttribute="leading" secondItem="Alb-bb-Pzg" secondAttribute="leading" id="IbE-js-yUG"/>
                             <constraint firstItem="3j4-AS-jbq" firstAttribute="leading" secondItem="YLK-I3-utY" secondAttribute="leading" id="Kpd-zQ-vQF"/>
+                            <constraint firstItem="YhK-3E-dzC" firstAttribute="centerY" secondItem="MhS-DH-0no" secondAttribute="centerY" id="M8q-cQ-7Wj"/>
                             <constraint firstItem="mat-mS-L5o" firstAttribute="leading" secondItem="IlF-Xc-Hp6" secondAttribute="leading" id="OH1-pm-ItB"/>
                             <constraint firstItem="3j4-AS-jbq" firstAttribute="top" secondItem="mat-mS-L5o" secondAttribute="bottom" constant="8" symbolic="YES" id="S7a-s4-U3b"/>
                             <constraint firstItem="MhS-DH-0no" firstAttribute="top" secondItem="IlF-Xc-Hp6" secondAttribute="bottom" constant="8" symbolic="YES" id="U0V-cy-57E"/>
@@ -1205,6 +1215,7 @@
                             <constraint firstItem="ToG-tX-HLP" firstAttribute="leading" secondItem="IlF-Xc-Hp6" secondAttribute="leading" id="Z1q-Ct-SHz"/>
                             <constraint firstItem="3j4-AS-jbq" firstAttribute="leading" secondItem="2Ty-kV-7yO" secondAttribute="leading" id="ZNP-YL-94i"/>
                             <constraint firstItem="MhS-DH-0no" firstAttribute="leading" secondItem="2Ty-kV-7yO" secondAttribute="leading" id="Zmx-If-WNA"/>
+                            <constraint firstItem="YhK-3E-dzC" firstAttribute="leading" secondItem="MhS-DH-0no" secondAttribute="trailing" constant="8" id="bhn-BC-mt1"/>
                             <constraint firstItem="qzu-GB-x6n" firstAttribute="top" secondItem="mcS-QG-I5g" secondAttribute="bottom" constant="20" symbolic="YES" id="d1c-3f-rls"/>
                             <constraint firstItem="yoP-CQ-nFP" firstAttribute="top" secondItem="YLK-I3-utY" secondAttribute="bottom" constant="8" symbolic="YES" id="gSX-oV-aAw"/>
                             <constraint firstItem="YLK-I3-utY" firstAttribute="leading" secondItem="qzu-GB-x6n" secondAttribute="leading" constant="10" id="iTp-U6-Azz"/>
@@ -1221,6 +1232,7 @@
                         <outlet property="authorLabel" destination="EyW-tz-Vmn" id="omK-gV-7HE"/>
                         <outlet property="dateLabel" destination="3j4-AS-jbq" id="kN2-sc-UF4"/>
                         <outlet property="descriptionLabel" destination="Alb-bb-Pzg" id="u3x-ct-G1A"/>
+                        <outlet property="directionIndicatorView" destination="YhK-3E-dzC" id="Yjg-Ke-ODV"/>
                         <outlet property="locationLabel" destination="MhS-DH-0no" id="dHu-H9-xUy"/>
                         <outlet property="nameLabel" destination="YLK-I3-utY" id="Bbi-5o-C78"/>
                         <outlet property="sizeLabel" destination="2Ty-kV-7yO" id="cgE-ch-APS"/>

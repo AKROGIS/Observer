@@ -8,6 +8,7 @@
 
 #import "MapDetailViewController.h"
 #import "NSDate+Formatting.h"
+#import "AKRDirectionIndicatorView.h"
 
 @interface MapDetailViewController () {
     CLLocationManager *_locationManager;
@@ -20,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *locationLabel;
 @property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *thumbnailImageView;
+@property (weak, nonatomic) IBOutlet AKRDirectionIndicatorView *directionIndicatorView;
 
 @end
 
@@ -92,14 +94,9 @@
 {
     AKRAngleDistance *angleDistance = [self.map angleDistanceFromLocation:[locations lastObject]];
     NSString *distanceString = [self distanceStringFromKilometers:angleDistance.kilometers];
-    if (angleDistance.kilometers <= 0) {
-        self.locationLabel.text = distanceString;
-        return;
-    } else {
-        //TODO: use the azimuth to draw a custom compass bearing, instead of using text
-        NSString *directionString = [self directionStringFromAzimuth:angleDistance.azimuth];
-        self.locationLabel.text = [NSString stringWithFormat:@"%@ %@",distanceString, directionString];
-    }
+    self.locationLabel.text = distanceString;
+    self.directionIndicatorView.azimuth = angleDistance.azimuth;
+    self.directionIndicatorView.azimuthUnknown = angleDistance.kilometers <= 0;
 }
 
 #pragma mark - formatting
