@@ -15,6 +15,7 @@
 //@property (strong,nonatomic) NSMutableArray *items;
 //@property (strong, nonatomic) FSSurvey* selectedSurvey;
 @property (nonatomic, strong) NSMutableArray *items;
+@property (nonatomic) BOOL isLoading;
 @property (nonatomic) BOOL isLoaded;
 //selectedIndex < 0  meaning that no item is selected
 @property (nonatomic) NSInteger selectedIndex;
@@ -22,10 +23,27 @@
 
 @implementation SurveyCollection
 
-static SurveyCollection *_sharedCollection;
+#pragma mark - singleton
 
 + (SurveyCollection *) sharedCollection {
+    static SurveyCollection *_sharedCollection = nil;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        if (_sharedCollection == nil) {
+            _sharedCollection = [[super allocWithZone:NULL] init];
+        }
+    });
     return _sharedCollection;
+}
+
++ (id)allocWithZone:(NSZone *)zone
+{
+    return [self sharedCollection];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return self;
 }
 
 #pragma mark - private properties
@@ -52,7 +70,6 @@ static SurveyCollection *_sharedCollection;
     //[Settings manager].currentSurveyIndex = selectedIndex;
     [[NSUserDefaults standardUserDefaults] setInteger:selectedIndex forKey:@"currentSurveyIndex"];
 }
-
 
 #pragma mark - TableView Data Source Support
 
@@ -139,21 +156,30 @@ static SurveyCollection *_sharedCollection;
     }
 }
 
-
-
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    //TODO: lock access to _sharedCollection
-    if (_sharedCollection) {
-        if (completionHandler) completionHandler(YES);
+    //TODO: need to revisit this.  Is it thread safe (probably not).  Can I use dispatch_once to help ??
+    if (self.isLoaded) {
+        if (completionHandler)
+            completionHandler(self.items != nil);
     } else {
-        dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
+        // isLoading is checked and set on the main thread, so it should be thread safe
+        if (self.isLoading) {
+            dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
+                //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
+                if (completionHandler) {
+                    completionHandler(self.items != nil);
+                }
+            });
+        }
+        self.isLoading = YES;
+        dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
             [self readSurveyList];
-            _sharedCollection = self;
-            BOOL success = self.items != nil;
             //TODO: open each survey item in the background?
+            self.isLoaded = YES;
+            self.isLoading = NO;
             if (completionHandler) {
-                completionHandler(success);
+                completionHandler(self.items != nil);
             }
         });
     }
