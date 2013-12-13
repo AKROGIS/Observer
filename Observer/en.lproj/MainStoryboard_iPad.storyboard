@@ -841,11 +841,14 @@
                                         </imageView>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="IaZ-pi-Joz" secondAttribute="trailing" id="5v7-iY-bh6"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="h6x-MY-8mq" secondAttribute="trailing" id="6gG-Ue-nMJ"/>
                                         <constraint firstItem="hql-9N-638" firstAttribute="leading" secondItem="h6x-MY-8mq" secondAttribute="leading" id="Gcg-qo-Wn7"/>
                                         <constraint firstItem="h6x-MY-8mq" firstAttribute="top" secondItem="IaZ-pi-Joz" secondAttribute="bottom" constant="8" symbolic="YES" id="IFK-XQ-pdh"/>
                                         <constraint firstItem="4Ur-Xc-M7P" firstAttribute="leading" secondItem="ss7-We-0Da" secondAttribute="leading" constant="20" symbolic="YES" id="Mrd-AQ-4WK"/>
                                         <constraint firstItem="hql-9N-638" firstAttribute="top" secondItem="h6x-MY-8mq" secondAttribute="bottom" constant="4" id="Qqv-Yb-08b"/>
                                         <constraint firstItem="hql-9N-638" firstAttribute="bottom" secondItem="4Ur-Xc-M7P" secondAttribute="bottom" id="XEh-y8-JTe"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="hql-9N-638" secondAttribute="trailing" id="g0b-ET-vtw"/>
                                         <constraint firstItem="IaZ-pi-Joz" firstAttribute="leading" secondItem="h6x-MY-8mq" secondAttribute="leading" id="h5A-eB-K40"/>
                                         <constraint firstItem="IaZ-pi-Joz" firstAttribute="leading" secondItem="4Ur-Xc-M7P" secondAttribute="trailing" constant="8" symbolic="YES" id="lA1-MB-qSd"/>
                                         <constraint firstItem="4Ur-Xc-M7P" firstAttribute="centerY" secondItem="ss7-We-0Da" secondAttribute="centerY" id="sKv-mw-3ji"/>
