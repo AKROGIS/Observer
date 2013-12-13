@@ -284,13 +284,13 @@
 {
     self.thumbnailIsLoaded = YES;
     NSData *data = [NSData dataWithContentsOfURL:self.thumbnailUrl];
-    if (![self.thumbnailUrl isFileReferenceURL]) {
-        NSString *name = [[self.thumbnailUrl lastPathComponent] stringByDeletingPathExtension];
-        NSURL *newUrl = [self thumbnailUrlForMapName:name];
-        if ([data writeToURL:newUrl atomically:YES]) {
-            self.thumbnailUrl = newUrl;
-        }
-    }
+//    if (![self.thumbnailUrl isFileReferenceURL]) {
+//        NSString *name = [[self.thumbnailUrl lastPathComponent] stringByDeletingPathExtension];
+//        NSURL *newUrl = [self thumbnailUrlForMapName:name];
+//        if ([data writeToURL:newUrl atomically:YES]) {
+//            self.thumbnailUrl = newUrl;
+//        }
+//    }
     //TODO: let the collection know we need to update the cache;
     _thumbnail = [[UIImage alloc] initWithData:data];
     if (!_thumbnail)
