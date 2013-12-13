@@ -34,7 +34,7 @@
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         self.clearsSelectionOnViewWillAppear = NO;
-        self.preferredContentSize = CGSizeMake(320.0, 600.0);
+        self.preferredContentSize = CGSizeMake(380.0, 480.0);
     }
     [super awakeFromNib];
 }
@@ -47,7 +47,7 @@
     UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     self.toolbarItems = @[self.editButtonItem,spacer,addButton];
 
-    self.detailViewController = (FSDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    self.detailViewController = (SurveyDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
 
     addButton.enabled = NO;
     self.protocols = [ProtocolCollection sharedCollection];

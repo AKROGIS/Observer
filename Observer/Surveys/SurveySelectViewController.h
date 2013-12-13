@@ -10,12 +10,11 @@
 #import "AKRTableViewItemCollection.h"
 #import "ProtocolCollection.h"
 #import "SurveyCollection.h"
-
-@class FSDetailViewController;
+#import "SurveyDetailViewController.h"
 
 @interface SurveySelectViewController : UITableViewController <UIAlertViewDelegate, UITextFieldDelegate>
 
-@property (strong, nonatomic) FSDetailViewController *detailViewController;
+@property (strong, nonatomic) SurveyDetailViewController *detailViewController;
 @property (nonatomic, weak) SurveyCollection *items;
 @property (nonatomic, weak) UIPopoverController *popover;
 @property (copy) void (^popoverDismissedCallback)(void);
