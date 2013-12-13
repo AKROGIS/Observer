@@ -113,6 +113,7 @@
 		39D1D94F17B9A8280014C68F /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */; };
 		39D1D95A17BC21D00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
 		39D1D95B17BC21E00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
+		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -298,6 +299,8 @@
 		39D1D95917BC21D00014C68F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		39D1D97B17BC51630014C68F /* ObserverModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObserverModel.h; path = Model/ObserverModel.h; sourceTree = "<group>"; };
 		59119861178906FD00B2331B /* MapMonitoring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MapMonitoring.h; path = Model/MapMonitoring.h; sourceTree = "<group>"; };
+		59C60FE6185ABF9400470791 /* AKRDirectionIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDirectionIndicatorView.h; sourceTree = "<group>"; };
+		59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDirectionIndicatorView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -353,6 +356,8 @@
 				3989086B1857F399007B3F67 /* AKRDownloadView.m */,
 				39B92FD117A869B500C62145 /* RadioStyleTableViewCell.h */,
 				39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */,
+				59C60FE6185ABF9400470791 /* AKRDirectionIndicatorView.h */,
+				59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -799,6 +804,7 @@
 				3989085F1857EDE1007B3F67 /* NSDate+Formatting.m in Sources */,
 				39955ECF1787336900D225D7 /* LocalMapsTableViewController.m in Sources */,
 				3989084F1857ED00007B3F67 /* SurveyCoreDataDocument.m in Sources */,
+				59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */,
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
 				398908601857EDE1007B3F67 /* NSIndexSet+indexPath.m in Sources */,
