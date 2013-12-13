@@ -114,7 +114,7 @@
                                 </connections>
                             </button>
                             <imageView opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="center" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" image="Crosshairs.png" translatesAutoresizingMaskIntoConstraints="NO" id="fpV-JS-knH">
-                                <rect key="frame" x="352" y="480" width="64" height="64"/>
+                                <rect key="frame" x="352" y="490" width="64" height="64"/>
                             </imageView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="No background map selected. Click the Maps button to select one." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="009-3q-8gq">
                                 <rect key="frame" x="127" y="502" width="515" height="21"/>
@@ -138,7 +138,7 @@
                             <constraint firstAttribute="trailing" secondItem="fOP-b6-5IU" secondAttribute="trailing" constant="20" symbolic="YES" id="nsx-gg-eH3"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="trailing" secondItem="SFd-OI-tIi" secondAttribute="trailing" id="qRh-xh-UHh"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leading" id="rOa-F8-w9s"/>
-                            <constraint firstItem="gK6-lQ-eLV" firstAttribute="centerY" secondItem="fpV-JS-knH" secondAttribute="centerY" constant="10" id="tbR-TV-av8"/>
+                            <constraint firstItem="gK6-lQ-eLV" firstAttribute="centerY" secondItem="fpV-JS-knH" secondAttribute="centerY" id="tbR-TV-av8"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="top" secondItem="jAV-ok-Y8z" secondAttribute="bottom" id="y1r-4K-euL"/>
                         </constraints>
                     </view>
@@ -818,14 +818,14 @@
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" horizontalHuggingPriority="246" verticalHuggingPriority="251" horizontalCompressionResistancePriority="115" text="Subtitle1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h6x-MY-8mq">
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subtitle1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h6x-MY-8mq">
                                             <rect key="frame" x="128" y="39" width="46" height="14"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" horizontalHuggingPriority="246" verticalHuggingPriority="252" horizontalCompressionResistancePriority="115" text="Subtitle2" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hql-9N-638">
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="252" text="Subtitle2" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hql-9N-638">
                                             <rect key="frame" x="128" y="57" width="46" height="14"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="11"/>
