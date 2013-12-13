@@ -229,7 +229,7 @@ static MapCollection *_sharedCollection = nil;
 
 - (void)cancelDownloadMapAtIndex:(NSUInteger)index
 {
-    
+    [self.remoteItems[index] stopDownload];
 }
 
 //- (void)downloadMapAtIndex:(NSUInteger)index WithCompletionHandler:(void (^)(BOOL success))completionHandler

@@ -23,7 +23,6 @@
 //FIXME - if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
 
 #import "ObserverMapViewController.h"
-#import "LocalMapsTableViewController.h"
 #import "AngleDistanceViewController.h"
 #import "SurveyCollection.h"
 #import "MapCollection.h"
@@ -42,7 +41,7 @@ typedef enum {
 
 @interface ObserverMapViewController ()
 
-@property (strong, nonatomic) BaseMapManager *oldMapList;
+//@property (strong, nonatomic) BaseMapManager *oldMapList;
 @property (strong, nonatomic) SurveyProtocol *protocol;
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
@@ -109,15 +108,6 @@ typedef enum {
 }
 
 #pragma mark - Private Properties
-
-//lazy instantiation
-- (BaseMapManager *)oldMapList
-{
-    if (!_oldMapList) {
-        _oldMapList = [BaseMapManager sharedManager];
-    }
-    return _oldMapList;
-}
 
 - (CLLocationManager *)locationManager
 {
@@ -323,13 +313,6 @@ typedef enum {
     self.mapView.touchDelegate = self;
     self.mapView.callout.delegate = self;
     self.mapView.allowRotationByPinching = YES;
-    dispatch_queue_t loadQueue = dispatch_queue_create("loadLocalMaps", NULL);
-    dispatch_async(loadQueue, ^{
-        [self.oldMapList loadLocalMaps];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self loadBaseMap];
-        });
-    });
     [self configureView];
 }
 
@@ -361,6 +344,7 @@ typedef enum {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.selectMapButton.enabled = YES;
             [self updateView];
+            [self loadBaseMap];
         });
     }];
 }
@@ -454,17 +438,6 @@ typedef enum {
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     UINavigationController *nav = [segue destinationViewController];
 
-    if ([[segue identifier] isEqualToString:@"Push Local Map Table"])
-    {
-        LocalMapsTableViewController *dvc = (LocalMapsTableViewController *)nav.viewControllers[0];
-        dvc.maps = self.oldMapList;
-        UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
-        self.mapsPopoverController = pop.popoverController;
-        self.mapsPopoverController.delegate = self;
-        //FIXME - need to clear self.mapsPopoverController when popover is dismissed programatically.
-        dvc.popover = pop.popoverController;
-    }
-
     if ([[segue identifier] isEqualToString:@"AngleDistancePopOver"])
     {
         AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
@@ -529,7 +502,9 @@ typedef enum {
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
             vc.popover = ((UIStoryboardPopoverSegue *)segue).popoverController;
             vc.popover.delegate = self;
-            vc.rowSelectedCallback = ^(NSIndexPath*indexPath){[self updateTitle];};
+            vc.rowSelectedCallback = ^(NSIndexPath*indexPath){
+                [self resetBasemap];
+            };
         }
         return;
     }}
@@ -542,18 +517,6 @@ typedef enum {
     //user panning will turn off the autopan mode, so I need to update the toolbar button.
     if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeOff)
         self.userWantsAutoPanOn = NO;
-}
-
-//FIXME - KVO callbacks will happen on whichever thread made the change!
-//Use receptionist pattern: http://developer.apple.com/library/ios/#documentation/general/conceptual/CocoaEncyclopedia/ReceptionistPattern/ReceptionistPattern.html
-- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (self.oldMapList == object && [keyPath isEqualToString:@"currentMap"])
-    {
-        NSLog(@"self.oldMapList.currentMap has changed; old: %@, new: %@", change[NSKeyValueChangeOldKey], change[NSKeyValueChangeNewKey]);
-        if (change[NSKeyValueChangeOldKey] != change[NSKeyValueChangeNewKey])
-            [self resetBasemap];
-    }
 }
 
 
@@ -571,6 +534,7 @@ typedef enum {
     }
 }
 
+
 #pragma mark - Delegate Methods - UIAlertViewDelegate
 
 - (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -583,6 +547,7 @@ typedef enum {
         self.busy = NO;
     }
 }
+
 
 #pragma mark - Delegate Methods: AGSLayerDelegate (all optional)
 
@@ -854,7 +819,7 @@ typedef enum {
 
 - (void) loadBaseMap
 {
-    if (!self.oldMapList.currentMap.tileCache)
+    if (!self.maps.selectedLocalMap.tileCache)
     {
         self.noMapLabel.hidden = NO;
         self.busy = NO;
@@ -862,10 +827,10 @@ typedef enum {
     else
     {
         //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
-        self.oldMapList.currentMap.tileCache.delegate = self;
-        [self.mapView addMapLayer:self.oldMapList.currentMap.tileCache withName:@"tilecache basemap"];
+        self.maps.selectedLocalMap.tileCache.delegate = self;
+        [self.mapView addMapLayer:self.maps.selectedLocalMap.tileCache withName:@"tilecache basemap"];
     }
-    [self.oldMapList addObserver:self forKeyPath:@"currentMap" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
+    //[self.oldMapList addObserver:self forKeyPath:@"currentMap" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
 }
 
 - (void) resetBasemap
@@ -878,7 +843,7 @@ typedef enum {
     //to reset the mapView extents/SR, we need to call reset, then re-add the layers.
     //first we need to get the layers, so we can re-add them after setting the new basemap
     NSLog(@"Reseting the basemap");
-    if (!self.oldMapList.currentMap.tileCache)
+    if (!self.maps.selectedLocalMap.tileCache)
     {
         self.noMapLabel.hidden = NO;
         self.busy = NO;
@@ -889,8 +854,8 @@ typedef enum {
         self.busy = YES;
         [self.mapView reset]; //remove all layers
         //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
-        self.oldMapList.currentMap.tileCache.delegate = self;
-        [self.mapView addMapLayer:self.oldMapList.currentMap.tileCache withName:@"tilecache basemap"];
+        self.maps.selectedLocalMap.tileCache.delegate = self;
+        [self.mapView addMapLayer:self.maps.selectedLocalMap.tileCache withName:@"tilecache basemap"];
     }
 }
 
@@ -1225,6 +1190,8 @@ typedef enum {
 
     return success;
 }
+
+
 
 #pragma mark - Support for Testing Quick Dialog
 

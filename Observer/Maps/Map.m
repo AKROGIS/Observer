@@ -423,9 +423,6 @@
 {
     [self.downloadTask cancel];
     self.downloading = NO;
-    if (self.completionAction){
-        self.completionAction(self.destinationURL, NO);
-    }
 }
 
 #pragma mark - NSURLSessionDownloadDelegate
@@ -445,6 +442,10 @@
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
 {
+    self.downloading = NO;
+    if (downloadTask.state == NSURLSessionTaskStateCanceling) {
+        return;
+    }
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (!self.destinationURL) {
         NSURL *documentsDirectory = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];

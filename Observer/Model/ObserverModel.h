@@ -12,8 +12,6 @@
 #import "AdhocLocation.h"
 #import "AGSPoint+AKRAdditions.h"
 #import "AngleDistanceLocation.h"
-#import "BaseMap.h"
-#import "BaseMapManager.h"
 #import "Enumerations.h"
 #import "GpsPoint.h"
 #import "LocationAngleDistance.h"

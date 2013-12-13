@@ -45,13 +45,7 @@
                                             </segue>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="old" id="xi5-9P-rbo">
-                                        <connections>
-                                            <segue destination="5v5-RW-ypa" kind="popover" identifier="Push Local Map Table" popoverAnchorBarButtonItem="xi5-9P-rbo" id="jrg-on-FJD">
-                                                <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                                            </segue>
-                                        </connections>
-                                    </barButtonItem>
+                                    <barButtonItem title="old" id="xi5-9P-rbo"/>
                                     <barButtonItem image="heading.png" id="jXA-Ll-IBJ">
                                         <connections>
                                             <action selector="togglePanMode:" destination="TiC-11-YSU" id="wsV-bl-ssf"/>
@@ -168,75 +162,6 @@
                 </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="-84" y="-1597"/>
-        </scene>
-        <!--Local Maps Table View Controller - Background Maps-->
-        <scene sceneID="Hey-mq-9DN">
-            <objects>
-                <tableViewController id="6MB-CL-g4f" customClass="LocalMapsTableViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="GqT-si-aYy">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="detailDisclosureButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Local Map Description Cell" textLabel="XvS-pN-Pcw" detailTextLabel="GFZ-MM-dDW" style="IBUITableViewCellStyleSubtitle" id="PRC-Vf-88g">
-                                <rect key="frame" x="0.0" y="86" width="768" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="PRC-Vf-88g" id="Oia-bk-bQa">
-                                    <rect key="frame" x="0.0" y="0.0" width="701" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="XvS-pN-Pcw">
-                                            <rect key="frame" x="15" y="2" width="36" height="22"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="GFZ-MM-dDW">
-                                            <rect key="frame" x="15" y="24" width="50" height="17"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <color key="textColor" red="0.50196078431372548" green="0.50196078431372548" blue="0.50196078431372548" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" showsReorderControl="YES" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="Notification Cell" textLabel="eaH-XP-ZQR" detailTextLabel="srh-gO-7e7" imageView="vT0-0W-YcR" style="IBUITableViewCellStyleValue1" id="b54-MP-bjB">
-                                <rect key="frame" x="0.0" y="130" width="768" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="b54-MP-bjB" id="3AE-0Y-c8B">
-                                    <rect key="frame" x="0.0" y="0.0" width="768" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eaH-XP-ZQR">
-                                            <rect key="frame" x="50" y="11" width="34" height="21"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="srh-gO-7e7">
-                                            <rect key="frame" x="709" y="11" width="44" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" red="0.2196078431372549" green="0.32941176470588235" blue="0.52941176470588236" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        </label>
-                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="Attachments.png" id="vT0-0W-YcR">
-                                            <rect key="frame" x="15" y="11" width="20" height="20"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </imageView>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="6MB-CL-g4f" id="ntn-GA-fEn"/>
-                            <outlet property="delegate" destination="6MB-CL-g4f" id="IjR-rh-sxF"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Background Maps" id="55G-Hx-qD6"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="S1J-En-4Vs" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2362" y="-3476"/>
         </scene>
         <!--Angle Distance View Controller - Angle/Distance-->
         <scene sceneID="jYe-T7-uyT">
@@ -532,24 +457,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="URI-nG-a5g" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1188" y="-2220"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="dF4-gt-w3t">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="5v5-RW-ypa" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="gda-el-JmR">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="6MB-CL-g4f" kind="relationship" relationship="rootViewController" id="7nL-bG-9qm"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="J7T-xv-lWD" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1188" y="-3476"/>
         </scene>
         <!--Survey Detail View Controller - Detail-->
         <scene sceneID="u3Z-vx-4mf">
@@ -1247,7 +1154,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Attachments.png" width="20" height="20"/>
         <image name="Crosshairs.png" width="64" height="64"/>
         <image name="Download" width="27" height="26"/>
         <image name="compass.png" width="30" height="30"/>

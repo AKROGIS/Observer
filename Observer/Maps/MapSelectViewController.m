@@ -174,7 +174,7 @@
         }];
         cell.subtitle1Label.text = item.subtitle;
         cell.subtitle2Label.text = item.subtitle2;
-        cell.downloadImageView.hidden = item.isDownloading;  //FIXME: hide if downloading
+        cell.downloadImageView.hidden = item.isDownloading;
         return cell;
     }
 }
@@ -309,6 +309,7 @@
         [self.items cancelDownloadMapAtIndex:indexPath.row];
     } else {
         [self.items prepareToDownloadMapAtIndex:indexPath.row];
+        cell.downloadView.percentComplete = 0;
         cell.downloadImageView.hidden = YES;
         cell.downloadView.downloading = YES;
         Map *map = [self.items remoteMapAtIndex:indexPath.row];
