@@ -337,7 +337,7 @@ typedef enum {
 - (void) configureView
 {
     self.selectSurveyButton.enabled = NO;
-    self.surveys = [[SurveyCollection alloc] init];
+    self.surveys = [SurveyCollection sharedCollection];
     [self.surveys openWithCompletionHandler:^(BOOL success) {
         //do any other background work;
         dispatch_async(dispatch_get_main_queue(), ^{
