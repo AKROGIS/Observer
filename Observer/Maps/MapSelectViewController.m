@@ -166,7 +166,12 @@
         NSString *identifier = (indexPath.section == 0) ? @"LocalMapCell" : @"RemoteMapCell";
         MapTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
         cell.titleLabel.text = item.title;
-        cell.thumbnailImageView.image = item.thumbnail;
+        [item openThumbnailWithCompletionHandler:^(BOOL success) {
+            //on background thread
+            dispatch_async(dispatch_get_main_queue(), ^{
+                cell.thumbnailImageView.image = item.thumbnail;
+            });
+        }];
         cell.subtitle1Label.text = item.subtitle;
         cell.subtitle2Label.text = item.subtitle2;
         cell.downloadImageView.hidden = item.isDownloading;  //FIXME: hide if downloading
@@ -306,22 +311,32 @@
         [self.items prepareToDownloadMapAtIndex:indexPath.row];
         cell.downloadImageView.hidden = YES;
         cell.downloadView.downloading = YES;
-        //[tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        [self.items downloadMapAtIndex:indexPath.row WithCompletionHandler:^(BOOL success) {
+        Map *map = [self.items remoteMapAtIndex:indexPath.row];
+        map.progressAction = ^(double bytesWritten, double bytesExpected) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                cell.downloadView.percentComplete =  bytesWritten/bytesExpected;
+            });
+        };
+        map.completionAction = ^(NSURL *imageUrl, BOOL success) {
             //on background thread
             dispatch_async(dispatch_get_main_queue(), ^{
-                if (!success) {
+                if (success) {
+                    [self.items moveRemoteMapAtIndex:indexPath.row toLocalMapAtIndex:0];
+                } else {
                     [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't download map" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-                    //[self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:YES];
                     cell.downloadView.downloading = NO;
                     cell.downloadImageView.hidden = NO;
-                } else {
-                    // updates are done by delegate calls
-                    // the remote cell does not exist anymore (transfered to local), so nothing to update
                 }
             });
-        }];
+        };
+        [map startDownload];
     }
+}
+
+- (void) stopDownloadItem:(NSIndexPath *)indexPath
+{
+    Map *map = [self.items remoteMapAtIndex:indexPath.row];
+    [map stopDownload];
 }
 
 @end

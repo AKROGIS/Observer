@@ -59,12 +59,19 @@
 - (void)prepareToDownloadMapAtIndex:(NSUInteger)index;
 // On success, the delegate will be sent two messages, one to remove the remote item, the other to add the new local item.
 // The completion handler is used only to signal success/failure
-- (void)downloadMapAtIndex:(NSUInteger)index WithCompletionHandler:(void (^)(BOOL success))completionHandler;
+//- (void)downloadMapAtIndex:(NSUInteger)index WithCompletionHandler:(void (^)(BOOL success))completionHandler;
+
+//TODO: is this the best API?
+- (void) moveRemoteMapAtIndex:(NSUInteger)fromIndex toLocalMapAtIndex:(NSUInteger)toIndex;
+
 - (void)cancelDownloadMapAtIndex:(NSUInteger)index;
 
 // Refresh the list of remote Maps
 // Will send message to the delegate as items are added/removed from the local/remote lists
 // The completion handler is used only to signal success/failure
 - (void) refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+
+//TODO: I don't making this public, but I need to save the cache after a map changes it's thumbnail url
+- (void) synchronize;
 
 @end

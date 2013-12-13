@@ -14,7 +14,7 @@
 
 #define MAP_EXT @"tpk"
 
-@interface Map : NSObject <NSCoding, AKRTableViewItem>
+@interface Map : NSObject <NSCoding, AKRTableViewItem, NSURLSessionDownloadDelegate>
 
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, strong, readonly) NSString *title;
@@ -57,6 +57,20 @@
 // download the Map from the remote URL to a local file...
 - (void)prepareToDownload;
 - (BOOL)isDownloading;
-- (BOOL)downloadToURL:(NSURL *)url;
+//- (BOOL)downloadToURL:(NSURL *)url;
+
+- (void)openThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+
+
+@property (nonatomic) BOOL isBackground;
+@property (nonatomic) BOOL canReplace;
+@property (nonatomic, strong) NSURLSession *session;
+//@property (nonatomic, strong) NSURL *sourceURL;
+@property (nonatomic, strong) NSURL *destinationURL;
+@property (nonatomic, copy) void(^progressAction)(double bytesWritten, double bytesExpected);
+@property (nonatomic, copy) void(^completionAction)(NSURL *imageUrl, BOOL success);
+
+- (void) startDownload;
+- (void) stopDownload;
 
 @end

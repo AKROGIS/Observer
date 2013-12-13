@@ -38,11 +38,15 @@
 @property (nonatomic, readwrite) AGSEnvelope *extents;
 
 @property (nonatomic) BOOL downloading;
+@property (nonatomic, strong, readwrite) NSURL *url;
 @property (nonatomic, strong, readwrite) UIImage *thumbnail;
 @property (nonatomic, strong, readwrite) AGSLocalTiledLayer *tileCache;
 @property (nonatomic, strong, readwrite) NSURL *thumbnailUrl;
 @property (nonatomic) BOOL thumbnailIsLoaded;
 @property (nonatomic) BOOL tileCacheIsLoaded;
+
+//TODO: move to NSOperation
+@property (nonatomic, strong) NSURLSessionTask *downloadTask;
 
 @end
 
@@ -178,11 +182,7 @@
 
 - (NSString *)subtitle
 {
-    if (self.downloading) {
-        return @"Downloading...";
-    } else {
-        return [NSString stringWithFormat:@"Author: %@, Date: %@", self.author, [self.date stringWithMediumDateFormat]];
-    }
+    return [NSString stringWithFormat:@"Author: %@, Date: %@", self.author, [self.date stringWithMediumDateFormat]];
 }
 
 - (NSString *)subtitle2
@@ -192,6 +192,16 @@
     } else {
         return [NSString stringWithFormat:@"Size: %@", (self.isLocal ? self.arealSizeString : self.byteSizeString)];
     }
+}
+
+- (void)openThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+{
+    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
+        UIImage *thumbnail = self.thumbnail;
+        if (completionHandler) {
+            completionHandler(thumbnail != nil);
+        }
+    });
 }
 
 - (UIImage *)thumbnail
@@ -242,23 +252,23 @@
 }
 
 
-- (BOOL)downloadToURL:(NSURL *)url
-{
-    //FIXME: use NSURLSession, and use delegate to provide progress indication
-    BOOL success = NO;
-    if (!self.isLocal && self.tileCache) {
-        if ([self saveCopyToURL:url]) {
-            _url = url;
-            success = YES;
-        } else {
-            NSLog(@"Map.downloadToURL:  Got data but write to %@ failed",url);
-        }
-    } else {
-        NSLog(@"Map.downloadToURL: Unable to get data at %@", self.url);
-    }
-    self.downloading = NO;
-    return success;
-}
+//- (BOOL)downloadToURL:(NSURL *)url
+//{
+//    //FIXME: use NSURLSession, and use delegate to provide progress indication
+//    BOOL success = NO;
+//    if (!self.isLocal && self.tileCache) {
+//        if ([self saveCopyToURL:url]) {
+//            _url = url;
+//            success = YES;
+//        } else {
+//            NSLog(@"Map.downloadToURL:  Got data but write to %@ failed",url);
+//        }
+//    } else {
+//        NSLog(@"Map.downloadToURL: Unable to get data at %@", self.url);
+//    }
+//    self.downloading = NO;
+//    return success;
+//}
 
 - (BOOL)saveCopyToURL:(NSURL *)url
 {
@@ -273,10 +283,16 @@
 - (BOOL)loadThumbnail
 {
     self.thumbnailIsLoaded = YES;
-    //TODO: if thumbnailUrl is not local, then download it, cache it, and update the url, let collection know the cache needs to be updated.
-
-    //_thumbnail = [[UIImage alloc] initWithContentsOfFile:[self.thumbnailUrl path]];
-    _thumbnail = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:self.thumbnailUrl]];
+    NSData *data = [NSData dataWithContentsOfURL:self.thumbnailUrl];
+    if (![self.thumbnailUrl isFileReferenceURL]) {
+        NSString *name = [[self.thumbnailUrl lastPathComponent] stringByDeletingPathExtension];
+        NSURL *newUrl = [self thumbnailUrlForMapName:name];
+        if ([data writeToURL:newUrl atomically:YES]) {
+            self.thumbnailUrl = newUrl;
+        }
+    }
+    //TODO: let the collection know we need to update the cache;
+    _thumbnail = [[UIImage alloc] initWithData:data];
     if (!_thumbnail)
         _thumbnail = [UIImage imageNamed:@"TilePackage"];
     return !_thumbnail;
@@ -349,6 +365,7 @@
 - (BOOL)loadTileCache
 {
     self.tileCacheIsLoaded = YES;
+    //FIXME: this will fail (crash) if the data at the url is not a valid tilechache - add try/catch
     _tileCache = [[AGSLocalTiledLayer alloc] initWithPath:[self.url path]];
     return _tileCache != nil;
 }
@@ -374,5 +391,77 @@
 {
     return [AKRAngleDistance angleDistanceFromLocation:location toGeometry:self.extents];
 }
+
+
+#pragma mark - download
+//TODO: move this to a NSOperation
+
+- (NSURLSession *)session
+{
+    if (!_session) {
+        NSURLSessionConfiguration *configuration;
+        if (self.isBackground) {
+            configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"gov.nps.observer.BackgroundDownloadSession"];
+        } else {
+            configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        }
+        //FIXME: the background session is needs to be unique
+        _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
+    }
+    return _session;
+}
+
+- (void) startDownload
+{
+    NSURLRequest *request = [NSURLRequest requestWithURL:self.url];
+    self.downloadTask = [self.session downloadTaskWithRequest:request];
+    self.downloading = YES;
+    [self.downloadTask resume];
+}
+
+- (void) stopDownload
+{
+    [self.downloadTask cancel];
+    self.downloading = NO;
+    if (self.completionAction){
+        self.completionAction(self.destinationURL, NO);
+    }
+}
+
+#pragma mark - NSURLSessionDownloadDelegate
+
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
+{
+    //TODO: implement method to support resume download (for pause or lost connection)
+    NSLog(@"did resume download");
+}
+
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+{
+    if (downloadTask == self.downloadTask && self.progressAction){
+        self.progressAction((double)totalBytesWritten, (double)totalBytesExpectedToWrite);
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (!self.destinationURL) {
+        NSURL *documentsDirectory = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+        NSURL *originalURL = downloadTask.originalRequest.URL;
+        self.destinationURL = [documentsDirectory URLByAppendingPathComponent:originalURL.lastPathComponent];
+    }
+    if (self.canReplace) {
+        [fileManager removeItemAtURL:self.destinationURL error:NULL];
+    }
+    BOOL success = [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];
+    if (success) {
+        self.url = self.destinationURL;
+    }
+    if (self.completionAction){
+        self.completionAction(self.url, success);
+    }
+}
+
 
 @end

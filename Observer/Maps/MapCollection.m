@@ -232,35 +232,49 @@ static MapCollection *_sharedCollection = nil;
     
 }
 
-- (void)downloadMapAtIndex:(NSUInteger)index WithCompletionHandler:(void (^)(BOOL success))completionHandler
+//- (void)downloadMapAtIndex:(NSUInteger)index WithCompletionHandler:(void (^)(BOOL success))completionHandler
+//{
+//    //if (self.remoteItems.count <= index) return; //safety check
+//    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
+//        Map *map = [self remoteMapAtIndex:index];
+//        NSURL *newUrl = [self.documentsDirectory URLByAppendingPathComponent:map.url.lastPathComponent];
+//        newUrl = [newUrl URLByUniquingPath];
+//        BOOL success = [map downloadToURL:newUrl];
+//        if (success) {
+//            if (self.delegate) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    [self.remoteItems removeObjectAtIndex:index];
+//                    [self.delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
+//                    [self.localItems insertObject:map atIndex:0];
+//                    [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
+//                    [self saveCache];
+//                });
+//            } else {
+//                [self.remoteItems removeObjectAtIndex:index];
+//                [self.localItems insertObject:map atIndex:0];
+//                [self saveCache];
+//            }
+//        }
+//        if (completionHandler) {
+//            completionHandler(success);
+//        }
+//    });
+//}
+
+- (void) moveRemoteMapAtIndex:(NSUInteger)fromIndex toLocalMapAtIndex:(NSUInteger)toIndex
 {
-    //if (self.remoteItems.count <= index) return; //safety check
-    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
-        Map *map = [self remoteMapAtIndex:index];
-        NSURL *newUrl = [self.documentsDirectory URLByAppendingPathComponent:map.url.lastPathComponent];
-        newUrl = [newUrl URLByUniquingPath];
-        BOOL success = [map downloadToURL:newUrl];
-        if (success) {
-            if (self.delegate) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.remoteItems removeObjectAtIndex:index];
-                    [self.delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
-                    [self.localItems insertObject:map atIndex:0];
-                    [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
-                    [self saveCache];
-                });
-            } else {
-                [self.remoteItems removeObjectAtIndex:index];
-                [self.localItems insertObject:map atIndex:0];
-                [self saveCache];
-            }
-        }
-        if (completionHandler) {
-            completionHandler(success);
-        }
-    });
+    Map *map = [self.remoteItems objectAtIndex:fromIndex];
+    [self.remoteItems removeObjectAtIndex:fromIndex];
+    [self.delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex]];
+    [self.localItems insertObject:map atIndex:toIndex];
+    [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:toIndex]];
+    [self saveCache];
 }
 
+-(void)synchronize
+{
+    [self saveCache];
+}
 
 
 #pragma mark - private methods
