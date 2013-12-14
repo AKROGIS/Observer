@@ -23,12 +23,12 @@
     return [self initWithDeadAhead:0.0 protocol:nil absoluteAngle:-1.0 distance:-1.0];
 }
 
-- (id) initWithDeadAhead:(double)deadAhead protocol:(SurveyProtocol *)protocol
+- (id) initWithDeadAhead:(double)deadAhead protocol:(SProtocol *)protocol
 {
     return [self initWithDeadAhead:deadAhead protocol:protocol absoluteAngle:-1.0 distance:-1.0];
 }
 
-- (id) initWithDeadAhead:(double)deadAhead protocol:(SurveyProtocol *)protocol absoluteAngle:(double)angle distance:(double)distance
+- (id) initWithDeadAhead:(double)deadAhead protocol:(SProtocol *)protocol absoluteAngle:(double)angle distance:(double)distance
 {
     self = [super init];
     if (self)

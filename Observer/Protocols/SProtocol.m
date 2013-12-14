@@ -263,4 +263,32 @@
     return nil;
 }
 
+
+#pragma mark - fields for angle distance measuring
+
+- (BOOL)definesAngleDistanceMeasures;
+{
+    return self.values[@"angle baseline"] != nil;
+}
+
+- (BOOL)requireAngleDistance
+{
+    return [self.values[@"requires angle-distance"] boolValue];
+}
+
+- (AGSSRUnit)distanceUnits
+{
+    return [self.values[@"distance units"] intValue];
+}
+
+- (double) angleBaseline
+{
+    return [self.values[@"angle baseline"] doubleValue];
+}
+
+- (AngleDirection) angleDirection
+{
+    return [self.values[@"angle direction"] intValue];
+}
+
 @end

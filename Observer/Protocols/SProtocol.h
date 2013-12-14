@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AKRTableViewItemCollection.h"
+#import "Enumerations.h"
 
 @interface SProtocol : NSObject <NSCoding, AKRTableViewItem>
 
@@ -45,5 +46,22 @@
 - (BOOL)isDownloading;
 - (BOOL)downloadToURL:(NSURL *)url;
 - (BOOL)saveCopyToURL:(NSURL *)url;
+
+
+//Does the protocol define the units of measure for angle/distance observations
+@property (nonatomic, readonly) BOOL definesAngleDistanceMeasures;
+
+// Does the protocol require that all observations are angle distance
+@property (nonatomic, readonly) BOOL requireAngleDistance;
+
+// The units of measure (meters, feet, etc) for distances to observed items
+@property (nonatomic, readonly) AGSSRUnit distanceUnits;
+
+// The angle in degrees for dead ahead or true north
+@property (nonatomic, readonly) double angleBaseline;
+
+// What is the direction of increasing angles (clockwise or counter-clockwise)
+@property (nonatomic, readonly) AngleDirection angleDirection;
+
 
 @end

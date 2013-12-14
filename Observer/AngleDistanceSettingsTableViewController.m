@@ -68,7 +68,7 @@
 
 #pragma mark - Public API
 
-- (void) setProtocol:(SurveyProtocol *)protocol
+- (void) setProtocol:(SProtocol *)protocol
 {
     _protocol = protocol;
     [self settingsDidChange:nil];
@@ -186,25 +186,19 @@
 
 - (void) updateAngleDirection: (AngleDirection)angleDirection
 {
-    if (self.protocol)
-        self.protocol.angleDirection = angleDirection;
-    else
+    if (!self.protocol)
         [Settings manager].angleDistanceAngleDirection = angleDirection;
 }
 
 - (void) updateAngleBaseline:(double)baseline
 {
-    if (self.protocol)
-        self.protocol.angleBaseline = baseline;
-    else
+    if (!self.protocol)
         [Settings manager].angleDistanceDeadAhead = baseline;
 }
 
 - (void) updateDistanceUnits:(AGSSRUnit)units
 {
-    if (self.protocol)
-        self.protocol.distanceUnits = units;
-    else
+    if (!self.protocol)
         [Settings manager].distanceUnitsForSightings = units;
 }
 

@@ -39,7 +39,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ArcGIS/ArcGIS.h>
-#import "SurveyProtocol.h"
+#import "SProtocol.h"
 #import "Enumerations.h"
 
 @interface LocationAngleDistance : NSObject
@@ -47,10 +47,10 @@
 //designated initializer
 //This will initialize the readonly properties deadAhead, protocol, distanceMeters and absoluteAngles.
 //values must be provided in the database neutral units and frame of reference specified below.
-- (id) initWithDeadAhead:(double)deadAhead protocol:(SurveyProtocol *)protocol absoluteAngle:(double)angle distance:(double)distance;
+- (id) initWithDeadAhead:(double)deadAhead protocol:(SProtocol *)protocol absoluteAngle:(double)angle distance:(double)distance;
 
 //convenience initializer with default values of -1 for angle and distance.
-- (id) initWithDeadAhead:(double)deadAhead protocol:(SurveyProtocol *)protocol;
+- (id) initWithDeadAhead:(double)deadAhead protocol:(SProtocol *)protocol;
 
 //convenience initializer with default values of 0 for deadAhead, nil for protocol and -1 for angle and distance.
 - (id) init;
@@ -62,7 +62,7 @@
 @property (nonatomic,readonly) double deadAhead;
 
 //the protocol may specify how angle/distance measurements are to be taken
-@property (nonatomic,strong,readonly) SurveyProtocol *protocol;
+@property (nonatomic,strong,readonly) SProtocol *protocol;
 
 //the current angle provided by the user - a nullable double
 //in the reference frame provided by the protocol, or the NSUserDefaults

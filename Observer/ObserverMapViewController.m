@@ -42,7 +42,8 @@ typedef enum {
 @interface ObserverMapViewController ()
 
 //@property (strong, nonatomic) BaseMapManager *oldMapList;
-@property (strong, nonatomic) SurveyProtocol *protocol;
+//@property (strong, nonatomic) SurveyProtocol *protocol;
+@property (strong, nonatomic) Survey *survey;
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
 @property (weak, nonatomic) IBOutlet UILabel *noMapLabel;
@@ -160,19 +161,19 @@ typedef enum {
 }
 
 //FIXME - Used for testing, get from SurveyFile
-- (SurveyProtocol *)protocol
-{
-    if (!_protocol) {
-        _protocol = [[SurveyProtocol alloc] init];
-        _protocol.distanceUnits = AGSSRUnitMeter;
-        _protocol.angleBaseline = 180;
-        _protocol.angleDirection = AngleDirectionClockwise;
-        _protocol.definesAngleDistanceMeasures = YES;
-        _protocol.delegate = self;
-        //_protocol = nil;
-    }
-    return _protocol;
-}
+//- (SurveyProtocol *)protocol
+//{
+//    if (!_protocol) {
+//        _protocol = [[SurveyProtocol alloc] init];
+//        _protocol.distanceUnits = AGSSRUnitMeter;
+//        _protocol.angleBaseline = 180;
+//        _protocol.angleDirection = AngleDirectionClockwise;
+//        _protocol.definesAngleDistanceMeasures = YES;
+//        _protocol.delegate = self;
+//        //_protocol = nil;
+//    }
+//    return _protocol;
+//}
 
 - (AGSSpatialReference *) wgs84
 {
@@ -361,12 +362,12 @@ typedef enum {
 
 -(void) updateTitle
 {
-    self.selectSurveyButton.title = (self.surveys.selectedSurvey ? self.surveys.selectedSurvey.title : @"Select Survey");
+    self.selectSurveyButton.title = (self.survey ? self.survey.title : @"Select Survey");
 }
 
 -(void) updateButtons
 {
-    NSDictionary *dialogs = self.surveys.selectedSurvey.protocol.dialogs;
+    NSDictionary *dialogs = self.survey.protocol.dialogs;
     self.editEnvironmentBarButton.enabled = dialogs[@"MissionProperty"] != nil;
     //TODO: support more than just one feature called "Observations"
     self.addObservationBarButton.enabled = dialogs[@"Observation"] != nil;
@@ -376,6 +377,7 @@ typedef enum {
 
 - (void)setupNewSurvey
 {
+    self.survey = self.surveys.selectedSurvey;
     [self updateView];
 }
 
@@ -446,15 +448,15 @@ typedef enum {
         
         LocationAngleDistance *location;
         if (0 <= currentCourse) {
-            location = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocol:self.protocol];
+            location = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocol:self.survey.protocol];
         }
         else {
             double currentHeading = self.locationManager.heading.trueHeading;
             if (0 <= currentHeading) {
-                location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocol:self.protocol];
+                location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocol:self.survey.protocol];
             }
             else {
-                location = [[LocationAngleDistance alloc] initWithDeadAhead:0.0 protocol:self.protocol];
+                location = [[LocationAngleDistance alloc] initWithDeadAhead:0.0 protocol:self.survey.protocol];
             }
         }
         vc.location = location;
@@ -904,7 +906,7 @@ typedef enum {
     AGSPoint *point;
     if (observation.angleDistanceLocation) {
         LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:observation.angleDistanceLocation.direction
-                                                                                  protocol:self.protocol
+                                                                                  protocol:self.survey.protocol
                                                                              absoluteAngle:observation.angleDistanceLocation.angle
                                                                                   distance:observation.angleDistanceLocation.distance];
         //The point must be in a projected coordinate system to apply an angle and distance
@@ -1132,17 +1134,17 @@ typedef enum {
 
 - (void) openModel
 {
-    [self.protocol openModel];
+    //[self.survey.protocol openModel];
 }
 
 - (void) saveModel
 {
-    [self.protocol saveModel];
+    //[self.survey saveModel];
 }
 
 - (void) closeModel
 {
-    [self.protocol closeModel];
+    //[self.survey closeModel];
 }
 
 

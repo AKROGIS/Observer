@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		391EE9FA17C6EA48007B050B /* ProtocolManagedDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 391EE9F917C6EA48007B050B /* ProtocolManagedDocument.m */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
 		394CC22D1858D0EC00FA859C /* ProtocolDocumentIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 394CC22A1858D0EC00FA859C /* ProtocolDocumentIcon.png */; };
@@ -102,7 +101,6 @@
 		39955EC51783A16900D225D7 /* form@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 39955EC31783A16900D225D7 /* form@2x.png */; };
 		39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ED1178733B900D225D7 /* ObserverMapViewController.m */; };
 		39A836C4185A668D008BF4E3 /* AKRAngleDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */; };
-		39B92FCA17A7380B00C62145 /* SurveyProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FC917A7380B00C62145 /* SurveyProtocol.m */; };
 		39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */; };
 		39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */; };
 		39B92FD517A87D9300C62145 /* BlueSelectionForTableViewCell.png in Resources */ = {isa = PBXBuildFile; fileRef = 39B92FD417A87D9300C62145 /* BlueSelectionForTableViewCell.png */; };
@@ -145,8 +143,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		391EE9F817C6EA48007B050B /* ProtocolManagedDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolManagedDocument.h; path = Model/ProtocolManagedDocument.h; sourceTree = "<group>"; };
-		391EE9F917C6EA48007B050B /* ProtocolManagedDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolManagedDocument.m; path = Model/ProtocolManagedDocument.m; sourceTree = "<group>"; };
 		3929196617BEB6A8008B0FFC /* Todo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Todo.rtf; sourceTree = "<group>"; };
 		393E8AFA17A2E1D8009AD0AC /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = Model/Settings.h; sourceTree = "<group>"; };
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
@@ -276,8 +272,6 @@
 		39955ED1178733B900D225D7 /* ObserverMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObserverMapViewController.m; sourceTree = "<group>"; };
 		39A836C2185A668D008BF4E3 /* AKRAngleDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRAngleDistance.h; sourceTree = "<group>"; };
 		39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRAngleDistance.m; sourceTree = "<group>"; };
-		39B92FC817A7380B00C62145 /* SurveyProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyProtocol.h; path = Model/SurveyProtocol.h; sourceTree = "<group>"; };
-		39B92FC917A7380B00C62145 /* SurveyProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyProtocol.m; path = Model/SurveyProtocol.m; sourceTree = "<group>"; };
 		39B92FCE17A73F5700C62145 /* AngleDistanceSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AngleDistanceSettingsTableViewController.h; sourceTree = "<group>"; };
 		39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AngleDistanceSettingsTableViewController.m; sourceTree = "<group>"; };
 		39B92FD117A869B500C62145 /* RadioStyleTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadioStyleTableViewCell.h; sourceTree = "<group>"; };
@@ -604,10 +598,6 @@
 				39D1D97B17BC51630014C68F /* ObserverModel.h */,
 				393E8AFA17A2E1D8009AD0AC /* Settings.h */,
 				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
-				39B92FC817A7380B00C62145 /* SurveyProtocol.h */,
-				39B92FC917A7380B00C62145 /* SurveyProtocol.m */,
-				391EE9F817C6EA48007B050B /* ProtocolManagedDocument.h */,
-				391EE9F917C6EA48007B050B /* ProtocolManagedDocument.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -796,7 +786,6 @@
 				394CC2441858F11800FA859C /* MissionProperty.m in Sources */,
 				393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */,
 				394CC24A1858F11800FA859C /* AdhocLocation.m in Sources */,
-				39B92FCA17A7380B00C62145 /* SurveyProtocol.m in Sources */,
 				398908221857EB2F007B3F67 /* Map.m in Sources */,
 				39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */,
 				394CC23E1858EF5800FA859C /* ObserverModel.xcdatamodeld in Sources */,
@@ -814,7 +803,6 @@
 				398908261857EB2F007B3F67 /* MapTableViewCell.m in Sources */,
 				3989083C1857EBF6007B3F67 /* ProtocolDetailViewController.m in Sources */,
 				398908501857ED00007B3F67 /* SurveyObjectModel.m in Sources */,
-				391EE9FA17C6EA48007B050B /* ProtocolManagedDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

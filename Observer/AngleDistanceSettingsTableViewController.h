@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SurveyProtocol.h"
+#import "SProtocol.h"
 
 @interface AngleDistanceSettingsTableViewController : UITableViewController
 
@@ -17,6 +17,6 @@
 //Model - if provided, reads and writes are from/to the model, otherwise from/to NSDefaults
 // the properties of the protocol are not observed, if they are changed externally,
 // this property should be reset to update the UI.
-@property (nonatomic,strong) SurveyProtocol *protocol;
+@property (nonatomic,strong) SProtocol *protocol;
 
 @end

@@ -18,5 +18,4 @@
 #import "NSArray+map.h"
 #import "Observation.h"
 #import "Settings.h"
-#import "SurveyProtocol.h"
 
