@@ -46,7 +46,6 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
 @property (weak, nonatomic) IBOutlet UILabel *noMapLabel;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *barTitle;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectSurveyButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectMapButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
@@ -326,7 +325,7 @@ typedef enum {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.selectSurveyButton.enabled = YES;
             if (self.surveys.selectedSurvey) {
-                self.barTitle.title = @"Loading Survey...";
+                self.selectSurveyButton.title = @"Loading Survey...";
                 [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
                     //do any other background work;
                     dispatch_async(dispatch_get_main_queue(), ^{[self setupNewSurvey];});
@@ -362,9 +361,7 @@ typedef enum {
 
 -(void) updateTitle
 {
-    self.barTitle.title = [NSString stringWithFormat:@"%@ - %@",
-                           (self.surveys.selectedSurvey ? self.surveys.selectedSurvey.title : @"Select Survey"),
-                           (self.maps.selectedLocalMap ? self.maps.selectedLocalMap.title : @"Select Map")];
+    self.selectSurveyButton.title = (self.surveys.selectedSurvey ? self.surveys.selectedSurvey.title : @"Select Survey");
 }
 
 -(void) updateButtons
@@ -485,7 +482,7 @@ typedef enum {
             vc.popover = ((UIStoryboardPopoverSegue *)segue).popoverController;
             vc.popover.delegate = self;
             vc.popoverDismissedCallback = ^{
-                self.barTitle.title = @"Loading Survey...";
+                self.selectSurveyButton.title = @"Loading Survey...";
                 [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
                     //do any other background work;
                     dispatch_async(dispatch_get_main_queue(), ^{[self setupNewSurvey];});

@@ -31,13 +31,6 @@
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3Af-C7-mib">
                                 <rect key="frame" x="0.0" y="980" width="768" height="44"/>
                                 <items>
-                                    <barButtonItem title="Survey" id="SCL-a5-7Et">
-                                        <connections>
-                                            <segue destination="T4w-Lz-eIY" kind="popover" identifier="Select Survey" popoverAnchorBarButtonItem="SCL-a5-7Et" id="jH8-38-ocf">
-                                                <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                                            </segue>
-                                        </connections>
-                                    </barButtonItem>
                                     <barButtonItem title="Maps" id="gJK-vn-5w7">
                                         <connections>
                                             <segue destination="lN0-o7-qJT" kind="popover" identifier="Select Map" popoverAnchorBarButtonItem="gJK-vn-5w7" id="ex6-ls-xlP">
@@ -45,7 +38,6 @@
                                             </segue>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="old" id="xi5-9P-rbo"/>
                                     <barButtonItem image="heading.png" id="jXA-Ll-IBJ">
                                         <connections>
                                             <action selector="togglePanMode:" destination="TiC-11-YSU" id="wsV-bl-ssf"/>
@@ -57,7 +49,13 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="kTL-5N-79y"/>
-                                    <barButtonItem title="Title" id="97o-hf-0bj"/>
+                                    <barButtonItem title="Survey" id="SCL-a5-7Et">
+                                        <connections>
+                                            <segue destination="T4w-Lz-eIY" kind="popover" identifier="Select Survey" popoverAnchorBarButtonItem="SCL-a5-7Et" id="jH8-38-ocf">
+                                                <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                            </segue>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="pyp-S6-0zm"/>
                                     <barButtonItem systemItem="play" id="fCO-tO-IRq">
                                         <connections>
@@ -141,7 +139,6 @@
                         <outlet property="addAdObservationBarButton" destination="XBC-1H-O73" id="Xx8-Pi-TnE"/>
                         <outlet property="addGpsObservationBarButton" destination="C8B-tf-jAe" id="KF1-bm-Whs"/>
                         <outlet property="addObservationBarButton" destination="zVE-98-VDX" id="DG8-bz-NK6"/>
-                        <outlet property="barTitle" destination="97o-hf-0bj" id="Ge6-pr-dwQ"/>
                         <outlet property="editEnvironmentBarButton" destination="Fdi-yp-sWi" id="cJv-sd-s4Y"/>
                         <outlet property="mapLoadingIndicator" destination="zJv-q7-y2x" id="hBV-WL-ipD"/>
                         <outlet property="mapView" destination="gK6-lQ-eLV" id="1kI-MU-Eog"/>
