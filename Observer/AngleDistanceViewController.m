@@ -37,6 +37,8 @@
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(settingsDidChange:) name:NSUserDefaultsDidChangeNotification object:nil];
+    //FIXME: do not use a "magic" number
+    self.detailsLabel.preferredMaxLayoutWidth = 280;
     [self resizeView];
     [[self.view viewWithTag:1] becomeFirstResponder];
 }
