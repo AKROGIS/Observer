@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="TiC-11-YSU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13A2093" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="TiC-11-YSU">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
@@ -26,7 +26,7 @@
                                 </connections>
                             </view>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="zJv-q7-y2x">
-                                <rect key="frame" x="366" y="494" width="37" height="37"/>
+                                <rect key="frame" x="366" y="504" width="37" height="37"/>
                             </activityIndicatorView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3Af-C7-mib">
                                 <rect key="frame" x="0.0" y="980" width="768" height="44"/>
@@ -109,7 +109,7 @@
                                 <rect key="frame" x="352" y="490" width="64" height="64"/>
                             </imageView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="No background map selected. Click the Maps button to select one." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="009-3q-8gq">
-                                <rect key="frame" x="127" y="502" width="515" height="21"/>
+                                <rect key="frame" x="127" y="557" width="515" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -118,13 +118,13 @@
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="gK6-lQ-eLV" secondAttribute="trailing" id="0tW-7C-WRV"/>
+                            <constraint firstItem="gK6-lQ-eLV" firstAttribute="centerY" secondItem="zJv-q7-y2x" secondAttribute="centerY" id="HNZ-ve-753"/>
                             <constraint firstAttribute="centerX" secondItem="009-3q-8gq" secondAttribute="centerX" id="Iel-Up-doe"/>
-                            <constraint firstAttribute="centerY" secondItem="009-3q-8gq" secondAttribute="centerY" id="K9S-Ah-BOf"/>
+                            <constraint firstAttribute="centerY" secondItem="009-3q-8gq" secondAttribute="centerY" constant="-55" id="K9S-Ah-BOf"/>
                             <constraint firstItem="fOP-b6-5IU" firstAttribute="top" secondItem="jAV-ok-Y8z" secondAttribute="bottom" constant="20" symbolic="YES" id="bbd-yI-sVt"/>
                             <constraint firstAttribute="centerX" secondItem="zJv-q7-y2x" secondAttribute="centerX" id="c9i-GS-Uhf"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="centerX" secondItem="fpV-JS-knH" secondAttribute="centerX" id="dSl-Tq-Iwi"/>
                             <constraint firstItem="D2B-BM-dlF" firstAttribute="top" secondItem="3Af-C7-mib" secondAttribute="bottom" constant="20" symbolic="YES" id="lPc-eG-ECb"/>
-                            <constraint firstAttribute="centerY" secondItem="zJv-q7-y2x" secondAttribute="centerY" id="mF3-xV-i41"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leading" id="msM-N1-Wbb"/>
                             <constraint firstItem="D2B-BM-dlF" firstAttribute="top" secondItem="gK6-lQ-eLV" secondAttribute="bottom" id="nTs-2E-lF7"/>
                             <constraint firstAttribute="trailing" secondItem="fOP-b6-5IU" secondAttribute="trailing" constant="20" symbolic="YES" id="nsx-gg-eH3"/>
