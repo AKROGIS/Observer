@@ -17,5 +17,6 @@
 #import "LocationAngleDistance.h"
 #import "NSArray+map.h"
 #import "Observation.h"
+#import "MissionProperty.h"
 #import "Settings.h"
 
