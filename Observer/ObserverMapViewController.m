@@ -50,16 +50,16 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet UIButton *northButton2;
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *selectSurveyButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectMapButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *addObservationBarButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *addGpsObservationBarButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *addAdObservationBarButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *panButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *panStyleButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *selectSurveyButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopRecordingBarButtonItem;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopObservingBarButtonItem;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *addAdObservationBarButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *addGpsObservationBarButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *addObservationBarButton;
 
 @property (nonatomic) BOOL userWantsAutoPanOn;
 @property (nonatomic) AGSLocationDisplayAutoPanMode savedAutoPanMode;
@@ -162,6 +162,26 @@ typedef enum {
     return _savedAutoPanMode;
 }
 
+- (void) setUserWantsAutoPanOn:(BOOL)userWantsAutoPanOn
+{
+    if (userWantsAutoPanOn)
+    {
+        self.mapView.locationDisplay.autoPanMode = self.savedAutoPanMode;
+        self.panButton.style = UIBarButtonItemStyleDone;
+        self.panStyleButton.enabled = YES;
+    }
+    else
+    {
+        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
+        self.panButton.style = UIBarButtonItemStyleBordered;
+        self.panStyleButton.enabled = NO;
+    }
+    [self checkIfMapIsRotated];
+    _userWantsAutoPanOn = userWantsAutoPanOn;
+
+    [Settings manager].autoPanEnabled = userWantsAutoPanOn;
+}
+
 - (void) setSavedAutoPanMode:(AGSLocationDisplayAutoPanMode)savedAutoPanMode
 {
     if (savedAutoPanMode != _savedAutoPanMode)
@@ -215,48 +235,6 @@ typedef enum {
     NSLog(@"User Tap");
 }
 
-- (IBAction)togglePanMode:(UIBarButtonItem *)sender {
-    self.userWantsAutoPanOn = !self.userWantsAutoPanOn;
-}
-
-- (void) setUserWantsAutoPanOn:(BOOL)userWantsAutoPanOn
-{
-    if (userWantsAutoPanOn)
-    {
-        self.mapView.locationDisplay.autoPanMode = self.savedAutoPanMode;
-        self.panButton.style = UIBarButtonItemStyleDone;
-        self.panStyleButton.enabled = YES;
-    }
-    else
-    {
-        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
-        self.panButton.style = UIBarButtonItemStyleBordered;        
-        self.panStyleButton.enabled = NO;
-    }
-    [self checkIfMapIsRotated];
-    _userWantsAutoPanOn = userWantsAutoPanOn;
-
-    [Settings manager].autoPanEnabled = userWantsAutoPanOn;
-}
-
-- (IBAction)startStopRecording:(UIBarButtonItem *)sender
-{
-    if (self.isRecording) {
-        [self stopRecording];
-     } else {
-        [self startRecording];
-   }
-}
-
-- (IBAction)startStopObserving:(UIBarButtonItem *)sender
-{
-    if (self.isObserving) {
-        [self stopObserving];
-    } else {
-        [self startObserving];
-     }
-}
-
 - (IBAction)resetNorth:(UIButton *)sender {
     NSLog(@"Reset North");
     [self.mapView setRotationAngle:0 animated:YES];
@@ -265,6 +243,10 @@ typedef enum {
     animation.duration = 0.4;
     [sender.layer addAnimation:animation forKey:nil];
     sender.hidden = YES;
+}
+
+- (IBAction)togglePanMode:(UIBarButtonItem *)sender {
+    self.userWantsAutoPanOn = !self.userWantsAutoPanOn;
 }
 
 - (IBAction)togglePanStyle:(UIBarButtonItem *)sender {
@@ -276,15 +258,42 @@ typedef enum {
     self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];    
 }
 
-- (IBAction)addAdhocObservation:(UIBarButtonItem *)sender
+- (IBAction)startStopRecording:(UIBarButtonItem *)sender
 {
-    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    //ignore the gpsPoint if it is over a second old
-    if ([gpsPoint.timestamp timeIntervalSinceNow] < -2.0)
-        gpsPoint = nil;
-    Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
-    [self drawObservation:observation atPoint:self.mapView.mapAnchor];
-    [self setAttributesForObservation:observation atPoint:self.mapView.mapAnchor];
+    if (self.isRecording) {
+        [self stopRecording];
+    } else {
+        [self startRecording];
+    }
+}
+
+- (IBAction)startStopObserving:(UIBarButtonItem *)sender
+{
+    if (self.isObserving) {
+        [self stopObserving];
+    } else {
+        [self startObserving];
+    }
+}
+
+- (IBAction)changeEnvironment:(UIBarButtonItem *)sender
+{
+    NSLog(@"Add Mission Property");
+    //FIXME: if gps, then add at GPS else add adhoc at current location
+    //launch pop up to enter attributes, use existing as defaults
+
+    if (self.quickDialogPopoverController) {
+        return;
+    }
+    //create VC from QDialog json in protocol, add newController to popover, display popover
+    NSDictionary *dialog = self.surveys.selectedSurvey.protocol.dialogs[@"MissionProperty"];
+    QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
+    QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
+    //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    self.quickDialogPopoverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
+    self.quickDialogPopoverController.delegate = self;
+    //self.popover.popoverContentSize = CGSizeMake(644, 425);
+    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 }
 
 - (IBAction)addGpsObservation:(UIBarButtonItem *)sender
@@ -295,10 +304,21 @@ typedef enum {
     [self drawObservation:observation atPoint:mapPoint];
     [self setAttributesForObservation:observation atPoint:mapPoint];
     //TODO: is there any reason to add the attributes to the graphic?
-//    NSDictionary *attributes = [self createAttributesFromObservation:observation];
-//    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
-//    [self.observationsLayer removeGraphic:oldGraphic]; //how do we get the old graphic
-//    [self.observationsLayer addGraphic:graphic];
+    //    NSDictionary *attributes = [self createAttributesFromObservation:observation];
+    //    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
+    //    [self.observationsLayer removeGraphic:oldGraphic]; //how do we get the old graphic
+    //    [self.observationsLayer addGraphic:graphic];
+}
+
+- (IBAction)addAdhocObservation:(UIBarButtonItem *)sender
+{
+    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    //ignore the gpsPoint if it is over a second old
+    if ([gpsPoint.timestamp timeIntervalSinceNow] < -2.0)
+        gpsPoint = nil;
+    Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
+    [self drawObservation:observation atPoint:self.mapView.mapAnchor];
+    [self setAttributesForObservation:observation atPoint:self.mapView.mapAnchor];
 }
 
 //- (IBAction)clearData:(UIBarButtonItem *)sender
@@ -1353,25 +1373,25 @@ typedef enum {
 
 #pragma mark - Support for Testing Quick Dialog
 
-- (IBAction)changeEnvironment:(UIBarButtonItem *)sender
-{
-    NSLog(@"Add Mission Property");
-    //FIXME: if gps, then add at GPS else add adhoc at current location
-    //launch pop up to enter attributes, use existing as defaults
-
-    if (self.quickDialogPopoverController) {
-        return;
-    }
-    //create VC from QDialog json in protocol, add newController to popover, display popover
-    NSDictionary *dialog = self.surveys.selectedSurvey.protocol.dialogs[@"MissionProperty"];
-    QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
-    QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
-    //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-    self.quickDialogPopoverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
-    self.quickDialogPopoverController.delegate = self;
-    //self.popover.popoverContentSize = CGSizeMake(644, 425);
-    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-}
+//- (IBAction)changeEnvironment:(UIBarButtonItem *)sender
+//{
+//    NSLog(@"Add Mission Property");
+//    //FIXME: if gps, then add at GPS else add adhoc at current location
+//    //launch pop up to enter attributes, use existing as defaults
+//
+//    if (self.quickDialogPopoverController) {
+//        return;
+//    }
+//    //create VC from QDialog json in protocol, add newController to popover, display popover
+//    NSDictionary *dialog = self.surveys.selectedSurvey.protocol.dialogs[@"MissionProperty"];
+//    QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
+//    QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
+//    //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+//    self.quickDialogPopoverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
+//    self.quickDialogPopoverController.delegate = self;
+//    //self.popover.popoverContentSize = CGSizeMake(644, 425);
+//    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+//}
 
 //- (void)collectObservation:(UIBarButtonItem *)barButton
 //{
