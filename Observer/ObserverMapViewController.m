@@ -261,9 +261,7 @@ typedef enum {
         gpsPoint = nil;
     Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
-    //TODO: support more than one type of observation
-    [self collectObservation:sender];
-    //FIXME: - update observation.attributes
+    [self setAttributesForObservation:observation atPoint:self.mapView.mapAnchor];
 }
 
 - (IBAction)addGpsObservation:(UIBarButtonItem *)sender
@@ -272,9 +270,12 @@ typedef enum {
     Observation *observation = [self createObservationAtGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self drawObservation:observation atPoint:mapPoint];
-    //TODO: support more than one type of observation
-    [self collectObservation:sender];
-    //FIXME: - update observation.attributes
+    [self setAttributesForObservation:observation atPoint:mapPoint];
+    //TODO: is there any reason to add the attributes to the graphic?
+//    NSDictionary *attributes = [self createAttributesFromObservation:observation];
+//    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
+//    [self.observationsLayer removeGraphic:oldGraphic]; //how do we get the old graphic
+//    [self.observationsLayer addGraphic:graphic];
 }
 
 - (IBAction)clearData:(UIBarButtonItem *)sender
@@ -933,15 +934,32 @@ typedef enum {
         NSLog(@"Cannot draw observation (%@).  It has no location", observation);
         return;
     }
-    //NSDictionary *attributes = observation.attributeSet ? [self createAttributesFromObservation:observation] : nil;
-    NSDictionary *attributes = nil;
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
+    //The graphic is drawn before we get the attributes, so set them to nil
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:nil];
     [self.observationsLayer addGraphic:graphic];
+}
+
+- (void)setAttributesForObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
+{
+    //TODO: support more than just one feature called Observations
+    NSDictionary *config = self.surveys.selectedSurvey.protocol.dialogs[@"Observation"];
+    QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
+    QuickDialogController *dialog = [QuickDialogController controllerForRoot:root];
+    
+    //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:dialog];
+    dialog.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:dialog animated:YES completion:^{
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        [dialog.root fetchValueUsingBindingsIntoObject:dict];
+        for (NSString *aKey in dict){
+            [observation setValue:[dict valueForKey:aKey] forKey:aKey];
+        }
+    }];
 }
 
 - (NSDictionary *) createAttributesFromObservation:(Observation *)observation
 {
-    //FIXME - need to define the attributes
+    //FIXME: need to define the attributes
     NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
     return attributes;
 }
@@ -961,12 +979,12 @@ typedef enum {
         NSLog(@"Cannot draw gpsPoint (%@) @ mapPoint (%@)",gpsPoint, mapPoint);
         return;
     }
-    //FIXME - figure out which attributes to show with GPS points
+    //FIXME: figure out which attributes to show with GPS points
     NSDictionary *attributes = @{@"date":gpsPoint.timestamp?:[NSNull null]};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
     [self.gpsPointsLayer addGraphic:graphic];
     
-    //FIXME draw a tracklog polyline
+    //FIXME: draw a tracklog polyline
 }
 
 - (GpsPoint *)createGpsPoint:(CLLocation *)gpsData
@@ -1003,8 +1021,10 @@ typedef enum {
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observation"
                                                               inManagedObjectContext:self.context];
     //We don't have any attributes yet, that will get created/added later depending on the protocol
+    
     return observation;
 }
+
 
 - (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint
 {
