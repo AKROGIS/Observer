@@ -20,7 +20,7 @@
  recreated from the saved features.
  */
 
-//FIXME - if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
+//FIXME: if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
 
 #import "ObserverMapViewController.h"
 #import "AngleDistanceViewController.h"
@@ -160,21 +160,6 @@ typedef enum {
     }
 }
 
-//FIXME - Used for testing, get from SurveyFile
-//- (SurveyProtocol *)protocol
-//{
-//    if (!_protocol) {
-//        _protocol = [[SurveyProtocol alloc] init];
-//        _protocol.distanceUnits = AGSSRUnitMeter;
-//        _protocol.angleBaseline = 180;
-//        _protocol.angleDirection = AngleDirectionClockwise;
-//        _protocol.definesAngleDistanceMeasures = YES;
-//        _protocol.delegate = self;
-//        //_protocol = nil;
-//    }
-//    return _protocol;
-//}
-
 - (AGSSpatialReference *) wgs84
 {
     if (!_wgs84) {
@@ -245,13 +230,6 @@ typedef enum {
     self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
     self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];    
 }
-
-//- (IBAction)addMissionProperty:(UIBarButtonItem *)sender {
-//    NSLog(@"Add Mission Property");
-//    //FIXME
-//    //if gps, then add at GPS else add adhoc at current location
-//    //launch pop up to enter attributes, use existing as defaults
-//}
 
 - (IBAction)addAdhocObservation:(UIBarButtonItem *)sender
 {
@@ -474,7 +452,7 @@ typedef enum {
             self.angleDistancePopoverController = nil;
             Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAngleDistanceLocation:sender.location];
             [self drawObservation:observation atPoint:[sender.location pointFromPoint:mapPoint]];
-            //FIXME - seque to popover to populate observation.attributes
+            [self setAttributesForObservation:observation atPoint:mapPoint];
         };
         vc.cancellationBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
@@ -545,7 +523,7 @@ typedef enum {
 {
     if ([alertView.title isEqualToString:@"Delete Data"] && buttonIndex == 1) {
         self.busy = YES;
-        //FIXME - Clear data on a background thread if it takes some time.
+        //FIXME: Clear data on a background thread if it takes some time.
         [self clearData];
         [self clearGraphics];
         self.busy = NO;
@@ -608,19 +586,19 @@ typedef enum {
     return YES;
 }
  
-- (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint graphics:(NSDictionary *)graphics
+- (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint graphics:(NSDictionary *)graphics
 {
     //Tells the delegate the map was single-tapped at specified location.
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
-    NSLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mappoint, graphics);
+    NSLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mapPoint, graphics);
     if ([graphics count]) {
         NSLog(@"display graphic callout");
     }
     else
     {
-        Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
-        [self drawObservation:observation atPoint:mappoint];
-        //FIXME - seque to popover to populate observation.attributes
+        Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mapPoint];
+        [self drawObservation:observation atPoint:mapPoint];
+        [self setAttributesForObservation:observation atPoint:mapPoint];
     }
 }
 
@@ -787,7 +765,7 @@ typedef enum {
 
 - (void) checkIfMapIsRotated
 {
-    //FIXME - there is too much delay before the compass appears 
+    //FIXME: there is too much delay before the compass appears
     if (self.mapView.rotationAngle != 0)
     {
         if (self.northButton2.hidden)
@@ -799,7 +777,7 @@ typedef enum {
             self.northButton2.hidden = NO;
         }
     }
-    //FIXME - what was I trying to do here?
+    //FIXME: what was I trying to do here?
     if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation ||
         self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation)
     {
@@ -882,6 +860,7 @@ typedef enum {
         }
     }
     //Get adhoc observations (gpsPoint is null and adhocLocation is non nil
+    //FIXME: support more than on Observation feature
     request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
     request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint == NIL AND adhocLocation != NIL"];
     results = [self.context executeFetchRequest:request error:&error];
@@ -952,14 +931,15 @@ typedef enum {
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
         [dialog.root fetchValueUsingBindingsIntoObject:dict];
         for (NSString *aKey in dict){
+            //TODO: do I need to add error checking
             [observation setValue:[dict valueForKey:aKey] forKey:aKey];
         }
     }];
 }
 
+//TODO: this is the dictionary of atttributes attached to the AGSGraphic.  not used at this point
 - (NSDictionary *) createAttributesFromObservation:(Observation *)observation
 {
-    //FIXME: need to define the attributes
     NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
     return attributes;
 }
@@ -1018,13 +998,12 @@ typedef enum {
         return nil;
     }
     NSLog(@"Saving Observation");
+    //FIXME: support more than one type of observation
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observation"
                                                               inManagedObjectContext:self.context];
     //We don't have any attributes yet, that will get created/added later depending on the protocol
-    
     return observation;
 }
-
 
 - (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint
 {
@@ -1103,7 +1082,7 @@ typedef enum {
         return YES;
     if (fabs(location.coordinate.latitude - self.lastGpsPointSaved.latitude) > 0.0001)
         return YES;
-    //FIXME is 10 seconds a good default?  do I want a user setting? this gets called a lot, so I don't want to slow down with a lookup
+    //FIXME: is 10 seconds a good default?  do I want a user setting? this gets called a lot, so I don't want to slow down with a lookup
     if ([location.timestamp timeIntervalSinceDate:self.lastGpsPointSaved.timestamp] > 10.0)
         return YES;
     return NO;
@@ -1221,8 +1200,7 @@ typedef enum {
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
     NSLog(@"Add Mission Property");
-    //FIXME
-    //if gps, then add at GPS else add adhoc at current location
+    //FIXME: if gps, then add at GPS else add adhoc at current location
     //launch pop up to enter attributes, use existing as defaults
 
     if (self.quickDialogPopoverController) {
@@ -1239,25 +1217,25 @@ typedef enum {
     [self.quickDialogPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 }
 
-- (void)collectObservation:(UIBarButtonItem *)barButton
-{
-    if (self.quickDialogPopoverController) {
-        return;
-    }
-    //create VC from QDialog json in protocol, add newController to popover, display popover
-    //TODO: support more than just one feature called Observations
-    NSDictionary *dialog = self.surveys.selectedSurvey.protocol.dialogs[@"Observation"];
-    QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
-    QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
-
-    //MapDetailViewController *vc = [[MapDetailViewController alloc] init];
-    //vc.map = self.maps.selectedLocalMap;
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-    self.quickDialogPopoverController = [[UIPopoverController alloc] initWithContentViewController:navigationController];
-    self.quickDialogPopoverController.delegate = self;
-    //self.popover.popoverContentSize = CGSizeMake(644, 425);
-    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:barButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-}
+//- (void)collectObservation:(UIBarButtonItem *)barButton
+//{
+//    if (self.quickDialogPopoverController) {
+//        return;
+//    }
+//    //create VC from QDialog json in protocol, add newController to popover, display popover
+//    //TODO: support more than just one feature called Observations
+//    NSDictionary *dialog = self.surveys.selectedSurvey.protocol.dialogs[@"Observation"];
+//    QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
+//    QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
+//
+//    //MapDetailViewController *vc = [[MapDetailViewController alloc] init];
+//    //vc.map = self.maps.selectedLocalMap;
+//    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+//    self.quickDialogPopoverController = [[UIPopoverController alloc] initWithContentViewController:navigationController];
+//    self.quickDialogPopoverController.delegate = self;
+//    //self.popover.popoverContentSize = CGSizeMake(644, 425);
+//    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:barButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+//}
 
 // not called when popover is dismissed programatically - use callbacks instead
 -(void)dismissQuickDialogPopover:(UIPopoverController *)popoverController
