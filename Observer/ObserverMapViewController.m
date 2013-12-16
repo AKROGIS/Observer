@@ -67,6 +67,7 @@ typedef enum {
 @property (strong, nonatomic) AGSGraphicsLayer *observationsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsPointsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsTracksLayer;
+@property (strong, nonatomic) AGSGraphicsLayer *missionPropertiesLayer;
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 @property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
@@ -139,6 +140,13 @@ typedef enum {
     if (!_gpsTracksLayer)
         _gpsTracksLayer = [[AGSGraphicsLayer alloc] init];
     return _gpsTracksLayer;
+}
+
+- (AGSGraphicsLayer *)missionPropertiesLayer
+{
+    if (!_missionPropertiesLayer)
+        _missionPropertiesLayer = [[AGSGraphicsLayer alloc] init];
+    return _missionPropertiesLayer;
 }
 
 @synthesize savedAutoPanMode = _savedAutoPanMode;
@@ -406,6 +414,7 @@ typedef enum {
 - (void)setupNewSurvey
 {
     self.survey = self.surveys.selectedSurvey;
+    self.context = self.survey.document.managedObjectContext;
     [self updateView];
     [self reloadGraphics];
 }
@@ -961,7 +970,7 @@ typedef enum {
     NSDictionary *config = self.surveys.selectedSurvey.protocol.dialogs[@"Observation"];
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
     QuickDialogController *dialog = [QuickDialogController controllerForRoot:root];
-    
+    //TODO: will I ever need to put the quick dialog in a navigation controller?    
     //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:dialog];
     dialog.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:dialog animated:YES completion:^{
@@ -970,6 +979,35 @@ typedef enum {
         for (NSString *aKey in dict){
             //TODO: do I need to add error checking
             [observation setValue:[dict valueForKey:aKey] forKey:aKey];
+        }
+    }];
+}
+
+- (void) drawMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
+{
+    if (!missionProperty || !mapPoint) {
+        NSLog(@"Cannot draw missionProperty (%@).  It has no location", missionProperty);
+        return;
+    }
+    //The graphic is drawn before we get the attributes, so set them to nil
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:nil];
+    [self.missionPropertiesLayer addGraphic:graphic];
+}
+
+- (void)setAttributesForMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
+{
+    NSDictionary *config = self.surveys.selectedSurvey.protocol.dialogs[@"MissionProperty"];
+    QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
+    QuickDialogController *dialog = [QuickDialogController controllerForRoot:root];
+    //TODO: will I ever need to put the quick dialog in a navigation controller?
+    //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:dialog];
+    dialog.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:dialog animated:YES completion:^{
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        [dialog.root fetchValueUsingBindingsIntoObject:dict];
+        for (NSString *aKey in dict){
+            //TODO: do I need to add error checking
+            [missionProperty setValue:[dict valueForKey:aKey] forKey:aKey];
         }
     }];
 }
@@ -1037,9 +1075,22 @@ typedef enum {
     NSLog(@"Saving Observation");
     //FIXME: support more than one type of observation
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observation"
-                                                              inManagedObjectContext:self.context];
+                                                             inManagedObjectContext:self.context];
     //We don't have any attributes yet, that will get created/added later depending on the protocol
     return observation;
+}
+
+- (MissionProperty *)createMissionProperty
+{
+    if (!self.context) {
+        NSLog(@"Can't create MissionPoroperty, there is no data context (file)");
+        return nil;
+    }
+    NSLog(@"Saving MissionPoroperty");
+    //FIXME: support more than one type of observation
+    MissionProperty *missionProperty = [NSEntityDescription insertNewObjectForEntityForName:@"MissionProperty" inManagedObjectContext:self.context];
+    //We don't have any attributes yet, that will get created/added later depending on the protocol
+    return missionProperty;
 }
 
 - (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint
@@ -1052,6 +1103,18 @@ typedef enum {
     Observation *observation = [self createObservation];
     observation.gpsPoint = gpsPoint;
     return observation;
+}
+
+- (MissionProperty *)createMissionPropertyAtGpsPoint:(GpsPoint *)gpsPoint
+{
+    if (!gpsPoint) {
+        NSLog(@"Can't save MissionProperty at GPS point without a GPS Point");
+        return nil;
+    }
+    NSLog(@"Saving MissionProperty at GPS point");
+    MissionProperty *missionProperty = [self createMissionProperty];
+    missionProperty.gpsPoint = gpsPoint;
+    return missionProperty;
 }
 
 - (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint withAdhocLocation:(AGSPoint *)mapPoint
@@ -1193,6 +1256,11 @@ typedef enum {
     [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:NO];
     //TODO: create a map graphic at the gps point (similar to an observation)
     //TDOO: display the mission attributes and populate with the last attribute set
+    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
+    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+    [self setAttributesForMissionProperty:mission atPoint:mapPoint];
+    [self drawMissionProperty:mission atPoint:mapPoint];
 }
 
 - (void) stopObserving
@@ -1202,6 +1270,11 @@ typedef enum {
     [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:YES];
     //TODO: create a map graphic at the gps point (similar to an observation)
     //TDOO: set the "observing" attribute to "off"
+    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
+    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+    [self setAttributesForMissionProperty:mission atPoint:mapPoint];
+    [self drawMissionProperty:mission atPoint:mapPoint];
 }
 
 -(void)setBarButtonAtIndex:(NSUInteger)index action:(SEL)action ToPlay:(BOOL)play
