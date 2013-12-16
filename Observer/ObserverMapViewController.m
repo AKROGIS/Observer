@@ -326,6 +326,7 @@ typedef enum {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.selectSurveyButton.enabled = YES;
             if (self.surveys.selectedSurvey) {
+                self.survey = nil;
                 self.selectSurveyButton.title = @"Loading Survey...";
                 [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
                     //do any other background work;
@@ -356,8 +357,8 @@ typedef enum {
 
 - (void)updateView
 {
-    [self updateButtons];
     [self updateTitle];
+    [self updateButtons];
 }
 
 -(void) updateTitle
@@ -367,18 +368,21 @@ typedef enum {
 
 -(void) updateButtons
 {
-    NSDictionary *dialogs = self.survey.protocol.dialogs;
-    self.editEnvironmentBarButton.enabled = dialogs[@"MissionProperty"] != nil;
-    //TODO: support more than just one feature called "Observations"
-    self.addObservationBarButton.enabled = dialogs[@"Observation"] != nil;
-    self.addGpsObservationBarButton.enabled = dialogs[@"Observation"] != nil;
-    self.addAdObservationBarButton.enabled = dialogs[@"Observation"] != nil;
+    if (self.survey) {
+        NSDictionary *dialogs = self.survey.protocol.dialogs;
+        self.editEnvironmentBarButton.enabled = dialogs[@"MissionProperty"] != nil;
+        //TODO: support more than just one feature called "Observations"
+        self.addObservationBarButton.enabled = dialogs[@"Observation"] != nil;
+        self.addGpsObservationBarButton.enabled = dialogs[@"Observation"] != nil;
+        self.addAdObservationBarButton.enabled = dialogs[@"Observation"] != nil;
+    }
 }
 
 - (void)setupNewSurvey
 {
     self.survey = self.surveys.selectedSurvey;
     [self updateView];
+    [self reloadGraphics];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
