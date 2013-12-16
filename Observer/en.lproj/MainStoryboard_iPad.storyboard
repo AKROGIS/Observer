@@ -57,9 +57,14 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="pyp-S6-0zm"/>
-                                    <barButtonItem systemItem="play" id="fCO-tO-IRq">
+                                    <barButtonItem style="plain" systemItem="play" id="fCO-tO-IRq">
                                         <connections>
-                                            <action selector="toggleRecordMode:" destination="TiC-11-YSU" id="njS-aE-mhL"/>
+                                            <action selector="startStopRecording:" destination="TiC-11-YSU" id="dcP-Wd-adV"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="play" id="faa-Nc-OBV">
+                                        <connections>
+                                            <action selector="startStopObserving:" destination="TiC-11-YSU" id="1Ay-IQ-Qfc"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem title="+MP" id="Fdi-yp-sWi">
@@ -82,11 +87,6 @@
                                     <barButtonItem systemItem="add" id="zVE-98-VDX">
                                         <connections>
                                             <action selector="addAdhocObservation:" destination="TiC-11-YSU" id="b30-q9-obS"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem systemItem="trash" id="3Ol-ec-TZ7">
-                                        <connections>
-                                            <action selector="clearData:" destination="TiC-11-YSU" id="Lib-Nl-qIF"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -149,6 +149,9 @@
                         <outlet property="recordButton" destination="fCO-tO-IRq" id="qHA-uf-NP4"/>
                         <outlet property="selectMapButton" destination="gJK-vn-5w7" id="H0i-2C-naE"/>
                         <outlet property="selectSurveyButton" destination="SCL-a5-7Et" id="aeX-q0-EBn"/>
+                        <outlet property="startStopObservingBarButtonItem" destination="faa-Nc-OBV" id="qgk-KR-oAf"/>
+                        <outlet property="startStopRecordingBarButtonItem" destination="fCO-tO-IRq" id="nGf-oH-pi4"/>
+                        <outlet property="toolbar" destination="3Af-C7-mib" id="YHr-yM-Amg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dpZ-sC-Ovn" userLabel="First Responder" sceneMemberID="firstResponder"/>

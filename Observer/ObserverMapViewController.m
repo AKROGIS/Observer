@@ -47,18 +47,19 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
 @property (weak, nonatomic) IBOutlet UILabel *noMapLabel;
+@property (weak, nonatomic) IBOutlet UIButton *northButton2;
+
+@property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectSurveyButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectMapButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addObservationBarButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addGpsObservationBarButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addAdObservationBarButton;
-
-//@property (weak, nonatomic) IBOutlet UIBarButtonItem *gpsButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *panButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *panStyleButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *recordButton;
-@property (weak, nonatomic) IBOutlet UIButton *northButton2;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopRecordingBarButtonItem;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopObservingBarButtonItem;
 
 @property (nonatomic) BOOL userWantsAutoPanOn;
 @property (nonatomic) AGSLocationDisplayAutoPanMode savedAutoPanMode;
@@ -75,6 +76,9 @@ typedef enum {
 @property (strong, nonatomic) SurveyCollection* surveys;
 @property (strong, nonatomic) MapCollection* maps;
 @property (strong, nonatomic) UIPopoverController *quickDialogPopoverController;
+
+@property (nonatomic) BOOL isRecording;
+@property (nonatomic) BOOL isObserving;
 
 @end
 
@@ -160,6 +164,34 @@ typedef enum {
     }
 }
 
+- (void) setIsRecording:(BOOL)isRecording
+{
+    if (isRecording == _isRecording) {
+        return;
+    }
+    _isRecording = isRecording;
+    if (isRecording) {
+        [self startRecording];
+    } else {
+        [self stopRecording];
+    }
+    //TODO: update UI:
+}
+
+- (void) setIsObserving:(BOOL)isObserving
+{
+    if (isObserving == _isObserving) {
+        return;
+    }
+    _isObserving = isObserving;
+    if (isObserving) {
+        [self startObserving];
+    } else {
+        [self stopObserving];
+    }
+    //TODO: update UI:
+}
+
 - (AGSSpatialReference *) wgs84
 {
     if (!_wgs84) {
@@ -199,17 +231,22 @@ typedef enum {
     [Settings manager].autoPanEnabled = userWantsAutoPanOn;
 }
 
-- (IBAction)toggleRecordMode:(UIBarButtonItem *)sender {
-    if (sender.style == UIBarButtonItemStyleDone) {
-        NSLog(@"stop recording");
-        sender.style = UIBarButtonItemStyleBordered;
-        [self stopMission];
-    }
-    else{
-        NSLog(@"start recording");
-        sender.style = UIBarButtonItemStyleDone;
-        [self startMission];
-    }
+- (IBAction)startStopRecording:(UIBarButtonItem *)sender
+{
+    if (self.isRecording) {
+        [self stopRecording];
+     } else {
+        [self startRecording];
+   }
+}
+
+- (IBAction)startStopObserving:(UIBarButtonItem *)sender
+{
+    if (self.isObserving) {
+        [self stopObserving];
+    } else {
+        [self startObserving];
+     }
 }
 
 - (IBAction)resetNorth:(UIButton *)sender {
@@ -256,11 +293,11 @@ typedef enum {
 //    [self.observationsLayer addGraphic:graphic];
 }
 
-- (IBAction)clearData:(UIBarButtonItem *)sender
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete Data" message:@"This will delete all observations and tracklogs, and cannot be undone." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Delete", nil];
-    [alert show];
-}
+//- (IBAction)clearData:(UIBarButtonItem *)sender
+//{
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete Data" message:@"This will delete all observations and tracklogs, and cannot be undone." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Delete", nil];
+//    [alert show];
+//}
 
 #pragma mark - Public Methods: Initializers
 
@@ -348,12 +385,21 @@ typedef enum {
 -(void) updateButtons
 {
     if (self.survey) {
+        self.startStopRecordingBarButtonItem.enabled = YES;
         NSDictionary *dialogs = self.survey.protocol.dialogs;
+        self.startStopObservingBarButtonItem.enabled = dialogs[@"MissionProperty"] != nil;
         self.editEnvironmentBarButton.enabled = dialogs[@"MissionProperty"] != nil;
         //TODO: support more than just one feature called "Observations"
         self.addObservationBarButton.enabled = dialogs[@"Observation"] != nil;
         self.addGpsObservationBarButton.enabled = dialogs[@"Observation"] != nil;
         self.addAdObservationBarButton.enabled = dialogs[@"Observation"] != nil;
+    } else {
+        self.startStopRecordingBarButtonItem.enabled = NO;
+        self.startStopObservingBarButtonItem.enabled = NO;
+        self.editEnvironmentBarButton.enabled = NO;
+        self.addObservationBarButton.enabled = NO;
+        self.addGpsObservationBarButton.enabled = NO;
+        self.addAdObservationBarButton.enabled = NO;
     }
 }
 
@@ -519,16 +565,16 @@ typedef enum {
 
 #pragma mark - Delegate Methods - UIAlertViewDelegate
 
-- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if ([alertView.title isEqualToString:@"Delete Data"] && buttonIndex == 1) {
-        self.busy = YES;
-        //FIXME: Clear data on a background thread if it takes some time.
-        [self clearData];
-        [self clearGraphics];
-        self.busy = NO;
-    }
-}
+//- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+//{
+//    if ([alertView.title isEqualToString:@"Delete Data"] && buttonIndex == 1) {
+//        self.busy = YES;
+//        //FIXME: Clear data on a background thread if it takes some time.
+//        [self clearData];
+//        [self clearGraphics];
+//        self.busy = NO;
+//    }
+//}
 
 
 #pragma mark - Delegate Methods: AGSLayerDelegate (all optional)
@@ -726,13 +772,6 @@ typedef enum {
 
 #pragma mark - Private Methods
 
-- (void) toggleGps:(UIBarButtonItem *)sender {
-    if (sender.style == UIBarButtonItemStyleDone)
-        [self turnOffGPS];
-    else
-        [self turnOnGPS];
-}
-
 - (void) turnOnGPS
 {
     self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
@@ -740,7 +779,6 @@ typedef enum {
     [self.mapView.locationDisplay startDataSource];
     //self.gpsButton.style = UIBarButtonItemStyleDone;
     self.panButton.enabled = YES;
-    self.recordButton.enabled = YES;
     
     self.userWantsAutoPanOn = [Settings manager].autoPanEnabled;
     
@@ -760,7 +798,6 @@ typedef enum {
     //self.gpsButton.style = UIBarButtonItemStyleBordered;
     self.panButton.enabled = NO;
     self.panStyleButton.enabled = NO;
-    self.recordButton.enabled = NO;
 }
 
 - (void) checkIfMapIsRotated
@@ -964,7 +1001,7 @@ typedef enum {
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
     [self.gpsPointsLayer addGraphic:graphic];
     
-    //FIXME: draw a tracklog polyline
+    //FIXME: draw a tracklog polyline, vary symbology based on self.isObserving
 }
 
 - (GpsPoint *)createGpsPoint:(CLLocation *)gpsData
@@ -1101,39 +1138,85 @@ typedef enum {
     [self.gpsPointsLayer removeAllGraphics];    
 }
 
-- (void) clearData
+//FIXME: Rob some of the following code for deleting an individual observation
+//- (void) clearData
+//{
+//    if (!self.context) {
+//        return;
+//    }
+//    
+//    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
+//    NSError *error = [[NSError alloc] init];
+//    NSArray *results = [self.context executeFetchRequest:request error:&error];
+//    if (!results && error.code)
+//        NSLog(@"Error Fetching Observation %@",error);
+//    for (Observation *observation in results) {
+//        [self.context deleteObject:observation];
+//    }
+//    request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
+//    results = [self.context executeFetchRequest:request error:&error];
+//    if (!results && error.code)
+//        NSLog(@"Error Fetching GpsPoints%@",error);
+//    for (GpsPoint *gpsPoint in results) {
+//        [self.context deleteObject:gpsPoint];        
+//    }
+//    self.lastGpsPointSaved = nil;
+//}
+
+
+- (void) startRecording
 {
-    if (!self.context) {
-        return;
-    }
-    
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
-    NSError *error = [[NSError alloc] init];
-    NSArray *results = [self.context executeFetchRequest:request error:&error];
-    if (!results && error.code)
-        NSLog(@"Error Fetching Observation %@",error);
-    for (Observation *observation in results) {
-        [self.context deleteObject:observation];
-    }
-    request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
-    results = [self.context executeFetchRequest:request error:&error];
-    if (!results && error.code)
-        NSLog(@"Error Fetching GpsPoints%@",error);
-    for (GpsPoint *gpsPoint in results) {
-        [self.context deleteObject:gpsPoint];        
-    }
-    self.lastGpsPointSaved = nil;
+    NSLog(@"start recording");
+    self.isRecording = YES;
+    self.startStopObservingBarButtonItem.enabled = YES;
+    [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:NO];
+    [self turnOnGPS];
 }
 
-- (void) startMission
+- (void) stopRecording
 {
-    
+    NSLog(@"stop recording");
+    self.isRecording = NO;
+    if (self.isObserving) {
+        [self stopObserving];
+    }
+    self.startStopObservingBarButtonItem.enabled = NO;
+    [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:YES];
+    [self turnOffGPS];
+    //TODO: save survey document
 }
 
-- (void) stopMission
+- (void) startObserving
 {
-    
+    NSLog(@"start observing");
+    self.isObserving = YES;
+    [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:NO];
+    //TODO: create a map graphic at the gps point (similar to an observation)
+    //TDOO: display the mission attributes and populate with the last attribute set
 }
+
+- (void) stopObserving
+{
+    NSLog(@"stop observing");
+    self.isObserving = NO;
+    [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:YES];
+    //TODO: create a map graphic at the gps point (similar to an observation)
+    //TDOO: set the "observing" attribute to "off"
+}
+
+-(void)setBarButtonAtIndex:(NSUInteger)index action:(SEL)action ToPlay:(BOOL)play
+ {
+     NSMutableArray *toolbarButtons = [self.toolbarItems mutableCopy];
+     UIBarButtonItem *newBarButton;
+     if (play) {
+         newBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay target:self action:action];
+     } else {
+         newBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPause target:self action:action];
+     }
+     [toolbarButtons removeObjectAtIndex:index];
+     [toolbarButtons insertObject:newBarButton atIndex:index];
+     [self setToolbarItems:toolbarButtons animated:YES];
+ }
 
 - (void) openModel
 {
