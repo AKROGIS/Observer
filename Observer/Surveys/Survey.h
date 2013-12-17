@@ -52,9 +52,12 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 //load all properties
 - (void)readPropertiesWithCompletionHandler:(void (^)(NSError*))handler;
 - (void)openDocumentWithCompletionHandler:(void (^)(BOOL success))handler;
-- (void)closeWithCompletionHandler:(void (^)(NSError*))handler;
+//- (void)closeWithCompletionHandler:(void (^)(NSError*))handler;
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler;
 
 //TODO: memory releaser (unload properties), reset object to unborn
+//
+- (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 @end

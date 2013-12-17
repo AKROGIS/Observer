@@ -29,6 +29,7 @@
 #import "ProtocolCollection.h"
 #import "SurveySelectViewController.h"
 #import "MapSelectViewController.h"
+#import "AttributeViewController.h"
 
 #define MINIMUM_NAVIGATION_SPEED 1.0  //speed in meters per second (1mps = 2.2mph) at which to switch map orientation from compass heading to course direction
 
@@ -77,6 +78,7 @@ typedef enum {
 @property (strong, nonatomic) SurveyCollection* surveys;
 @property (strong, nonatomic) MapCollection* maps;
 @property (strong, nonatomic) UIPopoverController *quickDialogPopoverController;
+@property (strong, nonatomic) UINavigationController *modalAttributeCollector;
 
 @property (nonatomic) BOOL isRecording;
 @property (nonatomic) BOOL isObserving;
@@ -92,7 +94,7 @@ typedef enum {
 {
     NSLog(@"Context Set");
     _context = context;
-    [self reloadGraphics];
+    //[self reloadGraphics];
 }
 
 - (void) setBusy:(BOOL)busy
@@ -192,33 +194,33 @@ typedef enum {
     }
 }
 
-- (void) setIsRecording:(BOOL)isRecording
-{
-    if (isRecording == _isRecording) {
-        return;
-    }
-    _isRecording = isRecording;
-    if (isRecording) {
-        [self startRecording];
-    } else {
-        [self stopRecording];
-    }
-    //TODO: update UI:
-}
-
-- (void) setIsObserving:(BOOL)isObserving
-{
-    if (isObserving == _isObserving) {
-        return;
-    }
-    _isObserving = isObserving;
-    if (isObserving) {
-        [self startObserving];
-    } else {
-        [self stopObserving];
-    }
-    //TODO: update UI:
-}
+//- (void) setIsRecording:(BOOL)isRecording
+//{
+//    if (isRecording == _isRecording) {
+//        return;
+//    }
+//    _isRecording = isRecording;
+//    if (isRecording) {
+//        [self startRecording];
+//    } else {
+//        [self stopRecording];
+//    }
+//    //TODO: update UI:
+//}
+//
+//- (void) setIsObserving:(BOOL)isObserving
+//{
+//    if (isObserving == _isObserving) {
+//        return;
+//    }
+//    _isObserving = isObserving;
+//    if (isObserving) {
+//        [self startObserving];
+//    } else {
+//        [self stopObserving];
+//    }
+//    //TODO: update UI:
+//}
 
 - (AGSSpatialReference *) wgs84
 {
@@ -412,27 +414,25 @@ typedef enum {
 
 -(void) updateButtons
 {
-    if (self.survey) {
-        self.startStopRecordingBarButtonItem.enabled = YES;
-        NSDictionary *dialogs = self.survey.protocol.dialogs;
-        self.startStopObservingBarButtonItem.enabled = dialogs[@"MissionProperty"] != nil;
-        self.editEnvironmentBarButton.enabled = dialogs[@"MissionProperty"] != nil;
-        //TODO: support more than just one feature called "Observations"
-        self.addObservationBarButton.enabled = dialogs[@"Observation"] != nil;
-        self.addGpsObservationBarButton.enabled = dialogs[@"Observation"] != nil;
-        self.addAdObservationBarButton.enabled = dialogs[@"Observation"] != nil;
-    } else {
-        self.startStopRecordingBarButtonItem.enabled = NO;
-        self.startStopObservingBarButtonItem.enabled = NO;
-        self.editEnvironmentBarButton.enabled = NO;
-        self.addObservationBarButton.enabled = NO;
-        self.addGpsObservationBarButton.enabled = NO;
-        self.addAdObservationBarButton.enabled = NO;
-    }
+    NSDictionary *dialogs = self.survey.protocol.dialogs;
+    self.startStopObservingBarButtonItem.enabled = self.isRecording && self.survey;
+    //TODO: if there are no mission proiperties, we should remove this button.
+    self.editEnvironmentBarButton.enabled = self.isRecording && self.survey && dialogs[@"MissionProperty"] != nil;
+    //TODO: support more than just one feature called "Observations"
+    //TODO:can we support adding observations that have no attributes (no dialog)
+    self.addObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
+    self.addGpsObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
+    self.addAdObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
 }
 
 - (void)setupNewSurvey
 {
+    if (self.survey == self.surveys.selectedSurvey) {
+        return;
+    }
+    if (self.survey) {
+        [self.survey closeWithCompletionHandler:nil];
+    }
     self.survey = self.surveys.selectedSurvey;
     self.context = self.survey.document.managedObjectContext;
     [self updateView];
@@ -913,10 +913,12 @@ typedef enum {
         NSLog(@"Can't load Graphics now context and/or map is not available.");
         return;
     }
+    NSLog(@"Loading exisitng graphics from coredata");
     [self clearGraphics];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.context executeFetchRequest:request error:&error];
+    NSLog(@"Loading %d gpsPoints", results.count);
     if (!results && error.code)
         NSLog(@"Error Fetching GpsPoint %@",error);
     for (GpsPoint *gpsPoint in results) {
@@ -924,7 +926,11 @@ typedef enum {
         if (gpsPoint.observation) {
             [self loadObservation:gpsPoint.observation];
         }
+        if (gpsPoint.missionProperty) {
+            [self loadMissionProperty:gpsPoint.missionProperty];
+        }
     }
+
     //Get adhoc observations (gpsPoint is null and adhocLocation is non nil
     //FIXME: support more than on Observation feature
     request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
@@ -932,10 +938,12 @@ typedef enum {
     results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
         NSLog(@"Error Fetching Observations %@",error);
+    NSLog(@"Loading %d adhoc observations", results.count);
     for (Observation *observation in results) {
         [self loadObservation:observation];
-    }    
+    }
 }
+
 
 - (void) initializeGraphicsLayer
 {
@@ -949,6 +957,11 @@ typedef enum {
     [symbol setSize:CGSizeMake(18,18)];
     [self.observationsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
     [self.mapView addMapLayer:self.observationsLayer withName:@"observations"];
+
+    symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[[UIColor greenColor] colorWithAlphaComponent:.5]];
+    [symbol setSize:CGSizeMake(14,14)];
+    [self.missionPropertiesLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
+    [self.mapView addMapLayer:self.missionPropertiesLayer withName:@"missionProperties"];
 }
 
 - (void) loadObservation:(Observation *)observation
@@ -972,6 +985,15 @@ typedef enum {
     [self drawObservation:observation atPoint:point];
 }
 
+- (void) loadMissionProperty:(MissionProperty *)missionProperty
+{
+    AGSPoint *point;
+    if (missionProperty.gpsPoint) {
+        point = [self mapPointFromGpsPoint:missionProperty.gpsPoint];
+    }
+    [self drawMissionProperty:missionProperty atPoint:point];
+}
+
 
 - (void) drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
 {
@@ -989,18 +1011,14 @@ typedef enum {
     //TODO: support more than just one feature called Observations
     NSDictionary *config = self.surveys.selectedSurvey.protocol.dialogs[@"Observation"];
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
-    QuickDialogController *dialog = [QuickDialogController controllerForRoot:root];
-    //TODO: will I ever need to put the quick dialog in a navigation controller?    
-    //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:dialog];
-    dialog.modalPresentationStyle = UIModalPresentationFormSheet;
-    [self presentViewController:dialog animated:YES completion:^{
-        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-        [dialog.root fetchValueUsingBindingsIntoObject:dict];
-        for (NSString *aKey in dict){
-            //TODO: do I need to add error checking
-            [observation setValue:[dict valueForKey:aKey] forKey:aKey];
-        }
-    }];
+    //FIXME: use a custom subclass of QuickDialogController, so I can hand it the observation (NSManagedObject)
+    AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
+    self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
+    dialog.toolbarItems = @[doneButton];
+    self.modalAttributeCollector.toolbarHidden = NO;
+    self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
 }
 
 - (void) drawMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
@@ -1016,20 +1034,39 @@ typedef enum {
 
 - (void)setAttributesForMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
 {
+    if (self.modalAttributeCollector) {
+        return;
+    }
     NSDictionary *config = self.surveys.selectedSurvey.protocol.dialogs[@"MissionProperty"];
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
-    QuickDialogController *dialog = [QuickDialogController controllerForRoot:root];
-    //TODO: will I ever need to put the quick dialog in a navigation controller?
-    //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:dialog];
-    dialog.modalPresentationStyle = UIModalPresentationFormSheet;
-    [self presentViewController:dialog animated:YES completion:^{
-        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-        [dialog.root fetchValueUsingBindingsIntoObject:dict];
-        for (NSString *aKey in dict){
-            //TODO: do I need to add error checking
-            [missionProperty setValue:[dict valueForKey:aKey] forKey:aKey];
-        }
-    }];
+    //FIXME: use a custom subclass of QuickDialogController, so I can hand it the observation (NSManagedObject)
+    AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
+    self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
+    dialog.toolbarItems = @[doneButton];
+    self.modalAttributeCollector.toolbarHidden = NO;
+    self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
+}
+
+- (void) saveAttributes:(UIBarButtonItem *)sender
+{
+    NSLog(@"saving attributes");
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    AttributeViewController *dialog = self.modalAttributeCollector.viewControllers[0];
+    [dialog.root fetchValueUsingBindingsIntoObject:dict];
+    NSManagedObject *obj = dialog.managedObject;
+    for (NSString *aKey in dict){
+        //if ([obj respondsToSelector:NSSelectorFromString(aKey)]) {
+            [obj setValue:[dict valueForKey:aKey] forKey:aKey];
+        //}
+    }
+        //FIXME: use a custom subclass of QuickDialogController, so I can hand it the observation (NSManagedObject)
+        //TODO: do I need to add error checking
+        //[missionProperty setValue:[dict valueForKey:aKey] forKey:aKey];
+        //[observation setValue:[dict valueForKey:aKey] forKey:aKey];
+    [self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
+    self.modalAttributeCollector = nil;
 }
 
 //TODO: this is the dictionary of atttributes attached to the AGSGraphic.  not used at this point
@@ -1254,6 +1291,7 @@ typedef enum {
     self.startStopObservingBarButtonItem.enabled = YES;
     [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:NO];
     [self turnOnGPS];
+    //[self updateButtons];
 }
 
 - (void) stopRecording
@@ -1262,10 +1300,13 @@ typedef enum {
     self.isRecording = NO;
     if (self.isObserving) {
         [self stopObserving];
+    } else {
+        [self updateButtons];
     }
     self.startStopObservingBarButtonItem.enabled = NO;
     [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:YES];
     [self turnOffGPS];
+    [self.survey saveWithCompletionHandler:nil];
     //TODO: save survey document
 }
 
@@ -1273,7 +1314,7 @@ typedef enum {
 {
     NSLog(@"start observing");
     self.isObserving = YES;
-    [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:NO];
+    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:NO];
     //TODO: create a map graphic at the gps point (similar to an observation)
     //TDOO: display the mission attributes and populate with the last attribute set
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
@@ -1281,25 +1322,27 @@ typedef enum {
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self setAttributesForMissionProperty:mission atPoint:mapPoint];
     [self drawMissionProperty:mission atPoint:mapPoint];
+    [self updateButtons];
 }
 
 - (void) stopObserving
 {
     NSLog(@"stop observing");
     self.isObserving = NO;
-    [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:YES];
+    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:YES];
     //TODO: create a map graphic at the gps point (similar to an observation)
     //TDOO: set the "observing" attribute to "off"
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    [self setAttributesForMissionProperty:mission atPoint:mapPoint];
+    //[self setAttributesForMissionProperty:mission atPoint:mapPoint];
     [self drawMissionProperty:mission atPoint:mapPoint];
+    [self updateButtons];
 }
 
--(void)setBarButtonAtIndex:(NSUInteger)index action:(SEL)action ToPlay:(BOOL)play
+-(UIBarButtonItem *)setBarButtonAtIndex:(NSUInteger)index action:(SEL)action ToPlay:(BOOL)play
  {
-     NSMutableArray *toolbarButtons = [self.toolbarItems mutableCopy];
+     NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
      UIBarButtonItem *newBarButton;
      if (play) {
          newBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay target:self action:action];
@@ -1308,7 +1351,8 @@ typedef enum {
      }
      [toolbarButtons removeObjectAtIndex:index];
      [toolbarButtons insertObject:newBarButton atIndex:index];
-     [self setToolbarItems:toolbarButtons animated:YES];
+     [self.toolbar setItems:toolbarButtons animated:YES];
+     return newBarButton;
  }
 
 - (void) openModel
@@ -1318,12 +1362,12 @@ typedef enum {
 
 - (void) saveModel
 {
-    //[self.survey saveModel];
+    [self.survey saveWithCompletionHandler:nil];
 }
 
 - (void) closeModel
 {
-    //[self.survey closeModel];
+    [self.survey closeWithCompletionHandler:nil];
 }
 
 

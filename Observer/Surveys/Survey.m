@@ -243,10 +243,10 @@
     //FIXME: need to make sure this is closed and saved at appropriate times
 }
 
-- (void)closeWithCompletionHandler:(void (^)(NSError*))handler
-{
-    //TODO: Implement
-}
+//- (void)closeWithCompletionHandler:(void (^)(NSError*))handler
+//{
+//    //TODO: Implement
+//}
 
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler
 {
@@ -315,6 +315,37 @@
 - (BOOL)saveThumbnail
 {
     return [UIImagePNGRepresentation(self.thumbnail) writeToFile:[self.thumbnailUrl path] atomically:YES];
+}
+
+//TODO: use the completion handler these
+- (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler
+{
+    NSLog(@"Saving document");
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"There are %d gpsPoints", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"There are %d Observations", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"There are %d mission properties", results.count);
+    [self.document saveToURL:self.url forSaveOperation:UIDocumentSaveForOverwriting completionHandler:completionHandler];
+}
+
+- (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler
+{
+    NSLog(@"Closing document");
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"There are %d gpsPoints", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"There are %d Observations", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"There are %d mission properties", results.count);
+    [self.document closeWithCompletionHandler:completionHandler];
 }
 
 @end
