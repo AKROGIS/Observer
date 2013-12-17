@@ -220,7 +220,7 @@
 		3989085A1857EDE1007B3F67 /* NSIndexSet+indexPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSIndexSet+indexPath.m"; path = "Categories/NSIndexSet+indexPath.m"; sourceTree = "<group>"; };
 		3989085B1857EDE1007B3F67 /* NSURL+unique.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURL+unique.h"; path = "Categories/NSURL+unique.h"; sourceTree = "<group>"; };
 		3989085C1857EDE1007B3F67 /* NSURL+unique.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURL+unique.m"; path = "Categories/NSURL+unique.m"; sourceTree = "<group>"; };
-		398908621857EFF3007B3F67 /* AKRTableViewItemCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRTableViewItemCollection.h; sourceTree = "<group>"; };
+		398908621857EFF3007B3F67 /* AKRTableViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRTableViewItem.h; sourceTree = "<group>"; };
 		398908631857F087007B3F67 /* AKRCollectionChanged.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRCollectionChanged.h; sourceTree = "<group>"; };
 		398908641857F192007B3F67 /* SurveyDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyDetailViewController.h; path = Surveys/SurveyDetailViewController.h; sourceTree = "<group>"; };
 		398908651857F192007B3F67 /* SurveyDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyDetailViewController.m; path = Surveys/SurveyDetailViewController.m; sourceTree = "<group>"; };
@@ -493,7 +493,7 @@
 			isa = PBXGroup;
 			children = (
 				398908631857F087007B3F67 /* AKRCollectionChanged.h */,
-				398908621857EFF3007B3F67 /* AKRTableViewItemCollection.h */,
+				398908621857EFF3007B3F67 /* AKRTableViewItem.h */,
 				398908521857ED27007B3F67 /* Categories */,
 				398908421857ECEB007B3F67 /* Surveys */,
 				398908081857EAB8007B3F67 /* Maps */,

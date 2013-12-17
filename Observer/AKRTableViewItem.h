@@ -1,5 +1,5 @@
 //
-//  AKRTableViewObjectCollection.h
+//  AKRTableViewItem.h
 //  Observer
 //
 //  Created by Regan Sarwas on 11/14/13.
