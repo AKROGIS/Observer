@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "AKRTableViewItemCollection.h"
+#import "AKRTableViewItem.h"
 #import <ArcGIS/ArcGIS.h>
 #import "AKRAngleDistance.h"
 

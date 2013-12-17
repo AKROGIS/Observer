@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AKRTableViewItemCollection.h"
+#import "AKRTableViewItem.h"
 #import "Enumerations.h"
 
 @interface SProtocol : NSObject <NSCoding, AKRTableViewItem>

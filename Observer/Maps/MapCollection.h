@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AKRTableViewItemCollection.h"
 #import "Map.h"
 #import "AKRCollectionChanged.h"
 

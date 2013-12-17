@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AKRTableViewItemCollection.h"
+#import "AKRTableViewItem.h"
 #import "SProtocol.h"
 #import "SurveyCoreDataDocument.h"
 
