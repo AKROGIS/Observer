@@ -415,6 +415,7 @@ typedef enum {
 -(void) updateButtons
 {
     NSDictionary *dialogs = self.survey.protocol.dialogs;
+    self.startStopRecordingBarButtonItem.enabled = self.survey != nil;
     self.startStopObservingBarButtonItem.enabled = self.isRecording && self.survey;
     //TODO: if there are no mission proiperties, we should remove this button.
     self.editEnvironmentBarButton.enabled = self.isRecording && self.survey && dialogs[@"MissionProperty"] != nil;
@@ -428,15 +429,21 @@ typedef enum {
 - (void)setupNewSurvey
 {
     if (self.survey == self.surveys.selectedSurvey) {
+        [self updateTitle]; //user may have changed the name.
         return;
     }
     if (self.survey) {
+        self.selectSurveyButton.title = @"Closing Survey...";
+        [self stopRecording];
         [self.survey closeWithCompletionHandler:nil];
     }
-    self.survey = self.surveys.selectedSurvey;
-    self.context = self.survey.document.managedObjectContext;
+    if (self.surveys.selectedSurvey) {
+        self.selectSurveyButton.title = @"Loading Survey...";
+        self.survey = self.surveys.selectedSurvey;
+        self.context = self.survey.document.managedObjectContext;
+        [self reloadGraphics];
+    }
     [self updateView];
-    [self reloadGraphics];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -542,7 +549,6 @@ typedef enum {
             vc.popover = ((UIStoryboardPopoverSegue *)segue).popoverController;
             vc.popover.delegate = self;
             vc.popoverDismissedCallback = ^{
-                self.selectSurveyButton.title = @"Loading Survey...";
                 [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
                     //do any other background work;
                     dispatch_async(dispatch_get_main_queue(), ^{[self setupNewSurvey];});
@@ -588,6 +594,12 @@ typedef enum {
         self.mapsPopoverController = nil;
     if (popoverController == self.quickDialogPopoverController) {
         [self dismissQuickDialogPopover:popoverController];
+    }
+    if ([popoverController.contentViewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *nav = (UINavigationController *)popoverController.contentViewController;
+        if ([nav.viewControllers[0] isKindOfClass:[SurveySelectViewController class]]) {
+            [self updateTitle]; //user may have edit the title without changing the selection.
+        }
     }
 }
 
@@ -1307,7 +1319,6 @@ typedef enum {
     [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:YES];
     [self turnOffGPS];
     [self.survey saveWithCompletionHandler:nil];
-    //TODO: save survey document
 }
 
 - (void) startObserving

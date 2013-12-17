@@ -229,7 +229,7 @@
 		3989086A1857F399007B3F67 /* AKRDownloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDownloadView.h; sourceTree = "<group>"; };
 		3989086B1857F399007B3F67 /* AKRDownloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDownloadView.m; sourceTree = "<group>"; };
 		39890DA21858C99E007B3F67 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		39955E47178334BF00D225D7 /* Observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Observer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		39955E47178334BF00D225D7 /* Park Observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Park Observer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		39955E4A178334BF00D225D7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39955E4C178334BF00D225D7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		39955E4E178334BF00D225D7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -461,7 +461,7 @@
 		39955E48178334BF00D225D7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				39955E47178334BF00D225D7 /* Observer.app */,
+				39955E47178334BF00D225D7 /* Park Observer.app */,
 				39955E7B178334C000D225D7 /* ObserverTests.octest */,
 			);
 			name = Products;
@@ -625,7 +625,7 @@
 			);
 			name = "Park Observer";
 			productName = Observer;
-			productReference = 39955E47178334BF00D225D7 /* Observer.app */;
+			productReference = 39955E47178334BF00D225D7 /* Park Observer.app */;
 			productType = "com.apple.product-type.application";
 		};
 		39955E7A178334C000D225D7 /* ObserverTests */ = {

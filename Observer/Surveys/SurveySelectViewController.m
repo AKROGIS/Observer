@@ -106,6 +106,7 @@
     SurveyTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SurveyCell" forIndexPath:indexPath];
     id<AKRTableViewItem> item = [self.items surveyAtIndex:indexPath.row];
     cell.titleTextField.text = item.title;
+    cell.titleTextField.delegate = self;
     cell.detailsLabel.text = item.subtitle;
     cell.thumbnailImageView.image = item.thumbnail;
     return cell;
@@ -205,13 +206,19 @@
 
 #pragma mark - UITextFieldDelegate
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
 	[textField resignFirstResponder];
-    [self textChanged:textField];
 	return YES;
 }
 
-- (void)textChanged:(UITextField *)textField {
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    [self textChanged:textField];
+}
+
+- (void)textChanged:(UITextField *)textField
+{
     UIView * view = textField.superview;
     while( ![view isKindOfClass: [SurveyTableViewCell class]]){
         view = view.superview;
