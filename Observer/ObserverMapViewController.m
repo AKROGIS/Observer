@@ -385,7 +385,7 @@ typedef enum {
     }];
 
     self.selectMapButton.enabled = NO;
-    self.maps = [[MapCollection alloc] init];
+    self.maps = [MapCollection sharedCollection];
     [self.maps openWithCompletionHandler:^(BOOL success) {
         //do any other background work;
         dispatch_async(dispatch_get_main_queue(), ^{
