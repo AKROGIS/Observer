@@ -19,16 +19,12 @@
 
 @interface Settings : NSObject
 
-//Short cut for a cached instance of [[[Settings alloc] init] registerDefaults]
-//This should be prefered, to prevent re-reading the settings bundle.
+//Settings is a singleton obtained with the manager method
 + (Settings *) manager;
-
-//Loads the defaults from the settings bundle
-- (Settings *) registerDefaults;
 
 //properties always read from and write to NSDefaults, there is no caching by this class
 //Views that need to updated thier display based on changes (made by settings app, or
-//other views should subscribe to NSUserDefaultsDidChangeNotification
+//other views) need to subscribe to NSUserDefaultsDidChangeNotification
 
 @property (nonatomic) NSUInteger indexOfCurrentMap;
 @property (nonatomic) NSUInteger indexOfCurrentSurvey;

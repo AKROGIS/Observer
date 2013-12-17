@@ -41,27 +41,38 @@
 #define DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_ANGLE nil
 
 #define DEFAULTS_KEY_INDEX_OF_CURRENT_MAP @"index_of_current_map"
-#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP NSNotFound
+#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP 0
 
 #define DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY @"index_of_current_survey"
-#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY NSNotFound
+#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY 0
 
 
 
 @implementation Settings
 
-static Settings * _manager;
+
+#pragma mark - singleton
 
 + (Settings *)manager
 {
-    if (!_manager)
-        _manager = [[[Settings alloc] init] registerDefaults];
+    static Settings *_manager = nil;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        if (!_manager) {
+            _manager = [[Settings alloc] init];
+            [_manager populateRegistrationDomain];
+        }
+    });
     return _manager;
 }
 
-- (Settings *) registerDefaults
++ (id)allocWithZone:(NSZone *)zone
 {
-    [self populateRegistrationDomain];
+    return [self manager];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
     return self;
 }
 
