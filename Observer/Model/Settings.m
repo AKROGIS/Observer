@@ -7,7 +7,6 @@
 //
 
 #import "Settings.h"
-#import "NSArray+Map.h"
 
 /*
  * Note:
@@ -22,18 +21,6 @@
 
 #define DEFAULTS_KEY_AUTOPAN_MODE @"autopan_mode"
 #define DEFAULTS_DEFAULT_AUTOPAN_MODE AGSLocationDisplayAutoPanModeDefault
-
-#define DEFAULTS_KEY_CURRENT_MAP @"current_map"
-#define DEFAULTS_DEFAULT_CURRENT_MAP nil
-
-#define DEFAULTS_KEY_SORTED_MAP_LIST @"sorted_map_list"
-#define DEFAULTS_DEFAULT_SORTED_MAP_LIST nil
-
-#define DEFAULTS_KEY_CURRENT_PROTOCOL @"current_protocol"
-#define DEFAULTS_DEFAULT_CURRENT_PROTOCOL nil
-
-#define DEFAULTS_KEY_SORTED_PROTOCOL_LIST @"sorted_protocol_list"
-#define DEFAULTS_DEFAULT_SORTED_PROTOCOL_LIST nil
 
 #define DEFAULTS_KEY_UOM_DISTANCE_SIGHTING @"uom_distance_sighting"
 #define DEFAULTS_DEFAULT_UOM_DISTANCE_SIGHTING AGSSRUnitMeter
@@ -52,6 +39,13 @@
 
 #define DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE @"angle_distance_last_angle"
 #define DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_ANGLE nil
+
+#define DEFAULTS_KEY_INDEX_OF_CURRENT_MAP @"index_of_current_map"
+#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP NSNotFound
+
+#define DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY @"index_of_current_survey"
+#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY NSNotFound
+
 
 
 @implementation Settings
@@ -73,92 +67,40 @@ static Settings * _manager;
 
 
 
-@synthesize currentMap = _currentMap;
+@synthesize indexOfCurrentMap = _indexOfCurrentMap;
 
-- (NSURL *) currentMap
+- (NSUInteger) indexOfCurrentMap
 {
-    NSURL *value = [[NSUserDefaults standardUserDefaults] URLForKey:DEFAULTS_KEY_CURRENT_MAP];
-    return value ?: DEFAULTS_DEFAULT_CURRENT_MAP;
+    NSUInteger value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
+    return value ?: DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP;
 }
 
-- (void) setCurrentMap:(NSURL *)currentMap
+- (void)setIndexOfCurrentMap:(NSUInteger)indexOfCurrentMap
 {
-    if ([currentMap isEqual:DEFAULTS_DEFAULT_CURRENT_MAP])
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_CURRENT_MAP];
-    else
-        [[NSUserDefaults standardUserDefaults] setURL:currentMap forKey:DEFAULTS_KEY_CURRENT_MAP];
-}
-
-
-
-@synthesize maps = _maps;
-
-- (NSArray *) maps
-{
-    NSArray *value = [[NSUserDefaults standardUserDefaults] arrayForKey:DEFAULTS_KEY_SORTED_MAP_LIST];
-    //NSDefaults returns a NSArray of NSString, convert to a NSArray of NSURL
-    value = [value mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return [NSURL URLWithString:obj];
-    }];
-    return value ?: DEFAULTS_DEFAULT_SORTED_MAP_LIST;
-}
-
-- (void) setMaps:(NSArray *)maps
-{
-    //NSURL is not a property list type (NSDefaults can't persist an array of NSURL
-    //I need to convert it to and array of NSString    
-    NSArray *strings = [maps mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return ((NSURL *)obj).absoluteString;
-    }];
-    if ([strings isEqual:DEFAULTS_DEFAULT_SORTED_MAP_LIST])
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SORTED_MAP_LIST];
-    else
-        [[NSUserDefaults standardUserDefaults] setObject:strings forKey:DEFAULTS_KEY_SORTED_MAP_LIST];
+    if (indexOfCurrentMap == DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setInteger:indexOfCurrentMap forKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
+    }
 }
 
 
 
-@synthesize currentProtocol = _currentProtocol;
+@synthesize indexOfCurrentSurvey = _indexOfCurrentSurvey;
 
-- (NSURL*) currentProtocol
+- (NSUInteger) indexOfCurrentSurvey
 {
-    NSURL *value = [[NSUserDefaults standardUserDefaults] URLForKey:DEFAULTS_KEY_CURRENT_PROTOCOL];
-    return value ?: DEFAULTS_DEFAULT_CURRENT_PROTOCOL;
+    NSUInteger value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
+    return value ?: DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY;
 }
 
-- (void) setCurrentProtocol:(NSURL *)currentProtocol
+- (void)setIndexOfCurrentSurvey:(NSUInteger)indexOfCurrentSurvey
 {
-    if ([currentProtocol isEqual:DEFAULTS_DEFAULT_CURRENT_PROTOCOL])
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_CURRENT_PROTOCOL];
-    else
-        [[NSUserDefaults standardUserDefaults] setURL:currentProtocol forKey:DEFAULTS_KEY_CURRENT_PROTOCOL];
-}
-
-
-
-@synthesize protocols = _protocols;
-
-- (NSArray *) protocols
-{
-    NSArray *value = [[NSUserDefaults standardUserDefaults] arrayForKey:DEFAULTS_KEY_SORTED_PROTOCOL_LIST];
-    //NSDefaults returns a NSArray of NSString, convert to a NSArray of NSURL
-    value = [value mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return [NSURL URLWithString:obj];
-    }];
-    return value ?: DEFAULTS_DEFAULT_SORTED_PROTOCOL_LIST;
-}
-
-- (void) setProtocols:(NSArray *)protocols
-{
-    //NSURL is not a property list type (NSDefaults can't persist an array of NSURL
-    //I need to convert it to and array of NSString
-    NSArray *strings = [protocols mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return ((NSURL *)obj).absoluteString;
-    }];
-    if ([protocols isEqual:DEFAULTS_DEFAULT_SORTED_PROTOCOL_LIST])
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SORTED_PROTOCOL_LIST];
-    else
-        [[NSUserDefaults standardUserDefaults] setObject:strings forKey:DEFAULTS_KEY_SORTED_PROTOCOL_LIST];
+    if (indexOfCurrentSurvey == DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setInteger:indexOfCurrentSurvey forKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
+    }
 }
 
 
@@ -304,7 +246,6 @@ static Settings * _manager;
     else
         [[NSUserDefaults standardUserDefaults] setObject:angleDistanceLastAngle forKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE];
 }
-
 
 
 #pragma mark - Seed NSDefaults from Settings.Bundle

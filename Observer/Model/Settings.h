@@ -30,11 +30,8 @@
 //Views that need to updated thier display based on changes (made by settings app, or
 //other views should subscribe to NSUserDefaultsDidChangeNotification
 
-@property (nonatomic, strong) NSURL *currentMap;
-@property (nonatomic, strong) NSArray *maps; //of NSURL
-
-@property (nonatomic, strong) NSURL *currentProtocol;
-@property (nonatomic, strong) NSArray *protocols; //of NSURL
+@property (nonatomic) NSUInteger indexOfCurrentMap;
+@property (nonatomic) NSUInteger indexOfCurrentSurvey;
 
 @property (nonatomic) BOOL autoPanEnabled;
 @property (nonatomic) AGSLocationDisplayAutoPanMode autoPanMode;
