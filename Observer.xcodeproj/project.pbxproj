@@ -610,9 +610,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		39955E46178334BF00D225D7 /* Observer */ = {
+		39955E46178334BF00D225D7 /* Park Observer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 39955E8D178334C000D225D7 /* Build configuration list for PBXNativeTarget "Observer" */;
+			buildConfigurationList = 39955E8D178334C000D225D7 /* Build configuration list for PBXNativeTarget "Park Observer" */;
 			buildPhases = (
 				39955E43178334BF00D225D7 /* Sources */,
 				39955E44178334BF00D225D7 /* Frameworks */,
@@ -623,7 +623,7 @@
 			dependencies = (
 				394CC2371858E05000FA859C /* PBXTargetDependency */,
 			);
-			name = Observer;
+			name = "Park Observer";
 			productName = Observer;
 			productReference = 39955E47178334BF00D225D7 /* Observer.app */;
 			productType = "com.apple.product-type.application";
@@ -676,7 +676,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				39955E46178334BF00D225D7 /* Observer */,
+				39955E46178334BF00D225D7 /* Park Observer */,
 				39955E7A178334C000D225D7 /* ObserverTests */,
 			);
 		};
@@ -832,7 +832,7 @@
 		};
 		39955E81178334C000D225D7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 39955E46178334BF00D225D7 /* Observer */;
+			target = 39955E46178334BF00D225D7 /* Park Observer */;
 			targetProxy = 39955E80178334C000D225D7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1023,7 +1023,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		39955E8D178334C000D225D7 /* Build configuration list for PBXNativeTarget "Observer" */ = {
+		39955E8D178334C000D225D7 /* Build configuration list for PBXNativeTarget "Park Observer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				39955E8E178334C000D225D7 /* Debug */,
