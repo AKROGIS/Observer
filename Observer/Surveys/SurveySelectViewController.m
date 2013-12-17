@@ -106,8 +106,8 @@
     SurveyTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SurveyCell" forIndexPath:indexPath];
     id<AKRTableViewItem> item = [self.items surveyAtIndex:indexPath.row];
     cell.titleTextField.text = item.title;
-    cell.titleTextField.delegate = self;
-    cell.detailsLabel.text = item.subtitle;
+    cell.protocolLabel.text = item.subtitle;
+    cell.detailsLabel.text = item.subtitle2;
     cell.thumbnailImageView.image = item.thumbnail;
     return cell;
 }

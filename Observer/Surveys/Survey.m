@@ -123,6 +123,11 @@
 
 - (NSString *)subtitle
 {
+    return [NSString stringWithFormat:@"Protocol: %@, v. %@",self.protocol.title, self.protocol.version];
+}
+
+- (NSString *)subtitle2
+{
     NSString *status = nil;
     switch (self.state) {
         case kUnborn:
