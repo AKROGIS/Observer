@@ -312,7 +312,9 @@
 
 - (void)saveCache
 {
-    [Settings manager].surveys = self.items;
+    [Settings manager].surveys = [self.items mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
+        return [obj url];
+    }];
 }
 
 @end
