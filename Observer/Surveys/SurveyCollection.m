@@ -11,14 +11,9 @@
 #import "Settings.h"
 
 @interface SurveyCollection()
-//FIXME:  The following should be private properties.
-//They are public temporarily as a convenience for the subclass
-//@property (strong,nonatomic) NSMutableArray *items;
-//@property (strong, nonatomic) FSSurvey* selectedSurvey;
 @property (nonatomic, strong) NSMutableArray *items;
 @property (nonatomic) BOOL isLoading;
 @property (nonatomic) BOOL isLoaded;
-
 //selectedIndex < 0  meaning that no item is selected
 @property (nonatomic) NSInteger selectedIndex;
 @end
@@ -71,17 +66,82 @@
     [Settings manager].indexOfCurrentSurvey = selectedIndex;
 }
 
+
+#pragma mark - Public methods
+
++ (BOOL) collectsURL:(NSURL *)url
+{
+    return [[url pathExtension] isEqualToString:SURVEY_EXT];
+}
+
+- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    //TODO: need to revisit this.  Is it thread safe (probably not).  Can I use dispatch_once to help ??
+    if (self.isLoaded) {
+        if (completionHandler)
+            completionHandler(self.items != nil);
+    } else {
+        // isLoading is checked and set on the main thread, so it should be thread safe
+        if (self.isLoading) {
+            dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
+                //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
+                if (completionHandler) {
+                    completionHandler(self.items != nil);
+                }
+            });
+        }
+        self.isLoading = YES;
+        dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
+            [self readSurveyList];
+            //TODO: open each survey item in the background?
+            self.isLoaded = YES;
+            self.isLoading = NO;
+            if (completionHandler) {
+                completionHandler(self.items != nil);
+            }
+        });
+    }
+}
+
+- (Survey *)surveyForURL:(NSURL *)url
+{
+    NSUInteger index = [self.items indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        return [url isEqual:[obj url]];
+    }];
+    return (index == NSNotFound) ? nil : [self.items objectAtIndex:index];
+}
+
+- (BOOL)openURL:(NSURL *)url
+{
+    //FIXME: just do it
+    return YES;
+}
+
+- (NSInteger)newSurveyWithProtocol:(SProtocol *)protocol {
+    Survey *newSurvey = [[Survey alloc] initWithProtocol:protocol];
+    if (newSurvey) {
+        NSInteger index = 0;     //insert at top of list
+        [self.items insertObject:newSurvey atIndex:index];
+        [self saveCache];
+        return index;
+    } else {
+        return -1;
+    }
+}
+
+
+
 #pragma mark - TableView Data Source Support
+
+-(NSUInteger)numberOfSurveys
+{
+    return self.items.count;
+}
 
 - (Survey *)surveyAtIndex:(NSUInteger)index
 {
     if (self.items.count <= index) return nil; //safety check
     return self.items[index];
-}
-
--(NSUInteger)numberOfSurveys
-{
-    return self.items.count;
 }
 
 -(void)removeSurveyAtIndex:(NSUInteger)index
@@ -144,65 +204,8 @@
 }
 
 
-- (NSInteger)newSurveyWithProtocol:(SProtocol *)protocol {
-    Survey *newSurvey = [[Survey alloc] initWithProtocol:protocol];
-    if (newSurvey) {
-        NSInteger index = 0;     //insert at top of list
-        [self.items insertObject:newSurvey atIndex:index];
-        [self saveCache];
-        return index;
-    } else {
-        return -1;
-    }
-}
 
-- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
-{
-    //TODO: need to revisit this.  Is it thread safe (probably not).  Can I use dispatch_once to help ??
-    if (self.isLoaded) {
-        if (completionHandler)
-            completionHandler(self.items != nil);
-    } else {
-        // isLoading is checked and set on the main thread, so it should be thread safe
-        if (self.isLoading) {
-            dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
-                //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
-                if (completionHandler) {
-                    completionHandler(self.items != nil);
-                }
-            });
-        }
-        self.isLoading = YES;
-        dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
-            [self readSurveyList];
-            //TODO: open each survey item in the background?
-            self.isLoaded = YES;
-            self.isLoading = NO;
-            if (completionHandler) {
-                completionHandler(self.items != nil);
-            }
-        });
-    }
-}
-
-- (BOOL)openURL:(NSURL *)url
-{
-    //FIXME: just do it
-    return YES;
-}
-
-+ (BOOL) collectsURL:(NSURL *)url
-{
-    return [[url pathExtension] isEqualToString:SURVEY_EXT];
-}
-
-- (Survey *)surveyForURL:(NSURL *)url
-{
-    NSUInteger index = [self.items indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [url isEqual:[obj url]];
-    }];
-    return (index == NSNotFound) ? nil : [self.items objectAtIndex:index];
-}
+#pragma mark - private methods
 
 - (void) readSurveyList
 {
@@ -295,8 +298,5 @@
         [[NSUserDefaults standardUserDefaults] setObject:strings forKey:DEFAULTS_KEY_SORTED_MAP_LIST];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
-
-
-
 
 @end
