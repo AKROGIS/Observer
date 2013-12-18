@@ -146,7 +146,7 @@
         return self.items.numberOfRemoteMaps;
     }
     if (section == 2) {
-        return 1;
+        return tableView.isEditing ? 0 : 1;
     }
     return 0;
 }
@@ -275,8 +275,16 @@
     }
 }
 
-
-
+-(void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    [self.tableView setEditing:editing animated:animated];
+    if (self.isEditing) {
+        [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:2]] withRowAnimation:YES];
+    } else {
+        [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:2]] withRowAnimation:YES];
+    }
+}
 
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
