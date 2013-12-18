@@ -18,6 +18,7 @@
 @interface MapSelectViewController ()
 @property (nonatomic) BOOL showRemoteItems;
 @property (nonatomic) BOOL isBackgroundRefreshing;
+@property (nonatomic, strong) UITableViewHeaderFooterView *footerView;
 @end
 
 @implementation MapSelectViewController
@@ -40,6 +41,13 @@
     self.showRemoteItems = [[NSUserDefaults standardUserDefaults] boolForKey:@"showRemoteMaps"];
     self.refreshControl = [UIRefreshControl new];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
+    self.footerView = [UITableViewHeaderFooterView new];
+    self.tableView.tableFooterView = self.footerView;
+    if (self.items.refreshDate) {
+        [self setFooterText];
+    } else {
+        ((UITableViewHeaderFooterView *)self.tableView.tableFooterView).textLabel.text = @"Pull to refresh.";
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -287,6 +295,7 @@
 - (void) refresh:(id)sender
 {
     [self.refreshControl beginRefreshing];
+    self.footerView.textLabel.text = @"Checking for new protocols.";
     self.isBackgroundRefreshing = YES;
     [self.items refreshWithCompletionHandler:^(BOOL success) {
         //on abackground thread
@@ -301,6 +310,7 @@
             } else {
                 [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't get the map list from the server" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
             }
+            [self setFooterText];
         });
     }];
 }
@@ -343,6 +353,11 @@
 {
     Map *map = [self.items remoteMapAtIndex:indexPath.row];
     [map stopDownload];
+}
+
+- (void)setFooterText
+{
+    self.footerView.textLabel.text = [NSString stringWithFormat:@"Updated %@",self.items.refreshDate];
 }
 
 @end

@@ -14,6 +14,7 @@
 @interface ProtocolSelectViewController ()
 @property (nonatomic) BOOL showRemoteItems;
 @property (nonatomic) BOOL isBackgroundRefreshing;
+@property (nonatomic, strong) UITableViewHeaderFooterView *footerView;
 @end
 
 @implementation ProtocolSelectViewController
@@ -36,6 +37,13 @@
     self.showRemoteItems = [[NSUserDefaults standardUserDefaults] boolForKey:@"showRemoteProtocols"];
     self.refreshControl = [UIRefreshControl new];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
+    self.footerView = [UITableViewHeaderFooterView new];
+    self.tableView.tableFooterView = self.footerView;
+    if (self.items.refreshDate) {
+        [self setFooterText];
+    } else {
+        self.footerView.textLabel.text = @"Pull to refresh.";
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -270,6 +278,7 @@
 
 - (void) refresh:(id)sender
 {
+    self.footerView.textLabel.text = @"Checking for new protocols.";
     [self.refreshControl beginRefreshing];
     self.isBackgroundRefreshing = YES;
     [self.items refreshWithCompletionHandler:^(BOOL success) {
@@ -285,6 +294,7 @@
             } else {
                 [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't connect to server" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
             }
+            [self setFooterText];
         });
     }];
 }
@@ -305,6 +315,11 @@
             }
         });
     }];
+}
+
+- (void)setFooterText
+{
+    self.footerView.textLabel.text = [NSString stringWithFormat:@"Updated %@",self.items.refreshDate];
 }
 
 @end

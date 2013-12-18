@@ -70,6 +70,8 @@
 // The completion handler is used only to signal success/failure
 - (void) refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
+@property (nonatomic, strong) NSDate *refreshDate;
+
 //TODO: I don't making this public, but I need to save the cache after a map changes it's thumbnail url
 - (void) synchronize;
 
