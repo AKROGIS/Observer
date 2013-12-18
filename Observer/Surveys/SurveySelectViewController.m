@@ -44,21 +44,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        self.navigationItem.leftBarButtonItem = self.addButton;
-        self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    } else {
-        UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-        self.toolbarItems = @[self.editButtonItem,spacer,self.addButton];
-    }
     self.detailViewController = (SurveyDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
-
-    self.addButton.enabled = NO;
+    [self configureControlsEnableAddButton:NO];
     self.protocols = [ProtocolCollection sharedCollection];
     [self.protocols openWithCompletionHandler:^(BOOL success) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.addButton.enabled = YES;
+            [self configureControlsEnableAddButton:YES];
         });
     }];
 }
@@ -75,6 +66,7 @@
         }
     } else {
         if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            self.navigationItem.leftBarButtonItem = nil;
             self.navigationItem.rightBarButtonItem = self.editButtonItem;
         } else {
             self.toolbarItems = @[self.editButtonItem];
@@ -190,6 +182,12 @@
     }
 }
 
+-(void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    [self.tableView setEditing:editing animated:animated];
+    [self configureControlsEnableAddButton:!editing];
+}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
