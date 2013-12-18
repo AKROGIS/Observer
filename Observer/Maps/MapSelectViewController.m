@@ -13,12 +13,13 @@
 #import "MapDetailViewController.h"
 //#import "FSEntryCell.h"
 #import "MapTableViewCell.h"
+#import "NSDate+Formatting.h"
 
 
 @interface MapSelectViewController ()
 @property (nonatomic) BOOL showRemoteItems;
 @property (nonatomic) BOOL isBackgroundRefreshing;
-@property (nonatomic, strong) UITableViewHeaderFooterView *footerView;
+@property (weak, nonatomic) IBOutlet UILabel *refreshLabel;
 @end
 
 @implementation MapSelectViewController
@@ -41,12 +42,8 @@
     self.showRemoteItems = [[NSUserDefaults standardUserDefaults] boolForKey:@"showRemoteMaps"];
     self.refreshControl = [UIRefreshControl new];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
-    self.footerView = [UITableViewHeaderFooterView new];
-    self.tableView.tableFooterView = self.footerView;
     if (self.items.refreshDate) {
         [self setFooterText];
-    } else {
-        ((UITableViewHeaderFooterView *)self.tableView.tableFooterView).textLabel.text = @"Pull to refresh.";
     }
 }
 
@@ -302,7 +299,7 @@
 - (void) refresh:(id)sender
 {
     [self.refreshControl beginRefreshing];
-    self.footerView.textLabel.text = @"Checking for new protocols.";
+    self.refreshLabel.text = @"Looking for new maps...";
     self.isBackgroundRefreshing = YES;
     [self.items refreshWithCompletionHandler:^(BOOL success) {
         //on abackground thread
@@ -364,7 +361,11 @@
 
 - (void)setFooterText
 {
-    self.footerView.textLabel.text = [NSString stringWithFormat:@"Updated %@",self.items.refreshDate];
+    if ([self.items.refreshDate isToday]) {
+        self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumTimeFormat]];
+    } else {
+        self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumDateFormat]];
+    }
 }
 
 @end

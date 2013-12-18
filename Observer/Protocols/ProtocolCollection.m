@@ -248,6 +248,7 @@ static ProtocolCollection *_sharedCollection = nil;
 - (void)refreshWithCompletionHandler:(void (^)(BOOL))completionHandler;
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
+        self.refreshDate = [NSDate date];
         BOOL success = [self refreshRemoteProtocols] && [self refreshLocalProtocols];
         //assume that changes were made to the model and save the cache.
         //If there is a delegate, then it must be queued up on main thread, because the model changes occur there
@@ -313,6 +314,9 @@ static ProtocolCollection *_sharedCollection = nil;
 {
     NSArray *plist = [NSArray arrayWithContentsOfURL:self.cacheFile];
     for (id obj in plist) {
+        if ([obj isKindOfClass:[NSDate class]]) {
+            self.refreshDate = obj;
+        }
         id protocol = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
         if ([protocol isKindOfClass:[SProtocol class]]) {
             if (((SProtocol *)protocol).isLocal) {
@@ -332,6 +336,9 @@ static ProtocolCollection *_sharedCollection = nil;
     //dispatching the creation of the archive data to a background thread could result in an exception
     //if the UI thread then changed the model while it is being enumerated
     NSMutableArray *plist = [NSMutableArray new];
+    if (self.refreshDate) {
+        [plist addObject:self.refreshDate];
+    }
     for (SProtocol *protocol in self.localItems) {
         [plist addObject:[NSKeyedArchiver archivedDataWithRootObject:protocol]];
     }

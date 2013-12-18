@@ -28,4 +28,24 @@
     return [dateFormatter stringFromDate:self];
 }
 
+- (NSString *)stringWithMediumTimeFormat
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDoesRelativeDateFormatting:YES];
+    [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
+    return [dateFormatter stringFromDate:self];
+}
+
+- (BOOL)isToday
+{
+    return [[self dateOnly] isEqualToDate:[[NSDate date] dateOnly]];
+}
+
+- (NSDate *)dateOnly
+{
+    NSCalendar *cal = [NSCalendar currentCalendar];
+    NSDateComponents *components = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit) fromDate:self];
+    return [cal dateFromComponents:components];
+}
+
 @end

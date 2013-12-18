@@ -204,6 +204,7 @@ static MapCollection *_sharedCollection = nil;
 - (void)refreshWithCompletionHandler:(void (^)(BOOL))completionHandler;
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
+        self.refreshDate = [NSDate date];
         BOOL success = [self refreshRemoteMaps] && [self refreshLocalMaps];
         //assume that changes were made to the model and save the cache.
         //If there is a delegate, then it must be queued up on main thread, because the model changes occur there
@@ -287,6 +288,9 @@ static MapCollection *_sharedCollection = nil;
 {
     NSArray *plist = [NSArray arrayWithContentsOfURL:self.cacheFile];
     for (id obj in plist) {
+        if ([obj isKindOfClass:[NSDate class]]) {
+            self.refreshDate = obj;
+        }
         id map = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
         if ([map isKindOfClass:[Map class]]) {
             if (((Map *)map).isLocal) {
@@ -306,6 +310,9 @@ static MapCollection *_sharedCollection = nil;
     //dispatching the creation of the archive data to a background thread could result in an exception
     //if the UI thread then changed the model while it is being enumerated
     NSMutableArray *plist = [NSMutableArray new];
+    if (self.refreshDate) {
+        [plist addObject:self.refreshDate];
+    }
     for (Map *map in self.localItems) {
         [plist addObject:[NSKeyedArchiver archivedDataWithRootObject:map]];
     }

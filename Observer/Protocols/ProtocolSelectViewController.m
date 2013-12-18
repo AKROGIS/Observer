@@ -10,11 +10,12 @@
 #import "ProtocolTableViewCell.h"
 #import "SProtocol.h"
 #import "NSIndexSet+indexPath.h"
+#import "NSDate+Formatting.h"
 
 @interface ProtocolSelectViewController ()
 @property (nonatomic) BOOL showRemoteItems;
 @property (nonatomic) BOOL isBackgroundRefreshing;
-@property (nonatomic, strong) UITableViewHeaderFooterView *footerView;
+@property (weak, nonatomic) IBOutlet UILabel *refreshLabel;
 @end
 
 @implementation ProtocolSelectViewController
@@ -37,12 +38,8 @@
     self.showRemoteItems = [[NSUserDefaults standardUserDefaults] boolForKey:@"showRemoteProtocols"];
     self.refreshControl = [UIRefreshControl new];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
-    self.footerView = [UITableViewHeaderFooterView new];
-    self.tableView.tableFooterView = self.footerView;
     if (self.items.refreshDate) {
         [self setFooterText];
-    } else {
-        self.footerView.textLabel.text = @"Pull to refresh.";
     }
 }
 
@@ -288,7 +285,7 @@
 
 - (void) refresh:(id)sender
 {
-    self.footerView.textLabel.text = @"Checking for new protocols.";
+    self.refreshLabel.text = @"Looking for new protocols...";
     [self.refreshControl beginRefreshing];
     self.isBackgroundRefreshing = YES;
     [self.items refreshWithCompletionHandler:^(BOOL success) {
@@ -329,7 +326,12 @@
 
 - (void)setFooterText
 {
-    self.footerView.textLabel.text = [NSString stringWithFormat:@"Updated %@",self.items.refreshDate];
+    if ([self.items.refreshDate isToday]) {
+        self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumTimeFormat]];
+    } else {
+        self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumDateFormat]];
+    }
 }
+
 
 @end
