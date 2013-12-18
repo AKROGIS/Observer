@@ -31,7 +31,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.toolbarItems = @[self.editButtonItem];
+    self.navigationItem.rightBarButtonItem = self.editButtonItem;
     //FIXME: use setting manager in observer
     //self.showRemoteItems = [Settings manager].showRemoteItems
     self.showRemoteItems = [[NSUserDefaults standardUserDefaults] boolForKey:@"showRemoteProtocols"];
@@ -48,7 +48,6 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    [self.navigationController setToolbarHidden:NO animated:NO];
 }
 
 -(void)viewWillDisappear:(BOOL)animated
