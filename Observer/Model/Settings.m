@@ -56,10 +56,10 @@
 + (Settings *)manager
 {
     static Settings *_manager = nil;
-    static dispatch_once_t once;
+        static dispatch_once_t once;
     dispatch_once(&once, ^{
         if (!_manager) {
-            _manager = [[Settings alloc] init];
+            _manager = [[super allocWithZone:NULL] init];
             [_manager populateRegistrationDomain];
         }
     });
@@ -76,17 +76,24 @@
     return self;
 }
 
+//- (id)init
+//{
+//    if (self = [super init]) {
+//        [self populateRegistrationDomain];
+//    }
+//    return self;
+//}
 
 
 @synthesize indexOfCurrentMap = _indexOfCurrentMap;
 
-- (NSUInteger) indexOfCurrentMap
+- (NSInteger) indexOfCurrentMap
 {
-    NSUInteger value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
+    NSInteger value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
     return value ?: DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP;
 }
 
-- (void)setIndexOfCurrentMap:(NSUInteger)indexOfCurrentMap
+- (void)setIndexOfCurrentMap:(NSInteger)indexOfCurrentMap
 {
     if (indexOfCurrentMap == DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
@@ -99,13 +106,13 @@
 
 @synthesize indexOfCurrentSurvey = _indexOfCurrentSurvey;
 
-- (NSUInteger) indexOfCurrentSurvey
+- (NSInteger) indexOfCurrentSurvey
 {
-    NSUInteger value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
+    NSInteger value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
     return value ?: DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY;
 }
 
-- (void)setIndexOfCurrentSurvey:(NSUInteger)indexOfCurrentSurvey
+- (void)setIndexOfCurrentSurvey:(NSInteger)indexOfCurrentSurvey
 {
     if (indexOfCurrentSurvey == DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];

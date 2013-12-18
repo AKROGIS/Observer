@@ -8,6 +8,7 @@
 
 #import "SurveyCollection.h"
 #import "NSArray+map.h"
+#import "Settings.h"
 
 @interface SurveyCollection()
 //FIXME:  The following should be private properties.
@@ -17,6 +18,7 @@
 @property (nonatomic, strong) NSMutableArray *items;
 @property (nonatomic) BOOL isLoading;
 @property (nonatomic) BOOL isLoaded;
+
 //selectedIndex < 0  meaning that no item is selected
 @property (nonatomic) NSInteger selectedIndex;
 @end
@@ -66,9 +68,7 @@
     }
     //Allow setting selected index to -1 (or any negative) to indicate no selected item
     _selectedIndex = selectedIndex;
-    //FIXME:  use settings
-    //[Settings manager].currentSurveyIndex = selectedIndex;
-    [[NSUserDefaults standardUserDefaults] setInteger:selectedIndex forKey:@"currentSurveyIndex"];
+    [Settings manager].indexOfCurrentSurvey = selectedIndex;
 }
 
 #pragma mark - TableView Data Source Support
@@ -230,9 +230,7 @@
     }
 
     //Get the selected index (we can't do this in the accessor, because there isn't a no value Sentinal, i.e 0 is valid)
-    //FIXME: Use settings
-    //_selectedIndex = [Settings manager].currentSurveyIndex;
-    _selectedIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentSurveyIndex"];
+    _selectedIndex = [Settings manager].indexOfCurrentSurvey;
 
     if (cacheWasOutdated) {
         [self saveCache];
