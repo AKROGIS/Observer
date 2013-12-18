@@ -30,6 +30,7 @@
 
 - (NSString *)stringWithMediumTimeFormat
 {
+    //TODO: add relative time format (Just Now, x minutes ago, x hours ago)
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDoesRelativeDateFormatting:YES];
     [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
