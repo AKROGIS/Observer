@@ -317,12 +317,14 @@ static ProtocolCollection *_sharedCollection = nil;
         if ([obj isKindOfClass:[NSDate class]]) {
             self.refreshDate = obj;
         }
-        id protocol = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
-        if ([protocol isKindOfClass:[SProtocol class]]) {
-            if (((SProtocol *)protocol).isLocal) {
-                [self.localItems addObject:protocol];
-            } else {
-                [self.remoteItems addObject:protocol];
+        if ([obj isKindOfClass:[NSData class]]) {
+            id protocol = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
+            if ([protocol isKindOfClass:[SProtocol class]]) {
+                if (((SProtocol *)protocol).isLocal) {
+                    [self.localItems addObject:protocol];
+                } else {
+                    [self.remoteItems addObject:protocol];
+                }
             }
         }
     }

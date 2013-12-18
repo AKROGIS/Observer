@@ -291,12 +291,14 @@ static MapCollection *_sharedCollection = nil;
         if ([obj isKindOfClass:[NSDate class]]) {
             self.refreshDate = obj;
         }
-        id map = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
-        if ([map isKindOfClass:[Map class]]) {
-            if (((Map *)map).isLocal) {
-                [self.localItems addObject:map];
-            } else {
-                [self.remoteItems addObject:map];
+        if ([obj isKindOfClass:[NSData class]]) {
+            id map = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
+            if ([map isKindOfClass:[Map class]]) {
+                if (((Map *)map).isLocal) {
+                    [self.localItems addObject:map];
+                } else {
+                    [self.remoteItems addObject:map];
+                }
             }
         }
     }
