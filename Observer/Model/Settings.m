@@ -7,6 +7,7 @@
 //
 
 #import "Settings.h"
+#import "NSArray+map.h"
 
 /*
  * Note:
@@ -15,6 +16,15 @@
  * If you provide a non-zero default, then you cannot persist
  * a zero value, as it will always be replaced with your default
  */
+
+#define DEFAULTS_KEY_INDEX_OF_CURRENT_MAP @"index_of_current_map"
+#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP 0
+
+#define DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY @"index_of_current_survey"
+#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY 0
+
+#define DEFAULTS_KEY_SORTED_SURVEY_LIST @"sorted_survey_list"
+#define DEFAULTS_DEFAULT_SORTED_SURVEY_LIST nil
 
 #define DEFAULTS_KEY_AUTOPAN_ENABLED @"autopan_enabled"
 #define DEFAULTS_DEFAULT_AUTOPAN_ENABLED NO
@@ -39,13 +49,6 @@
 
 #define DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE @"angle_distance_last_angle"
 #define DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_ANGLE nil
-
-#define DEFAULTS_KEY_INDEX_OF_CURRENT_MAP @"index_of_current_map"
-#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP 0
-
-#define DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY @"index_of_current_survey"
-#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY 0
-
 
 
 @implementation Settings
@@ -76,13 +79,6 @@
     return self;
 }
 
-//- (id)init
-//{
-//    if (self = [super init]) {
-//        [self populateRegistrationDomain];
-//    }
-//    return self;
-//}
 
 
 @synthesize indexOfCurrentMap = _indexOfCurrentMap;
@@ -118,6 +114,34 @@
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
     } else {
         [[NSUserDefaults standardUserDefaults] setInteger:indexOfCurrentSurvey forKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
+    }
+}
+
+
+
+@synthesize surveys = _surveys;
+
+- (NSArray *) surveys
+{
+    NSArray *value = [[NSUserDefaults standardUserDefaults] arrayForKey:DEFAULTS_KEY_SORTED_SURVEY_LIST];
+    //NSDefaults returns a NSArray of NSString, convert to a NSArray of NSURL
+    value = [value mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
+        return [NSURL URLWithString:obj];
+    }];
+    return value ?: DEFAULTS_DEFAULT_SORTED_SURVEY_LIST;
+}
+
+- (void) setSurveys:(NSArray *)surveys
+{
+    //NSURL is not a property list type (NSDefaults can't persist an array of NSURL
+    //I need to convert it to and array of NSString
+    NSArray *strings = [surveys mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
+        return ((NSURL *)obj).absoluteString;
+    }];
+    if ([strings isEqual:DEFAULTS_DEFAULT_SORTED_SURVEY_LIST]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SORTED_SURVEY_LIST];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setObject:strings forKey:DEFAULTS_KEY_SORTED_SURVEY_LIST];
     }
 }
 

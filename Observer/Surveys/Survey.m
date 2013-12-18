@@ -59,9 +59,10 @@
 
 - (id)initWithURL:(NSURL *)url
 {
-    return [self initWithURL:url title:nil state:0 date:[NSDate date]];
+    return [self initWithURL:url title:nil state:kUnborn date:[NSDate date]];
 }
 
+//FIXME: use obsolete attribute
 //Do not allow creating a Survey without a protocol or URL
 - (id)init
 {
@@ -110,6 +111,7 @@
     if (_title != title) {
         _title = title;
         [self saveProperties];
+        //TODO: we should also rename the URL, to simiplify recognition in transfers
     }
 }
 

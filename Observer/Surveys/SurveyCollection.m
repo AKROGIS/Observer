@@ -8,6 +8,7 @@
 
 #import "SurveyCollection.h"
 #import "NSArray+map.h"
+#import "NSURL+unique.h"
 #import "Settings.h"
 
 @interface SurveyCollection()
@@ -16,6 +17,8 @@
 @property (nonatomic) BOOL isLoaded;
 //selectedIndex < 0  meaning that no item is selected
 @property (nonatomic) NSInteger selectedIndex;
+@property (nonatomic, strong) NSURL *documentsDirectory;
+
 @end
 
 @implementation SurveyCollection
@@ -66,6 +69,15 @@
     [Settings manager].indexOfCurrentSurvey = selectedIndex;
 }
 
+- (NSURL *)documentsDirectory
+{
+    if (!_documentsDirectory) {
+        _documentsDirectory = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+    }
+    return _documentsDirectory;
+}
+
+
 
 #pragma mark - Public methods
 
@@ -74,15 +86,17 @@
     return [[url pathExtension] isEqualToString:SURVEY_EXT];
 }
 
+
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    //TODO: need to revisit this.  Is it thread safe (probably not).  Can I use dispatch_once to help ??
+    //Check and set of isLoading must be done on the main thread to guarantee
+    //there is no race condition.
     if (self.isLoaded) {
         if (completionHandler)
             completionHandler(self.items != nil);
     } else {
-        // isLoading is checked and set on the main thread, so it should be thread safe
         if (self.isLoading) {
+            //wait until loading is completed, then return;
             dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
                 //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
                 if (completionHandler) {
@@ -92,8 +106,8 @@
         }
         self.isLoading = YES;
         dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
-            [self readSurveyList];
-            //TODO: open each survey item in the background?
+            [self loadAndCorrectListOfSurveys];
+            //TODO: consider opening all/selected survey item(s) in the background
             self.isLoaded = YES;
             self.isLoading = NO;
             if (completionHandler) {
@@ -111,10 +125,35 @@
     return (index == NSNotFound) ? nil : [self.items objectAtIndex:index];
 }
 
+//TODO: test opening a Survey document
 - (BOOL)openURL:(NSURL *)url
 {
-    //FIXME: just do it
-    return YES;
+    //The only known use of this is by the app delegate to give us a file in the inbox
+    //however, I will make it as generic as possible
+    
+    //If we already have the url, then do nothing.
+    if ([self surveyForURL:url]) {
+        return YES;
+    }
+    NSURL *newUrl = [self.documentsDirectory URLByAppendingPathComponent:[url lastPathComponent]];
+    //If the url is already in the documents directory then do not move it
+    if (![newUrl isEqual:url]) {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:[newUrl path]]) {
+            newUrl = [newUrl URLByUniquingPath];
+        }
+        if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:newUrl error:nil]) {
+            return NO;
+        }
+    }
+    Survey *newSurvey = [[Survey alloc] initWithURL:newUrl];
+    if (newSurvey.protocol) {
+        NSInteger index = 0;     //insert at top of list
+        [self.items insertObject:newSurvey atIndex:index];
+        [self saveCache];
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
 - (NSInteger)newSurveyWithProtocol:(SProtocol *)protocol {
@@ -207,16 +246,13 @@
 
 #pragma mark - private methods
 
-- (void) readSurveyList
+- (void) loadAndCorrectListOfSurveys
 {
     BOOL cacheWasOutdated = NO;
-    //FIXME: use settings when integrated with Observer
-    //NSArray *cachedSurveyPaths = [Settings manager].surveys;
-    //FIXME: remove the following code when integrated with Observer
-    NSArray *cachedSurveyUrls = [self cachedSurveyUrls];
-
-    NSMutableSet *files = [NSMutableSet setWithArray:[self surveysInDocuments]];
-    // create maps in order from urls saved in defaults  IFF they are found in filesystem
+    NSArray *cachedSurveyUrls = [Settings manager].surveys;
+    
+    // create (in order) surveys from urls saved in defaults IFF they are found in filesystem
+    NSMutableSet *files = [NSMutableSet setWithArray:[self surveysInDocumentsFolder]];
     for (NSURL *url in cachedSurveyUrls) {
         if ([files containsObject:url]) {
             [self.items addObject:[[Survey alloc] initWithURL:url]];
@@ -226,13 +262,14 @@
     if (self.items.count < cachedSurveyUrls.count) {
         cacheWasOutdated = YES;
     }
+
     //Add any other Surveys in filesystem (maybe added via iTunes) to end of list from cached list
     for (NSURL *url in files) {
         [self.items addObject:[[Survey alloc] initWithURL:url]];
         cacheWasOutdated = YES;
     }
 
-    //Get the selected index (we can't do this in the accessor, because there isn't a no value Sentinal, i.e 0 is valid)
+    //Get the selected index (we can't do this in the accessor, because there isn't a no value sentinal, i.e 0 is valid)
     _selectedIndex = [Settings manager].indexOfCurrentSurvey;
 
     if (cacheWasOutdated) {
@@ -254,18 +291,17 @@
     }
 }
 
-- (NSArray *) /* of NSURL */ surveysInDocuments
+- (NSArray *) /* of NSURL */ surveysInDocumentsFolder
 {
     NSMutableArray *localUrls = [[NSMutableArray alloc] init];
-    NSURL *documentsDirectory = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
     NSArray *documents = [[NSFileManager defaultManager]
-                          contentsOfDirectoryAtURL:documentsDirectory
+                          contentsOfDirectoryAtURL:self.documentsDirectory
                           includingPropertiesForKeys:nil
                           options:NSDirectoryEnumerationSkipsHiddenFiles
                           error:nil];
     if (documents) {
         for (NSURL *url in documents) {
-            if ([[url pathExtension] isEqualToString:SURVEY_EXT]) {
+            if ([SurveyCollection collectsURL:url]) {
                 [localUrls addObject:url];
             }
         }
@@ -273,30 +309,10 @@
     return localUrls;
 }
 
-//FIXME: remove the following code when integrated with Observer
-- (NSArray *)cachedSurveyUrls
-{
-#define DEFAULTS_KEY_SORTED_MAP_LIST @"sorted_map_list"
-#define DEFAULTS_DEFAULT_SORTED_MAP_LIST nil
-    NSArray *strings = [[NSUserDefaults standardUserDefaults] arrayForKey:DEFAULTS_KEY_SORTED_MAP_LIST];
-    //NSDefaults returns a NSArray of NSString, convert to a NSArray of NSURL
-    NSArray *urls = [strings mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return [NSURL URLWithString:obj];
-    }];
-    return urls ?: DEFAULTS_DEFAULT_SORTED_MAP_LIST;
-}
 
-- (void)saveCache {
-    //[Settings manager].surveys = self.items;
-    //FIXME: remove the following code when integrated with Observer
-    NSArray *strings = [self.items mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return ((Survey *)obj).url.absoluteString;  //do not use path, it will not convert back to a URL
-    }];
-    if ([strings isEqual:DEFAULTS_DEFAULT_SORTED_MAP_LIST])
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SORTED_MAP_LIST];
-    else
-        [[NSUserDefaults standardUserDefaults] setObject:strings forKey:DEFAULTS_KEY_SORTED_MAP_LIST];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+- (void)saveCache
+{
+    [Settings manager].surveys = self.items;
 }
 
 @end

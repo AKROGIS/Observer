@@ -21,6 +21,7 @@
 + (BOOL) collectsURL:(NSURL *)url;
 
 // builds the list, and current selection from the filesystem and user defaults
+// Warning this must be called from the main thread if it might be called multiple times
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // returns the first survey that has the given (local) url
