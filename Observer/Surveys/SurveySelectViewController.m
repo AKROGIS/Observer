@@ -14,6 +14,7 @@
 #import "Survey.h"
 
 @interface SurveySelectViewController ()
+@property (strong, nonatomic) SurveyDetailViewController *detailViewController;
 @property (nonatomic) BOOL isBackgroundRefreshing;
 @property (strong, nonatomic) ProtocolCollection* protocols;
 @property (strong, nonatomic) NSIndexPath *indexPathToDelete;
@@ -84,7 +85,6 @@
     if (!self.items) {
         return;
     }
-    //[self insertNewObject];
     [self performSegueWithIdentifier:@"Select Protocol" sender:sender];
 }
 
@@ -138,6 +138,7 @@
     [self.items moveSurveyAtIndex:fromIndexPath.row toIndex:toIndexPath.row];
 }
 
+//TODO: test delete of survey with modifications
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
@@ -188,9 +189,15 @@
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
         [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     } else {
-        //TODO: alert unable to create new survey
+        [[[UIAlertView alloc] initWithTitle:@"Error"
+                                    message:@"The new survey could not be created."
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil] show];
     }
 }
+
+
 
 #pragma mark - UIAlertViewDelegate
 

@@ -13,9 +13,14 @@
 
 @interface SurveySelectViewController : UITableViewController <UIAlertViewDelegate, UITextFieldDelegate>
 
-@property (strong, nonatomic) SurveyDetailViewController *detailViewController;
+// The list of items to present in the table view
+// TODO: should I make the collection the datasource delegate?
 @property (nonatomic, weak) SurveyCollection *items;
+
+// The popover (maybe nil) that this view controller is presented in
 @property (nonatomic, weak) UIPopoverController *popover;
+
+// A method to call when the popover is dismissed
 @property (copy) void (^popoverDismissedCallback)(void);
 
 @end
