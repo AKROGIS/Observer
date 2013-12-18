@@ -14,9 +14,7 @@
 #import "Survey.h"
 
 @interface SurveySelectViewController ()
-@property (strong, nonatomic) SurveyDetailViewController *detailViewController;
 @property (strong, nonatomic) UIBarButtonItem *addButton;
-@property (nonatomic) BOOL isBackgroundRefreshing;
 @property (strong, nonatomic) ProtocolCollection* protocols;
 @property (strong, nonatomic) NSIndexPath *indexPathToDelete;
 @end
@@ -44,7 +42,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.detailViewController = (SurveyDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     [self configureControlsEnableAddButton:NO];
     self.protocols = [ProtocolCollection sharedCollection];
     [self.protocols openWithCompletionHandler:^(BOOL success) {
@@ -75,10 +72,6 @@
     }
 }
 
-- (void) configureView
-{
-}
-
 -(void)viewWillAppear:(BOOL)animated
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
@@ -88,7 +81,9 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
-    [self.navigationController setToolbarHidden:YES animated:NO];
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        [self.navigationController setToolbarHidden:YES animated:NO];
+    }
     [ProtocolCollection releaseSharedCollection];
 }
 
