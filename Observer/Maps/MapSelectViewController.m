@@ -11,13 +11,13 @@
 #import "NSIndexSet+indexPath.h"
 
 #import "MapDetailViewController.h"
-//#import "FSEntryCell.h"
 #import "MapTableViewCell.h"
 #import "NSDate+Formatting.h"
+#import "Settings.h"
 
 
 @interface MapSelectViewController ()
-@property (nonatomic) BOOL showRemoteItems;
+@property (nonatomic) BOOL showRemoteMaps;
 @property (nonatomic) BOOL isBackgroundRefreshing;
 @property (weak, nonatomic) IBOutlet UILabel *refreshLabel;
 @end
@@ -37,9 +37,7 @@
 {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    //FIXME: use setting manager in observer
-    //self.showRemoteItems = [Settings manager].showRemoteItems
-    self.showRemoteItems = [[NSUserDefaults standardUserDefaults] boolForKey:@"showRemoteMaps"];
+    self.showRemoteMaps = [Settings manager].showRemoteMaps;
     self.refreshControl = [UIRefreshControl new];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
     if (self.items.refreshDate) {
@@ -54,9 +52,7 @@
 -(void)viewWillDisappear:(BOOL)animated
 {
     [self.navigationController setToolbarHidden:YES animated:NO];
-    //FIXME: use setting manager in observer
-    //[Settings manager].showRemoteItems = self.showRemoteItems
-    [[NSUserDefaults standardUserDefaults] setBool:self.showRemoteItems forKey:@"showRemoteMaps"];
+    [Settings manager].showRemoteMaps = self.showRemoteMaps;
 }
 
 - (void)didReceiveMemoryWarning
@@ -93,7 +89,7 @@
 - (void) collection:(id)collection addedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
-    if (self.showRemoteItems) {
+    if (self.showRemoteMaps) {
         [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:YES];
     }
 }
@@ -107,7 +103,7 @@
 - (void) collection:(id)collection removedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
-    if (self.showRemoteItems) {
+    if (self.showRemoteMaps) {
         [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:YES];
     }
 }
@@ -121,7 +117,7 @@
 - (void) collection:(id)collection changedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
-    if (self.showRemoteItems) {
+    if (self.showRemoteMaps) {
         [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:YES];
     }
 }
@@ -138,7 +134,7 @@
     if (section == 0) {
         return self.items.numberOfLocalMaps;
     }
-    if (section == 1 && self.showRemoteItems) {
+    if (section == 1 && self.showRemoteMaps) {
         return self.items.numberOfRemoteMaps;
     }
     if (section == 2) {
@@ -152,7 +148,7 @@
     if (section == 0) {
         return @"On this device";
     }
-    if (section == 1 && self.showRemoteItems ) {
+    if (section == 1 && self.showRemoteMaps ) {
         return @"In the cloud";
     }
     return nil;
@@ -168,7 +164,7 @@
     if (indexPath.section == 2) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MapButtonCell" forIndexPath:indexPath];
         cell.textLabel.textColor = cell.tintColor;
-        cell.textLabel.text = self.showRemoteItems ? @"Show Only Downloaded Maps" : @"Show All Maps";
+        cell.textLabel.text = self.showRemoteMaps ? @"Show Only Downloaded Maps" : @"Show All Maps";
         return cell;
     } else {
         Map *item = (indexPath.section == 0) ? [self.items localMapAtIndex:indexPath.row] : [self.items remoteMapAtIndex:indexPath.row];
@@ -192,7 +188,7 @@
 {
 
     if (indexPath.section == 2) {
-        self.showRemoteItems = ! self.showRemoteItems;
+        self.showRemoteMaps = ! self.showRemoteMaps;
         [tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:YES];
         return;
     }
@@ -307,8 +303,8 @@
             [self.refreshControl endRefreshing];
             self.isBackgroundRefreshing = NO;
             if (success) {
-                if (!self.showRemoteItems) {
-                    self.showRemoteItems = YES;
+                if (!self.showRemoteMaps) {
+                    self.showRemoteMaps = YES;
                     [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:YES];
                 }
             } else {

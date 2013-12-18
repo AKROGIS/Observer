@@ -30,6 +30,9 @@
 @property (nonatomic) NSInteger indexOfCurrentSurvey;
 @property (nonatomic, strong) NSArray *surveys; //of NSURL
 
+@property (nonatomic) BOOL showRemoteMaps;
+@property (nonatomic) BOOL showRemoteProtocols;
+
 @property (nonatomic) BOOL autoPanEnabled;
 @property (nonatomic) AGSLocationDisplayAutoPanMode autoPanMode;
 

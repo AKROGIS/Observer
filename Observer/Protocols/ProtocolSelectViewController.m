@@ -11,9 +11,10 @@
 #import "SProtocol.h"
 #import "NSIndexSet+indexPath.h"
 #import "NSDate+Formatting.h"
+#import "Settings.h"
 
 @interface ProtocolSelectViewController ()
-@property (nonatomic) BOOL showRemoteItems;
+@property (nonatomic) BOOL showRemoteProtocols;
 @property (nonatomic) BOOL isBackgroundRefreshing;
 @property (weak, nonatomic) IBOutlet UILabel *refreshLabel;
 @end
@@ -33,9 +34,7 @@
 {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    //FIXME: use setting manager in observer
-    //self.showRemoteItems = [Settings manager].showRemoteItems
-    self.showRemoteItems = [[NSUserDefaults standardUserDefaults] boolForKey:@"showRemoteProtocols"];
+    self.showRemoteProtocols = [Settings manager].showRemoteProtocols;
     self.refreshControl = [UIRefreshControl new];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
     if (self.items.refreshDate) {
@@ -50,9 +49,7 @@
 -(void)viewWillDisappear:(BOOL)animated
 {
     [self.navigationController setToolbarHidden:YES animated:NO];
-    //FIXME: use setting manager in observer
-    //[Settings manager].showRemoteItems = self.showRemoteItems
-    [[NSUserDefaults standardUserDefaults] setBool:self.showRemoteItems forKey:@"showRemoteProtocols"];
+    [Settings manager].showRemoteProtocols = self.showRemoteProtocols;
 }
 
 - (void)didReceiveMemoryWarning
@@ -89,7 +86,7 @@
 - (void) collection:(id)collection addedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
-    if (self.showRemoteItems) {
+    if (self.showRemoteProtocols) {
         [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:YES];
     }
 }
@@ -103,7 +100,7 @@
 - (void) collection:(id)collection removedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
-    if (self.showRemoteItems) {
+    if (self.showRemoteProtocols) {
         [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:YES];
     }
 }
@@ -117,7 +114,7 @@
 - (void) collection:(id)collection changedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
-    if (self.showRemoteItems) {
+    if (self.showRemoteProtocols) {
         [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:YES];
     }
 }
@@ -134,7 +131,7 @@
     if (section == 0) {
         return self.items.numberOfLocalProtocols;
     }
-    if (section == 1 && self.showRemoteItems) {
+    if (section == 1 && self.showRemoteProtocols) {
         return self.items.numberOfRemoteProtocols;
     }
     if (section == 2) {
@@ -148,7 +145,7 @@
     if (section == 0) {
         return @"On this device";
     }
-    if (section == 1 && self.showRemoteItems ) {
+    if (section == 1 && self.showRemoteProtocols ) {
         return @"In the cloud";
     }
     return nil;
@@ -159,7 +156,7 @@
     if (indexPath.section == 2) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ProtocolButtonCell" forIndexPath:indexPath];
         cell.textLabel.textColor = cell.tintColor;
-        cell.textLabel.text = self.showRemoteItems ? @"Show Only Downloaded Protocols" : @"Show All Protocols";
+        cell.textLabel.text = self.showRemoteProtocols ? @"Show Only Downloaded Protocols" : @"Show All Protocols";
         return cell;
     } else {
         SProtocol *item = (indexPath.section == 0) ? [self.items localProtocolAtIndex:indexPath.row] : [self.items remoteProtocolAtIndex:indexPath.row];
@@ -176,7 +173,7 @@
 {
     
     if (indexPath.section == 2) {
-        self.showRemoteItems = ! self.showRemoteItems;
+        self.showRemoteProtocols = ! self.showRemoteProtocols;
         [tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:YES];
         return;
     }
@@ -294,8 +291,8 @@
             [self.refreshControl endRefreshing];
             self.isBackgroundRefreshing = NO;
             if (success) {
-                if (!self.showRemoteItems) {
-                    self.showRemoteItems = YES;
+                if (!self.showRemoteProtocols) {
+                    self.showRemoteProtocols = YES;
                     [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:YES];
                 }
             } else {

@@ -26,6 +26,12 @@
 #define DEFAULTS_KEY_SORTED_SURVEY_LIST @"sorted_survey_list"
 #define DEFAULTS_DEFAULT_SORTED_SURVEY_LIST nil
 
+#define DEFAULTS_KEY_SHOW_REMOTE_MAPS @"showRemoteMaps"
+#define DEFAULTS_DEFAULT_SHOW_REMOTE_MAPS NO
+
+#define DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS @"showRemoteProtocols"
+#define DEFAULTS_DEFAULT_SHOW_REMOTE_PROTOCOLS NO
+
 #define DEFAULTS_KEY_AUTOPAN_ENABLED @"autopan_enabled"
 #define DEFAULTS_DEFAULT_AUTOPAN_ENABLED NO
 
@@ -143,6 +149,42 @@
     } else {
         [[NSUserDefaults standardUserDefaults] setObject:strings forKey:DEFAULTS_KEY_SORTED_SURVEY_LIST];
     }
+}
+
+
+
+@synthesize showRemoteMaps = _showRemoteMaps;
+
+- (BOOL) showRemoteMaps
+{
+    bool value = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_SHOW_REMOTE_MAPS];
+    return value ?: DEFAULTS_DEFAULT_SHOW_REMOTE_MAPS;
+}
+
+- (void) setShowRemoteMaps:(BOOL)showRemoteMaps
+{
+    if (showRemoteMaps == DEFAULTS_DEFAULT_SHOW_REMOTE_MAPS)
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SHOW_REMOTE_MAPS];
+    else
+        [[NSUserDefaults standardUserDefaults] setBool:showRemoteMaps forKey:DEFAULTS_KEY_SHOW_REMOTE_MAPS];
+}
+
+
+
+@synthesize showRemoteProtocols = _showRemoteProtocols;
+
+- (BOOL) showRemoteProtocols
+{
+    bool value = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS];
+    return value ?: DEFAULTS_DEFAULT_SHOW_REMOTE_PROTOCOLS;
+}
+
+- (void) setShowRemoteProtocols:(BOOL)showRemoteProtocols
+{
+    if (showRemoteProtocols == DEFAULTS_DEFAULT_SHOW_REMOTE_PROTOCOLS)
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS];
+    else
+        [[NSUserDefaults standardUserDefaults] setBool:showRemoteProtocols forKey:DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS];
 }
 
 
