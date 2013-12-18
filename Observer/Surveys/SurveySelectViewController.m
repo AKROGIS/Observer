@@ -15,6 +15,7 @@
 
 @interface SurveySelectViewController ()
 @property (strong, nonatomic) SurveyDetailViewController *detailViewController;
+@property (strong, nonatomic) UIBarButtonItem *addButton;
 @property (nonatomic) BOOL isBackgroundRefreshing;
 @property (strong, nonatomic) ProtocolCollection* protocols;
 @property (strong, nonatomic) NSIndexPath *indexPathToDelete;
@@ -44,19 +45,42 @@
 {
     [super viewDidLoad];
 
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
-    UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-    self.toolbarItems = @[self.editButtonItem,spacer,addButton];
-
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        self.navigationItem.leftBarButtonItem = self.addButton;
+        self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    } else {
+        UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+        self.toolbarItems = @[self.editButtonItem,spacer,self.addButton];
+    }
     self.detailViewController = (SurveyDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
 
-    addButton.enabled = NO;
+    self.addButton.enabled = NO;
     self.protocols = [ProtocolCollection sharedCollection];
     [self.protocols openWithCompletionHandler:^(BOOL success) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            addButton.enabled = YES;
+            self.addButton.enabled = YES;
         });
     }];
+}
+
+- (void)configureControlsEnableAddButton:(BOOL)enableAdd
+{
+    if (enableAdd) {
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            self.navigationItem.leftBarButtonItem = self.addButton;
+            self.navigationItem.rightBarButtonItem = self.editButtonItem;
+        } else {
+            UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+            self.toolbarItems = @[self.editButtonItem,spacer,self.addButton];
+        }
+    } else {
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            self.navigationItem.rightBarButtonItem = self.editButtonItem;
+        } else {
+            self.toolbarItems = @[self.editButtonItem];
+        }
+
+    }
 }
 
 - (void) configureView
@@ -65,7 +89,9 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    [self.navigationController setToolbarHidden:NO animated:NO];
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        [self.navigationController setToolbarHidden:NO animated:NO];
+    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -88,6 +114,12 @@
     [self performSegueWithIdentifier:@"Select Protocol" sender:sender];
 }
 
+-(UIBarButtonItem *)addButton {
+    if (!_addButton) {
+        _addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
+    }
+    return _addButton;
+}
 
 #pragma mark - Table View
 
