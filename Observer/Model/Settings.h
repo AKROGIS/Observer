@@ -33,6 +33,9 @@
 @property (nonatomic) BOOL showRemoteMaps;
 @property (nonatomic) BOOL showRemoteProtocols;
 
+@property (nonatomic) NSURL *urlForMaps;
+@property (nonatomic) NSURL *urlForProtocols;
+
 @property (nonatomic) BOOL autoPanEnabled;
 @property (nonatomic) AGSLocationDisplayAutoPanMode autoPanMode;
 

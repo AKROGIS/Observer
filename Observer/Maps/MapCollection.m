@@ -9,6 +9,7 @@
 #import "MapCollection.h"
 #import "NSArray+map.h"
 #import "NSURL+unique.h"
+#import "Settings.h"
 
 @interface MapCollection()
 @property (nonatomic, strong) NSMutableArray *localItems;  // of Map
@@ -474,9 +475,7 @@ static MapCollection *_sharedCollection = nil;
 //done on background thread
 - (BOOL)refreshRemoteMaps;
 {
-    //FIXME: get URL from settings
-    //NSURL *url = [NSURL URLWithString:@"file:///Users/regan/Downloads/maplist.json"];
-    NSURL *url = [NSURL URLWithString:@"http://akrgis.nps.gov/observer/maps/maplist.json"];
+    NSURL *url = [Settings manager].urlForMaps;
     NSMutableArray *serverMaps = [self fetchMapListFromURL:url];
     if (serverMaps) {
         [self syncCacheWithServerMaps:serverMaps];

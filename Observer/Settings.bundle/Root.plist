@@ -5,6 +5,32 @@
 	<key>PreferenceSpecifiers</key>
 	<array>
 		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Remote Services</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSTextFieldSpecifier</string>
+			<key>Title</key>
+			<string>Maps</string>
+			<key>Key</key>
+			<string>url_for_maps</string>
+			<key>DefaultValue</key>
+			<string>http://akrgis.nps.gov/observer/maps/maplist.json</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSTextFieldSpecifier</string>
+			<key>Title</key>
+			<string>Protocols</string>
+			<key>Key</key>
+			<string>url_for_protocols</string>
+			<key>DefaultValue</key>
+			<string>http://akrgis.nps.gov/observer/protocols/list.json</string>
+		</dict>
+		<dict>
 			<key>Title</key>
 			<string>Units of Measure</string>
 			<key>Type</key>

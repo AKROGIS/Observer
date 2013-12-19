@@ -26,11 +26,17 @@
 #define DEFAULTS_KEY_SORTED_SURVEY_LIST @"sorted_survey_list"
 #define DEFAULTS_DEFAULT_SORTED_SURVEY_LIST nil
 
-#define DEFAULTS_KEY_SHOW_REMOTE_MAPS @"showRemoteMaps"
+#define DEFAULTS_KEY_SHOW_REMOTE_MAPS @"show_remote_maps"
 #define DEFAULTS_DEFAULT_SHOW_REMOTE_MAPS NO
 
-#define DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS @"showRemoteProtocols"
+#define DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS @"show_remote_protocols"
 #define DEFAULTS_DEFAULT_SHOW_REMOTE_PROTOCOLS NO
+
+#define DEFAULTS_KEY_URL_FOR_MAPS @"url_for_maps"
+#define DEFAULTS_DEFAULT_URL_FOR_MAPS nil
+
+#define DEFAULTS_KEY_URL_FOR_PROTOCOLS @"url_for_protocols"
+#define DEFAULTS_DEFAULT_URL_FOR_PROTOCOLS nil
 
 #define DEFAULTS_KEY_AUTOPAN_ENABLED @"autopan_enabled"
 #define DEFAULTS_DEFAULT_AUTOPAN_ENABLED NO
@@ -185,6 +191,52 @@
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS];
     else
         [[NSUserDefaults standardUserDefaults] setBool:showRemoteProtocols forKey:DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS];
+}
+
+
+
+@synthesize urlForMaps = _urlForMaps;
+
+- (NSURL *)urlForMaps
+{
+    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_MAPS];
+    if ([value isKindOfClass:[NSString class]]) {
+        value = [NSURL URLWithString:value];
+    }
+    return value ?: DEFAULTS_DEFAULT_URL_FOR_MAPS;
+}
+
+- (void)setUrlForMaps:(NSURL *)urlForMaps
+{
+    NSString *string = urlForMaps.absoluteString;
+    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_MAPS]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_MAPS];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_MAPS];
+    }
+}
+
+
+
+@synthesize urlForProtocols = _urlForProtocols;
+
+- (NSURL *)urlForProtocols
+{
+    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_PROTOCOLS];
+    if ([value isKindOfClass:[NSString class]]) {
+        value = [NSURL URLWithString:value];
+    }
+    return value ?: DEFAULTS_DEFAULT_URL_FOR_PROTOCOLS;
+}
+
+- (void)setUrlForProtocols:(NSURL *)urlForProtocols
+{
+    NSString *string = urlForProtocols.absoluteString;
+    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_PROTOCOLS]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_PROTOCOLS];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_PROTOCOLS];
+    }
 }
 
 

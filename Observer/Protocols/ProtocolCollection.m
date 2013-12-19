@@ -31,6 +31,7 @@
 #import "SProtocol.h"
 #import "NSArray+map.h"
 #import "NSURL+unique.h"
+#import "Settings.h"
 
 @interface ProtocolCollection()
 @property (nonatomic, strong) NSMutableArray *localItems;  // of SProtocol
@@ -509,8 +510,7 @@ static ProtocolCollection *_sharedCollection = nil;
 //done on background thread
 - (BOOL)refreshRemoteProtocols;
 {
-    //FIXME: get URL from settings
-    NSURL *url = [NSURL URLWithString:@"http://akrgis.nps.gov/observer/protocols/list.json"];
+    NSURL *url = [Settings manager].urlForProtocols;
     NSMutableArray *serverProtocols = [self fetchProtocolListFromURL:url];
     if (serverProtocols) {
         [self syncCacheWithServerProtocols:serverProtocols];
