@@ -208,9 +208,7 @@ typedef enum {
         self.panButton.style = UIBarButtonItemStyleBordered;
         self.panStyleButton.enabled = NO;
     }
-    [self checkIfMapIsRotated];
     _userWantsAutoPanOn = userWantsAutoPanOn;
-
     [Settings manager].autoPanEnabled = userWantsAutoPanOn;
 }
 
@@ -220,7 +218,6 @@ typedef enum {
     {
         _savedAutoPanMode = savedAutoPanMode;
         [Settings manager].autoPanMode = savedAutoPanMode;
-        [self checkIfMapIsRotated];
     }
 }
 
@@ -268,14 +265,12 @@ typedef enum {
 }
 
 - (IBAction)resetNorth:(UIButton *)sender {
-    NSLog(@"Reset North");
     [self.mapView setRotationAngle:0 animated:YES];
     [self stopHeadingUpdates];
-    CATransition *animation = [CATransition animation];
-    animation.type = kCATransitionFade;
-    animation.duration = 0.4;
-    [sender.layer addAnimation:animation forKey:nil];
-    sender.hidden = YES;
+    if (!self.isRecording) {
+        [self stopLocationUpdates];
+    }
+    [self hideNorthArrow];
 }
 
 - (IBAction)togglePanMode:(UIBarButtonItem *)sender {
@@ -354,6 +349,14 @@ typedef enum {
     Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
     [self setAttributesForObservation:observation atPoint:self.mapView.mapAnchor];
+}
+
+- (IBAction)rotateMap:(UIRotationGestureRecognizer *)sender
+{
+    // Map rotation is done internally by ArcGIS,
+    // I recognize this gesture so I can put up the north arrow when the map is rotated.
+    [self showNorthArrow];
+    [self rotateNorthArrow];
 }
 
 //- (IBAction)clearData:(UIBarButtonItem *)sender
@@ -949,20 +952,27 @@ typedef enum {
     }
 }
 
-- (void) checkIfMapIsRotated
+- (void) showNorthArrow
 {
-    //FIXME: there is too much delay before the compass appears
-    if (self.mapView.rotationAngle != 0)
+    if (self.northButton2.hidden)
     {
-        if (self.northButton2.hidden)
-        {
+        CATransition *animation = [CATransition animation];
+        animation.type = kCATransitionFade;
+        animation.duration = 0.4;
+        [self.northButton2.layer addAnimation:animation forKey:nil];
+        self.northButton2.hidden = NO;
+    }
+}
 
-            //CATransition *animation = [CATransition animation];
-            //animation.type = kCATransitionFade;
-            //animation.duration = 0.4;
-            //[self.northButton2.layer addAnimation:animation forKey:nil];
-            self.northButton2.hidden = NO;
-        }
+- (void) hideNorthArrow
+{
+    if (!self.northButton2.hidden)
+    {
+        CATransition *animation = [CATransition animation];
+        animation.type = kCATransitionFade;
+        animation.duration = 0.4;
+        [self.northButton2.layer addAnimation:animation forKey:nil];
+        self.northButton2.hidden = YES;
     }
 }
 

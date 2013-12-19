@@ -159,6 +159,11 @@
                         <action selector="tap:" destination="TiC-11-YSU" id="iKZ-Qu-QA7"/>
                     </connections>
                 </tapGestureRecognizer>
+                <rotationGestureRecognizer cancelsTouchesInView="NO" id="zwR-0I-sp9">
+                    <connections>
+                        <action selector="rotateMap:" destination="TiC-11-YSU" id="JXr-iI-nC3"/>
+                    </connections>
+                </rotationGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="580" y="-1203"/>
         </scene>
