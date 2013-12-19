@@ -72,7 +72,7 @@
 - (NSURL *)documentsDirectory
 {
     if (!_documentsDirectory) {
-        _documentsDirectory = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+        _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
     }
     return _documentsDirectory;
 }

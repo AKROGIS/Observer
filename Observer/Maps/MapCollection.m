@@ -44,7 +44,7 @@
 - (NSURL *)documentsDirectory
 {
     if (!_documentsDirectory) {
-        _documentsDirectory = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+        _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
     }
     return _documentsDirectory;
 }
@@ -52,7 +52,7 @@
 - (NSURL *)cacheFile
 {
     if (!_cacheFile) {
-        _cacheFile = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask][0];
+        _cacheFile = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
         _cacheFile = [_cacheFile URLByAppendingPathComponent:@"map_list.cache"];
     }
     return _cacheFile;
@@ -63,13 +63,19 @@
 
 - (Map *)localMapAtIndex:(NSUInteger)index
 {
-    //if (self.localItems.count <= index) return; //safety check
+    if (self.localItems.count <= index) {
+        NSLog(@"Array index out of bounds in [MapCollection localMapAtIndex:%d]; size = %d",index,self.localItems.count);
+        return nil;
+    }
     return self.localItems[index];
 }
 
 - (Map *)remoteMapAtIndex:(NSUInteger)index
 {
-    //if (self.remoteItems.count <= index) return; //safety check
+    if (self.remoteItems.count <= index) {
+        NSLog(@"Array index out of bounds in [MapCollection remoteMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
+        return nil;
+    }
     return self.remoteItems[index];
 }
 
@@ -85,7 +91,10 @@
 
 -(void)removeLocalMapAtIndex:(NSUInteger)index
 {
-    //if (self.localItems.count <= index) return; //safety check
+    if (self.localItems.count <= index) {
+        NSLog(@"Array index out of bounds in [MapCollection removeLocalMapAtIndex:%d] size = %d",index,self.localItems.count);
+        return;
+    }
     Map *item = [self localMapAtIndex:index];
     [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:item.thumbnailUrl error:nil];
@@ -98,7 +107,10 @@
 
 -(void)moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
-    //if (self.localItems.count <= fromIndex || self.localItems.count <= toIndex) return;  //safety check
+    if (self.localItems.count <= fromIndex || self.localItems.count <= toIndex) {
+        NSLog(@"Array index out of bounds in [MapCollection moveLocalMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.localItems.count);
+        return;
+    }
     if (fromIndex == toIndex)
         return;
 
@@ -124,7 +136,10 @@
 
 -(void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
-    //if (self.localItems.count <= fromIndex || self.localItems.count <= toIndex) return;  //safety check
+    if (self.remoteItems.count <= fromIndex || self.remoteItems.count <= toIndex) {
+        NSLog(@"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.remoteItems.count);
+        return;
+    }
     if (fromIndex == toIndex)
         return;
     id temp = self.remoteItems[fromIndex];
@@ -225,12 +240,19 @@ static MapCollection *_sharedCollection = nil;
 
 -(void)prepareToDownloadMapAtIndex:(NSUInteger)index
 {
-    //if (self.remoteItems.count <= index) return; //safety check
+    if (self.remoteItems.count <= index) {
+        NSLog(@"Array index out of bounds in [MapCollection prepareToDownloadMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
+        return;
+    }
     [self.remoteItems[index] prepareToDownload];
 }
 
 - (void)cancelDownloadMapAtIndex:(NSUInteger)index
 {
+    if (self.remoteItems.count <= index) {
+        NSLog(@"Array index out of bounds in [MapCollection cancelDownloadMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
+        return;
+    }
     [self.remoteItems[index] stopDownload];
 }
 
@@ -265,6 +287,10 @@ static MapCollection *_sharedCollection = nil;
 
 - (void) moveRemoteMapAtIndex:(NSUInteger)fromIndex toLocalMapAtIndex:(NSUInteger)toIndex
 {
+    if (self.remoteItems.count <= fromIndex || self.localItems.count <= toIndex) {
+        NSLog(@"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toLocalMapAtIndex:%d] size = (%d,%d)",fromIndex,toIndex,self.remoteItems.count,self.localItems.count);
+        return;
+    }
     Map *map = [self.remoteItems objectAtIndex:fromIndex];
     [self.remoteItems removeObjectAtIndex:fromIndex];
     [self.delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex]];

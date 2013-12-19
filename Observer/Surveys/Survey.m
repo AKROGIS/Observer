@@ -76,7 +76,7 @@
         return nil;
     }
     //find a suitable URL (reads filesystem)
-    NSURL *documentsDirectory = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+    NSURL *documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
     NSString *filename = [NSString stringWithFormat:@"%@.%@", protocol.title, SURVEY_EXT];
     //the trailing slash is added because it is a directory, and this standardizes the URL for comparisons
     NSURL *url = [[[documentsDirectory URLByAppendingPathComponent:filename] URLByUniquingPath] URLByAppendingPathComponent:@"/"];

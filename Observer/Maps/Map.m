@@ -301,7 +301,7 @@
 
 - (NSURL *)thumbnailUrlForMapName:(NSString *)name
 {
-    NSURL *library = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask][0];
+    NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     NSURL *folder = [library URLByAppendingPathComponent:@"mapthumbs" isDirectory:YES];
     if (![[NSFileManager defaultManager] fileExistsAtPath:[folder path]]) {
         [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
@@ -449,7 +449,7 @@
     }
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (!self.destinationURL) {
-        NSURL *documentsDirectory = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+        NSURL *documentsDirectory = [[fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
         NSURL *originalURL = downloadTask.originalRequest.URL;
         self.destinationURL = [documentsDirectory URLByAppendingPathComponent:originalURL.lastPathComponent];
     }

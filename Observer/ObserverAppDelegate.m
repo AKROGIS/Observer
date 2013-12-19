@@ -71,7 +71,7 @@
         vc = self.window.rootViewController;
     } else {
         UINavigationController *nav = (UINavigationController *)self.window.rootViewController;
-        vc = nav.viewControllers[0];
+        vc = [nav.viewControllers  firstObject];;
     }
     if ([vc isKindOfClass:[ObserverMapViewController class]]) {
         return (ObserverMapViewController *)vc;

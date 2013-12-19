@@ -504,8 +504,8 @@ typedef enum {
 
     if ([[segue identifier] isEqualToString:@"AngleDistancePopOver"])
     {
-        AngleDistanceViewController *vc = (AngleDistanceViewController *)nav.viewControllers[0];
-
+        AngleDistanceViewController *vc = (AngleDistanceViewController*)[nav.viewControllers firstObject];
+        
         //create/save current GpsPoint, because it may take a while for the user to enter an angle/distance
         GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
         AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
@@ -542,7 +542,7 @@ typedef enum {
     }
 
     if ([segue.identifier isEqualToString:@"Select Survey"]){
-        SurveySelectViewController *vc = (SurveySelectViewController *)nav.childViewControllers[0];
+        SurveySelectViewController *vc = (SurveySelectViewController *)[nav.childViewControllers firstObject];
         vc.title = segue.identifier;
         vc.items = self.surveys;
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
@@ -559,7 +559,7 @@ typedef enum {
     }
 
     if ([segue.identifier isEqualToString:@"Select Map"]) {
-        MapSelectViewController *vc = (MapSelectViewController *)nav.childViewControllers[0];
+        MapSelectViewController *vc = (MapSelectViewController *)[nav.childViewControllers firstObject];
         vc.title = segue.identifier;
         vc.items = self.maps;
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
@@ -597,7 +597,7 @@ typedef enum {
     }
     if ([popoverController.contentViewController isKindOfClass:[UINavigationController class]]) {
         UINavigationController *nav = (UINavigationController *)popoverController.contentViewController;
-        if ([nav.viewControllers[0] isKindOfClass:[SurveySelectViewController class]]) {
+        if ([[nav.viewControllers firstObject] isKindOfClass:[SurveySelectViewController class]]) {
             [self updateTitle]; //user may have edit the title without changing the selection.
         }
     }
@@ -1065,7 +1065,7 @@ typedef enum {
 {
     NSLog(@"saving attributes");
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    AttributeViewController *dialog = self.modalAttributeCollector.viewControllers[0];
+    AttributeViewController *dialog = [self.modalAttributeCollector.viewControllers firstObject];
     [dialog.root fetchValueUsingBindingsIntoObject:dict];
     NSManagedObject *obj = dialog.managedObject;
     for (NSString *aKey in dict){
