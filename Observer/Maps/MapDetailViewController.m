@@ -11,6 +11,8 @@
 #import "AKRDirectionIndicatorView.h"
 #import "Settings.h"
 
+#define TEXTMARGINS 60  //2*30pts
+
 @interface MapDetailViewController ()
 
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
@@ -29,15 +31,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //FIXME: Remove this magic number, but keep the autolayout height of uilabel with 0 lines
-    self.nameLabel.preferredMaxLayoutWidth = 360;
+    self.nameLabel.preferredMaxLayoutWidth = self.preferredContentSize.width - TEXTMARGINS;
     self.nameLabel.text = self.map.title;
     self.authorLabel.text = self.map.author;
     self.dateLabel.text = [self.map.date stringWithMediumDateFormat];
     [self updateSizeUI];
     [self setupLocationUI];
-    //FIXME: Remove this magic number, but keep the autolayout height of uilabel with 0 lines
-    self.descriptionLabel.preferredMaxLayoutWidth = 360;
+    self.descriptionLabel.preferredMaxLayoutWidth = self.preferredContentSize.width - TEXTMARGINS;
     self.descriptionLabel.text = self.map.description;
     self.thumbnailImageView.image = self.map.thumbnail;
 }
