@@ -9,6 +9,8 @@
 #import "AngleDistanceViewController.h"
 #import "AngleDistanceSettingsTableViewController.h"
 
+#define TEXTMARGINS 60  //2*30pts
+
 @interface AngleDistanceViewController ()
 
 @property (weak, nonatomic) IBOutlet UILabel *detailsLabel;
@@ -28,6 +30,14 @@
 
 @implementation AngleDistanceViewController
 
+- (void)awakeFromNib
+{
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        self.preferredContentSize = CGSizeMake(320.0, 216.0);
+    }
+    [super awakeFromNib];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -37,8 +47,7 @@
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(settingsDidChange:) name:NSUserDefaultsDidChangeNotification object:nil];
-    //FIXME: do not use a "magic" number
-    self.detailsLabel.preferredMaxLayoutWidth = 280;
+    self.detailsLabel.preferredMaxLayoutWidth = self.preferredContentSize.width - TEXTMARGINS;
     [self resizeView];
     [[self.view viewWithTag:1] becomeFirstResponder];
 }
