@@ -16,6 +16,7 @@
 #import "Map.h"
 #import "NSDate+Formatting.h"
 #import "NSURL+unique.h"
+#import "Settings.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -377,8 +378,8 @@
     }
 
     double areakm = [[AGSGeometryEngine defaultGeometryEngine] shapePreservingAreaOfGeometry:self.extents inUnit:AGSAreaUnitsSquareKilometers];
-    //TODO: query settings for a metric/SI preference
-    if (YES) {
+    AGSSRUnit units = [Settings manager].distanceUnitsForMeasuring;
+    if (units == AGSSRUnitMeter || units == AGSSRUnitKilometer) {
         return [NSString stringWithFormat:@"%@ sq km", [Map formatArea:areakm]];
     } else {
         double areami = areakm * 0.386102;

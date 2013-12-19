@@ -9,10 +9,9 @@
 #import "MapDetailViewController.h"
 #import "NSDate+Formatting.h"
 #import "AKRDirectionIndicatorView.h"
+#import "Settings.h"
 
-@interface MapDetailViewController () {
-    CLLocationManager *_locationManager;
-}
+@interface MapDetailViewController ()
 
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *authorLabel;
@@ -22,7 +21,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *thumbnailImageView;
 @property (weak, nonatomic) IBOutlet AKRDirectionIndicatorView *directionIndicatorView;
-
+@property (nonatomic, strong) CLLocationManager *locationManager;
 @end
 
 @implementation MapDetailViewController
@@ -35,43 +34,49 @@
     self.nameLabel.text = self.map.title;
     self.authorLabel.text = self.map.author;
     self.dateLabel.text = [self.map.date stringWithMediumDateFormat];
-    self.sizeLabel.text = [NSString stringWithFormat:@"%@ on %@\n%@", self.map.byteSizeString, (self.map.isLocal ? @"device" : @"server"), self.map.arealSizeString];
-    [self setLocationText];
+    [self updateSizeUI];
+    [self setupLocationUI];
     //FIXME: Remove this magic number, but keep the autolayout height of uilabel with 0 lines
     self.descriptionLabel.preferredMaxLayoutWidth = 360;
     self.descriptionLabel.text = self.map.description;
     self.thumbnailImageView.image = self.map.thumbnail;
 }
 
-- (void)viewDidDisappear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
-    [_locationManager stopMonitoringSignificantLocationChanges];
-    _locationManager.delegate = nil;
+    [super viewWillAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(unitsChanged) name:NSUserDefaultsDidChangeNotification object:nil];
 }
 
-- (void)setLocationText
+- (void)viewWillDisappear:(BOOL)animated
 {
-    //NSLog(@"locationServicesEnabled: %d",[CLLocationManager locationServicesEnabled]);
-    //NSLog(@"locationServicesAuthorized: %d",[CLLocationManager authorizationStatus]);
+    [super viewWillDisappear:animated];
+    [self.locationManager stopMonitoringSignificantLocationChanges];
+    self.locationManager.delegate = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)setupLocationUI
+{
     if (![CLLocationManager locationServicesEnabled]) {
         self.locationLabel.text = @"Location unavailable";
         return;
     }
     if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
         //ask for permission by trying
-        _locationManager = [CLLocationManager new];
-        _locationManager.delegate = self;
-        [_locationManager startMonitoringSignificantLocationChanges];
+        self.locationManager = [CLLocationManager new];
+        self.locationManager.delegate = self;
+        [self.locationManager startMonitoringSignificantLocationChanges];
     }
     if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized)
     {
         self.locationLabel.text = @"Location not authorized";
         return;
     }
-    if (!_locationManager) {
-        _locationManager = [CLLocationManager new];
-        _locationManager.delegate = self;
-        [_locationManager startMonitoringSignificantLocationChanges];
+    if (!self.locationManager) {
+        self.locationManager = [CLLocationManager new];
+        self.locationManager.delegate = self;
+        [self.locationManager startMonitoringSignificantLocationChanges];
     }
     self.locationLabel.text = @"Waiting for current location ...";
 }
@@ -83,22 +88,44 @@
     if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
     {
         self.locationLabel.text = @"Waiting for current location ...";
-        [_locationManager startMonitoringSignificantLocationChanges];
+        [self.locationManager startMonitoringSignificantLocationChanges];
     } else {
         self.locationLabel.text = @"Location not authorized";
-        if (_locationManager) {
-            [_locationManager stopMonitoringSignificantLocationChanges];
+        if (self.locationManager) {
+            [self.locationManager stopMonitoringSignificantLocationChanges];
         }
     }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    AKRAngleDistance *angleDistance = [self.map angleDistanceFromLocation:[locations lastObject]];
+    [self updateLocationUIWithLocation:[locations lastObject]];
+}
+
+#pragma mark - NSNotification callbacks
+
+- (void)unitsChanged
+{
+    [self updateSizeUI];
+    if (self.locationManager) {
+        [self updateLocationUIWithLocation:self.locationManager.location];
+    }
+}
+
+#pragma mark - private functions
+
+- (void)updateLocationUIWithLocation:(CLLocation *)location
+{
+    AKRAngleDistance *angleDistance = [self.map angleDistanceFromLocation:location];
     NSString *distanceString = [self distanceStringFromKilometers:angleDistance.kilometers];
     self.locationLabel.text = distanceString;
     self.directionIndicatorView.azimuth = angleDistance.azimuth;
     self.directionIndicatorView.azimuthUnknown = angleDistance.kilometers <= 0;
+}
+
+- (void)updateSizeUI
+{
+    self.sizeLabel.text = [NSString stringWithFormat:@"%@ on %@\n%@", self.map.byteSizeString, (self.map.isLocal ? @"device" : @"server"), self.map.arealSizeString];
 }
 
 #pragma mark - formatting
@@ -122,40 +149,13 @@
     if (kilometers == 0) {
         return @"On map!";
     }
-    //TODO: query settings for a metric/SI preference
-    if (YES) {
+    AGSSRUnit units = [Settings manager].distanceUnitsForMeasuring;
+    if (units == AGSSRUnitMeter || units == AGSSRUnitKilometer) {
         return [NSString stringWithFormat:@"%@ km", [MapDetailViewController formatLength:kilometers]];
     } else {
         double miles = kilometers * 0.621371;
         return [NSString stringWithFormat:@"%@ mi", [MapDetailViewController formatLength:miles]];
     }
 }
-
-- (NSString *)directionStringFromAzimuth:(double)rawAzimuth
-{
-    double azimuth = rawAzimuth < 0 ? 360+rawAzimuth : rawAzimuth;
-    if (azimuth < 0)
-        return @"Unknown";
-    if (azimuth < 30)
-        return @"N";
-    if (azimuth < 60)
-        return @"NE";
-    if (azimuth < 120)
-        return @"E";
-    if (azimuth < 150)
-        return @"SE";
-    if (azimuth < 210)
-        return @"S";
-    if (azimuth < 240)
-        return @"SW";
-    if (azimuth < 300)
-        return @"W";
-    if (azimuth < 330)
-        return @"NW";
-    if (azimuth <= 360)
-        return @"N";
-    return @"Unknown";
-}
-
 
 @end
