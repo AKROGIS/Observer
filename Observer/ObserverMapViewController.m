@@ -42,9 +42,6 @@ typedef enum {
 
 @interface ObserverMapViewController ()
 
-//@property (strong, nonatomic) BaseMapManager *oldMapList;
-//@property (strong, nonatomic) SurveyProtocol *protocol;
-@property (strong, nonatomic) Survey *survey;
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
 @property (weak, nonatomic) IBOutlet UILabel *noMapLabel;
@@ -65,16 +62,22 @@ typedef enum {
 @property (nonatomic) BOOL userWantsAutoPanOn;
 @property (nonatomic) AGSLocationDisplayAutoPanMode savedAutoPanMode;
 @property (strong, nonatomic) CLLocationManager *locationManager;
+@property (nonatomic) BOOL locationServicesAvailable;
+@property (nonatomic) BOOL userWantsLocationUpdates;
+@property (nonatomic) BOOL userWantsHeadingUpdates;
+@property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
+@property (strong, nonatomic) CLHeading *currentHeading;
+
 @property (strong, nonatomic) AGSGraphicsLayer *observationsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsPointsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsTracksLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *missionPropertiesLayer;
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
-@property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
 @property (nonatomic) int busyCount;
 
+@property (strong, nonatomic) Survey *survey;
 @property (strong, nonatomic) SurveyCollection* surveys;
 @property (strong, nonatomic) MapCollection* maps;
 @property (strong, nonatomic) UIPopoverController *quickDialogPopoverController;
@@ -118,8 +121,29 @@ typedef enum {
 
 - (CLLocationManager *)locationManager
 {
-    if (!_locationManager)
+    if (!_locationManager) {
+        self.locationServicesAvailable = NO;
+        //create manager and register as a delegate even if service are unavailable to get changes in authorization (via settings)
         _locationManager = [[CLLocationManager alloc] init];
+        _locationManager.delegate = self;
+
+        if (![CLLocationManager locationServicesEnabled]) {
+            NSLog(@"Location Services Not Enabled");
+        } else {
+            if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
+                NSLog(@"Triggering a request for permission to use Location Services.");
+                [_locationManager startUpdatingLocation];
+                [_locationManager stopUpdatingLocation];
+            }
+            if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
+            {
+                self.locationServicesAvailable = YES;
+                NSLog(@"Location Services Avaialble and Authorized");
+            } else {
+                NSLog(@"Location Services NOT Authorized");
+            }
+        }
+    }
     return _locationManager;
 }
 
@@ -240,6 +264,7 @@ typedef enum {
 - (IBAction)resetNorth:(UIButton *)sender {
     NSLog(@"Reset North");
     [self.mapView setRotationAngle:0 animated:YES];
+    [self stopHeadingUpdates];
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionFade;
     animation.duration = 0.4;
@@ -249,6 +274,7 @@ typedef enum {
 
 - (IBAction)togglePanMode:(UIBarButtonItem *)sender {
     self.userWantsAutoPanOn = !self.userWantsAutoPanOn;
+    [self startStopLocationServicesForPanMode];
 }
 
 - (IBAction)togglePanStyle:(UIBarButtonItem *)sender {
@@ -257,7 +283,8 @@ typedef enum {
         return;
     self.mapView.locationDisplay.autoPanMode = 1 + (self.mapView.locationDisplay.autoPanMode%3);
     self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
-    self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];    
+    self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];
+    [self startStopLocationServicesForPanMode];
 }
 
 - (IBAction)startStopRecording:(UIBarButtonItem *)sender
@@ -351,7 +378,6 @@ typedef enum {
 
 - (void)viewDidLoad
 {
-    NSLog(@"View Did Load");
     [super viewDidLoad];
     self.noMapLabel.hidden = YES;
     self.busy = YES;
@@ -447,7 +473,6 @@ typedef enum {
 }
 
 - (void) viewDidAppear:(BOOL)animated {
-    NSLog(@"View Did Appear");
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapDidPan:) name:AGSMapViewDidEndPanningNotification object:self.mapView];
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapDidZoom:) name:AGSMapViewDidEndZoomingNotification object:self.mapView];
     [super viewDidAppear:animated];
@@ -455,7 +480,6 @@ typedef enum {
 
 - (void) viewDidDisappear:(BOOL)animated
 {
-    NSLog(@"View Did Disappear");
     [[NSNotificationCenter defaultCenter] removeObserver:self name:AGSMapViewDidEndPanningNotification object:self.mapView];
     [super viewDidDisappear:animated];
 }
@@ -578,8 +602,10 @@ typedef enum {
 - (void) mapDidPan:(NSNotification *)notification
 {
     //user panning will turn off the autopan mode, so I need to update the toolbar button.
-    if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeOff)
+    if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeOff) {
         self.userWantsAutoPanOn = NO;
+        [self startStopLocationServicesForPanMode];
+    }
 }
 
 
@@ -766,27 +792,54 @@ typedef enum {
 
 #pragma mark - CLLocationManagerDelegate Protocol
 
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
+    {
+        self.locationServicesAvailable = YES;
+        NSLog(@"Location services authorized");
+        if (self.userWantsHeadingUpdates) {
+            [self.locationManager startUpdatingHeading];
+        }
+        if (self.userWantsLocationUpdates) {
+            [self.locationManager startUpdatingLocation];
+        }
+    } else {
+        NSLog(@"Location services have been deauthorized");
+        if (self.locationServicesAvailable) {
+            self.locationServicesAvailable = NO;
+            if (self.userWantsHeadingUpdates) {
+                [self.locationManager stopUpdatingHeading];
+            }
+            if (self.userWantsLocationUpdates) {
+                [self.locationManager stopUpdatingLocation];
+            }
+         }
+    }
+}
+
 - (void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    [self rotateNorthArrow];
+    //[self rotateNorthArrow];
 
     //monitor the velocity to auto switch between AGSLocation Auto Pan Mode between navigation and heading
+    //TODO: check how many locations might be returned (are we missing any?)
     CLLocation *location = [locations lastObject];
 #pragma warn - simulator returns -1 for speed, so ignore it for testing.  remove from production code.
     //if (!location || location.speed < 0)
     if (!location)
         return;
     
-    if (![self isNewLocation:location])
-        return;
-    
-    GpsPoint *gpsPoint = [self createGpsPoint:location];
-    //[self drawGpsPoint:gpsPoint atMapPoint:self.mapView.locationDisplay.mapLocation];
-    //requires a reprojection of the point, but i'm not sure mapLocation and CLlocation will be in sync.
-    [self drawGpsPoint:gpsPoint];
-    
-    //NSLog(@"Got a new location %@",location);
-    
+    if (self.isRecording) {
+        if (![self isNewLocation:location]) {
+            GpsPoint *gpsPoint = [self createGpsPoint:location];
+            //[self drawGpsPoint:gpsPoint atMapPoint:self.mapView.locationDisplay.mapLocation];
+            //requires a reprojection of the point, but i'm not sure mapLocation and CLlocation will be in sync.
+            [self drawGpsPoint:gpsPoint];
+        }
+    }
+
+    //use the speed to update the autorotation behavior
     if (location.speed < MINIMUM_NAVIGATION_SPEED &&
         self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation)
     {
@@ -799,7 +852,6 @@ typedef enum {
         self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
         self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
     }
-
 }
 
 - (void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
@@ -808,7 +860,17 @@ typedef enum {
     //didn't help, because it does the rotation in the c++ backend, not through the UIView or AGSMapView interface
     //Maybe I should try turning off the AutoRotate mode of the mapView LocationDisplay and do the
     //rotations myself.
-    [self rotateNorthArrow];
+    float diff = fabsf(newHeading.trueHeading - self.currentHeading.trueHeading); //degrees
+    if (2.0 < diff) {
+        [self rotateNorthArrow];
+        self.currentHeading = newHeading;
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+{
+    //TODO: put up an alertview
+    NSLog(@"Location Manager Failed: %@",error.localizedDescription);
 }
 
 #pragma mark - Private Methods
@@ -820,25 +882,64 @@ typedef enum {
     [self.mapView.locationDisplay startDataSource];
     //self.gpsButton.style = UIBarButtonItemStyleDone;
     self.panButton.enabled = YES;
-    
     self.userWantsAutoPanOn = [Settings manager].autoPanEnabled;
-    
     self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];
-    
-    //AGSLocationDisplay does not have a delegate or provide notifications,  If we want location events we need our own CLLocationManager
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
-    {
-        self.locationManager.delegate = self;
-        [self.locationManager startUpdatingLocation];
-    }
+    [self startStopLocationServicesForPanMode];
 }
 
 - (void) turnOffGPS
 {
+    //TODO: Method is not used - remove or use
     [self.mapView.locationDisplay stopDataSource];
     //self.gpsButton.style = UIBarButtonItemStyleBordered;
     self.panButton.enabled = NO;
     self.panStyleButton.enabled = NO;
+    [self stopHeadingUpdates];
+    [self stopLocationUpdates];
+}
+
+- (void)startStopLocationServicesForPanMode
+{
+    if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation ||
+        self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation) {
+        [self startHeadingUpdates];
+        [self startLocationUpdates]; //monitor speed to switch between navigation modes
+    } else {
+        [self stopHeadingUpdates];
+        [self stopLocationUpdates];
+    }
+}
+
+- (void) startHeadingUpdates
+{
+    self.userWantsHeadingUpdates = YES;
+    if (self.locationServicesAvailable) {
+        [self.locationManager startUpdatingHeading];
+    }
+}
+
+- (void) stopHeadingUpdates
+{
+    self.userWantsHeadingUpdates = NO;
+    if (self.locationServicesAvailable) {
+        [self.locationManager stopUpdatingHeading];
+    }
+}
+
+- (void) startLocationUpdates
+{
+    self.userWantsLocationUpdates = YES;
+    if (self.locationServicesAvailable) {
+        [self.locationManager startUpdatingLocation];
+    }
+}
+
+- (void) stopLocationUpdates
+{
+    self.userWantsLocationUpdates = NO;
+    if (self.locationServicesAvailable) {
+        [self.locationManager stopUpdatingLocation];
+    }
 }
 
 - (void) checkIfMapIsRotated
@@ -848,18 +949,13 @@ typedef enum {
     {
         if (self.northButton2.hidden)
         {
+
             //CATransition *animation = [CATransition animation];
             //animation.type = kCATransitionFade;
             //animation.duration = 0.4;
             //[self.northButton2.layer addAnimation:animation forKey:nil];
             self.northButton2.hidden = NO;
         }
-    }
-    //FIXME: what was I trying to do here?
-    if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation ||
-        self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation)
-    {
-        //self.northButton2.enabled = NO;
     }
 }
 
@@ -1249,7 +1345,7 @@ typedef enum {
     //0.0001 deg in latitude is about 18cm (<1foot) assuming a mean radius of 6371m, and less in longitude away from the equator. 
     if (fabs(location.coordinate.latitude - self.lastGpsPointSaved.latitude) > 0.0001)
         return YES;
-    if (fabs(location.coordinate.latitude - self.lastGpsPointSaved.latitude) > 0.0001)
+    if (fabs(location.coordinate.longitude - self.lastGpsPointSaved.longitude) > 0.0001)
         return YES;
     //FIXME: is 10 seconds a good default?  do I want a user setting? this gets called a lot, so I don't want to slow down with a lookup
     if ([location.timestamp timeIntervalSinceDate:self.lastGpsPointSaved.timestamp] > 10.0)
@@ -1302,7 +1398,7 @@ typedef enum {
     self.isRecording = YES;
     self.startStopObservingBarButtonItem.enabled = YES;
     [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:NO];
-    [self turnOnGPS];
+    [self startLocationUpdates];
     //[self updateButtons];
 }
 
@@ -1317,7 +1413,7 @@ typedef enum {
     }
     self.startStopObservingBarButtonItem.enabled = NO;
     [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:YES];
-    [self turnOffGPS];
+    [self stopLocationUpdates];
     [self.survey saveWithCompletionHandler:nil];
 }
 
