@@ -188,6 +188,12 @@ typedef enum {
     return _savedAutoPanMode;
 }
 
+- (BOOL)locationServicesAvailable
+{
+    //this value is undefined if the there is no locationManager
+    return !self.locationManager ? NO : _locationServicesAvailable;
+}
+
 - (void) setUserWantsAutoPanOn:(BOOL)userWantsAutoPanOn
 {
     if (userWantsAutoPanOn)
@@ -820,12 +826,11 @@ typedef enum {
 
 - (void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    //[self rotateNorthArrow];
+    //NSLog(@"locationManager: didUpdateLocations:%@",locations);
 
-    //monitor the velocity to auto switch between AGSLocation Auto Pan Mode between navigation and heading
     //TODO: check how many locations might be returned (are we missing any?)
     CLLocation *location = [locations lastObject];
-#pragma warn - simulator returns -1 for speed, so ignore it for testing.  remove from production code.
+    //TODO: simulator returns -1 for speed, so ignore it for testing.  remove from production code.
     //if (!location || location.speed < 0)
     if (!location)
         return;
@@ -856,6 +861,8 @@ typedef enum {
 
 - (void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
+    //NSLog(@"locationManager: didUpdateHeading:%@",newHeading);
+    
     //This is choppy, because it isn't synchronized with the map rotation.  Unfortunately, subclassing AGSMapView
     //didn't help, because it does the rotation in the c++ backend, not through the UIView or AGSMapView interface
     //Maybe I should try turning off the AutoRotate mode of the mapView LocationDisplay and do the
