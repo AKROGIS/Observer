@@ -66,7 +66,6 @@ typedef enum {
 @property (nonatomic) BOOL userWantsLocationUpdates;
 @property (nonatomic) BOOL userWantsHeadingUpdates;
 @property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
-@property (strong, nonatomic) CLHeading *currentHeading;
 
 @property (strong, nonatomic) AGSGraphicsLayer *observationsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsPointsLayer;
@@ -260,8 +259,13 @@ typedef enum {
 
 #pragma mark - IBActions
 
-- (IBAction)tap:(UITapGestureRecognizer *)sender {
-    NSLog(@"User Tap");
+- (IBAction)rotateMap:(UIRotationGestureRecognizer *)sender
+{
+    //NSLog(@"User Rotating");
+    // Map rotation is done internally by ArcGIS, and no delegate messages or notifications are provided.
+    // I recognize this gesture so I can put up the north arrow when the map is rotated.
+    [self showNorthArrow];
+    [self rotateNorthArrow];
 }
 
 - (IBAction)resetNorth:(UIButton *)sender {
@@ -349,14 +353,6 @@ typedef enum {
     Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
     [self setAttributesForObservation:observation atPoint:self.mapView.mapAnchor];
-}
-
-- (IBAction)rotateMap:(UIRotationGestureRecognizer *)sender
-{
-    // Map rotation is done internally by ArcGIS,
-    // I recognize this gesture so I can put up the north arrow when the map is rotated.
-    [self showNorthArrow];
-    [self rotateNorthArrow];
 }
 
 //- (IBAction)clearData:(UIBarButtonItem *)sender
@@ -867,16 +863,16 @@ typedef enum {
 - (void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
     //NSLog(@"locationManager: didUpdateHeading:%@",newHeading);
-    
-    //This is choppy, because it isn't synchronized with the map rotation.  Unfortunately, subclassing AGSMapView
-    //didn't help, because it does the rotation in the c++ backend, not through the UIView or AGSMapView interface
-    //Maybe I should try turning off the AutoRotate mode of the mapView LocationDisplay and do the
-    //rotations myself.
-    float diff = fabsf(newHeading.trueHeading - self.currentHeading.trueHeading); //degrees
-    if (2.0 < diff) {
-        [self rotateNorthArrow];
-        self.currentHeading = newHeading;
-    }
+
+    //I get the headings to sync the north arrow with the maps rotation due to changes in the heading (when walking/standing)
+    //The mapview provides no delegates or notifications when it rotates.
+    //Unfortunately, subclassing AGSMapView didn't help, because it does the rotation in the c++ backend, not through the UIView or AGSMapView interface
+    //Maybe I should try turning off the AutoRotate mode of the mapView LocationDisplay and do the rotations myself.
+
+    //if we rotating the north arrow based on the current mapView rotation we will be late, due to the animated rotation of the mapview.
+    //[self rotateNorthArrow];
+    //if we rotating the north arrow based on the current heading we will be early, due to the animated rotation of the mapview.
+    [self rotateNorthArrow:newHeading];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
@@ -914,9 +910,13 @@ typedef enum {
 {
     if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation ||
         self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation) {
+        [self showNorthArrow];
         [self startHeadingUpdates];
         [self startLocationUpdates]; //monitor speed to switch between navigation modes
     } else {
+        if (self.mapView.rotationAngle == 0) {
+            [self hideNorthArrow];
+        }
         [self stopHeadingUpdates];
         [self stopLocationUpdates];
     }
@@ -980,10 +980,27 @@ typedef enum {
 
 - (void) rotateNorthArrow
 {
-    double degrees = -1*self.mapView.rotationAngle;
-    NSLog(@"Rotating compass icon to %f degrees", degrees);
-    double radians = degrees * M_PI / 180.0;
+    double degrees = self.mapView.rotationAngle;
+    //NSLog(@"Rotating compass icon to %f degrees", degrees);
     //angle in radians with positive being counterclockwise (on iOS)
+    double radians = -1*degrees * M_PI / 180.0;
+    self.northButton2.transform = CGAffineTransformMakeRotation(radians);
+}
+
+- (void) rotateNorthArrow:(CLHeading *)heading
+{
+    double degrees = heading.trueHeading;
+    double radians = -1 * degrees * M_PI / 180.0;
+    //TODO: use animation to keep the northarrow synced with the mapView
+//    CALayer *myLayer = self.northButton2.layer;
+//    NSNumber *rotationAtStart = [myLayer valueForKeyPath:@"transform.rotation"];
+//    CATransform3D myRotationTransform = CATransform3DRotate(myLayer.transform, radians, 0.0, 0.0, 1.0);
+//    myLayer.transform = myRotationTransform;
+//    CABasicAnimation *myAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
+//    myAnimation.duration = 0.2;
+//    myAnimation.fromValue = rotationAtStart;
+//    myAnimation.toValue = [NSNumber numberWithFloat:([rotationAtStart floatValue] + radians)];
+//    [myLayer addAnimation:myAnimation forKey:@"transform.rotation"];
     self.northButton2.transform = CGAffineTransformMakeRotation(radians);
 }
 
