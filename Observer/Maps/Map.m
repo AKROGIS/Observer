@@ -377,8 +377,12 @@
         NSURL *originalURL = downloadTask.originalRequest.URL;
         self.destinationURL = [documentsDirectory URLByAppendingPathComponent:originalURL.lastPathComponent];
     }
-    if (self.canReplace) {
-        [fileManager removeItemAtURL:self.destinationURL error:NULL];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[self.destinationURL path]]) {
+        if (self.canReplace) {
+            [fileManager removeItemAtURL:self.destinationURL error:NULL];
+        } else {
+            self.destinationURL = [self.destinationURL URLByUniquingPath];
+        }
     }
     BOOL success = [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];
     if (success) {

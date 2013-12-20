@@ -298,7 +298,7 @@
     self.refreshLabel.text = @"Looking for new maps...";
     self.isBackgroundRefreshing = YES;
     [self.items refreshWithCompletionHandler:^(BOOL success) {
-        //on abackground thread
+        //on background thread
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.refreshControl endRefreshing];
             self.isBackgroundRefreshing = NO;
@@ -333,7 +333,7 @@
                 cell.downloadView.percentComplete =  bytesWritten/bytesExpected;
             });
         };
-        map.completionAction = ^(NSURL *imageUrl, BOOL success) {
+        map.completionAction = ^(NSURL *mapUrl, BOOL success) {
             //on background thread
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {

@@ -1035,7 +1035,7 @@ typedef enum {
 - (void) reloadGraphics
 {
     if (!self.context || !self.mapView.loaded) {
-        NSLog(@"Can't load Graphics now context and/or map is not available.");
+        NSLog(@"Can't reload Graphics.  Context and/or map is not available.");
         return;
     }
     NSLog(@"Loading exisitng graphics from coredata");

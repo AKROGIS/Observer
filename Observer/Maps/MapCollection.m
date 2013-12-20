@@ -287,7 +287,7 @@ static MapCollection *_sharedCollection = nil;
 
 - (void) moveRemoteMapAtIndex:(NSUInteger)fromIndex toLocalMapAtIndex:(NSUInteger)toIndex
 {
-    if (self.remoteItems.count <= fromIndex || self.localItems.count <= toIndex) {
+    if (self.remoteItems.count <= fromIndex || self.localItems.count < toIndex) {
         NSLog(@"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toLocalMapAtIndex:%d] size = (%d,%d)",fromIndex,toIndex,self.remoteItems.count,self.localItems.count);
         return;
     }
