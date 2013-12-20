@@ -21,31 +21,25 @@
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
 #define kUrlKey           @"url"
-#define kThumbnailUrlKey  @"thumbnail"
-#define kTitleKey         @"name"
-#define kAuthorKey        @"author"
-#define kDateKey          @"date"
-#define kDescriptionKey   @"description"
-#define kSizeKey          @"size"
 #define kExtentsKey       @"extents"
 
 @interface Map()
 
+@property (nonatomic, strong, readwrite) NSURL *url;
 @property (nonatomic, strong, readwrite) NSString *title;
 @property (nonatomic, strong, readwrite) NSString *description;
 @property (nonatomic, strong, readwrite) NSString *author;
 @property (nonatomic, strong, readwrite) NSDate *date;
 @property (nonatomic, readwrite) NSUInteger byteCount;
 @property (nonatomic, readwrite) AGSEnvelope *extents;
+@property (nonatomic, strong, readwrite) NSURL *thumbnailUrl;
 
-@property (nonatomic) BOOL downloading;
-@property (nonatomic, strong, readwrite) NSURL *url;
 @property (nonatomic, strong, readwrite) UIImage *thumbnail;
 @property (nonatomic, strong, readwrite) AGSLocalTiledLayer *tileCache;
-@property (nonatomic, strong, readwrite) NSURL *thumbnailUrl;
 @property (nonatomic) BOOL thumbnailIsLoaded;
 @property (nonatomic) BOOL tileCacheIsLoaded;
 
+@property (nonatomic) BOOL downloading;
 //TODO: move to NSOperation
 @property (nonatomic, strong) NSURLSessionTask *downloadTask;
 
@@ -116,13 +110,13 @@
         map.description = [item isKindOfClass:[NSString class]] ? item : nil;
         item =  dictionary[kThumbnailUrlKey];
         map.thumbnailUrl = [item isKindOfClass:[NSString class]] ? [NSURL URLWithString:item] : nil;
-        item =  dictionary[@"xmin"];
+        item =  dictionary[kXminKey];
         CGFloat xmin = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-        item =  dictionary[@"ymin"];
+        item =  dictionary[kYminKey];
         CGFloat ymin = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-        item =  dictionary[@"xmax"];
+        item =  dictionary[kXmaxKey];
         CGFloat xmax = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-        item =  dictionary[@"ymax"];
+        item =  dictionary[kYmaxKey];
         CGFloat ymax = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
         if (xmin != 0  || ymin != 0 || xmax != 0 || ymax != 0 ) {
             map.extents = [[AGSEnvelope alloc] initWithXmin:xmin ymin:ymin xmax:xmax ymax:ymax spatialReference:[AGSSpatialReference wgs84SpatialReference]];
@@ -158,19 +152,18 @@
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeInt:kCodingVersion forKey:kCodingVersionKey];
-    [aCoder encodeObject:_url forKey:kUrlKey];
-    [aCoder encodeObject:_title forKey:kTitleKey];
-    [aCoder encodeObject:_author forKey:kAuthorKey];
-    [aCoder encodeObject:_date forKey:kDateKey];
-    [aCoder encodeObject:_description forKey:kDescriptionKey];
-    [aCoder encodeInteger:_byteCount forKey:kSizeKey];
-    [aCoder encodeObject:_thumbnailUrl forKey:kThumbnailUrlKey];
-    [aCoder encodeObject:[_extents encodeToJSON] forKey:kExtentsKey];
+    [aCoder encodeObject:self.url forKey:kUrlKey];
+    [aCoder encodeObject:self.title forKey:kTitleKey];
+    [aCoder encodeObject:self.author forKey:kAuthorKey];
+    [aCoder encodeObject:self.date forKey:kDateKey];
+    [aCoder encodeObject:self.description forKey:kDescriptionKey];
+    [aCoder encodeInteger:self.byteCount forKey:kSizeKey];
+    [aCoder encodeObject:self.thumbnailUrl forKey:kThumbnailUrlKey];
+    [aCoder encodeObject:[self.extents encodeToJSON] forKey:kExtentsKey];
 }
 
+
 #pragma mark - Lazy property initiallizers
-
-
 
 #pragma mark - AKRTableViewItem
 
@@ -205,6 +198,16 @@
     });
 }
 
+- (void)openTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+{
+    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
+        AGSLocalTiledLayer *tileCache = self.tileCache;
+        if (completionHandler) {
+            completionHandler(tileCache != nil);
+        }
+    });
+}
+
 - (UIImage *)thumbnail
 {
     if (!_thumbnail && !self.thumbnailIsLoaded) {
@@ -224,14 +227,6 @@
 
 #pragma mark - public methods
 
-- (BOOL)isLocal
-{
-    return self.url.isFileURL;
-}
-
-// I do not override isEqual to use this method, because title,version and date could change
-// when the values are accessed.  This would cause the hash value to change which can cause
-// all kinds of problems if the object is used in a dictionary or set.
 - (BOOL)isEqualtoMap:(Map *)other
 {
     // need to be careful with null properties.
@@ -240,6 +235,11 @@
     (self.byteCount == other.byteCount) &&
     ((self.author == other.author) || [self.author isEqual:other.author]) &&
     ((self.date == other.date) || [self.date isEqual:other.date]);
+}
+
+- (BOOL)isLocal
+{
+    return self.url.isFileURL;
 }
 
 - (void)prepareToDownload
@@ -252,46 +252,33 @@
     return self.downloading;
 }
 
+- (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location
+{
+    return [AKRAngleDistance angleDistanceFromLocation:location toGeometry:self.extents];
+}
 
-//- (BOOL)downloadToURL:(NSURL *)url
-//{
-//    //FIXME: use NSURLSession, and use delegate to provide progress indication
-//    BOOL success = NO;
-//    if (!self.isLocal && self.tileCache) {
-//        if ([self saveCopyToURL:url]) {
-//            _url = url;
-//            success = YES;
-//        } else {
-//            NSLog(@"Map.downloadToURL:  Got data but write to %@ failed",url);
-//        }
-//    } else {
-//        NSLog(@"Map.downloadToURL: Unable to get data at %@", self.url);
-//    }
-//    self.downloading = NO;
-//    return success;
-//}
+- (double)areaInKilometers
+{
+    if (!self.extents || self.extents.isEmpty) {
+        return -1;
+    }
+    return [[AGSGeometryEngine defaultGeometryEngine] shapePreservingAreaOfGeometry:self.extents inUnit:AGSAreaUnitsSquareKilometers];
+}
 
-//- (BOOL)saveCopyToURL:(NSURL *)url
-//{
-//    NSOutputStream *stream = [NSOutputStream outputStreamWithURL:url append:NO];
-//    [stream open];
-//    NSInteger numberOfBytesWritten = 0; //FIXME: get tilecache at remote URL and write to stream
-//    [stream close];
-//    return numberOfBytesWritten > 0;
-//}
 
+#pragma mark - loaders
 
 - (BOOL)loadThumbnail
 {
     self.thumbnailIsLoaded = YES;
     NSData *data = [NSData dataWithContentsOfURL:self.thumbnailUrl];
-//    if (![self.thumbnailUrl isFileReferenceURL]) {
-//        NSString *name = [[self.thumbnailUrl lastPathComponent] stringByDeletingPathExtension];
-//        NSURL *newUrl = [self thumbnailUrlForMapName:name];
-//        if ([data writeToURL:newUrl atomically:YES]) {
-//            self.thumbnailUrl = newUrl;
-//        }
-//    }
+    //    if (![self.thumbnailUrl isFileReferenceURL]) {
+    //        NSString *name = [[self.thumbnailUrl lastPathComponent] stringByDeletingPathExtension];
+    //        NSURL *newUrl = [self thumbnailUrlForMapName:name];
+    //        if ([data writeToURL:newUrl atomically:YES]) {
+    //            self.thumbnailUrl = newUrl;
+    //        }
+    //    }
     //TODO: let the collection know we need to update the cache;
     _thumbnail = [[UIImage alloc] initWithData:data];
     if (!_thumbnail)
@@ -310,14 +297,44 @@
     return thumb;
 }
 
-
-- (NSString *)details
+- (BOOL)loadTileCache
 {
-    return @"get details from the tilecache";
+    self.tileCacheIsLoaded = YES;
+    @try {
+        //The AGS tile cache loader uses C++ exceptions for error handling.
+        _tileCache = [[AGSLocalTiledLayer alloc] initWithPath:[self.url path]];
+    }
+    @catch (NSException *exception) {
+        _tileCache = nil;
+    }
+    return _tileCache != nil;
 }
 
 
+//TODO: these are UI specific, and should be in the viewController
+- (NSString *)byteSizeString
+{
+    return [Map formatBytes:self.byteCount];
+}
+
+- (NSString *)arealSizeString
+{
+    double areakm = self.areaInKilometers;
+    
+    if (areakm == -1) {
+        return @"Unknown";
+    }
+    AGSSRUnit units = [Settings manager].distanceUnitsForMeasuring;
+    if (units == AGSSRUnitMeter || units == AGSSRUnitKilometer) {
+        return [NSString stringWithFormat:@"%@ sq km", [Map formatArea:areakm]];
+    } else {
+        double areami = areakm * 0.386102;
+        return [NSString stringWithFormat:@"%@ sq mi", [Map formatArea:areami]];
+    }
+}
+
 #pragma mark - formatters
+//TODO: move these to generic Categories
 
 //cached date formatters per xcdoc://ios/documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html
 - (NSDate *) dateFromString:(NSString *)date
@@ -354,48 +371,6 @@
         formatter.maximumSignificantDigits = 3;
     });
     return [formatter stringFromNumber:[NSNumber numberWithDouble:area]];
-}
-
-- (NSString *)byteSizeString
-{
-    return [Map formatBytes:self.byteCount];
-}
-
-#pragma mark - tilecache (ESRI functionality)
-
-- (BOOL)loadTileCache
-{
-    self.tileCacheIsLoaded = YES;
-    @try {
-        //The AGS tile cache loader uses C++ exceptions for error handling.
-        _tileCache = [[AGSLocalTiledLayer alloc] initWithPath:[self.url path]];
-    }
-    @catch (NSException *exception) {
-        _tileCache = nil;
-    }
-    return _tileCache != nil;
-}
-
-- (NSString *)arealSizeString
-{
-    if (!self.extents || self.extents.isEmpty) {
-        return @"Unknown";
-    }
-
-    double areakm = [[AGSGeometryEngine defaultGeometryEngine] shapePreservingAreaOfGeometry:self.extents inUnit:AGSAreaUnitsSquareKilometers];
-    AGSSRUnit units = [Settings manager].distanceUnitsForMeasuring;
-    if (units == AGSSRUnitMeter || units == AGSSRUnitKilometer) {
-        return [NSString stringWithFormat:@"%@ sq km", [Map formatArea:areakm]];
-    } else {
-        double areami = areakm * 0.386102;
-        return [NSString stringWithFormat:@"%@ sq mi", [Map formatArea:areami]];
-    }
-}
-
-
-- (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location
-{
-    return [AKRAngleDistance angleDistanceFromLocation:location toGeometry:self.extents];
 }
 
 

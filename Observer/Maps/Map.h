@@ -13,6 +13,19 @@
 
 #define MAP_EXT @"tpk"
 
+//Key strings and expected value types for the initialization dictionary
+#define kTitleKey         @"name"        //NSString
+#define kAuthorKey        @"author"      //NSString
+#define kDateKey          @"date"        //NSDate or NSString as yyyy-mm-dd
+#define kDescriptionKey   @"description" //NSString
+#define kSizeKey          @"size"        //NSNumber -> NSUInteger
+#define kXminKey          @"xmin"        //NSNumber -> float (WGS84 decimal degrees)
+#define kXmaxKey          @"xmax"        //NSNumber -> float (WGS84 decimal degrees)
+#define kYminKey          @"ymin"        //NSNumber -> float (WGS84 decimal degrees)
+#define kYmaxKey          @"ymax"        //NSNumber -> float (WGS84 decimal degrees)
+#define kThumbnailUrlKey  @"thumbnail"   //NSString -> NSURL
+
+
 @interface Map : NSObject <NSCoding, AKRTableViewItem, NSURLSessionDownloadDelegate>
 
 @property (nonatomic, strong, readonly) NSURL *url;
@@ -32,25 +45,31 @@
 - (void)openThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)openTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
-//designated initializer
+// Designated initializer
+// This initializer should not be called by clients, as it returns a useless map.  Instead, use the convenience initializers
 - (id)initWithURL:(NSURL *)url;
 - (id) init __attribute__((unavailable("Must use initWithURL: instead.")));
 
 //Convenience initializers
+//Initialize with a dictionary of property values
 - (id)initWithDictionary:(NSDictionary *)dictionary;
+//Initialize with the contents of a local tile, will block while tileCache is loaded,
+//and will return nil if the tileCache is not local, not found, or not valid
 - (id)initWithLocalTileCache:(NSURL *)url;
 
-//YES if two Maps are the same (same title, version and date)
+//YES if two Maps are the same (same size, title, author and date)
 //    do not compare urls, because the same Map will have either a local, or a server url
 - (BOOL)isEqualtoMap:(Map *)Map;
+
+// Additional info for details view
+- (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location;
+- (double)areaInKilometers;
 
 // Helpers for details view
 // TODO: move these to categories or to the details view controller
 - (NSString *)byteSizeString;
 - (NSString *)arealSizeString;
 
-// Additional info for details view
-- (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location;
 
 //YES if the Map is available locally, NO otherwise;
 - (BOOL)isLocal;
