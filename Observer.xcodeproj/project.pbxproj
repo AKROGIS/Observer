@@ -110,6 +110,7 @@
 		39D1D95A17BC21D00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
 		39D1D95B17BC21E00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
 		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
+		59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FEE1863FDBF00470791 /* AKRFormatter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -288,6 +289,8 @@
 		39D1D97B17BC51630014C68F /* ObserverModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObserverModel.h; path = Model/ObserverModel.h; sourceTree = "<group>"; };
 		59C60FE6185ABF9400470791 /* AKRDirectionIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDirectionIndicatorView.h; sourceTree = "<group>"; };
 		59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDirectionIndicatorView.m; sourceTree = "<group>"; };
+		59C60FED1863FDBF00470791 /* AKRFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRFormatter.h; sourceTree = "<group>"; };
+		59C60FEE1863FDBF00470791 /* AKRFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRFormatter.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -494,6 +497,8 @@
 			children = (
 				398908631857F087007B3F67 /* AKRCollectionChanged.h */,
 				398908621857EFF3007B3F67 /* AKRTableViewItem.h */,
+				59C60FED1863FDBF00470791 /* AKRFormatter.h */,
+				59C60FEE1863FDBF00470791 /* AKRFormatter.m */,
 				398908521857ED27007B3F67 /* Categories */,
 				398908421857ECEB007B3F67 /* Surveys */,
 				398908081857EAB8007B3F67 /* Maps */,
@@ -785,6 +790,7 @@
 				398908601857EDE1007B3F67 /* NSIndexSet+indexPath.m in Sources */,
 				394CC2501858F11800FA859C /* AngleDistanceLocation.m in Sources */,
 				3989084D1857ED00007B3F67 /* Survey.m in Sources */,
+				59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */,
 				398908611857EDE1007B3F67 /* NSURL+unique.m in Sources */,
 				3989083D1857EBF6007B3F67 /* ProtocolSelectViewController.m in Sources */,
 				3989083E1857EBF6007B3F67 /* ProtocolTableViewCell.m in Sources */,

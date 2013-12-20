@@ -17,6 +17,7 @@
 #import "NSDate+Formatting.h"
 #import "NSURL+unique.h"
 #import "Settings.h"
+#import "AKRFormatter.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -47,7 +48,7 @@
 
 @implementation Map
 
-- (id) initWithURL:(NSURL *)url
+- (id)initWithURL:(NSURL *)url
 {
     if (!url) {
         return nil;
@@ -101,7 +102,7 @@
         item = dictionary[kTitleKey];
         map.title = ([item isKindOfClass:[NSString class]] ? item : nil);
         item = dictionary[kDateKey];
-        map.date = [item isKindOfClass:[NSDate class]] ? item : ([item isKindOfClass:[NSString class]] ? [self dateFromString:item] : nil);
+        map.date = [item isKindOfClass:[NSDate class]] ? item : ([item isKindOfClass:[NSString class]] ? [AKRFormatter dateFromISOString:item] : nil);
         item = dictionary[kAuthorKey];
         map.author = ([item isKindOfClass:[NSString class]] ? item : nil);
         item =  dictionary[kSizeKey];
@@ -149,7 +150,7 @@
     }
 }
 
--(void)encodeWithCoder:(NSCoder *)aCoder
+- (void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeInt:kCodingVersion forKey:kCodingVersionKey];
     [aCoder encodeObject:self.url forKey:kUrlKey];
@@ -176,7 +177,7 @@
 
 - (NSString *)subtitle
 {
-    return [NSString stringWithFormat:@"Author: %@, Date: %@", self.author, [self.date stringWithMediumDateFormat]];
+    return [NSString stringWithFormat:@"Author: %@", self.author];
 }
 
 - (NSString *)subtitle2
@@ -184,7 +185,7 @@
     if (self.downloading) {
         return @"Downloading...";
     } else {
-        return [NSString stringWithFormat:@"Size: %@", (self.isLocal ? self.arealSizeString : self.byteSizeString)];
+        return [NSString stringWithFormat:@"Date: %@, Size: %@", [self.date stringWithMediumDateFormat], [AKRFormatter stringFromBytes:self.byteCount]];
     }
 }
 
@@ -242,16 +243,6 @@
     return self.url.isFileURL;
 }
 
-- (void)prepareToDownload
-{
-    self.downloading = YES;
-}
-
-- (BOOL)isDownloading
-{
-    return self.downloading;
-}
-
 - (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location
 {
     return [AKRAngleDistance angleDistanceFromLocation:location toGeometry:self.extents];
@@ -263,6 +254,16 @@
         return -1;
     }
     return [[AGSGeometryEngine defaultGeometryEngine] shapePreservingAreaOfGeometry:self.extents inUnit:AGSAreaUnitsSquareKilometers];
+}
+
+- (void)prepareToDownload
+{
+    self.downloading = YES;
+}
+
+- (BOOL)isDownloading
+{
+    return self.downloading;
 }
 
 
@@ -311,69 +312,6 @@
 }
 
 
-//TODO: these are UI specific, and should be in the viewController
-- (NSString *)byteSizeString
-{
-    return [Map formatBytes:self.byteCount];
-}
-
-- (NSString *)arealSizeString
-{
-    double areakm = self.areaInKilometers;
-    
-    if (areakm == -1) {
-        return @"Unknown";
-    }
-    AGSSRUnit units = [Settings manager].distanceUnitsForMeasuring;
-    if (units == AGSSRUnitMeter || units == AGSSRUnitKilometer) {
-        return [NSString stringWithFormat:@"%@ sq km", [Map formatArea:areakm]];
-    } else {
-        double areami = areakm * 0.386102;
-        return [NSString stringWithFormat:@"%@ sq mi", [Map formatArea:areami]];
-    }
-}
-
-#pragma mark - formatters
-//TODO: move these to generic Categories
-
-//cached date formatters per xcdoc://ios/documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html
-- (NSDate *) dateFromString:(NSString *)date
-{
-    if (!date) {
-        return nil;
-    }
-    static NSDateFormatter *dateFormatter = nil;
-    if (!dateFormatter) {
-        dateFormatter = [NSDateFormatter new];
-        [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
-        [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd"];
-        [dateFormatter setLenient:YES];
-    }
-    return [dateFormatter dateFromString:date];
-}
-
-+ (NSString *)formatBytes:(long long)bytes
-{
-    static NSByteCountFormatter *formatter = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        formatter = [NSByteCountFormatter new];
-    });
-    return [formatter stringFromByteCount:bytes];
-}
-
-+ (NSString *)formatArea:(double)area
-{
-    static NSNumberFormatter *formatter = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        formatter = [NSNumberFormatter new];
-        formatter.maximumSignificantDigits = 3;
-    });
-    return [formatter stringFromNumber:[NSNumber numberWithDouble:area]];
-}
-
-
 #pragma mark - download
 //TODO: move this to a NSOperation
 
@@ -398,7 +336,7 @@
     return _session;
 }
 
-- (void) startDownload
+- (void)startDownload
 {
     NSURLRequest *request = [NSURLRequest requestWithURL:self.url];
     self.downloadTask = [self.session downloadTaskWithRequest:request];
@@ -406,7 +344,7 @@
     [self.downloadTask resume];
 }
 
-- (void) stopDownload
+- (void)stopDownload
 {
     [self.downloadTask cancel];
     self.downloading = NO;

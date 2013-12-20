@@ -10,6 +10,7 @@
 #import "NSDate+Formatting.h"
 #import "AKRDirectionIndicatorView.h"
 #import "Settings.h"
+#import "AKRFormatter.h"
 
 #define TEXTMARGINS 60  //2*30pts
 
@@ -27,6 +28,8 @@
 @end
 
 @implementation MapDetailViewController
+
+#pragma mark - Super overrides
 
 - (void)viewDidLoad
 {
@@ -54,31 +57,6 @@
     [self.locationManager stopMonitoringSignificantLocationChanges];
     self.locationManager.delegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)setupLocationUI
-{
-    if (![CLLocationManager locationServicesEnabled]) {
-        self.locationLabel.text = @"Location unavailable";
-        return;
-    }
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
-        //ask for permission by trying
-        self.locationManager = [CLLocationManager new];
-        self.locationManager.delegate = self;
-        [self.locationManager startMonitoringSignificantLocationChanges];
-    }
-    if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized)
-    {
-        self.locationLabel.text = @"Location not authorized";
-        return;
-    }
-    if (!self.locationManager) {
-        self.locationManager = [CLLocationManager new];
-        self.locationManager.delegate = self;
-        [self.locationManager startMonitoringSignificantLocationChanges];
-    }
-    self.locationLabel.text = @"Waiting for current location ...";
 }
 
 #pragma mark - CLLocationManagerDelegate
@@ -114,10 +92,35 @@
 
 #pragma mark - private functions
 
+- (void)setupLocationUI
+{
+    if (![CLLocationManager locationServicesEnabled]) {
+        self.locationLabel.text = @"Location unavailable";
+        return;
+    }
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
+        //ask for permission by trying
+        self.locationManager = [CLLocationManager new];
+        self.locationManager.delegate = self;
+        [self.locationManager startMonitoringSignificantLocationChanges];
+    }
+    if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized)
+    {
+        self.locationLabel.text = @"Location not authorized";
+        return;
+    }
+    if (!self.locationManager) {
+        self.locationManager = [CLLocationManager new];
+        self.locationManager.delegate = self;
+        [self.locationManager startMonitoringSignificantLocationChanges];
+    }
+    self.locationLabel.text = @"Waiting for current location ...";
+}
+
 - (void)updateLocationUIWithLocation:(CLLocation *)location
 {
     AKRAngleDistance *angleDistance = [self.map angleDistanceFromLocation:location];
-    NSString *distanceString = [self distanceStringFromKilometers:angleDistance.kilometers];
+    NSString *distanceString = [self distanceInPreferredUnitsFromKilometers:angleDistance.kilometers];
     self.locationLabel.text = distanceString;
     self.directionIndicatorView.azimuth = angleDistance.azimuth;
     self.directionIndicatorView.azimuthUnknown = angleDistance.kilometers <= 0;
@@ -125,23 +128,12 @@
 
 - (void)updateSizeUI
 {
-    self.sizeLabel.text = [NSString stringWithFormat:@"%@ on %@\n%@", self.map.byteSizeString, (self.map.isLocal ? @"device" : @"server"), self.map.arealSizeString];
+    self.sizeLabel.text = [NSString stringWithFormat:@"%@ on %@\n%@", [AKRFormatter stringFromBytes:self.map.byteCount], (self.map.isLocal ? @"device" : @"server"), [self mapAreaInPreferredUnits]];
 }
 
 #pragma mark - formatting
 
-+ (NSString *)formatLength:(double)length
-{
-    static NSNumberFormatter *formatter = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        formatter = [NSNumberFormatter new];
-        formatter.maximumSignificantDigits = 4;
-    });
-    return [formatter stringFromNumber:[NSNumber numberWithDouble:length]];
-}
-
-- (NSString *)distanceStringFromKilometers:(double)kilometers
+- (NSString *)distanceInPreferredUnitsFromKilometers:(double)kilometers
 {
     if (kilometers < 0) {
         return @"Unknown";
@@ -151,11 +143,28 @@
     }
     AGSSRUnit units = [Settings manager].distanceUnitsForMeasuring;
     if (units == AGSSRUnitMeter || units == AGSSRUnitKilometer) {
-        return [NSString stringWithFormat:@"%@ km", [MapDetailViewController formatLength:kilometers]];
+        return [NSString stringWithFormat:@"%@ km", [AKRFormatter stringWith4SigFigsFromDouble:kilometers]];
     } else {
         double miles = kilometers * 0.621371;
-        return [NSString stringWithFormat:@"%@ mi", [MapDetailViewController formatLength:miles]];
+        return [NSString stringWithFormat:@"%@ mi", [AKRFormatter stringWith4SigFigsFromDouble:miles]];
     }
 }
+
+- (NSString *)mapAreaInPreferredUnits
+{
+    double areakm = self.map.areaInKilometers;
+    
+    if (areakm == -1) {
+        return @"Unknown";
+    }
+    AGSSRUnit units = [Settings manager].distanceUnitsForMeasuring;
+    if (units == AGSSRUnitMeter || units == AGSSRUnitKilometer) {
+        return [NSString stringWithFormat:@"%@ sq km", [AKRFormatter stringWith3SigFigsFromDouble:areakm]];
+    } else {
+        double areami = areakm * 0.386102;
+        return [NSString stringWithFormat:@"%@ sq mi", [AKRFormatter stringWith3SigFigsFromDouble:areami]];
+    }
+}
+
 
 @end

@@ -61,16 +61,9 @@
 //    do not compare urls, because the same Map will have either a local, or a server url
 - (BOOL)isEqualtoMap:(Map *)Map;
 
-// Additional info for details view
+// Additional info for the view controllers
 - (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location;
 - (double)areaInKilometers;
-
-// Helpers for details view
-// TODO: move these to categories or to the details view controller
-- (NSString *)byteSizeString;
-- (NSString *)arealSizeString;
-
-
 //YES if the Map is available locally, NO otherwise;
 - (BOOL)isLocal;
 
