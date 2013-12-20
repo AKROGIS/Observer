@@ -718,9 +718,11 @@ typedef enum {
     }
     else
     {
-        Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mapPoint];
-        [self drawObservation:observation atPoint:mapPoint];
-        [self setAttributesForObservation:observation atPoint:mapPoint];
+        if (self.isObserving) {
+            Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mapPoint];
+            [self drawObservation:observation atPoint:mapPoint];
+            [self setAttributesForObservation:observation atPoint:mapPoint];
+        }
     }
 }
 
