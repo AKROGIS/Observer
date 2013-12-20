@@ -296,6 +296,10 @@ static MapCollection *_sharedCollection = nil;
     [self.delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex]];
     [self.localItems insertObject:map atIndex:toIndex];
     [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:toIndex]];
+    //Update the selectedIndex, unless this the list was empty (self.selectedIndex was already 0), 
+    if (toIndex <= self.selectedLocalIndex && 1 < self.localItems.count ) {
+        self.selectedLocalIndex++;
+    }
     [self saveCache];
 }
 
