@@ -271,14 +271,14 @@
 //    return success;
 //}
 
-- (BOOL)saveCopyToURL:(NSURL *)url
-{
-    NSOutputStream *stream = [NSOutputStream outputStreamWithURL:url append:NO];
-    [stream open];
-    NSInteger numberOfBytesWritten = 0; //FIXME: get tilecache at remote URL and write to stream
-    [stream close];
-    return numberOfBytesWritten > 0;
-}
+//- (BOOL)saveCopyToURL:(NSURL *)url
+//{
+//    NSOutputStream *stream = [NSOutputStream outputStreamWithURL:url append:NO];
+//    [stream open];
+//    NSInteger numberOfBytesWritten = 0; //FIXME: get tilecache at remote URL and write to stream
+//    [stream close];
+//    return numberOfBytesWritten > 0;
+//}
 
 
 - (BOOL)loadThumbnail
@@ -366,8 +366,13 @@
 - (BOOL)loadTileCache
 {
     self.tileCacheIsLoaded = YES;
-    //FIXME: this will fail (crash) if the data at the url is not a valid tilechache - add try/catch
-    _tileCache = [[AGSLocalTiledLayer alloc] initWithPath:[self.url path]];
+    @try {
+        //The AGS tile cache loader uses C++ exceptions for error handling.
+        _tileCache = [[AGSLocalTiledLayer alloc] initWithPath:[self.url path]];
+    }
+    @catch (NSException *exception) {
+        _tileCache = nil;
+    }
     return _tileCache != nil;
 }
 
@@ -399,15 +404,21 @@
 
 - (NSURLSession *)session
 {
+
+    static NSURLSession *backgroundSession = nil;
+    
     if (!_session) {
         NSURLSessionConfiguration *configuration;
         if (self.isBackground) {
-            configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"gov.nps.observer.BackgroundDownloadSession"];
+            if (!backgroundSession) {
+                configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"gov.nps.observer.BackgroundDownloadSession"];
+                backgroundSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
+            }
+            _session = backgroundSession;
         } else {
             configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+            _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
         }
-        //FIXME: the background session is needs to be unique
-        _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
     }
     return _session;
 }

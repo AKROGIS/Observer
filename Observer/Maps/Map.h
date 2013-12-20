@@ -6,10 +6,9 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "AKRTableViewItem.h"
 #import <ArcGIS/ArcGIS.h>
+#import "AKRTableViewItem.h"
 #import "AKRAngleDistance.h"
 
 #define MAP_EXT @"tpk"
@@ -25,43 +24,45 @@
 @property (nonatomic, readonly) AGSEnvelope *extents;
 @property (nonatomic, strong, readonly) NSURL *thumbnailUrl;
 
-// Helpers for details view
-- (NSString *)byteSizeString;
-- (NSString *)arealSizeString;
-- (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location;
-
-//YES if the Map is available locally, NO otherwise;
-- (BOOL)isLocal;
-
-//title and date will block (reading values from the filessytem) if the state is unborn.
-//To avoid the potential delay, call readPropertiesWithCompletionHandler first
-
-//The following methods will block (reading data from the filessytem)
-//To avoid the potential delay, call openPropertiesWithCompletionHandler first
+//The following properties will block (reading data from the network/filessytem)
+//To avoid the potential delay, call openXXXWithCompletionHandler first.
 @property (nonatomic, strong, readonly) UIImage *thumbnail;
-//FIXME: get correct type for tilecache and validate usage
 @property (nonatomic, strong, readonly) AGSLocalTiledLayer *tileCache;
 
+- (void)openThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)openTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+
+//designated initializer
+- (id)initWithURL:(NSURL *)url;
+- (id) init __attribute__((unavailable("Must use initWithURL: instead.")));
+
+//Convenience initializers
+- (id)initWithDictionary:(NSDictionary *)dictionary;
+- (id)initWithLocalTileCache:(NSURL *)url;
 
 //YES if two Maps are the same (same title, version and date)
 //    do not compare urls, because the same Map will have either a local, or a server url
 - (BOOL)isEqualtoMap:(Map *)Map;
 
-//designated initializer
-//- (id) initWithURL:(id)url title:(id)title author:(id)author date:(id)date size:(id)size description:(id)description thumbnail:(id)thumbnail xmin:(id)xmin ymin:(id)ymin xmax:(id)xmax ymax:(id)ymax;
-- (id)initWithURL:(NSURL *)url;
-- (id)initWithDictionary:(NSDictionary *)dictionary;
-- (id)initWithLocalTileCache:(NSURL *)url;
-- (id) init __attribute__((unavailable("Must use initWithURL: instead.")));
+// Helpers for details view
+// TODO: move these to categories or to the details view controller
+- (NSString *)byteSizeString;
+- (NSString *)arealSizeString;
+
+// Additional info for details view
+- (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location;
+
+//YES if the Map is available locally, NO otherwise;
+- (BOOL)isLocal;
 
 // download the Map from the remote URL to a local file...
 - (void)prepareToDownload;
+- (void)startDownload;
+- (void)stopDownload;
 - (BOOL)isDownloading;
-//- (BOOL)downloadToURL:(NSURL *)url;
 
-- (void)openThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
-
-
+//properties to support downloading
+//TODO: move these to a generic NSOperation
 @property (nonatomic) BOOL isBackground;
 @property (nonatomic) BOOL canReplace;
 @property (nonatomic, strong) NSURLSession *session;
@@ -70,7 +71,5 @@
 @property (nonatomic, copy) void(^progressAction)(double bytesWritten, double bytesExpected);
 @property (nonatomic, copy) void(^completionAction)(NSURL *imageUrl, BOOL success);
 
-- (void) startDownload;
-- (void) stopDownload;
 
 @end
