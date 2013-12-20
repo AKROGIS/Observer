@@ -111,6 +111,7 @@
 		39D1D95B17BC21E00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
 		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
 		59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FEE1863FDBF00470791 /* AKRFormatter.m */; };
+		59C60FF31864206500470791 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 59C60FF51864206500470791 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -291,6 +292,7 @@
 		59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDirectionIndicatorView.m; sourceTree = "<group>"; };
 		59C60FED1863FDBF00470791 /* AKRFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRFormatter.h; sourceTree = "<group>"; };
 		59C60FEE1863FDBF00470791 /* AKRFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRFormatter.m; sourceTree = "<group>"; };
+		59C60FF41864206500470791 /* en */ = {isa = PBXFileReference; lastKnownFileType = file; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -527,6 +529,7 @@
 				39955E58178334C000D225D7 /* Observer-Prefix.pch */,
 				393E8AFD17A30012009AD0AC /* Settings.bundle */,
 				3929196617BEB6A8008B0FFC /* Todo.rtf */,
+				59C60FF51864206500470791 /* Localizable.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -734,6 +737,7 @@
 				3967750A1798C800009ECD34 /* heading@2x.png in Resources */,
 				396775A017A065EE009ECD34 /* Crosshairs.png in Resources */,
 				396775A117A065EE009ECD34 /* Crosshairs@2x.png in Resources */,
+				59C60FF31864206500470791 /* Localizable.strings in Resources */,
 				393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */,
 				39B92FD517A87D9300C62145 /* BlueSelectionForTableViewCell.png in Resources */,
 				398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */,
@@ -874,6 +878,14 @@
 				39955E86178334C000D225D7 /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		59C60FF51864206500470791 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				59C60FF41864206500470791 /* en */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -39,19 +39,21 @@
 - (NSString *)stringWithRelativeTimeFormat
 {
     NSTimeInterval seconds = [self timeIntervalSinceNow];
-    if (seconds < 60) {
-        return @"Just Now";
+    if (seconds < 30) {
+        return NSLocalizedString(@"Just Now", @"Relative time for less than 30 seconds");
     }
-    if (seconds < 120) {
-        return @"1 Minute";
+    if (seconds < 90) {
+        return NSLocalizedString(@"1 Minute", @"Relative time for 30 to 90 seconds");
     }
-    if (seconds < 3600) {
-        return [NSString stringWithFormat:@"%d Minutes",(int)floor(seconds/60)];
+    if (seconds < 3570) {
+        NSString *format = NSLocalizedString(@"%d Minutes", @"Relative time for 2 to 59 minutes");
+        return [NSString stringWithFormat:format,(int)floor((seconds/60)+0.5)];
     }
-    if (seconds < 7200) {
-        return @"1 Hour";
+    if (seconds < 5400) {
+        return NSLocalizedString(@"1 Hour", @"Relative time for 59.5 minutes to 1.5 hours");
     }
-    return [NSString stringWithFormat:@"%d Hours",(int)floor(seconds/3600)];
+    NSString *format = NSLocalizedString(@"%d Hours", @"Relative time for 1.5 to 24 hours");
+    return [NSString stringWithFormat:format,(int)floor((seconds/3600)+0.5)];
 }
 
 - (BOOL)isToday
