@@ -30,11 +30,28 @@
 
 - (NSString *)stringWithMediumTimeFormat
 {
-    //TODO: add relative time format (Just Now, x minutes ago, x hours ago)
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDoesRelativeDateFormatting:YES];
     [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
     return [dateFormatter stringFromDate:self];
+}
+
+- (NSString *)stringWithRelativeTimeFormat
+{
+    NSTimeInterval seconds = [self timeIntervalSinceNow];
+    if (seconds < 60) {
+        return @"Just Now";
+    }
+    if (seconds < 120) {
+        return @"1 Minute";
+    }
+    if (seconds < 3600) {
+        return [NSString stringWithFormat:@"%d Minutes",(int)floor(seconds/60)];
+    }
+    if (seconds < 7200) {
+        return @"1 Hour";
+    }
+    return [NSString stringWithFormat:@"%d Hours",(int)floor(seconds/3600)];
 }
 
 - (BOOL)isToday

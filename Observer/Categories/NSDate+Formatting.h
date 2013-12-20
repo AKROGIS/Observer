@@ -13,6 +13,7 @@
 - (NSString *)stringWithMediumDateTimeFormat;
 - (NSString *)stringWithMediumDateFormat;
 - (NSString *)stringWithMediumTimeFormat;
+- (NSString *)stringWithRelativeTimeFormat;
 
 - (BOOL)isToday;
 
