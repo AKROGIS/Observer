@@ -637,16 +637,6 @@ typedef enum {
 
 #pragma mark - Delegate Methods - UIAlertViewDelegate
 
-//- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-//{
-//    if ([alertView.title isEqualToString:@"Delete Data"] && buttonIndex == 1) {
-//        self.busy = YES;
-//        //FIXME: Clear data on a background thread if it takes some time.
-//        [self clearData];
-//        [self clearGraphics];
-//        self.busy = NO;
-//    }
-//}
 
 
 #pragma mark - Delegate Methods: AGSLayerDelegate (all optional)
@@ -1076,7 +1066,7 @@ typedef enum {
     }
 
     //Get adhoc observations (gpsPoint is null and adhocLocation is non nil
-    //FIXME: support more than on Observation feature
+    //TODO: support more than one Observation feature
     request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
     request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint == NIL AND adhocLocation != NIL"];
     results = [self.context executeFetchRequest:request error:&error];
@@ -1155,7 +1145,6 @@ typedef enum {
     //TODO: support more than just one feature called Observations
     NSDictionary *config = self.surveys.selectedSurvey.protocol.dialogs[@"Observation"];
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
-    //FIXME: use a custom subclass of QuickDialogController, so I can hand it the observation (NSManagedObject)
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
@@ -1183,7 +1172,6 @@ typedef enum {
     }
     NSDictionary *config = self.surveys.selectedSurvey.protocol.dialogs[@"MissionProperty"];
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
-    //FIXME: use a custom subclass of QuickDialogController, so I can hand it the observation (NSManagedObject)
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
@@ -1201,14 +1189,11 @@ typedef enum {
     [dialog.root fetchValueUsingBindingsIntoObject:dict];
     NSManagedObject *obj = dialog.managedObject;
     for (NSString *aKey in dict){
+        //TODO: do I need to add error checking, respondsToSelector did not work
         //if ([obj respondsToSelector:NSSelectorFromString(aKey)]) {
             [obj setValue:[dict valueForKey:aKey] forKey:aKey];
         //}
     }
-        //FIXME: use a custom subclass of QuickDialogController, so I can hand it the observation (NSManagedObject)
-        //TODO: do I need to add error checking
-        //[missionProperty setValue:[dict valueForKey:aKey] forKey:aKey];
-        //[observation setValue:[dict valueForKey:aKey] forKey:aKey];
     [self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;
 }
