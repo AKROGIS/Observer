@@ -7,6 +7,8 @@
 //
 
 #import "SProtocol.h"
+#import "AKRFormatter.h"
+#import "NSDate+Formatting.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -18,7 +20,7 @@
 
 
 @interface SProtocol() {
-    NSString *_title;  //protocol properties cannot be synthesized
+    NSString *_title;  //properties from an implemented cannot be synthesized
 }
 @property (nonatomic) BOOL downloading;
 @end
@@ -35,7 +37,7 @@
         _url = url;
         _title = ([title isKindOfClass:[NSString class]] ? title : nil);
         _version = ([version isKindOfClass:[NSNumber class]] ? version : nil);
-        _date = [date isKindOfClass:[NSDate class]] ? date : ([date isKindOfClass:[NSString class]] ? [self dateFromString:date] : nil);
+        _date = [date isKindOfClass:[NSDate class]] ? date : ([date isKindOfClass:[NSString class]] ? [AKRFormatter dateFromISOString:date] : nil);
     }
     return self;
 }
@@ -118,7 +120,7 @@
                 id date = _values[@"date"];
                 _title = ([title isKindOfClass:[NSString class]] ? title : nil);
                 _version = ([version isKindOfClass:[NSNumber class]] ? version : nil);
-                _date = [self dateFromString:([date isKindOfClass:[NSString class]] ? date : nil)];
+                _date = [AKRFormatter dateFromISOString:([date isKindOfClass:[NSString class]] ? date : nil)];
             }
         }
     }
@@ -180,40 +182,8 @@
 }
 
 
-#pragma mark - date formatters
+#pragma mark - formatting for UI views
 
-//cached date formatters per xcdoc://ios/documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html
-//TODO: subscribe to the NSCurrentLocaleDidChangeNotification notification and update cached objects when the current locale changes
-
-- (NSDate *) dateFromString:(NSString *)date
-{
-    if (!date) {
-        return nil;
-    }
-    static NSDateFormatter *dateFormatter = nil;
-    if (!dateFormatter) {
-        dateFormatter = [NSDateFormatter new];
-        [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
-        [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd"];
-        [dateFormatter setLenient:YES];
-    }
-    return [dateFormatter dateFromString:date];
-}
-
-- (NSString *) stringFromDate:(NSDate *)date
-{
-    if (!date) {
-        return nil;
-    }
-    static NSDateFormatter *dateFormatter = nil;
-    if (!dateFormatter)
-    {
-        dateFormatter = [NSDateFormatter new];
-        [dateFormatter setDateStyle:NSDateFormatterLongStyle];
-        [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
-    }
-    return [dateFormatter stringFromDate:date];
-}
 
 - (NSString *)details
 {
@@ -227,13 +197,16 @@
 
 - (NSString *)dateString
 {
-    return self.date ? [self stringFromDate:self.date] : @"Unknown";
+    return self.date ? [self.date stringWithMediumDateFormat] : @"Unknown";
 }
 
 - (NSString *)versionString
 {
     return self.version ? [self.version stringValue] : @"Unknown";
 }
+
+
+#pragma mark - convenience methods for protocol values
 
 - (NSArray *)features
 {
