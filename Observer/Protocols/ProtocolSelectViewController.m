@@ -164,7 +164,7 @@
         ProtocolTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
         cell.titleLabel.text = item.title;
         cell.subtitleLabel.text = item.subtitle;
-        cell.downloadImageView.hidden = item.isDownloading;  //FIXME: hide if downloading
+        cell.downloadImageView.hidden = item.isDownloading;
         return cell;
     }
 }

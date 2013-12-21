@@ -1560,45 +1560,6 @@ typedef enum {
 
 #pragma mark - Support for Testing Quick Dialog
 
-//- (IBAction)changeEnvironment:(UIBarButtonItem *)sender
-//{
-//    NSLog(@"Add Mission Property");
-//    //FIXME: if gps, then add at GPS else add adhoc at current location
-//    //launch pop up to enter attributes, use existing as defaults
-//
-//    if (self.quickDialogPopoverController) {
-//        return;
-//    }
-//    //create VC from QDialog json in protocol, add newController to popover, display popover
-//    NSDictionary *dialog = self.surveys.selectedSurvey.protocol.dialogs[@"MissionProperty"];
-//    QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
-//    QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
-//    //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-//    self.quickDialogPopoverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
-//    self.quickDialogPopoverController.delegate = self;
-//    //self.popover.popoverContentSize = CGSizeMake(644, 425);
-//    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-//}
-
-//- (void)collectObservation:(UIBarButtonItem *)barButton
-//{
-//    if (self.quickDialogPopoverController) {
-//        return;
-//    }
-//    //create VC from QDialog json in protocol, add newController to popover, display popover
-//    //TODO: support more than just one feature called Observations
-//    NSDictionary *dialog = self.surveys.selectedSurvey.protocol.dialogs[@"Observation"];
-//    QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
-//    QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
-//
-//    //MapDetailViewController *vc = [[MapDetailViewController alloc] init];
-//    //vc.map = self.maps.selectedLocalMap;
-//    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-//    self.quickDialogPopoverController = [[UIPopoverController alloc] initWithContentViewController:navigationController];
-//    self.quickDialogPopoverController.delegate = self;
-//    //self.popover.popoverContentSize = CGSizeMake(644, 425);
-//    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:barButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-//}
 
 // not called when popover is dismissed programatically - use callbacks instead
 -(void)dismissQuickDialogPopover:(UIPopoverController *)popoverController
