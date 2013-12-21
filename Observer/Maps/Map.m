@@ -6,13 +6,6 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
-//TODO: implement download, and update progress view.
-//TODO: cache the thumbnail, change the thumbnail (then need to resave cache)
-//TODO: format properties for the details view (add outlets in the details VC
-//TODO: implement distance to map and map area
-//TODO: get map properties from the tilecache if we got it from the document directory, email, or web page.
-//TODO: Allow editing of the map name.
-
 #import "Map.h"
 #import "NSDate+Formatting.h"
 #import "NSURL+unique.h"
@@ -271,6 +264,7 @@
 
 - (BOOL)loadThumbnail
 {
+    //TODO: cache network thumbnails, then update the object cache with the cached url
     self.thumbnailIsLoaded = YES;
     NSData *data = [NSData dataWithContentsOfURL:self.thumbnailUrl];
     //    if (![self.thumbnailUrl isFileReferenceURL]) {

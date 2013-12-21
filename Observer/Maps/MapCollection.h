@@ -72,7 +72,7 @@
 
 @property (nonatomic, strong) NSDate *refreshDate;
 
-//TODO: I don't making this public, but I need to save the cache after a map changes it's thumbnail url
+//TODO: I don't like making this public, but I need to save the cache after a map changes it's thumbnail url
 - (void) synchronize;
 
 @end

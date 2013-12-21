@@ -220,34 +220,6 @@ typedef enum {
     }
 }
 
-//- (void) setIsRecording:(BOOL)isRecording
-//{
-//    if (isRecording == _isRecording) {
-//        return;
-//    }
-//    _isRecording = isRecording;
-//    if (isRecording) {
-//        [self startRecording];
-//    } else {
-//        [self stopRecording];
-//    }
-//    //TODO: update UI:
-//}
-//
-//- (void) setIsObserving:(BOOL)isObserving
-//{
-//    if (isObserving == _isObserving) {
-//        return;
-//    }
-//    _isObserving = isObserving;
-//    if (isObserving) {
-//        [self startObserving];
-//    } else {
-//        [self stopObserving];
-//    }
-//    //TODO: update UI:
-//}
-
 - (AGSSpatialReference *) wgs84
 {
     if (!_wgs84) {
