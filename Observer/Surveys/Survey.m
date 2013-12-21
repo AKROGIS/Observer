@@ -246,7 +246,10 @@
             }
         }
      });
-    //FIXME:  hook up document changed handler
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(objectsDidChange:)
+                                                 name:NSManagedObjectContextObjectsDidChangeNotification
+                                               object:self.document.managedObjectContext];
 }
 
 - (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler
@@ -281,14 +284,15 @@
         NSLog(@"There are %d mission properties", results.count);
     }
     [self.document closeWithCompletionHandler:completionHandler];
-
-    //TODO: release document change notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler
 {
     //TODO: Implement
+    self.date = [NSDate date];
+    self.state = kSaved;
 }
 
 
@@ -354,5 +358,16 @@
 {
     return [UIImagePNGRepresentation(self.thumbnail) writeToFile:[self.thumbnailUrl path] atomically:YES];
 }
+
+
+- (void)objectsDidChange:(NSNotification *)notification
+{
+#ifdef DEBUG
+    NSLog(@"Survey.document.managedObjectContext objects did change.");
+#endif
+    self.date = [NSDate date];
+    self.state = kModified;
+}
+
 
 @end
