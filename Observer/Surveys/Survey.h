@@ -41,10 +41,10 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 @property (nonatomic, strong, readonly) UIManagedDocument *document;
 
 //Initializers
-// init will always return nil
-//- (id)init //overridden to always return nil, use the designated initializer
-// Designated Initializer  (typically not called directly
+// Designated Initializer  (for subclasses, clients will typically not call this directly)
 - (id)initWithURL:(NSURL *)url;
+- (id) init __attribute__((unavailable("Must use initWithProtocol: instead.")));
+
 //This involve doing IO (to find and create the unused url), it should be called on a background thread
 - (id)initWithProtocol:(SProtocol *)protocol;
 

@@ -62,13 +62,6 @@
     return [self initWithURL:url title:nil state:kUnborn date:[NSDate date]];
 }
 
-//FIXME: use obsolete attribute
-//Do not allow creating a Survey without a protocol or URL
-- (id)init
-{
-    return nil;
-}
-
 - (id)initWithProtocol:(SProtocol *)protocol
 {
     //verify the input - reading protocol values may cause protocol to load from filesystem

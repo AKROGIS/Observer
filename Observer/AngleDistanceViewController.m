@@ -242,9 +242,9 @@
 
 - (void) addButton
 {
-    //FIXME - add button to view heiracrcy
-    //FIXME - add constraints??
-    //FIXME - resize view
+    //FIXME: add button to view heiracrcy
+    //FIXME: add constraints??
+    //FIXME: resize view
 }
 
 - (void) removeButton
@@ -276,8 +276,8 @@
     BOOL canBeDone = self.location.isValid && inputIsComplete;
     self.navigationItem.rightBarButtonItem.enabled = canBeDone;
     textField.returnKeyType = canBeDone ? UIReturnKeyDone : UIReturnKeyNext;
-    //FIXME - keyboard view does not update until focus changes to new view
-    //FIXME - other textfields should also be updated to UIReturnKeyDone without requiring a text changed event
+    //FIXME: keyboard view does not update until focus changes to new view
+    //FIXME: other textfields should also be updated to UIReturnKeyDone without requiring a text changed event
 }
 
 - (void) resizeView
