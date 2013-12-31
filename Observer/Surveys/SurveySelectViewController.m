@@ -157,7 +157,6 @@
     [self.items moveSurveyAtIndex:fromIndexPath.row toIndex:toIndexPath.row];
 }
 
-//TODO: test delete of survey with modifications
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
