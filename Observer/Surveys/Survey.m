@@ -263,7 +263,7 @@
         results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
         NSLog(@"There are %d Missions", results.count);
     }
-    [self.document saveToURL:self.url forSaveOperation:UIDocumentSaveForOverwriting completionHandler:completionHandler];
+    [self.document saveToURL:self.documentUrl forSaveOperation:UIDocumentSaveForOverwriting completionHandler:completionHandler];
 }
 
 - (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler
