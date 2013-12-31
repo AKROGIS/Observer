@@ -418,7 +418,7 @@
             NSLog(@"  Document has an error saving state");
             break;
         default:
-            NSLog(@"  Document has an unexpected state");
+            NSLog(@"  Document has an unexpected state: %d",self.document.documentState);
     }
 }
 

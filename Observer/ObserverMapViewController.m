@@ -85,6 +85,8 @@ typedef enum {
 @property (nonatomic) BOOL isRecording;
 @property (nonatomic) BOOL isObserving;
 
+@property (nonatomic, strong) Mission *mission;
+
 @end
 
 @implementation ObserverMapViewController
@@ -1118,6 +1120,7 @@ typedef enum {
     NSDictionary *config = self.surveys.selectedSurvey.protocol.dialogs[@"Observation"];
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
+    dialog.managedObject = observation;
     self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
     dialog.toolbarItems = @[doneButton];
@@ -1145,6 +1148,7 @@ typedef enum {
     NSDictionary *config = self.surveys.selectedSurvey.protocol.dialogs[@"MissionProperty"];
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
+    dialog.managedObject = missionProperty;
     self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
     dialog.toolbarItems = @[doneButton];
@@ -1212,6 +1216,7 @@ typedef enum {
     NSLog(@"Saving GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
     GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:@"GpsPoint"
                                                                           inManagedObjectContext:self.context];
+    gpsPoint.mission = self.mission;
     gpsPoint.altitude = gpsData.altitude;
     gpsPoint.course = gpsData.course;
     gpsPoint.horizontalAccuracy = gpsData.horizontalAccuracy;
@@ -1234,6 +1239,7 @@ typedef enum {
     //FIXME: support more than one type of observation
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observation"
                                                              inManagedObjectContext:self.context];
+    observation.mission = self.mission;
     //We don't have any attributes yet, that will get created/added later depending on the protocol
     return observation;
 }
@@ -1247,6 +1253,7 @@ typedef enum {
     NSLog(@"Saving MissionPoroperty");
     //FIXME: support more than one type of observation
     MissionProperty *missionProperty = [NSEntityDescription insertNewObjectForEntityForName:@"MissionProperty" inManagedObjectContext:self.context];
+    missionProperty.mission = self.mission;
     //We don't have any attributes yet, that will get created/added later depending on the protocol
     return missionProperty;
 }
@@ -1392,6 +1399,8 @@ typedef enum {
     self.startStopObservingBarButtonItem.enabled = YES;
     [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:NO];
     [self startLocationUpdates];
+    self.mission = [NSEntityDescription insertNewObjectForEntityForName:@"Mission"
+                                                 inManagedObjectContext:self.context];
     //[self updateButtons];
 }
 
@@ -1408,6 +1417,7 @@ typedef enum {
     [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:YES];
     [self stopLocationUpdates];
     [self.survey saveWithCompletionHandler:nil];
+    self.mission = nil;
 }
 
 - (void) startObserving
