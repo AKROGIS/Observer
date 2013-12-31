@@ -1235,7 +1235,7 @@ typedef enum {
         NSLog(@"Can't create Observation, there is no data context (file)");
         return nil;
     }
-    NSLog(@"Saving Observation");
+    NSLog(@"Creating Observation managed object");
     //FIXME: support more than one type of observation
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observation"
                                                              inManagedObjectContext:self.context];
@@ -1247,10 +1247,10 @@ typedef enum {
 - (MissionProperty *)createMissionProperty
 {
     if (!self.context) {
-        NSLog(@"Can't create MissionPoroperty, there is no data context (file)");
+        NSLog(@"Can't create MissionProperty, there is no data context (file)");
         return nil;
     }
-    NSLog(@"Saving MissionPoroperty");
+    NSLog(@"Creating MissionProperty managed object");
     //FIXME: support more than one type of observation
     MissionProperty *missionProperty = [NSEntityDescription insertNewObjectForEntityForName:@"MissionProperty" inManagedObjectContext:self.context];
     missionProperty.mission = self.mission;
@@ -1264,7 +1264,7 @@ typedef enum {
         NSLog(@"Can't save Observation at GPS point without a GPS Point");
         return nil;
     }
-    NSLog(@"Saving Observation at GPS point");
+    NSLog(@"Creating Observation at GPS point");
     Observation *observation = [self createObservation];
     observation.gpsPoint = gpsPoint;
     return observation;
@@ -1276,7 +1276,7 @@ typedef enum {
         NSLog(@"Can't save MissionProperty at GPS point without a GPS Point");
         return nil;
     }
-    NSLog(@"Saving MissionProperty at GPS point");
+    NSLog(@"Creating MissionProperty at GPS point");
     MissionProperty *missionProperty = [self createMissionProperty];
     missionProperty.gpsPoint = gpsPoint;
     return missionProperty;
@@ -1429,6 +1429,7 @@ typedef enum {
     //TDOO: display the mission attributes and populate with the last attribute set
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
+    mission.observing = YES;
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self setAttributesForMissionProperty:mission atPoint:mapPoint];
     [self drawMissionProperty:mission atPoint:mapPoint];
@@ -1444,6 +1445,7 @@ typedef enum {
     //TDOO: set the "observing" attribute to "off"
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
+    mission.observing = NO;
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     //[self setAttributesForMissionProperty:mission atPoint:mapPoint];
     [self drawMissionProperty:mission atPoint:mapPoint];

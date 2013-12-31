@@ -19,4 +19,10 @@
     return [SurveyObjectModel objectModelWithProtocol:survey.protocol];
 }
 
+- (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
+    NSLog(@"SurveyCoreDataDocument error %@", error);
+    [super handleError:error userInteractionPermitted:userInteractionPermitted];
+}
+
+
 @end
