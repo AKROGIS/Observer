@@ -20,7 +20,7 @@
 }
 
 - (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
-    NSLog(@"SurveyCoreDataDocument error %@", error);
+    NSLog(@"SurveyCoreDataDocument has error.  State %u, %@", self.documentState, error);
     [super handleError:error userInteractionPermitted:userInteractionPermitted];
 }
 
