@@ -243,6 +243,7 @@
                                              selector:@selector(objectsDidChange:)
                                                  name:NSManagedObjectContextObjectsDidChangeNotification
                                                object:self.document.managedObjectContext];
+    [self connectToNotificationCenter];
 }
 
 - (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler
@@ -278,6 +279,7 @@
     }
     [self.document closeWithCompletionHandler:completionHandler];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self disconnectFromNotificationCenter];
 }
 
 
@@ -361,6 +363,83 @@
     self.date = [NSDate date];
     self.state = kModified;
 }
+
+
+- (void) connectToNotificationCenter
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(documentStateChanged:)
+                                                 name:UIDocumentStateChangedNotification
+                                               object:self.document];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(dataChanged:)
+                                                 name:NSManagedObjectContextObjectsDidChangeNotification
+                                               object:self.document.managedObjectContext];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(dataSaved:)
+                                                 name:NSManagedObjectContextDidSaveNotification
+                                               object:self.document.managedObjectContext];
+}
+
+- (void) disconnectFromNotificationCenter
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIDocumentStateChangedNotification
+                                                  object:self.document];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSManagedObjectContextObjectsDidChangeNotification
+                                                  object:self.document.managedObjectContext];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSManagedObjectContextDidSaveNotification
+                                                  object:self.document.managedObjectContext];
+}
+
+- (void) documentStateChanged: (NSNotification *)notification
+{
+    //name should always be UIDocumentStateChangedNotification
+    //object should always be self.document
+    //userinfo is nil
+
+    NSLog(@"Document State Changed");
+    switch (self.document.documentState) {
+        case UIDocumentStateNormal:
+            NSLog(@"  Document is normal");
+            break;
+        case UIDocumentStateClosed:
+            NSLog(@"  Document is closed");
+            break;
+        case UIDocumentStateEditingDisabled:
+            NSLog(@"  Document editing is disabled");
+            break;
+        case UIDocumentStateInConflict:
+            NSLog(@"  Document is in conflict");
+            break;
+        case UIDocumentStateSavingError:
+            NSLog(@"  Document has an error saving state");
+            break;
+        default:
+            NSLog(@"  Document has an unexpected state");
+    }
+}
+
+- (void) dataChanged: (NSNotification *)notification
+{
+    //name should always be NSManagedObjectContextObjectsDidChangeNotification
+    //object should always be self.document
+    //userinfo has keys NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey which all return arrays of objects
+
+    NSLog(@"Data Changed; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
+}
+
+- (void) dataSaved: (NSNotification *)notification
+{
+    //name should always be NSManagedObjectContextDidSaveNotification
+    //object should always be self.document
+    //userinfo has keys NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey which all return arrays of objects
+
+    NSLog(@"Data Saved; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
+}
+
 
 
 @end
