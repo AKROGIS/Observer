@@ -379,9 +379,16 @@ typedef enum {
             if (self.surveys.selectedSurvey) {
                 self.survey = nil;
                 self.selectSurveyButton.title = @"Loading Survey...";
+                NSLog(@"Opening Survey document");
                 [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
                     //do any other background work;
-                    dispatch_async(dispatch_get_main_queue(), ^{[self setupNewSurvey];});
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (success) {
+                            [self setupNewSurvey];
+                        } else {
+                            [[[UIAlertView alloc] initWithTitle:@"Corrupt Document" message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
+                        }
+                    });
                 }];
             } else {
                 [self updateView];
@@ -446,6 +453,19 @@ typedef enum {
         self.selectSurveyButton.title = @"Loading Survey...";
         self.survey = self.surveys.selectedSurvey;
         self.context = self.survey.document.managedObjectContext;
+        NSLog(@"survey document open");
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
+        NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+        NSLog(@"There are %d GpsPoints", results.count);
+        request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
+        results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+        NSLog(@"There are %d Observations", results.count);
+        request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
+        results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+        NSLog(@"There are %d MissionYroperties", results.count);
+        request = [NSFetchRequest fetchRequestWithEntityName:@"Mission"];
+        results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+        NSLog(@"There are %d Missions", results.count);
         [self reloadGraphics];
     }
     [self updateView];
