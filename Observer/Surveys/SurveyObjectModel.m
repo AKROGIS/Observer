@@ -46,7 +46,7 @@
             //TODO: Check that unexpected values in an attribute dictionary does not cause a failure
             [attributeDescription setName:attribute[@"name"]];
             [attributeDescription setAttributeType:[attribute[@"type"] intValue]];
-            [attributeDescription setOptional:[attribute[@"optional"] boolValue]];
+            [attributeDescription setOptional:![attribute[@"required"] boolValue]];
             [attributeDescription setDefaultValue:attribute[@"default"]];
             NSArray *constraints = attribute[@"constraints"];
             if (constraints)
