@@ -434,7 +434,8 @@
     //object should always be self.document
     //userinfo has keys NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey which all return arrays of objects
 
-    NSLog(@"Data Changed; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
+    NSLog(@"Data Changed");
+    //NSLog(@"Data Changed; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
 }
 
 - (void) dataSaved: (NSNotification *)notification
@@ -443,7 +444,8 @@
     //object should always be self.document
     //userinfo has keys NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey which all return arrays of objects
 
-    NSLog(@"Data Saved; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
+    NSLog(@"Data Saved");
+    //NSLog(@"Data Saved; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
 }
 
 - (NSString *)description
