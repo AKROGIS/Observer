@@ -1243,7 +1243,7 @@ typedef enum {
     gpsPoint.latitude = gpsData.coordinate.latitude;
     gpsPoint.longitude = gpsData.coordinate.longitude;
     gpsPoint.speed = gpsData.speed;
-    gpsPoint.timestamp = gpsData.timestamp;
+    gpsPoint.timestamp = gpsData.timestamp ?: [NSDate date]; //FIXME - added for testing on simulator, remove for production
     gpsPoint.verticalAccuracy = gpsData.verticalAccuracy;
     self.lastGpsPointSaved = gpsPoint;
     return gpsPoint;
