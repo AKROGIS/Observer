@@ -14,7 +14,8 @@
 @interface MapCollection()
 @property (nonatomic, strong) NSMutableArray *localItems;  // of Map
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of Map
-@property (nonatomic) NSUInteger selectedLocalIndex;
+//selectedLocalIndex < 0  means that no item is selected
+@property (nonatomic) NSInteger selectedLocalIndex;
 @property (nonatomic, strong) NSURL *documentsDirectory;
 @property (nonatomic, strong) NSURL *cacheFile;
 @property (nonatomic) BOOL isLoaded;
@@ -56,6 +57,19 @@
         _cacheFile = [_cacheFile URLByAppendingPathComponent:@"map_list.cache"];
     }
     return _cacheFile;
+}
+
+- (void) setSelectedLocalIndex:(NSInteger)selectedLocalIndex
+{
+    if (_selectedLocalIndex == selectedLocalIndex)
+        return;
+    //Since self.items.count is unsigned, the comparison is unsigned, so 2 < -1
+    if (0 < selectedLocalIndex && self.localItems.count <= selectedLocalIndex) {
+        return; //ignore bogus indexes
+    }
+    //Allow setting selected index to -1 (or any negative) to indicate no selected item
+    _selectedLocalIndex = selectedLocalIndex;
+    [Settings manager].indexOfCurrentMap = selectedLocalIndex;
 }
 
 
@@ -148,22 +162,6 @@
     [self saveCache];
 }
 
-- (void)setSelectedLocalMap:(NSUInteger)index
-{
-    if (index < self.localItems.count) {
-        self.selectedLocalIndex = index;
-    }
-}
-
-- (Map *)selectedLocalMap
-{
-    if (self.localItems.count) {
-        return self.localItems[self.selectedLocalIndex];
-    } else {
-        return nil;
-    }
-}
-
 
 #pragma mark - public methods
 
@@ -187,6 +185,22 @@ static MapCollection *_sharedCollection = nil;
 }
 
 
+- (void)setSelectedLocalMap:(NSUInteger)index
+{
+    if (index < self.localItems.count) {
+        self.selectedLocalIndex = index;
+    }
+}
+
+- (Map *)selectedLocalMap
+{
+    if (self.localItems.count) {
+        return self.localItems[self.selectedLocalIndex];
+    } else {
+        return nil;
+    }
+}
+
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
     if (self.isLoaded) {
@@ -200,6 +214,9 @@ static MapCollection *_sharedCollection = nil;
             [self loadCache];
             BOOL success = [self refreshLocalMaps];
             [self saveCache];
+            //Get the selected index (we can't do this in an accessor, because there isn't a no valid 'data not loaded' sentinal)
+            _selectedLocalIndex = [Settings manager].indexOfCurrentMap;
+            [self checkAndFixSelectedIndex];
             self.delegate = savedDelegate;
             self.isLoaded = YES;
             if (completionHandler) {
@@ -621,7 +638,7 @@ static MapCollection *_sharedCollection = nil;
 - (void) checkAndFixSelectedIndex
 {
     if (self.localItems.count <= self.selectedLocalIndex) {
-        self.selectedLocalIndex = (self.localItems.count == 0) ? 0 : self.localItems.count - 1;
+        self.selectedLocalIndex = self.localItems.count - 1;
     }
 }
 

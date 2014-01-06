@@ -269,7 +269,7 @@
         cacheWasOutdated = YES;
     }
 
-    //Get the selected index (we can't do this in the accessor, because there isn't a no value sentinal, i.e 0 is valid)
+    //Get the selected index (we can't do this in an accessor, because there isn't a no valid 'data not loaded' sentinal)
     _selectedIndex = [Settings manager].indexOfCurrentSurvey;
 
     if (cacheWasOutdated) {
