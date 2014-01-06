@@ -446,6 +446,13 @@
     NSLog(@"Data Saved; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
 }
 
-
+- (NSString *)description
+{
+    if (self.state == kUnborn) {
+        return @"Unborn survey (properties not yet loaded from disk)";
+    } else {
+        return [NSString stringWithFormat:@"%@; %@; %@", self.title, self.subtitle2, self.protocolIsLoaded ? self.subtitle : @"protocol not yet loaded"];
+    }
+}
 
 @end

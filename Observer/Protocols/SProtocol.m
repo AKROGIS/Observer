@@ -264,4 +264,9 @@
     return [self.values[@"angle direction"] intValue];
 }
 
+-(NSString *)description
+{
+    return [NSString stringWithFormat:@"%@; %@",self.title, self.subtitle];
+}
+
 @end
