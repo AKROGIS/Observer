@@ -387,5 +387,9 @@
     }
 }
 
+-(NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ by %@, dated: %@", self.title, self.author, [self.date stringWithMediumDateFormat]];
+}
 
 @end

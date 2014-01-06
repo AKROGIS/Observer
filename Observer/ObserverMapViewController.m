@@ -22,10 +22,10 @@
 
 //FIXME: if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
 
-#import "ObserverMapViewController.h"
-#import "AngleDistanceViewController.h"
 #import "SurveyCollection.h"
 #import "MapCollection.h"
+#import "ObserverMapViewController.h"
+#import "AngleDistanceViewController.h"
 #import "ProtocolCollection.h"
 #import "SurveySelectViewController.h"
 #import "MapSelectViewController.h"
@@ -66,6 +66,7 @@ typedef enum {
 @property (nonatomic) BOOL userWantsLocationUpdates;
 @property (nonatomic) BOOL userWantsHeadingUpdates;
 @property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
+@property (strong, nonatomic) MapReference *currentMapEntity;
 
 @property (strong, nonatomic) AGSGraphicsLayer *observationsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsPointsLayer;
@@ -228,6 +229,28 @@ typedef enum {
         _wgs84 = [AGSSpatialReference wgs84SpatialReference];
     }
     return _wgs84;
+}
+
+- (MapReference *)currentMapEntity
+{
+    if (!_currentMapEntity) {
+        // try to fetch it, otherwise create it.
+        NSLog(@"Looking for %@ in coredata",self.maps.selectedLocalMap);
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Map"];
+
+        request.predicate = [NSPredicate predicateWithFormat:@"name == %@ AND author == %@ AND date == %@",
+                             self.maps.selectedLocalMap.title, self.maps.selectedLocalMap.author, self.maps.selectedLocalMap.date];
+        NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+        _currentMapEntity = [results firstObject];
+        if(!_currentMapEntity) {
+            NSLog(@"  Map not found, creating new CoreData Entity");
+            _currentMapEntity = [NSEntityDescription insertNewObjectForEntityForName:@"Map" inManagedObjectContext:self.context];
+            _currentMapEntity.name = self.maps.selectedLocalMap.title;
+            _currentMapEntity.author = self.maps.selectedLocalMap.author;
+            _currentMapEntity.date = self.maps.selectedLocalMap.date;
+        }
+    }
+    return _currentMapEntity;
 }
 
 
@@ -435,7 +458,7 @@ typedef enum {
     //TODO:can we support adding observations that have no attributes (no dialog)
     self.addObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
     self.addGpsObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
-    self.addAdObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
+    self.addAdObservationBarButton.enabled = self.isObserving && self.maps.selectedLocalMap && self.survey && dialogs[@"Observation"] != nil;
 }
 
 - (void)setupNewSurvey
@@ -1019,6 +1042,7 @@ typedef enum {
     //to reset the mapView extents/SR, we need to call reset, then re-add the layers.
     //first we need to get the layers, so we can re-add them after setting the new basemap
     NSLog(@"Reseting the basemap");
+    self.currentMapEntity = nil;
     if (!self.maps.selectedLocalMap.tileCache)
     {
         self.noMapLabel.hidden = NO;
@@ -1324,6 +1348,7 @@ typedef enum {
     } else {
         adhocLocation.timestamp = [NSDate date];
     }
+    adhocLocation.map = self.currentMapEntity;
     observation.adhocLocation = adhocLocation;
     return observation;
 }
