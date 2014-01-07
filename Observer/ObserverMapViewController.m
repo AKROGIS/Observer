@@ -50,6 +50,7 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectMapButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *panButton;
+//TODO- remove panStyleButton, integrate functionality with panButton
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *panStyleButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectSurveyButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopRecordingBarButtonItem;
@@ -60,7 +61,6 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addObservationBarButton;
 
 @property (nonatomic,weak) NSManagedObjectContext *context;
-@property (nonatomic) BOOL busy;
 @property (nonatomic) int busyCount;
 
 @property (nonatomic) BOOL userWantsAutoPanOn;
@@ -98,27 +98,6 @@ typedef enum {
 
 
 #pragma mark - Private Properties
-
-//TODO use an increment/decrement busy
-//  when > 0 disable all controls and show spinner
-//  when = 0 update controls, and hide spinner
-
-- (void) setBusy:(BOOL)busy
-{
-    if (busy) {
-        self.busyCount++;
-    } else {
-        self.busyCount--;
-    }
-    if (self.busyCount < 0)
-        self.busyCount = 0;
-    _busy = self.busyCount;
-    if (_busy) {
-        [self.mapLoadingIndicator startAnimating];
-    } else {
-        [self.mapLoadingIndicator stopAnimating];
-    }
-}
 
 - (CLLocationManager *)locationManager
 {
@@ -377,7 +356,7 @@ typedef enum {
 {
     [super viewDidLoad];
     self.noMapLabel.hidden = YES;
-    self.busy = YES;
+    [self incrementBusy];
     self.mapView.layerDelegate = self;
     self.mapView.touchDelegate = self;
     self.mapView.callout.delegate = self;
@@ -620,7 +599,7 @@ typedef enum {
 {
     // Tells the delegate that the layer failed to load with the specified error.
     NSLog(@"layer %@ failed to load with error %@", layer, error);
-    self.busy = NO;
+    [self decrementBusy];
     self.noMapLabel.hidden = NO;
 }
 
@@ -646,8 +625,8 @@ typedef enum {
     self.noMapLabel.hidden = YES;
     [self initializeGraphicsLayer];
     [self reloadGraphics];
-    [self turnOnGPS];
-    self.busy = NO;
+    [self setupGPS];
+    [self decrementBusy];
 }
 
 - (BOOL)mapView:(AGSMapView *)mapView shouldFindGraphicsInLayer:(AGSGraphicsLayer *)graphicsLayer atPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint
@@ -848,27 +827,36 @@ typedef enum {
 
 #pragma mark - Private Methods
 
-- (void) turnOnGPS
+- (void) incrementBusy
+{
+    if (self.busyCount == 0) {
+        [self disableControls];
+        [self.mapLoadingIndicator startAnimating];
+    }
+    self.busyCount++;
+}
+
+- (void) decrementBusy
+{
+    if (self.busyCount == 0) {
+        return;
+    }
+    if (self.busyCount == 1) {
+        [self enableControls];
+        [self.mapLoadingIndicator stopAnimating];
+    }
+    self.busyCount--;
+}
+
+- (void) setupGPS
 {
     self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
     self.mapView.locationDisplay.wanderExtentFactor = 0.0;
     [self.mapView.locationDisplay startDataSource];
-    //self.gpsButton.style = UIBarButtonItemStyleDone;
-    self.panButton.enabled = YES;
     self.userWantsAutoPanOn = [Settings manager].autoPanEnabled;
+    //TODO- remove this button, integrate with self.panButton
     self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];
     [self startStopLocationServicesForPanMode];
-}
-
-- (void) turnOffGPS
-{
-    //TODO: Method is not used - remove or use
-    [self.mapView.locationDisplay stopDataSource];
-    //self.gpsButton.style = UIBarButtonItemStyleBordered;
-    self.panButton.enabled = NO;
-    self.panStyleButton.enabled = NO;
-    [self stopHeadingUpdates];
-    [self stopLocationUpdates];
 }
 
 - (void)startStopLocationServicesForPanMode
@@ -979,7 +967,7 @@ typedef enum {
     if (!self.maps.selectedLocalMap.tileCache)
     {
         self.noMapLabel.hidden = NO;
-        self.busy = NO;
+        [self decrementBusy];
     }
     else
     {
@@ -1004,12 +992,12 @@ typedef enum {
     if (!self.maps.selectedLocalMap.tileCache)
     {
         self.noMapLabel.hidden = NO;
-        self.busy = NO;
+        [self decrementBusy];
     }
     else
     {
         self.noMapLabel.hidden = YES;
-        self.busy = YES;
+        [self incrementBusy];
         [self.mapView reset]; //remove all layers
         //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
         self.maps.selectedLocalMap.tileCache.delegate = self;
@@ -1415,7 +1403,7 @@ typedef enum {
     if (self.isObserving) {
         [self stopObserving];
     } else {
-        [self updateControls];
+        [self enableControls];
     }
     self.startStopObservingBarButtonItem.enabled = NO;
     [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:YES];
@@ -1436,7 +1424,7 @@ typedef enum {
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self setAttributesForMissionProperty:mission atPoint:mapPoint];
     [self drawMissionProperty:mission atPoint:mapPoint];
-    [self updateControls];
+    [self enableControls];
 }
 
 - (void) stopObserving
@@ -1449,7 +1437,7 @@ typedef enum {
     mission.observing = NO;
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self drawMissionProperty:mission atPoint:mapPoint];
-    [self updateControls];
+    [self enableControls];
 }
 
 -(UIBarButtonItem *)setBarButtonAtIndex:(NSUInteger)index action:(SEL)action ToPlay:(BOOL)play
@@ -1472,26 +1460,23 @@ typedef enum {
 
 - (void) configureView
 {
-    //TODO - increment busy
-    self.selectSurveyButton.enabled = NO;
+    [self incrementBusy];
     self.surveys = [SurveyCollection sharedCollection];
     [self.surveys openWithCompletionHandler:^(BOOL success) {
         //do any other background work;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self changeSurvey];
-            self.selectSurveyButton.enabled = YES;
-            //decrement busy //here or maybe in completion handlers for load survey
+            [self decrementBusy];
         });
     }];
 
-    self.selectMapButton.enabled = NO;
+    [self incrementBusy];
     self.maps = [MapCollection sharedCollection];
     [self.maps openWithCompletionHandler:^(BOOL success) {
         //do any other background work;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self loadBaseMap];
-            self.selectMapButton.enabled = YES;
-            [self updateControls]; //TODO - remove this call, enable buttons when busy state ends
+            [self decrementBusy];
         });
     }];
 }
@@ -1501,12 +1486,34 @@ typedef enum {
     self.selectSurveyButton.title = (self.survey ? self.survey.title : @"Select Survey");
 }
 
--(void) updateControls
+-(void) disableControls
 {
+    self.selectMapButton.enabled = NO;
+    self.selectSurveyButton.enabled = NO;
+
+    self.panButton.enabled = NO;
+    self.panStyleButton.enabled = NO;
+
+    self.startStopRecordingBarButtonItem.enabled = NO;
+    self.startStopObservingBarButtonItem.enabled = NO;
+    self.editEnvironmentBarButton.enabled = NO;
+    self.addObservationBarButton.enabled = NO;
+    self.addGpsObservationBarButton.enabled = NO;
+    self.addAdObservationBarButton.enabled = NO;
+}
+
+-(void) enableControls
+{
+    self.selectMapButton.enabled = self.maps != nil;
+    self.selectSurveyButton.enabled = self.surveys != nil;
+
+    self.panButton.enabled = self.mapView.loaded;
+    self.panStyleButton.enabled = self.mapView.loaded && self.userWantsAutoPanOn;
+    
     NSDictionary *dialogs = self.survey.protocol.dialogs;
     self.startStopRecordingBarButtonItem.enabled = self.survey != nil;
     self.startStopObservingBarButtonItem.enabled = self.isRecording && self.survey;
-    //TODO: if there are no mission proiperties, we should remove this button.
+    //TODO: if there are no mission properties, we should remove this button.
     self.editEnvironmentBarButton.enabled = self.isRecording && self.survey && dialogs[@"MissionProperty"] != nil;
     //TODO: support more than just one feature called "Observations"
     //TODO:can we support adding observations that have no attributes (no dialog)
@@ -1526,7 +1533,7 @@ typedef enum {
     if (self.surveys.selectedSurvey) {
         self.selectSurveyButton.title = @"Loading Survey...";
         NSLog(@"Opening Survey document");
-        //TODO: increment busy counter
+        [self incrementBusy];
         [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
             //do any other background work;
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -1541,8 +1548,7 @@ typedef enum {
 
                 }
                 [self updateTitleBar];
-                [self updateControls];
-                //TODO: decrement busy counter
+                [self decrementBusy];
             });
         }];
     }
@@ -1573,7 +1579,7 @@ typedef enum {
     //TODO: this works, but logs background errors when called after a active document is deleted.
     if (self.survey) {
         if (self.survey.document.documentState == UIDocumentStateNormal) {
-            //TODO: increment busy count
+            [self incrementBusy];
             self.selectSurveyButton.title = @"Closing Survey...";
             [self stopRecording];
             [self.survey closeWithCompletionHandler:^(BOOL success) {
@@ -1583,12 +1589,11 @@ typedef enum {
                         if (!concurrentOpen) {
                             self.survey = nil;
                             [self updateTitleBar];
-                        }
-                        //If there is a concurrent open, then these actions will be performed when the open finishes
+                        } //else similar actions will be performed when the concurrent open finishes
                     } else {
                         [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to close the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
                     }
-                    //TODO: decrement busy counter
+                    [self decrementBusy];
                 });
             }];
         } else if (self.survey.document.documentState != UIDocumentStateClosed) {
