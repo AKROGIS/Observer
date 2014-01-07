@@ -187,6 +187,7 @@
 {
     if (self.items.count <= index) return; //safety check
     Survey *item = [self surveyAtIndex:index];
+    //TODO: if the document is open, close it first, or set it to nil, so subsequent attempts to close it do not generate errors.
     [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
     [self.items removeObjectAtIndex:index];
     [self saveCache];

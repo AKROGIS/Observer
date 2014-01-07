@@ -102,6 +102,10 @@ typedef enum {
     //[self reloadGraphics];
 }
 
+//TODO use an increment/decrement busy
+//  when > 0 disable all controls and show spinner
+//  when = 0 update controls, and hide spinner
+
 - (void) setBusy:(BOOL)busy
 {
     if (busy) {
@@ -140,7 +144,7 @@ typedef enum {
             if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
             {
                 self.locationServicesAvailable = YES;
-                NSLog(@"Location Services Avaialble and Authorized");
+                NSLog(@"Location Services Available and Authorized");
             } else {
                 NSLog(@"Location Services NOT Authorized");
             }
@@ -390,110 +394,6 @@ typedef enum {
     [self configureView];
 }
 
-
-- (void) configureView
-{
-    self.selectSurveyButton.enabled = NO;
-    self.surveys = [SurveyCollection sharedCollection];
-    [self.surveys openWithCompletionHandler:^(BOOL success) {
-        //do any other background work;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.selectSurveyButton.enabled = YES;
-            if (self.surveys.selectedSurvey) {
-                self.survey = nil;
-                self.selectSurveyButton.title = @"Loading Survey...";
-                NSLog(@"Opening Survey document");
-                [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
-                    //do any other background work;
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if (success) {
-                            [self setupNewSurvey];
-                        } else {
-                            [[[UIAlertView alloc] initWithTitle:@"Corrupt Document" message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
-                        }
-                    });
-                }];
-            } else {
-                [self updateView];
-            }
-        });
-    }];
-
-    self.selectMapButton.enabled = NO;
-    self.maps = [MapCollection sharedCollection];
-    [self.maps openWithCompletionHandler:^(BOOL success) {
-        //do any other background work;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.selectMapButton.enabled = YES;
-            [self updateView];
-            [self loadBaseMap];
-        });
-    }];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [self updateView];
-}
-
-- (void)updateView
-{
-    [self updateTitle];
-    [self updateButtons];
-}
-
--(void) updateTitle
-{
-    self.selectSurveyButton.title = (self.survey ? self.survey.title : @"Select Survey");
-}
-
--(void) updateButtons
-{
-    NSDictionary *dialogs = self.survey.protocol.dialogs;
-    self.startStopRecordingBarButtonItem.enabled = self.survey != nil;
-    self.startStopObservingBarButtonItem.enabled = self.isRecording && self.survey;
-    //TODO: if there are no mission proiperties, we should remove this button.
-    self.editEnvironmentBarButton.enabled = self.isRecording && self.survey && dialogs[@"MissionProperty"] != nil;
-    //TODO: support more than just one feature called "Observations"
-    //TODO:can we support adding observations that have no attributes (no dialog)
-    self.addObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
-    self.addGpsObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
-    self.addAdObservationBarButton.enabled = self.isObserving && self.maps.selectedLocalMap && self.survey && dialogs[@"Observation"] != nil;
-}
-
-- (void)setupNewSurvey
-{
-    if (self.survey == self.surveys.selectedSurvey) {
-        [self updateTitle]; //user may have changed the name.
-        return;
-    }
-    if (self.survey) {
-        self.selectSurveyButton.title = @"Closing Survey...";
-        [self stopRecording];
-        [self.survey closeWithCompletionHandler:nil];
-    }
-    if (self.surveys.selectedSurvey) {
-        self.selectSurveyButton.title = @"Loading Survey...";
-        self.survey = self.surveys.selectedSurvey;
-        self.context = self.survey.document.managedObjectContext;
-        NSLog(@"survey document open");
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
-        NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d GpsPoints", results.count);
-        request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
-        results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d Observations", results.count);
-        request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
-        results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d MissionYroperties", results.count);
-        request = [NSFetchRequest fetchRequestWithEntityName:@"Mission"];
-        results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d Missions", results.count);
-        [self reloadGraphics];
-    }
-    [self updateView];
-}
-
 - (void) viewDidAppear:(BOOL)animated {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapDidPan:) name:AGSMapViewDidEndPanningNotification object:self.mapView];
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapDidZoom:) name:AGSMapViewDidEndZoomingNotification object:self.mapView];
@@ -594,11 +494,12 @@ typedef enum {
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
             vc.popover = ((UIStoryboardPopoverSegue *)segue).popoverController;
             vc.popover.delegate = self;
-            vc.popoverDismissedCallback = ^{
-                [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
-                    //do any other background work;
-                    dispatch_async(dispatch_get_main_queue(), ^{[self setupNewSurvey];});
-                }];
+            vc.selectedSurveyChanged = ^{
+                // on calling thread
+                [self changeSurvey];
+            };
+            vc.selectedSurveyChangedName = ^{
+                [self updateTitleBar];
             };
         }
         return;
@@ -643,12 +544,12 @@ typedef enum {
     if (popoverController == self.quickDialogPopoverController) {
         [self dismissQuickDialogPopover:popoverController];
     }
-    if ([popoverController.contentViewController isKindOfClass:[UINavigationController class]]) {
-        UINavigationController *nav = (UINavigationController *)popoverController.contentViewController;
-        if ([[nav.viewControllers firstObject] isKindOfClass:[SurveySelectViewController class]]) {
-            [self updateTitle]; //user may have edit the title without changing the selection.
-        }
-    }
+//    if ([popoverController.contentViewController isKindOfClass:[UINavigationController class]]) {
+//        UINavigationController *nav = (UINavigationController *)popoverController.contentViewController;
+//        if ([[nav.viewControllers firstObject] isKindOfClass:[SurveySelectViewController class]]) {
+//            [self updateTitleBar]; //user may have edited the name of the survey without changing the selection.
+//        }
+//    }
 }
 
 
@@ -1456,7 +1357,7 @@ typedef enum {
     if (self.isObserving) {
         [self stopObserving];
     } else {
-        [self updateButtons];
+        [self updateControls];
     }
     self.startStopObservingBarButtonItem.enabled = NO;
     [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:YES];
@@ -1478,7 +1379,7 @@ typedef enum {
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self setAttributesForMissionProperty:mission atPoint:mapPoint];
     [self drawMissionProperty:mission atPoint:mapPoint];
-    [self updateButtons];
+    [self updateControls];
 }
 
 - (void) stopObserving
@@ -1494,7 +1395,7 @@ typedef enum {
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     //[self setAttributesForMissionProperty:mission atPoint:mapPoint];
     [self drawMissionProperty:mission atPoint:mapPoint];
-    [self updateButtons];
+    [self updateControls];
 }
 
 -(UIBarButtonItem *)setBarButtonAtIndex:(NSUInteger)index action:(SEL)action ToPlay:(BOOL)play
@@ -1511,22 +1412,6 @@ typedef enum {
      [self.toolbar setItems:toolbarButtons animated:YES];
      return newBarButton;
  }
-
-- (void) openModel
-{
-    //[self.survey.protocol openModel];
-}
-
-- (void) saveModel
-{
-    [self.survey saveWithCompletionHandler:nil];
-}
-
-- (void) closeModel
-{
-    [self.survey closeWithCompletionHandler:nil];
-}
-
 
 - (BOOL) openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
@@ -1568,6 +1453,182 @@ typedef enum {
     }
 
     return success;
+}
+
+
+#pragma mark - UI configuration
+
+- (void) configureView
+{
+    //TODO - increment busy
+    self.selectSurveyButton.enabled = NO;
+    self.surveys = [SurveyCollection sharedCollection];
+    [self.surveys openWithCompletionHandler:^(BOOL success) {
+        //do any other background work;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self changeSurvey];
+            self.selectSurveyButton.enabled = YES;
+            //decrement busy //here or maybe in completion handlers for load survey
+        });
+    }];
+
+    self.selectMapButton.enabled = NO;
+    self.maps = [MapCollection sharedCollection];
+    [self.maps openWithCompletionHandler:^(BOOL success) {
+        //do any other background work;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self loadBaseMap];
+            self.selectMapButton.enabled = YES;
+            [self updateControls]; //TODO - remove this call, enable buttons when busy state ends
+        });
+    }];
+}
+
+-(void) updateTitleBar
+{
+    self.selectSurveyButton.title = (self.survey ? self.survey.title : @"Select Survey");
+}
+
+-(void) updateControls
+{
+    NSDictionary *dialogs = self.survey.protocol.dialogs;
+    self.startStopRecordingBarButtonItem.enabled = self.survey != nil;
+    self.startStopObservingBarButtonItem.enabled = self.isRecording && self.survey;
+    //TODO: if there are no mission proiperties, we should remove this button.
+    self.editEnvironmentBarButton.enabled = self.isRecording && self.survey && dialogs[@"MissionProperty"] != nil;
+    //TODO: support more than just one feature called "Observations"
+    //TODO:can we support adding observations that have no attributes (no dialog)
+    self.addObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
+    self.addGpsObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
+    self.addAdObservationBarButton.enabled = self.isObserving && self.maps.selectedLocalMap && self.survey && dialogs[@"Observation"] != nil;
+}
+
+//- (void) xloadSurvey
+//{
+//    if (self.surveys.selectedSurvey) {
+//        self.survey = nil;
+//        self.selectSurveyButton.title = @"Loading Survey...";
+//        NSLog(@"Opening Survey document");
+//        [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
+//            //do any other background work;
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                if (success) {
+//                    [self setupNewSurvey];
+//                } else {
+//                    [[[UIAlertView alloc] initWithTitle:@"Corrupt Document" message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
+//                }
+//            });
+//        }];
+//    } else {
+//        [self updateTitleBar];
+//        [self updateControls];
+//    }
+//}
+//
+//- (void) xchangeSurvey
+//{
+//    [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
+//        //do any other background work;
+//        dispatch_async(dispatch_get_main_queue(), ^{[self setupNewSurvey];});
+//    }];
+//}
+//
+//- (void)xsetupNewSurvey
+//{}
+
+- (void)changeSurvey
+{
+    if (self.survey == self.surveys.selectedSurvey) {
+        return;
+    }
+
+    [self closeOpenSurveyWithConcurrentOpen:(self.surveys.selectedSurvey != nil)];
+
+    if (self.surveys.selectedSurvey) {
+        self.selectSurveyButton.title = @"Loading Survey...";
+        NSLog(@"Opening Survey document");
+        //TODO: increment busy counter
+        [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
+            //do any other background work;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (success) {
+                    self.survey = self.surveys.selectedSurvey;
+                    self.context = self.survey.document.managedObjectContext;
+                    [self logStats];
+                    [self reloadGraphics];
+                } else {
+                    [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
+                    self.survey = nil;
+
+                }
+                [self updateTitleBar];
+                [self updateControls];
+                //TODO: decrement busy counter
+            });
+        }];
+    }
+}
+
+- (void) logStats
+{
+    NSLog(@"survey document open");
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
+    NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"There are %d GpsPoints", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
+    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"There are %d Observations", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
+    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"There are %d MissionYroperties", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"Mission"];
+    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"There are %d Missions", results.count);
+}
+
+- (void) openModel
+{
+    //[self.survey.protocol openModel];
+}
+
+- (void) saveModel
+{
+    [self.survey saveWithCompletionHandler:nil];
+}
+
+- (void) closeModel
+{
+    [self closeOpenSurveyWithConcurrentOpen:NO];
+}
+
+- (void) closeOpenSurveyWithConcurrentOpen:(BOOL)concurrentOpen
+{
+    //TODO: this works, but writes logs backgro9und errors when called after a active document is deleted. 
+    if (self.survey) {
+        if (self.survey.document.documentState == UIDocumentStateNormal) {
+            //TODO: increment busy count
+            self.selectSurveyButton.title = @"Closing Survey...";
+            [self stopRecording];
+            [self.survey closeWithCompletionHandler:^(BOOL success) {
+                //do any other background work;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (success) {
+                        if (!concurrentOpen) {
+                            self.survey = nil;
+                            [self updateTitleBar];
+                        }
+                        //If there is a concurrent open, then these actions will be performed when the open finishes
+                    } else {
+                        [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to close the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
+                    }
+                    //TODO: decrement busy counter
+                });
+            }];
+        } else if (self.survey.document.documentState != UIDocumentStateClosed) {
+            NSLog(@"Survey is in an abnormal state: %d", self.survey.document.documentState);
+            [[[UIAlertView alloc] initWithTitle:@"Oh No!" message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
+        }
+    }
 }
 
 

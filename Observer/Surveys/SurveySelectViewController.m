@@ -136,7 +136,9 @@
     [self.items setSelectedSurvey:indexPath.row];
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         [self.popover dismissPopoverAnimated:YES];
-        self.popoverDismissedCallback();
+        if (self.selectedSurveyChanged) {
+            self.selectedSurveyChanged();
+        }
     } else {
         [self.navigationController popViewControllerAnimated:YES];
     }
@@ -172,6 +174,9 @@
         } else {
             [self.items removeSurveyAtIndex:indexPath.row];
             [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            if (self.selectedSurveyChanged) {
+                self.selectedSurveyChanged();
+            }
         }
     }
 }
@@ -227,10 +232,17 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == 1 && self.indexPathToDelete) {
-        [self.items removeSurveyAtIndex:self.indexPathToDelete.row];
-        [self.tableView deleteRowsAtIndexPaths:@[self.indexPathToDelete] withRowAnimation:UITableViewRowAnimationFade];
-        self.indexPathToDelete = nil;
+    if ([alertView.title isEqualToString:@"Unsaved Changes"]) {
+        if (buttonIndex == 1 && self.indexPathToDelete) {
+            [self.items removeSurveyAtIndex:self.indexPathToDelete.row];
+            [self.tableView deleteRowsAtIndexPaths:@[self.indexPathToDelete] withRowAnimation:UITableViewRowAnimationFade];
+            self.indexPathToDelete = nil;
+            if (self.selectedSurveyChanged) {
+                self.selectedSurveyChanged();
+            }
+        }
+    } else {
+        NSLog(@"Unexpected AlertView in SurveySelectViewController");
     }
 }
 
@@ -259,6 +271,9 @@
     Survey *survey = [self.items surveyAtIndex:indexPath.row];
     NSLog(@"Going to rename %@ to %@", survey.title, textField.text);
     survey.title = textField.text;
+    if (survey == self.items.selectedSurvey && self.selectedSurveyChangedName) {
+        self.selectedSurveyChangedName();
+    }
 }
 
 @end

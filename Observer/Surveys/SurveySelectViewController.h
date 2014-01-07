@@ -20,7 +20,10 @@
 // The popover (maybe nil) that this view controller is presented in
 @property (nonatomic, weak) UIPopoverController *popover;
 
-// A method to call when the popover is dismissed
-@property (copy) void (^popoverDismissedCallback)(void);
+// A method to call when the selected survey changes
+@property (copy) void (^selectedSurveyChanged)(void);
+
+// A method to call when the name of the selected survey changes
+@property (copy) void (^selectedSurveyChangedName)(void);
 
 @end
