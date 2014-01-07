@@ -414,7 +414,7 @@ typedef enum {
             return NO;
         }
     }
-    if ([identifier isEqualToString:@"Push Local Map Table"])
+    if ([identifier isEqualToString:@"Select Map"])
     {
         if (self.mapsPopoverController) {
             [self.mapsPopoverController dismissPopoverAnimated:YES];
@@ -499,8 +499,8 @@ typedef enum {
             [self updateTitleBar];
         };
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
-            self.mapsPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
-            vc.popover = self.mapsPopoverController;
+            self.surveysPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
+            vc.popover = self.surveysPopoverController;
             vc.popover.delegate = self;
         }
         return;
