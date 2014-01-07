@@ -61,6 +61,8 @@ typedef enum {
 
 @property (nonatomic,weak) NSManagedObjectContext *context;
 @property (nonatomic) BOOL busy;
+@property (nonatomic) int busyCount;
+
 @property (nonatomic) BOOL userWantsAutoPanOn;
 @property (nonatomic) AGSLocationDisplayAutoPanMode savedAutoPanMode;
 @property (strong, nonatomic) CLLocationManager *locationManager;
@@ -76,8 +78,8 @@ typedef enum {
 @property (strong, nonatomic) AGSGraphicsLayer *missionPropertiesLayer;
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
+@property (strong, nonatomic) UIPopoverController *surveysPopoverController;
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
-@property (nonatomic) int busyCount;
 
 @property (strong, nonatomic) Survey *survey;
 @property (strong, nonatomic) SurveyCollection* surveys;
@@ -368,6 +370,7 @@ typedef enum {
     return self;
 }
 
+
 #pragma mark - Public Methods: Super class methods
 
 - (void)viewDidLoad
@@ -403,6 +406,14 @@ typedef enum {
 
 - (BOOL) shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 {
+    if ([identifier isEqualToString:@"Select Survey"])
+    {
+        if (self.surveysPopoverController) {
+            [self.surveysPopoverController dismissPopoverAnimated:YES];
+            self.surveysPopoverController = nil;
+            return NO;
+        }
+    }
     if ([identifier isEqualToString:@"Push Local Map Table"])
     {
         if (self.mapsPopoverController) {
@@ -460,10 +471,11 @@ typedef enum {
         }
         vc.location = location;
         
-        UIStoryboardPopoverSegue *pop = (UIStoryboardPopoverSegue*)segue;
-        self.angleDistancePopoverController = pop.popoverController;
-        self.angleDistancePopoverController.delegate = self;
-        vc.popover = pop.popoverController;
+        if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
+            self.angleDistancePopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
+            vc.popover = self.angleDistancePopoverController;
+            vc.popover.delegate = self;
+        }
         vc.completionBlock = ^(AngleDistanceViewController *sender) {
             self.angleDistancePopoverController = nil;
             Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAngleDistanceLocation:sender.location];
@@ -479,16 +491,17 @@ typedef enum {
         SurveySelectViewController *vc = (SurveySelectViewController *)[nav.childViewControllers firstObject];
         vc.title = segue.identifier;
         vc.items = self.surveys;
+        vc.selectedSurveyChanged = ^{
+            // on calling thread
+            [self changeSurvey];
+        };
+        vc.selectedSurveyChangedName = ^{
+            [self updateTitleBar];
+        };
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
-            vc.popover = ((UIStoryboardPopoverSegue *)segue).popoverController;
+            self.mapsPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
+            vc.popover = self.mapsPopoverController;
             vc.popover.delegate = self;
-            vc.selectedSurveyChanged = ^{
-                // on calling thread
-                [self changeSurvey];
-            };
-            vc.selectedSurveyChangedName = ^{
-                [self updateTitleBar];
-            };
         }
         return;
     }
@@ -497,12 +510,13 @@ typedef enum {
         MapSelectViewController *vc = (MapSelectViewController *)[nav.childViewControllers firstObject];
         vc.title = segue.identifier;
         vc.items = self.maps;
+        vc.rowSelectedCallback = ^(NSIndexPath*indexPath){
+            [self resetBasemap];
+        };
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
-            vc.popover = ((UIStoryboardPopoverSegue *)segue).popoverController;
+            self.mapsPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
+            vc.popover = self.mapsPopoverController;
             vc.popover.delegate = self;
-            vc.rowSelectedCallback = ^(NSIndexPath*indexPath){
-                [self resetBasemap];
-            };
         }
         return;
     }}
