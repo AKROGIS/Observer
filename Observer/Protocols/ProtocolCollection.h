@@ -26,14 +26,14 @@
 // This is a singleton - actually a psuedo singleton, it is based on the honor system.
 // if you create your own instance with alloc/init then the behaviour is unspecified
 + (ProtocolCollection *)sharedCollection;
+
 + (void)releaseSharedCollection;
-//FIXME: multiple instances will clash when saving state to the cache.
+//TODO: this is a memory optimization that needs to be validated and tested
+//multiple instances will clash when saving state to the cache.
 //However, I want to create and destroy the protocol list with the view controller to
 //avoid keeping the collection in memory if it isn't needed.  making a singleton object
 //ensures that it is trapped in memory, unless I create a cleanup method that the VC calls
-//when it disappears.
-//Not sure the best way to go here.
-
+//when it disappears. - Not sure the best way to go here.
 
 
 // Does this collection manage the provided URL?

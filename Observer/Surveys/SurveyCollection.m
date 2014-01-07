@@ -46,6 +46,13 @@
     return self;
 }
 
+
++ (void)releaseSharedCollection {
+    //TODO: I can't release the shared collection with this type of singleton.
+    //This optimization may not be necessary
+    //_sharedCollection = nil;
+}
+
 #pragma mark - private properties
 
 - (NSMutableArray *)items

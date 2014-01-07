@@ -288,6 +288,7 @@ typedef enum {
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
     NSLog(@"Add Mission Property");
+    //FIXME: populate form with prior values or defaults
     //FIXME: if gps, then add at GPS else add adhoc at current location
     //launch pop up to enter attributes, use existing as defaults
 
@@ -329,12 +330,6 @@ typedef enum {
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
     [self setAttributesForObservation:observation atPoint:self.mapView.mapAnchor];
 }
-
-//- (IBAction)clearData:(UIBarButtonItem *)sender
-//{
-//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete Data" message:@"This will delete all observations and tracklogs, and cannot be undone." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Delete", nil];
-//    [alert show];
-//}
 
 
 #pragma mark - Public Methods: Initializers
