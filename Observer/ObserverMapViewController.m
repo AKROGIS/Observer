@@ -1309,7 +1309,8 @@ typedef enum {
 - (void) clearGraphics
 {
     [self.observationsLayer removeAllGraphics];
-    [self.gpsPointsLayer removeAllGraphics];    
+    [self.gpsPointsLayer removeAllGraphics];
+    [self.missionPropertiesLayer removeAllGraphics];
 }
 
 //FIXME: Rob some of the following code for deleting an individual observation
@@ -1584,6 +1585,9 @@ typedef enum {
     request = [NSFetchRequest fetchRequestWithEntityName:@"Mission"];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
     NSLog(@"There are %d Missions", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"Map"];
+    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"There are %d Maps", results.count);
 }
 
 - (void) openModel
@@ -1603,7 +1607,7 @@ typedef enum {
 
 - (void) closeOpenSurveyWithConcurrentOpen:(BOOL)concurrentOpen
 {
-    //TODO: this works, but writes logs backgro9und errors when called after a active document is deleted. 
+    //TODO: this works, but logs background errors when called after a active document is deleted.
     if (self.survey) {
         if (self.survey.document.documentState == UIDocumentStateNormal) {
             //TODO: increment busy count
