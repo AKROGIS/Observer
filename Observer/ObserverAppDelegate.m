@@ -12,7 +12,7 @@
 
 @interface ObserverAppDelegate()
 
-@property (nonatomic,strong) ObserverMapViewController *masterVC;
+@property (nonatomic,strong) ObserverMapViewController *observerMapViewController;
 
 @end
 
@@ -21,7 +21,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    [self.masterVC openModel];
     return YES;
 }
 							
@@ -37,7 +36,7 @@
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     NSLog(@"Entering Background.  Synchronizing User Defaults and saving coredata");
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [self.masterVC saveModel];
+    [self.observerMapViewController saveSurvey];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -55,16 +54,16 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     NSLog(@"Terminating App.  Synchronizing User Defaults and saving coredata");
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [self.masterVC closeModel];
+    [self.observerMapViewController closeSurvey];
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
     NSLog(@"%@ asked me to open %@", sourceApplication, url);
-    return [self.masterVC openURL:url sourceApplication:sourceApplication annotation:annotation];
+    return [self.observerMapViewController openURL:url sourceApplication:sourceApplication annotation:annotation];
 }
 
-- (ObserverMapViewController *)masterVC
+- (ObserverMapViewController *)observerMapViewController
 {
     UIViewController *vc;
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {

@@ -59,6 +59,8 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addGpsObservationBarButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addObservationBarButton;
 
+@property (nonatomic,weak) NSManagedObjectContext *context;
+@property (nonatomic) BOOL busy;
 @property (nonatomic) BOOL userWantsAutoPanOn;
 @property (nonatomic) AGSLocationDisplayAutoPanMode savedAutoPanMode;
 @property (strong, nonatomic) CLLocationManager *locationManager;
@@ -93,14 +95,7 @@ typedef enum {
 @implementation ObserverMapViewController
 
 
-#pragma mark - Public Properties
-
-- (void) setContext:(NSManagedObjectContext *)context
-{
-    NSLog(@"Context Set");
-    _context = context;
-    //[self reloadGraphics];
-}
+#pragma mark - Private Properties
 
 //TODO use an increment/decrement busy
 //  when > 0 disable all controls and show spinner
@@ -122,8 +117,6 @@ typedef enum {
         [self.mapLoadingIndicator stopAnimating];
     }
 }
-
-#pragma mark - Private Properties
 
 - (CLLocationManager *)locationManager
 {
@@ -362,6 +355,7 @@ typedef enum {
 //    [alert show];
 //}
 
+
 #pragma mark - Public Methods: Initializers
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -373,12 +367,6 @@ typedef enum {
     }
     return self;
 }
-
-- (void)dealloc
-{
-    [self removeObserver:self forKeyPath:@"currentMap"];
-}
-
 
 #pragma mark - Public Methods: Super class methods
 
@@ -518,6 +506,61 @@ typedef enum {
         }
         return;
     }}
+
+
+#pragma mark - public methods
+
+- (BOOL) openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    BOOL success = NO;
+    if ([SurveyCollection collectsURL:url]) {
+        success = [self.surveys openURL:url];
+        if (!success) {
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        } else {
+            //FIXME: update UI for new survey)
+            [[[UIAlertView alloc] initWithTitle:@"Thanks" message:@"I should do something now." delegate:nil cancelButtonTitle:@"Do it later" otherButtonTitles:nil] show];
+        }
+    }
+    if ([MapCollection collectsURL:url]) {
+        success = ![self.maps openURL:url];
+        if (!success) {
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        } else {
+            //FIXME: update UI for new map)
+            [[[UIAlertView alloc] initWithTitle:@"Thanks" message:@"I should do something now." delegate:nil cancelButtonTitle:@"Do it later" otherButtonTitles:nil] show];
+        }
+    }
+
+    //FIXME: this isn't working when the Protocol view is up
+    //I need to make sure I am getting the protocol collection it is using, and make sure updates are going to the delegate.
+    if ([ProtocolCollection collectsURL:url]) {
+        ProtocolCollection *protocols = [ProtocolCollection sharedCollection];
+        [protocols openWithCompletionHandler:^(BOOL success) {
+            SProtocol *protocol = [protocols openURL:url];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (protocol) {
+                    [[[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to create a new survey file with this protocol?" delegate:nil cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil] show];
+                    //FIXME: read the response, and acta accordingly
+                } else {
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                }
+            });
+        }];
+    }
+
+    return success;
+}
+
+- (void) saveSurvey
+{
+    [self.survey saveWithCompletionHandler:nil];
+}
+
+- (void) closeSurvey
+{
+    [self closeOpenSurveyWithConcurrentOpen:NO];
+}
 
 
 #pragma mark - Public Methods: Call backs for KVO and notifications
@@ -1372,8 +1415,7 @@ typedef enum {
     NSLog(@"start observing");
     self.isObserving = YES;
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:NO];
-    //TODO: create a map graphic at the gps point (similar to an observation)
-    //TDOO: display the mission attributes and populate with the last attribute set
+    //TDOO: populate the mission property dialog with the last/default dataset
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
     mission.observing = YES;
@@ -1388,13 +1430,10 @@ typedef enum {
     NSLog(@"stop observing");
     self.isObserving = NO;
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:YES];
-    //TODO: create a map graphic at the gps point (similar to an observation)
-    //TDOO: set the "observing" attribute to "off"
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
     mission.observing = NO;
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    //[self setAttributesForMissionProperty:mission atPoint:mapPoint];
     [self drawMissionProperty:mission atPoint:mapPoint];
     [self updateControls];
 }
@@ -1413,48 +1452,6 @@ typedef enum {
      [self.toolbar setItems:toolbarButtons animated:YES];
      return newBarButton;
  }
-
-- (BOOL) openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
-{
-    BOOL success = NO;
-    if ([SurveyCollection collectsURL:url]) {
-        success = [self.surveys openURL:url];
-        if (!success) {
-            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-        } else {
-            //FIXME: update UI for new survey)
-            [[[UIAlertView alloc] initWithTitle:@"Thanks" message:@"I should do something now." delegate:nil cancelButtonTitle:@"Do it later" otherButtonTitles:nil] show];
-        }
-    }
-    if ([MapCollection collectsURL:url]) {
-        success = ![self.maps openURL:url];
-        if (!success) {
-            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-        } else {
-            //FIXME: update UI for new map)
-            [[[UIAlertView alloc] initWithTitle:@"Thanks" message:@"I should do something now." delegate:nil cancelButtonTitle:@"Do it later" otherButtonTitles:nil] show];
-        }
-    }
-
-    //FIXME: this isn't working when the Protocol view is up
-    //I need to make sure I am getting the protocol collection it is using, and make sure updates are going to the delegate.
-    if ([ProtocolCollection collectsURL:url]) {
-        ProtocolCollection *protocols = [ProtocolCollection sharedCollection];
-        [protocols openWithCompletionHandler:^(BOOL success) {
-            SProtocol *protocol = [protocols openURL:url];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (protocol) {
-                    [[[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to create a new survey file with this protocol?" delegate:nil cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil] show];
-                    //FIXME: read the response, and acta accordingly
-                } else {
-                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-                }
-            });
-        }];
-    }
-
-    return success;
-}
 
 
 #pragma mark - UI configuration
@@ -1503,39 +1500,6 @@ typedef enum {
     self.addGpsObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
     self.addAdObservationBarButton.enabled = self.isObserving && self.maps.selectedLocalMap && self.survey && dialogs[@"Observation"] != nil;
 }
-
-//- (void) xloadSurvey
-//{
-//    if (self.surveys.selectedSurvey) {
-//        self.survey = nil;
-//        self.selectSurveyButton.title = @"Loading Survey...";
-//        NSLog(@"Opening Survey document");
-//        [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
-//            //do any other background work;
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                if (success) {
-//                    [self setupNewSurvey];
-//                } else {
-//                    [[[UIAlertView alloc] initWithTitle:@"Corrupt Document" message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
-//                }
-//            });
-//        }];
-//    } else {
-//        [self updateTitleBar];
-//        [self updateControls];
-//    }
-//}
-//
-//- (void) xchangeSurvey
-//{
-//    [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
-//        //do any other background work;
-//        dispatch_async(dispatch_get_main_queue(), ^{[self setupNewSurvey];});
-//    }];
-//}
-//
-//- (void)xsetupNewSurvey
-//{}
 
 - (void)changeSurvey
 {
@@ -1590,21 +1554,6 @@ typedef enum {
     NSLog(@"There are %d Maps", results.count);
 }
 
-- (void) openModel
-{
-    //[self.survey.protocol openModel];
-}
-
-- (void) saveModel
-{
-    [self.survey saveWithCompletionHandler:nil];
-}
-
-- (void) closeModel
-{
-    [self closeOpenSurveyWithConcurrentOpen:NO];
-}
-
 - (void) closeOpenSurveyWithConcurrentOpen:(BOOL)concurrentOpen
 {
     //TODO: this works, but logs background errors when called after a active document is deleted.
@@ -1636,9 +1585,7 @@ typedef enum {
 }
 
 
-
 #pragma mark - Support for Testing Quick Dialog
-
 
 // not called when popover is dismissed programatically - use callbacks instead
 -(void)dismissQuickDialogPopover:(UIPopoverController *)popoverController

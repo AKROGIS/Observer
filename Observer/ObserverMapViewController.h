@@ -11,16 +11,11 @@
 
 @interface ObserverMapViewController : UIViewController <UIPopoverControllerDelegate, CLLocationManagerDelegate, AGSMapViewLayerDelegate, AGSMapViewTouchDelegate, AGSCalloutDelegate, AGSLayerDelegate, UIAlertViewDelegate>
 
-@property (nonatomic) BOOL busy;
-@property (nonatomic,weak) NSManagedObjectContext *context;
-
-//To assist App delegate in opening urls from mail/web
+// To assist AppDelegate in opening urls from mail/web
 - (BOOL) openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation;
 
-- (void) openModel;
-
-- (void) closeModel;
-
-- (void) saveModel;
+// To assist AppDelegate in saving/closing the survey data
+- (void) closeSurvey;
+- (void) saveSurvey;
 
 @end
