@@ -31,9 +31,11 @@
 // Does this collection manage the provided URL?
 + (BOOL) collectsURL:(NSURL *)url;
 
-// builds the list, and current selection from the filesystem and user defaults
+// builds/verifies the list, and current selection from the filesystem and user defaults
 // This method does NOT send messsages to the delegate when items are added to the lists.
 // so the UI should be updated in the completionHandler;
+// Warning this must be called from the main thread if it might be called multiple times
+// assume completionHandler will be called on a background thread
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // Opens a file from Mail/Safari (via the App delegate)

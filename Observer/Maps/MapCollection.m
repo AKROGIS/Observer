@@ -18,6 +18,7 @@
 @property (nonatomic) NSInteger selectedLocalIndex;
 @property (nonatomic, strong) NSURL *documentsDirectory;
 @property (nonatomic, strong) NSURL *cacheFile;
+@property (nonatomic) BOOL isLoading;
 @property (nonatomic) BOOL isLoaded;
 @end
 
@@ -203,29 +204,31 @@ static MapCollection *_sharedCollection = nil;
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
+    //Check and set of isLoading must be done on the main thread to guarantee there is no race condition.
     if (self.isLoaded) {
-        if (completionHandler) completionHandler(YES);
+        if (completionHandler)
+            completionHandler(self.localItems != nil  & self.remoteItems != nil);
     } else {
-        dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
-            //temporarily remove the delegate so that updates are not sent for the bulk updates before the UI might be ready
-            //  currently unnecessary, since open is only called when the delegate is nil;
-            id savedDelegate = self.delegate;
-            self.delegate = nil;
-            [self loadCache];
-            BOOL success = [self refreshLocalMaps];
-            [self saveCache];
-            //Get the selected index (we can't do this in an accessor, because there isn't a no valid 'data not loaded' sentinal)
-            _selectedLocalIndex = [Settings manager].indexOfCurrentMap;
-            [self checkAndFixSelectedIndex];
-            self.delegate = savedDelegate;
+        if (self.isLoading) {
+            //wait until loading is completed, then return;
+            dispatch_async(dispatch_queue_create("gov.nps.akr.observer.mapcollection.open", DISPATCH_QUEUE_SERIAL), ^{
+                //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
+                if (completionHandler) {
+                    completionHandler(self.localItems != nil  & self.remoteItems != nil);
+                }
+            });
+        }
+        self.isLoading = YES;
+        dispatch_async(dispatch_queue_create("gov.nps.akr.observer.mapcollection.open", DISPATCH_QUEUE_SERIAL), ^{
+            [self loadAndCorrectListOfMaps];
             self.isLoaded = YES;
+            self.isLoading = NO;
             if (completionHandler) {
-                completionHandler(success);
+                completionHandler(self.localItems != nil  & self.remoteItems != nil);
             }
         });
     }
 }
-
 
 - (BOOL)openURL:(NSURL *)url
 {
@@ -327,6 +330,23 @@ static MapCollection *_sharedCollection = nil;
 
 
 #pragma mark - private methods
+
+- (void)loadAndCorrectListOfMaps
+{
+    //TODO - compare with similar method in SurveyCollection
+    //temporarily remove the delegate so that updates are not sent for the bulk updates before the UI might be ready
+    //  currently unnecessary, since open is only called when the delegate is nil;
+    id savedDelegate = self.delegate;
+    self.delegate = nil;
+    [self loadCache];
+    [self refreshLocalMaps];
+    [self saveCache];
+    //Get the selected index (we can't do this in an accessor, because there isn't a no valid 'data not loaded' sentinal)
+    _selectedLocalIndex = [Settings manager].indexOfCurrentMap;
+    [self checkAndFixSelectedIndex];
+    self.delegate = savedDelegate;
+
+}
 
 //TODO: - consider NSDefaults as it does memory mapping and defered writes
 //       this also make the class a singleton object

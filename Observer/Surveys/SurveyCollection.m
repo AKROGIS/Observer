@@ -89,8 +89,7 @@
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    //Check and set of isLoading must be done on the main thread to guarantee
-    //there is no race condition.
+    //Check and set of isLoading must be done on the main thread to guarantee there is no race condition.
     if (self.isLoaded) {
         if (completionHandler)
             completionHandler(self.items != nil);
