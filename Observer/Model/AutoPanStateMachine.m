@@ -152,12 +152,14 @@
         case kAutoPanAutoRotateByBearing:
             if (newSpeed <= self.maxSpeedForBearing) {
                 self.state = kAutoPanAutoRotateByHeading;
+                NSLog(@"AutoPan switch Bearing -> Heading");
                 self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
             }
             break;
         case kAutoPanAutoRotateByHeading:
             if (newSpeed < self.maxSpeedForBearing) {
                 self.state = kAutoPanAutoRotateByBearing;
+                NSLog(@"AutoPan switch Heading -> Bearing");
                 self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
             }
             break;
@@ -203,16 +205,26 @@
     } else {
         mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
     }
+    NSLog(@"Initialize autopan state with autopan mode %d", mapView.locationDisplay.autoPanMode);
 }
 
 - (void)setCompassRoseButton:(UIButton *)compassRoseButton
 {
-    _compassRoseButton = compassRoseButton;
-    if (self.state == kNoAutoPanNoAutoRotateNorthUp || self.state == kAutoPanNoAutoRotateNorthUp) {
-        [self hideCompassRoseButton];
+    if (!_compassRoseButton) {
+        //called on mapview initialization, so map rotation is 0 by default, an compass should be hidden by default
+        if (self.state == kAutoPanAutoRotateByBearing || self.state == kAutoPanAutoRotateByHeading) {
+            [self unhideCompassRoseButton];
+        } else {
+            [self hideCompassRoseButton];
+        }
     } else {
-        [self unhideCompassRoseButton];
+        if (self.state == kNoAutoPanNoAutoRotateNorthUp || self.state == kAutoPanNoAutoRotateNorthUp) {
+            [self hideCompassRoseButton];
+        } else {
+            [self unhideCompassRoseButton];
+        }
     }
+    _compassRoseButton = compassRoseButton;
 }
 
 - (void)hideCompassRoseButton
