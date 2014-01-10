@@ -38,14 +38,9 @@
                                             </segue>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem image="heading.png" id="jXA-Ll-IBJ">
+                                    <barButtonItem title="Item" id="jXA-Ll-IBJ" customClass="AutoPanButton">
                                         <connections>
                                             <action selector="togglePanMode:" destination="TiC-11-YSU" id="wsV-bl-ssf"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem title="mode" id="Q6g-O2-Fjg">
-                                        <connections>
-                                            <action selector="togglePanStyle:" destination="TiC-11-YSU" id="XjC-nk-PBr"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="kTL-5N-79y"/>
@@ -145,7 +140,6 @@
                         <outlet property="noMapLabel" destination="009-3q-8gq" id="t2W-18-0Iw"/>
                         <outlet property="northButton2" destination="fOP-b6-5IU" id="qxr-us-yGI"/>
                         <outlet property="panButton" destination="jXA-Ll-IBJ" id="ANP-0w-d3Q"/>
-                        <outlet property="panStyleButton" destination="Q6g-O2-Fjg" id="dp0-lZ-ZWa"/>
                         <outlet property="selectMapButton" destination="gJK-vn-5w7" id="H0i-2C-naE"/>
                         <outlet property="selectSurveyButton" destination="SCL-a5-7Et" id="aeX-q0-EBn"/>
                         <outlet property="startStopObservingBarButtonItem" destination="faa-Nc-OBV" id="qgk-KR-oAf"/>
@@ -1172,7 +1166,6 @@
         <image name="Crosshairs.png" width="64" height="64"/>
         <image name="Download" width="27" height="26"/>
         <image name="compass.png" width="30" height="30"/>
-        <image name="heading.png" width="33" height="29"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

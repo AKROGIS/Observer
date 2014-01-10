@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AutoPanButton : UIButton
+@interface AutoPanButton : UIBarButtonItem
 
 - (void)turnOff;
 - (void)turnOnWithoutRotate;

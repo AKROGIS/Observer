@@ -10,32 +10,23 @@
 
 @implementation AutoPanButton
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
-
 - (void)turnOff
 {
     //TODO: replace text with cool images/highlighting
-    self.titleLabel.text = @"Off";
-    self.imageView.image = nil;
+    self.title = @"Off";
+    self.image = nil;
 }
 
 - (void)turnOnWithoutRotate
 {
-    self.titleLabel.text = @"On";
-    self.imageView.image = nil;
+    self.title = @"On";
+    self.image = nil;
 }
 
 - (void)turnOnWitRotate
 {
-    self.titleLabel.text = @"OnR";
-    self.imageView.image = nil;
+    self.title = @"OnR";
+    self.image = nil;
 }
 
 @end

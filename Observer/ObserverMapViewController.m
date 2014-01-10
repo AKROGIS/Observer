@@ -30,15 +30,17 @@
 #import "SurveySelectViewController.h"
 #import "MapSelectViewController.h"
 #import "AttributeViewController.h"
+#import "AutoPanStateMachine.h"
+#import "AutoPanButton.h"
 
-#define MINIMUM_NAVIGATION_SPEED 1.0  //speed in meters per second (1mps = 2.2mph) at which to switch map orientation from compass heading to course direction
+//#define MINIMUM_NAVIGATION_SPEED 1.0  //speed in meters per second (1mps = 2.2mph) at which to switch map orientation from compass heading to course direction
 
-typedef enum {
-    LocationStyleOff,
-    LocationStyleNormal,
-    LocationStyleNaviagation,
-    LocationStyleMagnetic
-} LocationStyle;
+//typedef enum {
+//    LocationStyleOff,
+//    LocationStyleNormal,
+//    LocationStyleNaviagation,
+//    LocationStyleMagnetic
+//} LocationStyle;
 
 @interface ObserverMapViewController ()
 
@@ -49,9 +51,7 @@ typedef enum {
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectMapButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *panButton;
-//TODO- remove panStyleButton, integrate functionality with panButton
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *panStyleButton;
+@property (weak, nonatomic) IBOutlet AutoPanButton *panButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectSurveyButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopRecordingBarButtonItem;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopObservingBarButtonItem;
@@ -62,6 +62,7 @@ typedef enum {
 
 @property (nonatomic,weak) NSManagedObjectContext *context;
 @property (nonatomic) int busyCount;
+@property (strong, nonatomic) AutoPanStateMachine *autoPanController;
 
 @property (nonatomic) BOOL userWantsAutoPanOn;
 @property (nonatomic) AGSLocationDisplayAutoPanMode savedAutoPanMode;
@@ -155,18 +156,18 @@ typedef enum {
     return _missionPropertiesLayer;
 }
 
-@synthesize savedAutoPanMode = _savedAutoPanMode;
-
-- (AGSLocationDisplayAutoPanMode) savedAutoPanMode
-{
-    if (!_savedAutoPanMode)
-    {
-        _savedAutoPanMode = [Settings manager].autoPanMode;
-        if (_savedAutoPanMode < 1 || 3 < _savedAutoPanMode)
-            _savedAutoPanMode = 1;
-    }
-    return _savedAutoPanMode;
-}
+//@synthesize savedAutoPanMode = _savedAutoPanMode;
+//
+//- (AGSLocationDisplayAutoPanMode) savedAutoPanMode
+//{
+//    if (!_savedAutoPanMode)
+//    {
+//        _savedAutoPanMode = [Settings manager].autoPanMode;
+//        if (_savedAutoPanMode < 1 || 3 < _savedAutoPanMode)
+//            _savedAutoPanMode = 1;
+//    }
+//    return _savedAutoPanMode;
+//}
 
 - (BOOL)locationServicesAvailable
 {
@@ -174,32 +175,32 @@ typedef enum {
     return !self.locationManager ? NO : _locationServicesAvailable;
 }
 
-- (void) setUserWantsAutoPanOn:(BOOL)userWantsAutoPanOn
-{
-    if (userWantsAutoPanOn)
-    {
-        self.mapView.locationDisplay.autoPanMode = self.savedAutoPanMode;
-        self.panButton.style = UIBarButtonItemStyleDone;
-        self.panStyleButton.enabled = YES;
-    }
-    else
-    {
-        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
-        self.panButton.style = UIBarButtonItemStyleBordered;
-        self.panStyleButton.enabled = NO;
-    }
-    _userWantsAutoPanOn = userWantsAutoPanOn;
-    [Settings manager].autoPanEnabled = userWantsAutoPanOn;
-}
-
-- (void) setSavedAutoPanMode:(AGSLocationDisplayAutoPanMode)savedAutoPanMode
-{
-    if (savedAutoPanMode != _savedAutoPanMode)
-    {
-        _savedAutoPanMode = savedAutoPanMode;
-        [Settings manager].autoPanMode = savedAutoPanMode;
-    }
-}
+//- (void) setUserWantsAutoPanOn:(BOOL)userWantsAutoPanOn
+//{
+//    if (userWantsAutoPanOn)
+//    {
+//        self.mapView.locationDisplay.autoPanMode = self.savedAutoPanMode;
+//        self.panButton.style = UIBarButtonItemStyleDone;
+//        self.panStyleButton.enabled = YES;
+//    }
+//    else
+//    {
+//        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
+//        self.panButton.style = UIBarButtonItemStyleBordered;
+//        self.panStyleButton.enabled = NO;
+//    }
+//    _userWantsAutoPanOn = userWantsAutoPanOn;
+//    [Settings manager].autoPanEnabled = userWantsAutoPanOn;
+//}
+//
+//- (void) setSavedAutoPanMode:(AGSLocationDisplayAutoPanMode)savedAutoPanMode
+//{
+//    if (savedAutoPanMode != _savedAutoPanMode)
+//    {
+//        _savedAutoPanMode = savedAutoPanMode;
+//        [Settings manager].autoPanMode = savedAutoPanMode;
+//    }
+//}
 
 - (AGSSpatialReference *) wgs84
 {
@@ -239,7 +240,8 @@ typedef enum {
     //NSLog(@"User Rotating");
     // Map rotation is done internally by ArcGIS, and no delegate messages or notifications are provided.
     // I recognize this gesture so I can put up the north arrow when the map is rotated.
-    [self showNorthArrow];
+    //[self showNorthArrow];
+    [self.autoPanController userRotatedMap];
     [self rotateNorthArrow];
 }
 
@@ -253,19 +255,11 @@ typedef enum {
 }
 
 - (IBAction)togglePanMode:(UIBarButtonItem *)sender {
-    self.userWantsAutoPanOn = !self.userWantsAutoPanOn;
+    [self.autoPanController userClickedAutoPanButton];
+    //self.userWantsAutoPanOn = !self.userWantsAutoPanOn;
     [self startStopLocationServicesForPanMode];
 }
 
-- (IBAction)togglePanStyle:(UIBarButtonItem *)sender {
-    // if not autopan off, then loop through 1,2,3
-    if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeOff)
-        return;
-    self.mapView.locationDisplay.autoPanMode = 1 + (self.mapView.locationDisplay.autoPanMode%3);
-    self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
-    self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];
-    [self startStopLocationServicesForPanMode];
-}
 
 - (IBAction)startStopRecording:(UIBarButtonItem *)sender
 {
@@ -350,6 +344,12 @@ typedef enum {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    self.autoPanController = [[AutoPanStateMachine alloc] init];
+    self.autoPanController.mapView = self.mapView;
+    self.autoPanController.compassRoseButton = self.northButton2;
+    self.autoPanController.autoPanModeButton = self.panButton;
+
     self.noMapLabel.hidden = YES;
     [self incrementBusy];
     self.mapView.layerDelegate = self;
