@@ -23,6 +23,7 @@
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="zwR-0I-sp9" appends="YES" id="ziT-rl-Nxg"/>
+                                    <outletCollection property="gestureRecognizers" destination="Gmo-Ux-MzB" appends="YES" id="Y3W-Rh-ytq"/>
                                 </connections>
                             </view>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="zJv-q7-y2x">
@@ -153,6 +154,11 @@
                         <action selector="rotateMap:" destination="TiC-11-YSU" id="JXr-iI-nC3"/>
                     </connections>
                 </rotationGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="Gmo-Ux-MzB">
+                    <connections>
+                        <action selector="panMap:" destination="TiC-11-YSU" id="UK5-dV-80W"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="580" y="-1203"/>
         </scene>

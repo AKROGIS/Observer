@@ -191,8 +191,23 @@
     //NSLog(@"User Rotating");
     // Map rotation is done internally by ArcGIS, and no delegate messages or notifications are provided.
     // I recognize this gesture so I can put up the north arrow when the map is rotated.
-    [self.autoPanController userRotatedMap];
     [self rotateNorthArrow];
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        [self.autoPanController userRotatedMap];
+    }
+}
+
+- (IBAction)panMap:(UIPanGestureRecognizer *)sender
+{
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        //NSLog(@"User started Pan");
+        // Map panning is done internally by ArcGIS, and the map view will turn off autopanning when the user pans.
+        // However, I need to know when the user manually pans, so I can update the UI controls
+        // mapView has no delegate messages for panning and the notifications provided does not distinguish between auto v. manual pans.
+        //user panning will turn off the autopan mode, so I need to update the toolbar button.
+        [self.autoPanController userPannedMap];
+        [self startStopLocationServicesForPanMode];
+    }
 }
 
 - (IBAction)resetNorth:(UIButton *)sender {
@@ -303,18 +318,6 @@
     self.mapView.callout.delegate = self;
     self.mapView.allowRotationByPinching = YES;
     [self configureView];
-}
-
-- (void) viewDidAppear:(BOOL)animated {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapDidPan:) name:AGSMapViewDidEndPanningNotification object:self.mapView];
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mapDidZoom:) name:AGSMapViewDidEndZoomingNotification object:self.mapView];
-    [super viewDidAppear:animated];
-}
-
-- (void) viewDidDisappear:(BOOL)animated
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AGSMapViewDidEndPanningNotification object:self.mapView];
-    [super viewDidDisappear:animated];
 }
 
 - (void)didReceiveMemoryWarning
@@ -494,16 +497,6 @@
 - (void) closeSurvey
 {
     [self closeOpenSurveyWithConcurrentOpen:NO];
-}
-
-
-#pragma mark - Public Methods: Call backs for KVO and notifications
-
-- (void) mapDidPan:(NSNotification *)notification
-{
-    //user panning will turn off the autopan mode, so I need to update the toolbar button.
-    [self.autoPanController userPannedMap];
-    [self startStopLocationServicesForPanMode];
 }
 
 
