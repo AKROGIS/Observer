@@ -76,6 +76,7 @@
         case kNoAutoPanNoAutoRotateNorthUp:
             self.state = kNoAutoPanNoAutoRotate;
             [self unhideCompassRoseButton];
+            break;
         default:
             NSLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userRotatedMap", self.state);
             break;
@@ -109,6 +110,7 @@
             self.state = kNoAutoPanNoAutoRotate;
             self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
             [self.autoPanModeButton turnOff];
+            break;
         default:
             NSLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userClickedAutoPanButton", self.state);
             break;
