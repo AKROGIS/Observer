@@ -7,6 +7,7 @@
 //
 
 #import "AutoPanStateMachine.h"
+#import "Settings.h"
 
 @interface AutoPanStateMachine ()
 
@@ -17,6 +18,14 @@
 @end
 
 @implementation AutoPanStateMachine
+
+- (id)init
+{
+    if (self = [super init]) {
+        _state = [Settings manager].autoPanMode;
+    }
+    return self;
+}
 
 #pragma mark - public actions
 
@@ -158,7 +167,13 @@
 
 #pragma mark - private methods
 
-//TODO: save and restore state to/from Settings
+- (void)setState:(MapAutoPanState)state
+{
+    if (state != _state) {
+        [Settings manager].autoPanMode = state;
+        _state = state;
+    }
+}
 
 - (void)hideCompassRoseButton
 {

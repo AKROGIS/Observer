@@ -38,11 +38,8 @@
 #define DEFAULTS_KEY_URL_FOR_PROTOCOLS @"url_for_protocols"
 #define DEFAULTS_DEFAULT_URL_FOR_PROTOCOLS nil
 
-#define DEFAULTS_KEY_AUTOPAN_ENABLED @"autopan_enabled"
-#define DEFAULTS_DEFAULT_AUTOPAN_ENABLED NO
-
 #define DEFAULTS_KEY_AUTOPAN_MODE @"autopan_mode"
-#define DEFAULTS_DEFAULT_AUTOPAN_MODE AGSLocationDisplayAutoPanModeDefault
+#define DEFAULTS_DEFAULT_AUTOPAN_MODE kNoAutoPanNoAutoRotateNorthUp
 
 #define DEFAULTS_KEY_UOM_DISTANCE_SIGHTING @"uom_distance_sighting"
 #define DEFAULTS_DEFAULT_UOM_DISTANCE_SIGHTING AGSSRUnitMeter
@@ -241,33 +238,15 @@
 
 
 
-@synthesize autoPanEnabled = _autoPanEnabled;
-
-- (BOOL) autoPanEnabled
-{
-    bool value = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_AUTOPAN_ENABLED];
-    return value ?: DEFAULTS_DEFAULT_AUTOPAN_ENABLED;
-}
-
-- (void) setAutoPanEnabled:(BOOL)autoPanEnabled
-{
-    if (autoPanEnabled == DEFAULTS_DEFAULT_AUTOPAN_ENABLED)
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_AUTOPAN_ENABLED];
-    else
-        [[NSUserDefaults standardUserDefaults] setBool:autoPanEnabled forKey:DEFAULTS_KEY_AUTOPAN_ENABLED];
-}
-
-
-
 @synthesize autoPanMode = _autoPanMode;
 
-- (AGSLocationDisplayAutoPanMode) autoPanMode
+- (MapAutoPanState) autoPanMode
 {
-    AGSLocationDisplayAutoPanMode value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_AUTOPAN_MODE];
+    MapAutoPanState value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_AUTOPAN_MODE];
     return value ?: DEFAULTS_DEFAULT_AUTOPAN_MODE;
 }
 
-- (void) setAutoPanMode:(AGSLocationDisplayAutoPanMode)autoPanMode
+- (void) setAutoPanMode:(MapAutoPanState)autoPanMode
 {
     if (autoPanMode == DEFAULTS_DEFAULT_AUTOPAN_MODE)
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_AUTOPAN_MODE];

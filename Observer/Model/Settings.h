@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <ArcGIS/ArcGIS.h>
 #import "Enumerations.h"
+#import "AutoPanStateMachine.h"
 
 /*
  * Manages reading and writing from the NSDefaults system
@@ -36,8 +37,7 @@
 @property (nonatomic) NSURL *urlForMaps;
 @property (nonatomic) NSURL *urlForProtocols;
 
-@property (nonatomic) BOOL autoPanEnabled;
-@property (nonatomic) AGSLocationDisplayAutoPanMode autoPanMode;
+@property (nonatomic) MapAutoPanState autoPanMode;
 
 @property (nonatomic) AGSSRUnit distanceUnitsForSightings;
 @property (nonatomic) AGSSRUnit distanceUnitsForMeasuring;
