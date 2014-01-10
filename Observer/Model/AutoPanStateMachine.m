@@ -98,11 +98,11 @@
         case kAutoPanNoAutoRotateNorthUp:
             [self unhideCompassRoseButton];
             [self selectRotationStyleBasedOnSpeed];
-            [self.autoPanModeButton turnOnWitRotate];
+            [self.autoPanModeButton turnOnWithRotate];
             break;
         case kAutoPanNoAutoRotate:
             [self selectRotationStyleBasedOnSpeed];
-            [self.autoPanModeButton turnOnWitRotate];
+            [self.autoPanModeButton turnOnWithRotate];
             break;
         case kAutoPanAutoRotateByBearing:
         case kAutoPanAutoRotateByHeading:
@@ -183,7 +183,7 @@
     if (self.state == kAutoPanNoAutoRotate || self.state == kAutoPanNoAutoRotateNorthUp) {
         [autoPanModeButton turnOnWithoutRotate];
     } else if (self.state == kAutoPanAutoRotateByBearing || self.state == kAutoPanAutoRotateByHeading) {
-        [autoPanModeButton turnOnWitRotate];
+        [autoPanModeButton turnOnWithRotate];
     } else {
         [autoPanModeButton turnOff];
     }

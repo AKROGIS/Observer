@@ -12,6 +12,6 @@
 
 - (void)turnOff;
 - (void)turnOnWithoutRotate;
-- (void)turnOnWitRotate;
+- (void)turnOnWithRotate;
 
 @end

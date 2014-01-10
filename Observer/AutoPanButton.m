@@ -23,7 +23,7 @@
     self.image = nil;
 }
 
-- (void)turnOnWitRotate
+- (void)turnOnWithRotate
 {
     self.title = @"OnR";
     self.image = nil;
