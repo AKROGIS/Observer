@@ -25,6 +25,12 @@
         _priorSpeed = 0;
         _maxSpeedForBearing = MINIMUM_NAVIGATION_SPEED;
         _state = [Settings manager].autoPanMode;
+        //called on mapview initialization, so map rotation is 0 by default
+        if (_state == kAutoPanNoAutoRotate)
+            _state = kAutoPanNoAutoRotateNorthUp;
+        if (_state == kNoAutoPanNoAutoRotate) {
+            _state = kNoAutoPanNoAutoRotateNorthUp;
+        }
     }
     return self;
 }
@@ -71,11 +77,11 @@
             break;
         case kAutoPanNoAutoRotateNorthUp:
             self.state = kAutoPanNoAutoRotate;
-            [self unhideCompassRoseButton];
+            [self showCompassRoseButton];
             break;
         case kNoAutoPanNoAutoRotateNorthUp:
             self.state = kNoAutoPanNoAutoRotate;
-            [self unhideCompassRoseButton];
+            [self showCompassRoseButton];
             break;
         default:
             NSLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userRotatedMap", self.state);
@@ -97,7 +103,7 @@
             self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
             break;
         case kAutoPanNoAutoRotateNorthUp:
-            [self unhideCompassRoseButton];
+            [self showCompassRoseButton];
             [self selectRotationStyleBasedOnSpeed];
             [self.autoPanModeButton turnOnWithRotate];
             break;
@@ -210,25 +216,17 @@
 
 - (void)setCompassRoseButton:(UIButton *)compassRoseButton
 {
-    if (!_compassRoseButton) {
-        //called on mapview initialization, so map rotation is 0 by default, an compass should be hidden by default
-        if (self.state == kAutoPanAutoRotateByBearing || self.state == kAutoPanAutoRotateByHeading) {
-            [self unhideCompassRoseButton];
-        } else {
-            [self hideCompassRoseButton];
-        }
-    } else {
-        if (self.state == kNoAutoPanNoAutoRotateNorthUp || self.state == kAutoPanNoAutoRotateNorthUp) {
-            [self hideCompassRoseButton];
-        } else {
-            [self unhideCompassRoseButton];
-        }
-    }
     _compassRoseButton = compassRoseButton;
+    if (self.state == kNoAutoPanNoAutoRotateNorthUp || self.state == kAutoPanNoAutoRotateNorthUp) {
+        [self hideCompassRoseButton];
+    } else {
+        [self showCompassRoseButton];
+    }
 }
 
 - (void)hideCompassRoseButton
 {
+    NSLog(@"hide compass rose");
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionFade;
     animation.duration = 0.4;
@@ -236,8 +234,9 @@
     self.compassRoseButton.hidden = YES;
 }
 
-- (void)unhideCompassRoseButton
+- (void)showCompassRoseButton
 {
+    NSLog(@"show compass rose");
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionFade;
     animation.duration = 0.4;
