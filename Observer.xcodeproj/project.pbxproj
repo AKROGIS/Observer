@@ -105,6 +105,8 @@
 		39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */; };
 		39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */; };
 		39B92FD517A87D9300C62145 /* BlueSelectionForTableViewCell.png in Resources */ = {isa = PBXBuildFile; fileRef = 39B92FD417A87D9300C62145 /* BlueSelectionForTableViewCell.png */; };
+		39C53E61187F411B00C0CECE /* AutoPanStateMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */; };
+		39C53E65187F4B5E00C0CECE /* AutoPanButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C53E64187F4B5E00C0CECE /* AutoPanButton.m */; };
 		39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94B17B464B40014C68F /* LocationAngleDistance.m */; };
 		39D1D94F17B9A8280014C68F /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */; };
 		39D1D95A17BC21D00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
@@ -282,6 +284,10 @@
 		39B92FD117A869B500C62145 /* RadioStyleTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadioStyleTableViewCell.h; sourceTree = "<group>"; };
 		39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RadioStyleTableViewCell.m; sourceTree = "<group>"; };
 		39B92FD417A87D9300C62145 /* BlueSelectionForTableViewCell.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlueSelectionForTableViewCell.png; sourceTree = "<group>"; };
+		39C53E5F187F411B00C0CECE /* AutoPanStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AutoPanStateMachine.h; path = Model/AutoPanStateMachine.h; sourceTree = "<group>"; };
+		39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AutoPanStateMachine.m; path = Model/AutoPanStateMachine.m; sourceTree = "<group>"; };
+		39C53E63187F4B5E00C0CECE /* AutoPanButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoPanButton.h; sourceTree = "<group>"; };
+		39C53E64187F4B5E00C0CECE /* AutoPanButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoPanButton.m; sourceTree = "<group>"; };
 		39D1D94A17B464B40014C68F /* LocationAngleDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocationAngleDistance.h; path = Model/LocationAngleDistance.h; sourceTree = "<group>"; };
 		39D1D94B17B464B40014C68F /* LocationAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LocationAngleDistance.m; path = Model/LocationAngleDistance.m; sourceTree = "<group>"; };
 		39D1D94D17B9A8280014C68F /* LocationAngleDistanceTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationAngleDistanceTests.h; sourceTree = "<group>"; };
@@ -292,7 +298,7 @@
 		59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDirectionIndicatorView.m; sourceTree = "<group>"; };
 		59C60FED1863FDBF00470791 /* AKRFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRFormatter.h; sourceTree = "<group>"; };
 		59C60FEE1863FDBF00470791 /* AKRFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRFormatter.m; sourceTree = "<group>"; };
-		59C60FF41864206500470791 /* en */ = {isa = PBXFileReference; lastKnownFileType = file; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		59C60FF41864206500470791 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -350,6 +356,8 @@
 				39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */,
 				59C60FE6185ABF9400470791 /* AKRDirectionIndicatorView.h */,
 				59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */,
+				39C53E63187F4B5E00C0CECE /* AutoPanButton.h */,
+				39C53E64187F4B5E00C0CECE /* AutoPanButton.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -611,6 +619,8 @@
 				39D1D97B17BC51630014C68F /* ObserverModel.h */,
 				393E8AFA17A2E1D8009AD0AC /* Settings.h */,
 				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
+				39C53E5F187F411B00C0CECE /* AutoPanStateMachine.h */,
+				39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -803,6 +813,7 @@
 				394CC24A1858F11800FA859C /* AdhocLocation.m in Sources */,
 				398908221857EB2F007B3F67 /* Map.m in Sources */,
 				39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */,
+				39C53E65187F4B5E00C0CECE /* AutoPanButton.m in Sources */,
 				394CC23E1858EF5800FA859C /* ObserverModel.xcdatamodeld in Sources */,
 				39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */,
 				39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */,
@@ -810,6 +821,7 @@
 				398908691857F192007B3F67 /* SurveyTableViewCell.m in Sources */,
 				398908411857ECE4007B3F67 /* SProtocol.m in Sources */,
 				3989083B1857EBF6007B3F67 /* ProtocolCollection.m in Sources */,
+				39C53E61187F411B00C0CECE /* AutoPanStateMachine.m in Sources */,
 				3989085D1857EDE1007B3F67 /* AGSPoint+AKRAdditions.m in Sources */,
 				394CC2531858F11800FA859C /* Observation.m in Sources */,
 				39A836CB185FDAB8008BF4E3 /* AttributeViewController.m in Sources */,
