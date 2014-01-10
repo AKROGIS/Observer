@@ -38,6 +38,7 @@
 @property (nonatomic) NSURL *urlForProtocols;
 
 @property (nonatomic) MapAutoPanState autoPanMode;
+@property (nonatomic) double maxSpeedForBearing;
 
 @property (nonatomic) AGSSRUnit distanceUnitsForSightings;
 @property (nonatomic) AGSSRUnit distanceUnitsForMeasuring;

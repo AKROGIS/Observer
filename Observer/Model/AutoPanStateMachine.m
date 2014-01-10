@@ -22,7 +22,10 @@
 - (id)init
 {
     if (self = [super init]) {
+        _priorSpeed = 0;
+        _maxSpeedForBearing = [Settings manager].maxSpeedForBearing;
         _state = [Settings manager].autoPanMode;
+        //TODO: setup the outlets based on the saved state
     }
     return self;
 }

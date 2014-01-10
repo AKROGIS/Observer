@@ -41,6 +41,9 @@
 #define DEFAULTS_KEY_AUTOPAN_MODE @"autopan_mode"
 #define DEFAULTS_DEFAULT_AUTOPAN_MODE kNoAutoPanNoAutoRotateNorthUp
 
+#define DEFAULTS_KEY_MAX_SPEED_FOR_BEARING @"max_speed_for_bearing"
+#define DEFAULTS_DEFAULT_MAX_SPEED_FOR_BEARING 0.0
+
 #define DEFAULTS_KEY_UOM_DISTANCE_SIGHTING @"uom_distance_sighting"
 #define DEFAULTS_DEFAULT_UOM_DISTANCE_SIGHTING AGSSRUnitMeter
 
@@ -252,6 +255,24 @@
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_AUTOPAN_MODE];
     else
         [[NSUserDefaults standardUserDefaults] setInteger:autoPanMode forKey:DEFAULTS_KEY_AUTOPAN_MODE];
+}
+
+
+
+@synthesize maxSpeedForBearing = _maxSpeedForBearing;
+
+- (double)maxSpeedForBearing
+{
+    double value = [[NSUserDefaults standardUserDefaults] doubleForKey:DEFAULTS_KEY_MAX_SPEED_FOR_BEARING];
+    return value ?: DEFAULTS_DEFAULT_MAX_SPEED_FOR_BEARING;
+}
+
+- (void)setMaxSpeedForBearing:(double)maxSpeedForBearing
+{
+    if (maxSpeedForBearing == DEFAULTS_DEFAULT_MAX_SPEED_FOR_BEARING)
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_MAX_SPEED_FOR_BEARING];
+    else
+        [[NSUserDefaults standardUserDefaults] setDouble:maxSpeedForBearing forKey:DEFAULTS_KEY_MAX_SPEED_FOR_BEARING];
 }
 
 
