@@ -33,15 +33,6 @@
 #import "AutoPanStateMachine.h"
 #import "AutoPanButton.h"
 
-//#define MINIMUM_NAVIGATION_SPEED 1.0  //speed in meters per second (1mps = 2.2mph) at which to switch map orientation from compass heading to course direction
-
-//typedef enum {
-//    LocationStyleOff,
-//    LocationStyleNormal,
-//    LocationStyleNaviagation,
-//    LocationStyleMagnetic
-//} LocationStyle;
-
 @interface ObserverMapViewController ()
 
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
@@ -156,51 +147,11 @@
     return _missionPropertiesLayer;
 }
 
-//@synthesize savedAutoPanMode = _savedAutoPanMode;
-//
-//- (AGSLocationDisplayAutoPanMode) savedAutoPanMode
-//{
-//    if (!_savedAutoPanMode)
-//    {
-//        _savedAutoPanMode = [Settings manager].autoPanMode;
-//        if (_savedAutoPanMode < 1 || 3 < _savedAutoPanMode)
-//            _savedAutoPanMode = 1;
-//    }
-//    return _savedAutoPanMode;
-//}
-
 - (BOOL)locationServicesAvailable
 {
     //this value is undefined if the there is no locationManager
     return !self.locationManager ? NO : _locationServicesAvailable;
 }
-
-//- (void) setUserWantsAutoPanOn:(BOOL)userWantsAutoPanOn
-//{
-//    if (userWantsAutoPanOn)
-//    {
-//        self.mapView.locationDisplay.autoPanMode = self.savedAutoPanMode;
-//        self.panButton.style = UIBarButtonItemStyleDone;
-//        self.panStyleButton.enabled = YES;
-//    }
-//    else
-//    {
-//        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
-//        self.panButton.style = UIBarButtonItemStyleBordered;
-//        self.panStyleButton.enabled = NO;
-//    }
-//    _userWantsAutoPanOn = userWantsAutoPanOn;
-//    [Settings manager].autoPanEnabled = userWantsAutoPanOn;
-//}
-//
-//- (void) setSavedAutoPanMode:(AGSLocationDisplayAutoPanMode)savedAutoPanMode
-//{
-//    if (savedAutoPanMode != _savedAutoPanMode)
-//    {
-//        _savedAutoPanMode = savedAutoPanMode;
-//        [Settings manager].autoPanMode = savedAutoPanMode;
-//    }
-//}
 
 - (AGSSpatialReference *) wgs84
 {
@@ -240,23 +191,18 @@
     //NSLog(@"User Rotating");
     // Map rotation is done internally by ArcGIS, and no delegate messages or notifications are provided.
     // I recognize this gesture so I can put up the north arrow when the map is rotated.
-    //[self showNorthArrow];
     [self.autoPanController userRotatedMap];
     [self rotateNorthArrow];
 }
 
 - (IBAction)resetNorth:(UIButton *)sender {
     [self.mapView setRotationAngle:0 animated:YES];
-    [self stopHeadingUpdates];
-    if (!self.isRecording) {
-        [self stopLocationUpdates];
-    }
-    [self hideNorthArrow];
+    [self.autoPanController userClickedCompassRoseButton];
+    [self startStopLocationServicesForPanMode];
 }
 
 - (IBAction)togglePanMode:(UIBarButtonItem *)sender {
     [self.autoPanController userClickedAutoPanButton];
-    //self.userWantsAutoPanOn = !self.userWantsAutoPanOn;
     [self startStopLocationServicesForPanMode];
 }
 
@@ -556,10 +502,8 @@
 - (void) mapDidPan:(NSNotification *)notification
 {
     //user panning will turn off the autopan mode, so I need to update the toolbar button.
-    if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeOff) {
-        self.userWantsAutoPanOn = NO;
-        [self startStopLocationServicesForPanMode];
-    }
+    [self.autoPanController userPannedMap];
+    [self startStopLocationServicesForPanMode];
 }
 
 
@@ -785,18 +729,7 @@
     }
 
     //use the speed to update the autorotation behavior
-    if (location.speed < MINIMUM_NAVIGATION_SPEED &&
-        self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation)
-    {
-        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
-        self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
-    }
-    if (MINIMUM_NAVIGATION_SPEED <= location.speed &&
-        self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation)
-    {
-        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
-        self.savedAutoPanMode = self.mapView.locationDisplay.autoPanMode;
-    }
+    [self.autoPanController speedUpdate:location.speed];
 }
 
 - (void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
@@ -848,23 +781,21 @@
     self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
     self.mapView.locationDisplay.wanderExtentFactor = 0.0;
     [self.mapView.locationDisplay startDataSource];
-    self.userWantsAutoPanOn = [Settings manager].autoPanEnabled;
-    //TODO- remove this button, integrate with self.panButton
-    self.panStyleButton.title = [NSString stringWithFormat:@"Mode%u",self.savedAutoPanMode];
     [self startStopLocationServicesForPanMode];
+}
+
+- (BOOL)isAutoRotating
+{
+    return self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation ||
+           self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation;
 }
 
 - (void)startStopLocationServicesForPanMode
 {
-    if (self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation ||
-        self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation) {
-        [self showNorthArrow];
-        [self startHeadingUpdates];
+    if ([self isAutoRotating]) {
+        [self startHeadingUpdates];  //monitor heading to rotate compass rose
         [self startLocationUpdates]; //monitor speed to switch between navigation modes
     } else {
-        if (self.mapView.rotationAngle == 0) {
-            [self hideNorthArrow];
-        }
         [self stopHeadingUpdates];
         [self stopLocationUpdates];
     }
@@ -896,33 +827,12 @@
 
 - (void) stopLocationUpdates
 {
-    self.userWantsLocationUpdates = NO;
-    if (self.locationServicesAvailable) {
-        [self.locationManager stopUpdatingLocation];
-    }
-}
-
-- (void) showNorthArrow
-{
-    if (self.northButton2.hidden)
-    {
-        CATransition *animation = [CATransition animation];
-        animation.type = kCATransitionFade;
-        animation.duration = 0.4;
-        [self.northButton2.layer addAnimation:animation forKey:nil];
-        self.northButton2.hidden = NO;
-    }
-}
-
-- (void) hideNorthArrow
-{
-    if (!self.northButton2.hidden)
-    {
-        CATransition *animation = [CATransition animation];
-        animation.type = kCATransitionFade;
-        animation.duration = 0.4;
-        [self.northButton2.layer addAnimation:animation forKey:nil];
-        self.northButton2.hidden = YES;
+    //I may try to stop for multiple reasons. Only stop if they all want to stop
+    if (!self.isRecording && ![self isAutoRotating]) {
+        self.userWantsLocationUpdates = NO;
+        if (self.locationServicesAvailable) {
+            [self.locationManager stopUpdatingLocation];
+        }
     }
 }
 
@@ -1487,7 +1397,6 @@
     self.selectSurveyButton.enabled = NO;
 
     self.panButton.enabled = NO;
-    self.panStyleButton.enabled = NO;
 
     self.startStopRecordingBarButtonItem.enabled = NO;
     self.startStopObservingBarButtonItem.enabled = NO;
@@ -1503,7 +1412,6 @@
     self.selectSurveyButton.enabled = self.surveys != nil;
 
     self.panButton.enabled = self.mapView.loaded;
-    self.panStyleButton.enabled = self.mapView.loaded && self.userWantsAutoPanOn;
     
     NSDictionary *dialogs = self.survey.protocol.dialogs;
     self.startStopRecordingBarButtonItem.enabled = self.survey != nil;
