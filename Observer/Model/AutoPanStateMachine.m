@@ -23,9 +23,8 @@
 {
     if (self = [super init]) {
         _priorSpeed = 0;
-        _maxSpeedForBearing = [Settings manager].maxSpeedForBearing;
+        _maxSpeedForBearing = MINIMUM_NAVIGATION_SPEED;
         _state = [Settings manager].autoPanMode;
-        //TODO: setup the outlets based on the saved state
     }
     return self;
 }
@@ -175,6 +174,42 @@
     if (state != _state) {
         [Settings manager].autoPanMode = state;
         _state = state;
+    }
+}
+
+- (void)setAutoPanModeButton:(AutoPanButton *)autoPanModeButton
+{
+    _autoPanModeButton = autoPanModeButton;
+    if (self.state == kAutoPanNoAutoRotate || self.state == kAutoPanNoAutoRotateNorthUp) {
+        [autoPanModeButton turnOnWithoutRotate];
+    } else if (self.state == kAutoPanAutoRotateByBearing || self.state == kAutoPanAutoRotateByHeading) {
+        [autoPanModeButton turnOnWitRotate];
+    } else {
+        [autoPanModeButton turnOff];
+    }
+}
+
+- (void)setMapView:(AGSMapView *)mapView
+{
+    _mapView = mapView;
+    if (self.state == kAutoPanNoAutoRotate || self.state == kAutoPanNoAutoRotateNorthUp) {
+        mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
+    } else if (self.state == kAutoPanAutoRotateByBearing) {
+        mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
+    } else if (self.state == kAutoPanAutoRotateByHeading) {
+        mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
+    } else {
+        mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
+    }
+}
+
+- (void)setCompassRoseButton:(UIButton *)compassRoseButton
+{
+    _compassRoseButton = compassRoseButton;
+    if (self.state == kNoAutoPanNoAutoRotateNorthUp || self.state == kAutoPanNoAutoRotateNorthUp) {
+        [self hideCompassRoseButton];
+    } else {
+        [self unhideCompassRoseButton];
     }
 }
 
