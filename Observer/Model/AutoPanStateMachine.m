@@ -74,6 +74,7 @@
         case kAutoPanAutoRotateByHeading:
             self.state = kAutoPanNoAutoRotate;
             [self.autoPanModeButton turnOnWithoutRotate];
+            self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
             break;
         case kAutoPanNoAutoRotateNorthUp:
             self.state = kAutoPanNoAutoRotate;
@@ -161,16 +162,16 @@
         case kAutoPanNoAutoRotate:
             break;
         case kAutoPanAutoRotateByBearing:
-            if (newSpeed <= self.maxSpeedForBearing) {
+            if (self.maxSpeedForBearing < newSpeed) {
                 self.state = kAutoPanAutoRotateByHeading;
-                NSLog(@"AutoPan switch Bearing -> Heading");
+                NSLog(@"AutoPan switch Bearing -> Heading, speed %f",newSpeed);
                 self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
             }
             break;
         case kAutoPanAutoRotateByHeading:
-            if (newSpeed < self.maxSpeedForBearing) {
+            if (newSpeed <= self.maxSpeedForBearing) {
                 self.state = kAutoPanAutoRotateByBearing;
-                NSLog(@"AutoPan switch Heading -> Bearing");
+                NSLog(@"AutoPan switch Heading -> Bearing, speed %f",newSpeed);
                 self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
             }
             break;
@@ -251,12 +252,12 @@
 
 - (void)selectRotationStyleBasedOnSpeed
 {
-    if (self.priorSpeed < self.maxSpeedForBearing) {
-        self.state = kAutoPanAutoRotateByBearing;
-        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
-    } else {
+    if (self.maxSpeedForBearing < self.priorSpeed) {
         self.state = kAutoPanAutoRotateByHeading;
         self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
+    } else {
+        self.state = kAutoPanAutoRotateByBearing;
+        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
     }
 }
 
