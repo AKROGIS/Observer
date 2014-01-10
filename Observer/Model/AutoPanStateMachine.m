@@ -177,13 +177,19 @@
 
 - (void)hideCompassRoseButton
 {
-    //TODO: animate
+    CATransition *animation = [CATransition animation];
+    animation.type = kCATransitionFade;
+    animation.duration = 0.4;
+    [self.compassRoseButton.layer addAnimation:animation forKey:nil];
     self.compassRoseButton.hidden = YES;
 }
 
 - (void)unhideCompassRoseButton
 {
-    //TODO: animate
+    CATransition *animation = [CATransition animation];
+    animation.type = kCATransitionFade;
+    animation.duration = 0.4;
+    [self.compassRoseButton.layer addAnimation:animation forKey:nil];
     self.compassRoseButton.hidden = NO;
 }
 
