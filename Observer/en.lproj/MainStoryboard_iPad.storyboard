@@ -87,10 +87,10 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fOP-b6-5IU">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fOP-b6-5IU">
                                 <rect key="frame" x="718" y="28" width="30" height="30"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" image="compass.png">
+                                <state key="normal" image="CompassRose">
                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -1169,9 +1169,9 @@
         </scene>
     </scenes>
     <resources>
+        <image name="CompassRose" width="30" height="30"/>
         <image name="Crosshairs.png" width="64" height="64"/>
         <image name="Download" width="27" height="26"/>
-        <image name="compass.png" width="30" height="30"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

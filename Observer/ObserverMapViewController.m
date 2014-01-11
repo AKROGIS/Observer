@@ -33,7 +33,9 @@
 #import "AutoPanStateMachine.h"
 #import "AutoPanButton.h"
 
-@interface ObserverMapViewController ()
+@interface ObserverMapViewController () {
+    CGFloat _initialRotationOfViewAtGestureStart;
+}
 
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
@@ -186,15 +188,19 @@
 
 #pragma mark - IBActions
 
+// I'm doing the rotation myself, instead of using self.mapView.allowRotationByPinching = YES
+// because I need to sync it with the compass rose,
+// but the real problem was the mapView was missing some gestures, and capturing some I didn't get
 - (IBAction)rotateMap:(UIRotationGestureRecognizer *)sender
 {
-    //NSLog(@"User Rotating");
-    // Map rotation is done internally by ArcGIS, and no delegate messages or notifications are provided.
-    // I recognize this gesture so I can put up the north arrow when the map is rotated.
-    [self rotateNorthArrow];
     if (sender.state == UIGestureRecognizerStateBegan) {
         [self.autoPanController userRotatedMap];
+        _initialRotationOfViewAtGestureStart = atan2f(self.northButton2.transform.b, self.northButton2.transform.a);
     }
+    CGFloat radians = _initialRotationOfViewAtGestureStart + sender.rotation;
+    CGFloat degrees = radians * (180 / M_PI);
+    self.northButton2.transform = CGAffineTransformMakeRotation(radians);
+    [self.mapView setRotationAngle:-1*degrees];
 }
 
 - (IBAction)panMap:(UIPanGestureRecognizer *)sender
@@ -211,14 +217,16 @@
 }
 
 - (IBAction)resetNorth:(UIButton *)sender {
-    [self.mapView setRotationAngle:0 animated:YES];
     [self.autoPanController userClickedCompassRoseButton];
     [self startStopLocationServicesForPanMode];
+    [self.mapView setRotationAngle:0 animated:YES];
+    self.northButton2.transform = CGAffineTransformMakeRotation(0);
 }
 
 - (IBAction)togglePanMode:(UIBarButtonItem *)sender {
     [self.autoPanController userClickedAutoPanButton];
     [self startStopLocationServicesForPanMode];
+    [self rotateNorthArrow];
 }
 
 
@@ -316,7 +324,6 @@
     self.mapView.layerDelegate = self;
     self.mapView.touchDelegate = self;
     self.mapView.callout.delegate = self;
-    self.mapView.allowRotationByPinching = YES;
     [self configureView];
 }
 
@@ -727,7 +734,7 @@
 
 - (void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
-    //NSLog(@"locationManager: didUpdateHeading:%@",newHeading);
+    //NSLog(@"locationManager: didUpdateHeading: %f",newHeading.trueHeading);
 
     //I get the headings to sync the north arrow with the maps rotation due to changes in the heading (when walking/standing)
     //The mapview provides no delegates or notifications when it rotates.
@@ -735,9 +742,9 @@
     //Maybe I should try turning off the AutoRotate mode of the mapView LocationDisplay and do the rotations myself.
 
     //if we rotating the north arrow based on the current mapView rotation we will be late, due to the animated rotation of the mapview.
-    //[self rotateNorthArrow];
+    [self rotateNorthArrow];
     //if we rotating the north arrow based on the current heading we will be early, due to the animated rotation of the mapview.
-    [self rotateNorthArrow:newHeading];
+    //[self rotateNorthArrow:newHeading];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
@@ -840,7 +847,7 @@
 
 - (void) rotateNorthArrow:(CLHeading *)heading
 {
-    double degrees = heading.trueHeading;
+    double degrees = 360 - heading.trueHeading;
     double radians = -1 * degrees * M_PI / 180.0;
     //TODO: use animation to keep the northarrow synced with the mapView
 //    CALayer *myLayer = self.northButton2.layer;

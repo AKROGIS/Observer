@@ -164,14 +164,14 @@
         case kAutoPanAutoRotateByBearing:
             if (self.maxSpeedForBearing < newSpeed) {
                 self.state = kAutoPanAutoRotateByHeading;
-                NSLog(@"AutoPan switch Bearing -> Heading, speed %f",newSpeed);
+                //NSLog(@"AutoPan switch Bearing -> Heading, speed %f",newSpeed);
                 self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
             }
             break;
         case kAutoPanAutoRotateByHeading:
             if (newSpeed <= self.maxSpeedForBearing) {
                 self.state = kAutoPanAutoRotateByBearing;
-                NSLog(@"AutoPan switch Heading -> Bearing, speed %f",newSpeed);
+                //NSLog(@"AutoPan switch Heading -> Bearing, speed %f",newSpeed);
                 self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
             }
             break;
@@ -217,7 +217,7 @@
     } else {
         mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
     }
-    NSLog(@"Initialize autopan state with autopan mode %d", mapView.locationDisplay.autoPanMode);
+    //NSLog(@"Initialize autopan state with autopan mode %d", mapView.locationDisplay.autoPanMode);
 }
 
 - (void)setCompassRoseButton:(UIButton *)compassRoseButton
@@ -232,7 +232,7 @@
 
 - (void)hideCompassRoseButton
 {
-    NSLog(@"hide compass rose");
+    //NSLog(@"hide compass rose");
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionFade;
     animation.duration = 0.4;
@@ -242,7 +242,7 @@
 
 - (void)showCompassRoseButton
 {
-    NSLog(@"show compass rose");
+    //NSLog(@"show compass rose");
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionFade;
     animation.duration = 0.4;
