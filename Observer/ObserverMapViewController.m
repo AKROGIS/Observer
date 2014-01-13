@@ -99,6 +99,11 @@
 {
     [super viewDidLoad];
 
+    self.mapView.layerDelegate = self;
+    self.mapView.touchDelegate = self;
+    self.mapView.callout.delegate = self;
+    self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
+
     self.autoPanController = [[AutoPanStateMachine alloc] init];
     self.autoPanController.mapView = self.mapView;
     self.autoPanController.compassRoseButton = self.compassRoseButton;
@@ -106,9 +111,6 @@
 
     self.noMapLabel.hidden = YES;
     [self incrementBusy];
-    self.mapView.layerDelegate = self;
-    self.mapView.touchDelegate = self;
-    self.mapView.callout.delegate = self;
     [self configureView];
 }
 
