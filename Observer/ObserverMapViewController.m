@@ -70,6 +70,7 @@
 @property (strong, nonatomic) AGSGraphicsLayer *gpsPointsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsTracksLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *missionPropertiesLayer;
+
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 @property (strong, nonatomic) UIPopoverController *surveysPopoverController;
@@ -94,16 +95,6 @@
 
 #pragma mark - Super class overrides
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self)
-    {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -119,13 +110,6 @@
     self.mapView.touchDelegate = self;
     self.mapView.callout.delegate = self;
     [self configureView];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    NSLog(@"Observer Map ViewController did recieve memory warning");
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
@@ -476,16 +460,7 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
     //NSLog(@"locationManager: didUpdateHeading: %f",newHeading.trueHeading);
-
-    //I get the headings to sync the north arrow with the maps rotation due to changes in the heading (when walking/standing)
-    //The mapview provides no delegates or notifications when it rotates.
-    //Unfortunately, subclassing AGSMapView didn't help, because it does the rotation in the c++ backend, not through the UIView or AGSMapView interface
-    //Maybe I should try turning off the AutoRotate mode of the mapView LocationDisplay and do the rotations myself.
-
-    //if we rotating the north arrow based on the current mapView rotation we will be late, due to the animated rotation of the mapview.
     [self rotateNorthArrow];
-    //if we rotating the north arrow based on the current heading we will be early, due to the animated rotation of the mapview.
-    //[self rotateNorthArrow:newHeading];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
@@ -508,17 +483,7 @@
     //TODO: put up an alertview
 }
 
-- (void) ayerDidLoad:(AGSLayer *)layer
-{
-    // Tells the delegate that the layer is loaded and ready to use.
-    NSLog(@"layer %@ did load", layer);
-    //real work will be done in mapView's delegate
-}
 
-- (void)layer:(AGSLayer *)layer didInitializeSpatialReferenceStatus:(BOOL)srStatusValid
-{
-    NSLog(@"layer %@ did%@ initialize Spatial Reference", layer, srStatusValid ? @"" : @" not");
-}
 
 
 #pragma mark - Delegate Methods: AGSMapViewLayerDelegate (all optional)
@@ -545,24 +510,18 @@
 
 #pragma mark - Delegate Methods: AGSMapViewTouchDelegate (all optional)
 
-- (BOOL)mapView:(AGSMapView*)mapView shouldProcessClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint*)mappoint
-{
-    //Asks the delegate if the map should process the click at the given location. The default value if this method is not implemented is YES.
-    NSLog(@"mapView:shouldProcessClickAtPoint:(%f,%f)=(%@)", screen.x, screen.y, mappoint);
-    return YES;
-}
-
 - (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint graphics:(NSDictionary *)graphics
 {
     //Tells the delegate the map was single-tapped at specified location.
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
     NSLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mapPoint, graphics);
     if ([graphics count]) {
-        NSLog(@"display graphic callout");
+        NSLog(@"display attributes of selected graphic for editing/delete");
     }
     else
     {
         if (self.isObserving) {
+            //create new ad-hoc observation at touch point
             Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mapPoint];
             [self drawObservation:observation atPoint:mapPoint];
             [self setAttributesForObservation:observation atPoint:mapPoint];
@@ -575,6 +534,9 @@
     //Tells the delegate that a point on the map was tapped and held at specified location.
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
     NSLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, graphics);
+    if (0 < [graphics count]) {
+        NSLog(@"Try to move selected graphic - if allowed");
+    }
 }
 
 - (void)mapView:(AGSMapView *)mapView didMoveTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint graphics:(NSDictionary *)graphics
@@ -589,62 +551,10 @@
     }
 }
 
-- (void)mapView:(AGSMapView *)mapView didEndTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint graphics:(NSDictionary *)graphics
-{
-    //Tells the delegate that a tap and hold event has ended.
-    //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
-    NSLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, graphics);
-}
-
-- (void)mapViewDidCancelTapAndHold:(AGSMapView *)mapView
-{
-    //Tells the delegate that a tap and hold event was cancelled. This may happen when you have the magnifier visible and attempt to take
-    //a screenshot using the home/lock button combination.
-    NSLog(@"mapViewDidCancelTapAndHold:");
-}
-
 
 
 
 #pragma mark - Delegate Methods: AGSCalloutDelegate (all optional)
-
-- (BOOL)mapView:(AGSMapView *)mapView shouldShowCalloutForLocationDisplay:(AGSLocationDisplay *)ld
-{
-    //Asks the delegate whether to show a callout when the user taps the location display. Default is YES.
-    NSLog(@"mapView:shouldShowCalloutForLocationDisplay:%@", ld);
-    return YES;
-}
-
-- (void)mapView:(AGSMapView *)mapView didShowCalloutForLocationDisplay:(AGSLocationDisplay *)ld
-{
-    //Tells the delegate a callout was shown for the location display.
-    NSLog(@"mapView:didShowCalloutForLocationDisplay%@", ld);
-}
-
-- (BOOL)mapView:(AGSMapView *)mapView shouldShowCalloutForGraphic:(AGSGraphic *)graphic
-{
-    //Asks delegate whether to show callout for a graphic that has been tapped on. Default is YES.
-    NSLog(@"mapView:shouldShowCalloutForGraphic:%@", graphic);
-    return YES;
-}
-
-- (void)mapView:(AGSMapView *)mapView didShowCalloutForGraphic:(AGSGraphic *)graphic
-{
-    //Tells the delegate callout was shown for a graphic that was tapped on.
-    NSLog(@"mapView:didShowCalloutForGraphic:%@", graphic);
-}
-
-- (void)mapViewWillDismissCallout:(AGSMapView*)mapView
-{
-    //Tells the delegate that a callout will be dismissed.
-    NSLog(@"mapViewWillDismissCallout:");
-}
-
-- (void)mapViewDidDismissCallout:(AGSMapView*)mapView
-{
-    //Tells the delegate that the callout was dismissed.
-    NSLog(@"mapViewDidDismissCallout:");
-}
 
 
 
@@ -889,23 +799,6 @@
     //NSLog(@"Rotating compass icon to %f degrees", degrees);
     //angle in radians with positive being counterclockwise (on iOS)
     double radians = -1*degrees * M_PI / 180.0;
-    self.northButton2.transform = CGAffineTransformMakeRotation(radians);
-}
-
-- (void)rotateNorthArrow:(CLHeading *)heading
-{
-    double degrees = 360 - heading.trueHeading;
-    double radians = -1 * degrees * M_PI / 180.0;
-    //TODO: use animation to keep the northarrow synced with the mapView
-    //    CALayer *myLayer = self.northButton2.layer;
-    //    NSNumber *rotationAtStart = [myLayer valueForKeyPath:@"transform.rotation"];
-    //    CATransform3D myRotationTransform = CATransform3DRotate(myLayer.transform, radians, 0.0, 0.0, 1.0);
-    //    myLayer.transform = myRotationTransform;
-    //    CABasicAnimation *myAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
-    //    myAnimation.duration = 0.2;
-    //    myAnimation.fromValue = rotationAtStart;
-    //    myAnimation.toValue = [NSNumber numberWithFloat:([rotationAtStart floatValue] + radians)];
-    //    [myLayer addAnimation:myAnimation forKey:@"transform.rotation"];
     self.northButton2.transform = CGAffineTransformMakeRotation(radians);
 }
 
