@@ -40,7 +40,7 @@
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
 @property (weak, nonatomic) IBOutlet UILabel *noMapLabel;
-@property (weak, nonatomic) IBOutlet UIButton *northButton2;
+@property (weak, nonatomic) IBOutlet UIButton *compassRoseButton;
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectMapButton;
@@ -101,7 +101,7 @@
 
     self.autoPanController = [[AutoPanStateMachine alloc] init];
     self.autoPanController.mapView = self.mapView;
-    self.autoPanController.compassRoseButton = self.northButton2;
+    self.autoPanController.compassRoseButton = self.compassRoseButton;
     self.autoPanController.autoPanModeButton = self.panButton;
 
     self.noMapLabel.hidden = YES;
@@ -246,11 +246,11 @@
 {
     if (sender.state == UIGestureRecognizerStateBegan) {
         [self.autoPanController userRotatedMap];
-        _initialRotationOfViewAtGestureStart = atan2f(self.northButton2.transform.b, self.northButton2.transform.a);
+        _initialRotationOfViewAtGestureStart = atan2f(self.compassRoseButton.transform.b, self.compassRoseButton.transform.a);
     }
     CGFloat radians = _initialRotationOfViewAtGestureStart + sender.rotation;
     CGFloat degrees = radians * (180 / M_PI);
-    self.northButton2.transform = CGAffineTransformMakeRotation(radians);
+    self.compassRoseButton.transform = CGAffineTransformMakeRotation(radians);
     [self.mapView setRotationAngle:-1*degrees];
 }
 
@@ -271,7 +271,7 @@
     [self.autoPanController userClickedCompassRoseButton];
     [self startStopLocationServicesForPanMode];
     [self.mapView setRotationAngle:0 animated:YES];
-    self.northButton2.transform = CGAffineTransformMakeRotation(0);
+    self.compassRoseButton.transform = CGAffineTransformMakeRotation(0);
 }
 
 - (IBAction)togglePanMode:(UIBarButtonItem *)sender {
@@ -799,7 +799,7 @@
     //NSLog(@"Rotating compass icon to %f degrees", degrees);
     //angle in radians with positive being counterclockwise (on iOS)
     double radians = -1*degrees * M_PI / 180.0;
-    self.northButton2.transform = CGAffineTransformMakeRotation(radians);
+    self.compassRoseButton.transform = CGAffineTransformMakeRotation(radians);
 }
 
 - (void)startRecording

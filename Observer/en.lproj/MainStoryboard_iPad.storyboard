@@ -135,11 +135,11 @@
                         <outlet property="addAdObservationBarButton" destination="XBC-1H-O73" id="Xx8-Pi-TnE"/>
                         <outlet property="addGpsObservationBarButton" destination="C8B-tf-jAe" id="KF1-bm-Whs"/>
                         <outlet property="addObservationBarButton" destination="zVE-98-VDX" id="DG8-bz-NK6"/>
+                        <outlet property="compassRoseButton" destination="fOP-b6-5IU" id="MRd-X5-ZrB"/>
                         <outlet property="editEnvironmentBarButton" destination="Fdi-yp-sWi" id="cJv-sd-s4Y"/>
                         <outlet property="mapLoadingIndicator" destination="zJv-q7-y2x" id="hBV-WL-ipD"/>
                         <outlet property="mapView" destination="gK6-lQ-eLV" id="1kI-MU-Eog"/>
                         <outlet property="noMapLabel" destination="009-3q-8gq" id="t2W-18-0Iw"/>
-                        <outlet property="northButton2" destination="fOP-b6-5IU" id="qxr-us-yGI"/>
                         <outlet property="panButton" destination="jXA-Ll-IBJ" id="ANP-0w-d3Q"/>
                         <outlet property="selectMapButton" destination="gJK-vn-5w7" id="H0i-2C-naE"/>
                         <outlet property="selectSurveyButton" destination="SCL-a5-7Et" id="aeX-q0-EBn"/>
