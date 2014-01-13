@@ -25,9 +25,11 @@
         _priorSpeed = 0;
         _maxSpeedForBearing = MINIMUM_NAVIGATION_SPEED;
         _state = [Settings manager].autoPanMode;
-        //called on mapview initialization, so map rotation is 0 by default
-        if (_state == kAutoPanNoAutoRotate)
+        //map rotation is not persisted - it defaults to zero.  Assume it is zero, and correct saved state to match;
+        //I can check this assumption when I get the mapView proterty is set, and make corrections if necessary;
+        if (_state == kAutoPanNoAutoRotate) {
             _state = kAutoPanNoAutoRotateNorthUp;
+        }
         if (_state == kNoAutoPanNoAutoRotate) {
             _state = kNoAutoPanNoAutoRotateNorthUp;
         }
@@ -164,14 +166,12 @@
         case kAutoPanAutoRotateByBearing:
             if (self.maxSpeedForBearing < newSpeed) {
                 self.state = kAutoPanAutoRotateByHeading;
-                //NSLog(@"AutoPan switch Bearing -> Heading, speed %f",newSpeed);
                 self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
             }
             break;
         case kAutoPanAutoRotateByHeading:
             if (newSpeed <= self.maxSpeedForBearing) {
                 self.state = kAutoPanAutoRotateByBearing;
-                //NSLog(@"AutoPan switch Heading -> Bearing, speed %f",newSpeed);
                 self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
             }
             break;
@@ -217,7 +217,16 @@
     } else {
         mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
     }
-    //NSLog(@"Initialize autopan state with autopan mode %d", mapView.locationDisplay.autoPanMode);
+    //Initilaizer assumed a mapView rotation of zero; correct if that assumption was wrong
+    if (mapView.rotationAngle != 0) {
+        if (_state == kAutoPanNoAutoRotateNorthUp) {
+            _state = kAutoPanNoAutoRotate;
+        }
+        if (_state == kNoAutoPanNoAutoRotateNorthUp) {
+            _state = kNoAutoPanNoAutoRotate;
+        }
+        [self showCompassRoseButton];
+    }
 }
 
 - (void)setCompassRoseButton:(UIButton *)compassRoseButton
