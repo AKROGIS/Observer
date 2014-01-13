@@ -109,8 +109,6 @@
     self.autoPanController.compassRoseButton = self.compassRoseButton;
     self.autoPanController.autoPanModeButton = self.panButton;
 
-    self.noMapLabel.hidden = YES;
-    [self incrementBusy];
     [self configureView];
 }
 
@@ -938,6 +936,7 @@
 
 - (void)loadBaseMap
 {
+    [self incrementBusy];
     if (!self.maps.selectedLocalMap.tileCache)
     {
         self.noMapLabel.hidden = NO;
@@ -945,11 +944,10 @@
     }
     else
     {
-        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
         self.maps.selectedLocalMap.tileCache.delegate = self;
         [self.mapView addMapLayer:self.maps.selectedLocalMap.tileCache withName:@"tilecache basemap"];
+        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
     }
-    //[self.oldMapList addObserver:self forKeyPath:@"currentMap" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
 }
 
 - (void)resetBasemap
@@ -962,6 +960,7 @@
     //to reset the mapView extents/SR, we need to call reset, then re-add the layers.
     //first we need to get the layers, so we can re-add them after setting the new basemap
     NSLog(@"Reseting the basemap");
+    [self incrementBusy];
     self.currentMapEntity = nil;
     if (!self.maps.selectedLocalMap.tileCache)
     {
@@ -970,12 +969,10 @@
     }
     else
     {
-        self.noMapLabel.hidden = YES;
-        [self incrementBusy];
-        [self.mapView reset]; //remove all layers
-                              //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
+        [self.mapView reset]; //remove all layers, clear SR, envelope, etc.
         self.maps.selectedLocalMap.tileCache.delegate = self;
         [self.mapView addMapLayer:self.maps.selectedLocalMap.tileCache withName:@"tilecache basemap"];
+        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
     }
 }
 
@@ -1090,13 +1087,14 @@
 {
     //TODO: this works, but logs background errors when called after a active document is deleted.
     if (self.survey) {
+        [self incrementBusy];  //loading the survey document may block
         if (self.survey.document.documentState == UIDocumentStateNormal) {
-            [self incrementBusy];
             self.selectSurveyButton.title = @"Closing Survey...";
             [self stopRecording];
             [self.survey closeWithCompletionHandler:^(BOOL success) {
                 //do any other background work;
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    [self decrementBusy];
                     if (success) {
                         if (!concurrentOpen) {
                             self.survey = nil;
@@ -1105,11 +1103,11 @@
                     } else {
                         [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to close the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
                     }
-                    [self decrementBusy];
                 });
             }];
         } else if (self.survey.document.documentState != UIDocumentStateClosed) {
             NSLog(@"Survey is in an abnormal state: %d", self.survey.document.documentState);
+            [self decrementBusy];
             [[[UIAlertView alloc] initWithTitle:@"Oh No!" message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
         }
     }
