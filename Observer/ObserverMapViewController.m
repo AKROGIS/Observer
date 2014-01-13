@@ -5,6 +5,7 @@
 //  Created by Regan Sarwas on 7/5/13.
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
+
 /*
  Note that I only use esri's LocationDisplay for the graphic display, and the autopan features.
  I use Apple's CLLocationManager for all the Gps information.
@@ -20,7 +21,6 @@
  recreated from the saved features.
  */
 
-//FIXME: if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
 
 #import "SurveyCollection.h"
 #import "MapCollection.h"
@@ -37,10 +37,17 @@
     CGFloat _initialRotationOfViewAtGestureStart;
 }
 
+//Model
+@property (strong, nonatomic) SurveyCollection* surveys;
+@property (strong, nonatomic) MapCollection* maps;
+@property (weak,   nonatomic, readonly) Survey *survey; //short cut to self.surveys.selectedSurvey
+@property (weak,   nonatomic, readonly) NSManagedObjectContext *context; //shortcut to self.survey.document.managedObjectContext
+
+//Views
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
 @property (weak, nonatomic) IBOutlet UILabel *noMapLabel;
 @property (weak, nonatomic) IBOutlet UIButton *compassRoseButton;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectMapButton;
@@ -53,19 +60,22 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addGpsObservationBarButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addObservationBarButton;
 
-@property (weak, nonatomic) NSManagedObjectContext *context;
-@property (nonatomic) int busyCount;
-@property (strong, nonatomic) AutoPanStateMachine *autoPanController;
-
-@property (nonatomic) BOOL userWantsAutoPanOn;
-@property (nonatomic) AGSLocationDisplayAutoPanMode savedAutoPanMode;
-@property (strong, nonatomic) CLLocationManager *locationManager;
+//Support
+@property (nonatomic) int  busyCount;
 @property (nonatomic) BOOL locationServicesAvailable;
 @property (nonatomic) BOOL userWantsLocationUpdates;
 @property (nonatomic) BOOL userWantsHeadingUpdates;
+@property (nonatomic) BOOL isRecording;
+@property (nonatomic) BOOL isObserving;
+
+@property (strong, nonatomic) AutoPanStateMachine *autoPanController;
+@property (strong, nonatomic) CLLocationManager *locationManager;
+
 @property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
 @property (strong, nonatomic) MapReference *currentMapEntity;
+@property (strong, nonatomic) Mission *mission;
 
+@property (strong, nonatomic) AGSSpatialReference *wgs84;
 @property (strong, nonatomic) AGSGraphicsLayer *observationsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsPointsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsTracksLayer;
@@ -74,18 +84,8 @@
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 @property (strong, nonatomic) UIPopoverController *surveysPopoverController;
-@property (strong, nonatomic) AGSSpatialReference *wgs84;
-
-@property (strong, nonatomic) Survey *survey;
-@property (strong, nonatomic) SurveyCollection* surveys;
-@property (strong, nonatomic) MapCollection* maps;
 @property (strong, nonatomic) UIPopoverController *quickDialogPopoverController;
 @property (strong, nonatomic) UINavigationController *modalAttributeCollector;
-
-@property (nonatomic) BOOL isRecording;
-@property (nonatomic) BOOL isObserving;
-
-@property (strong, nonatomic) Mission *mission;
 
 @end
 
@@ -201,7 +201,8 @@
         vc.items = self.surveys;
         vc.selectedSurveyChanged = ^{
             // on calling thread
-            [self changeSurvey];
+            [self closeSurveyWithConcurrentOpen:YES];
+            [self openSurvey];
         };
         vc.selectedSurveyChangedName = ^{
             [self updateTitleBar];
@@ -310,7 +311,7 @@
         return;
     }
     //create VC from QDialog json in protocol, add newController to popover, display popover
-    NSDictionary *dialog = self.surveys.selectedSurvey.protocol.dialogs[@"MissionProperty"];
+    NSDictionary *dialog = self.survey.protocol.dialogs[@"MissionProperty"];
     QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
     QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
     //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
@@ -399,7 +400,7 @@
 
 - (void)closeSurvey
 {
-    [self closeOpenSurveyWithConcurrentOpen:NO];
+    [self closeSurveyWithConcurrentOpen:NO];
 }
 
 
@@ -681,6 +682,19 @@
     return _currentMapEntity;
 }
 
+@synthesize survey = _survey;
+
+- (Survey *)survey
+{
+    return self.surveys.selectedSurvey;
+}
+
+@synthesize context = _context;
+
+- (NSManagedObjectContext *)context
+{
+    return self.surveys.selectedSurvey.document.managedObjectContext;
+}
 
 
 
@@ -693,7 +707,7 @@
     [self.surveys openWithCompletionHandler:^(BOOL success) {
         //do any other background work;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self changeSurvey];
+            [self openSurvey];
             [self decrementBusy];
         });
     }];
@@ -711,7 +725,7 @@
 
 -(void)updateTitleBar
 {
-    self.selectSurveyButton.title = (self.survey ? self.survey.title : @"Select Survey");
+    self.selectSurveyButton.title = (self.context ? self.survey.title : @"Select Survey");
 }
 
 -(void)disableControls
@@ -745,6 +759,8 @@
     //TODO:can we support adding observations that have no attributes (no dialog)
     self.addObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
     self.addGpsObservationBarButton.enabled = self.isObserving && self.survey && dialogs[@"Observation"] != nil;
+    //TODO: if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
+    //TODO: availability of the Angle Distance button is dependent on protocol
     self.addAdObservationBarButton.enabled = self.isObserving && self.maps.selectedLocalMap && self.survey && dialogs[@"Observation"] != nil;
 }
 
@@ -811,7 +827,6 @@
     [self startLocationUpdates];
     self.mission = [NSEntityDescription insertNewObjectForEntityForName:@"Mission"
                                                  inManagedObjectContext:self.context];
-    //[self updateButtons];
 }
 
 - (void)stopRecording
@@ -1051,29 +1066,20 @@
 
 #pragma mark - Private Methods - support for data model - Surveys
 
-- (void)changeSurvey
+- (void)openSurvey
 {
-    if (self.survey == self.surveys.selectedSurvey) {
-        return;
-    }
-
-    [self closeOpenSurveyWithConcurrentOpen:(self.surveys.selectedSurvey != nil)];
-
-    if (self.surveys.selectedSurvey) {
-        self.selectSurveyButton.title = @"Loading Survey...";
+    if (self.survey) {
         NSLog(@"Opening Survey document");
+        self.selectSurveyButton.title = @"Loading Survey...";
         [self incrementBusy];
-        [self.surveys.selectedSurvey openDocumentWithCompletionHandler:^(BOOL success) {
+        [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
             //do any other background work;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
-                    self.survey = self.surveys.selectedSurvey;
-                    self.context = self.survey.document.managedObjectContext;
                     [self logStats];
                     [self reloadGraphics];
                 } else {
                     [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
-                    self.survey = nil;
 
                 }
                 [self updateTitleBar];
@@ -1083,10 +1089,11 @@
     }
 }
 
-- (void)closeOpenSurveyWithConcurrentOpen:(BOOL)concurrentOpen
+- (void)closeSurveyWithConcurrentOpen:(BOOL)concurrentOpen
 {
     //TODO: this works, but logs background errors when called after a active document is deleted.
     if (self.survey) {
+        NSLog(@"Closing Survey document");
         [self incrementBusy];  //loading the survey document may block
         if (self.survey.document.documentState == UIDocumentStateNormal) {
             self.selectSurveyButton.title = @"Closing Survey...";
@@ -1097,7 +1104,6 @@
                     [self decrementBusy];
                     if (success) {
                         if (!concurrentOpen) {
-                            self.survey = nil;
                             [self updateTitleBar];
                         } //else similar actions will be performed when the concurrent open finishes
                     } else {
@@ -1290,7 +1296,7 @@
 - (void)setAttributesForObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
 {
     //TODO: support more than just one feature called Observations
-    NSDictionary *config = self.surveys.selectedSurvey.protocol.dialogs[@"Observation"];
+    NSDictionary *config = self.survey.protocol.dialogs[@"Observation"];
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = observation;
@@ -1358,7 +1364,7 @@
     if (self.modalAttributeCollector) {
         return;
     }
-    NSDictionary *config = self.surveys.selectedSurvey.protocol.dialogs[@"MissionProperty"];
+    NSDictionary *config = self.survey.protocol.dialogs[@"MissionProperty"];
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = missionProperty;
