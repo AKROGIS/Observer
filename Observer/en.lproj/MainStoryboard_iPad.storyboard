@@ -39,7 +39,7 @@
                                             </segue>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Item" id="jXA-Ll-IBJ" customClass="AutoPanButton">
+                                    <barButtonItem image="GpsOff" id="jXA-Ll-IBJ" customClass="AutoPanButton">
                                         <connections>
                                             <action selector="togglePanMode:" destination="TiC-11-YSU" id="wsV-bl-ssf"/>
                                         </connections>
@@ -1172,6 +1172,7 @@
         <image name="CompassRose" width="30" height="30"/>
         <image name="Crosshairs.png" width="64" height="64"/>
         <image name="Download" width="27" height="26"/>
+        <image name="GpsOff" width="22" height="22"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
