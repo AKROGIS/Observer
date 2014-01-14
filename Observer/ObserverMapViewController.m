@@ -826,7 +826,7 @@
     NSLog(@"start recording");
     self.isRecording = YES;
     self.startStopObservingBarButtonItem.enabled = YES;
-    [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:NO];
+    [self setBarButtonAtIndex:5 action:@selector(startStopRecording:) ToPlay:NO];
     [self startLocationUpdates];
     self.mission = [NSEntityDescription insertNewObjectForEntityForName:@"Mission"
                                                  inManagedObjectContext:self.context];
@@ -842,7 +842,7 @@
         [self enableControls];
     }
     self.startStopObservingBarButtonItem.enabled = NO;
-    [self setBarButtonAtIndex:6 action:@selector(startStopRecording:) ToPlay:YES];
+    [self setBarButtonAtIndex:5 action:@selector(startStopRecording:) ToPlay:YES];
     [self stopLocationUpdates];
     [self.survey saveWithCompletionHandler:nil];
     self.mission = nil;
@@ -852,7 +852,7 @@
 {
     NSLog(@"start observing");
     self.isObserving = YES;
-    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:NO];
+    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:NO];
     //TDOO: populate the mission property dialog with the last/default dataset
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
@@ -867,7 +867,7 @@
 {
     NSLog(@"stop observing");
     self.isObserving = NO;
-    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startStopObserving:) ToPlay:YES];
+    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:YES];
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
     mission.observing = NO;
