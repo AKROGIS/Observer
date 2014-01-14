@@ -248,41 +248,15 @@
 
 - (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
-    if (YES) {
-        NSLog(@"Saving document");
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
-        NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d GpsPoints", results.count);
-        request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
-        results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d Observations", results.count);
-        request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
-        results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d MissionYroperties", results.count);
-        request = [NSFetchRequest fetchRequestWithEntityName:@"Mission"];
-        results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d Missions", results.count);
-    }
+    NSLog(@"Saving document");
+    [self logStats];
     [self.document saveToURL:self.documentUrl forSaveOperation:UIDocumentSaveForOverwriting completionHandler:completionHandler];
 }
 
 - (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
-    if (YES) {
-        NSLog(@"Closing document");
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
-        NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d GpsPoints", results.count);
-        request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
-        results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d Observations", results.count);
-        request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
-        results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d MissionProperties", results.count);
-        request = [NSFetchRequest fetchRequestWithEntityName:@"Mission"];
-        results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-        NSLog(@"There are %d Missions", results.count);
-    }
+    NSLog(@"Closing document");
+    [self logStats];
     [self.document closeWithCompletionHandler:completionHandler];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self disconnectFromNotificationCenter];
@@ -406,7 +380,7 @@
     //object should always be self.document
     //userinfo is nil
 
-    NSLog(@"Document State Changed");
+    NSLog(@"Document state changed");
     switch (self.document.documentState) {
         case UIDocumentStateNormal:
             NSLog(@"  Document is normal");
@@ -434,7 +408,7 @@
     //object should always be self.document
     //userinfo has keys NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey which all return arrays of objects
 
-    NSLog(@"Data Changed");
+    NSLog(@"Document data changed");
     //NSLog(@"Data Changed; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
 }
 
@@ -444,7 +418,7 @@
     //object should always be self.document
     //userinfo has keys NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey which all return arrays of objects
 
-    NSLog(@"Data Saved");
+    NSLog(@"Document data Saved");
     //NSLog(@"Data Saved; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
 }
 
@@ -455,6 +429,28 @@
     } else {
         return [NSString stringWithFormat:@"%@; %@; %@", self.title, self.subtitle2, self.protocolIsLoaded ? self.subtitle : @"protocol not yet loaded"];
     }
+}
+
+#pragma mark - Diagnostic aids - remove when done
+
+- (void)logStats
+{
+    NSLog(@"  Survey document contains:");
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"    %d GpsPoints", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"    %d Observations", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"    %d MissionProperties", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"Mission"];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"    %d Missions", results.count);
+    request = [NSFetchRequest fetchRequestWithEntityName:@"Map"];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    NSLog(@"    %d Maps", results.count);
 }
 
 @end

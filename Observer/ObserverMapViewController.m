@@ -97,6 +97,7 @@
 
 - (void)viewDidLoad
 {
+    NSLog(@"Main view controller view did load");
     [super viewDidLoad];
 
     self.mapView.layerDelegate = self;
@@ -410,19 +411,21 @@
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
+    if (status == kCLAuthorizationStatusAuthorized)
     {
-        self.locationServicesAvailable = YES;
-        NSLog(@"Location services authorized");
-        if (self.userWantsHeadingUpdates) {
-            [self.locationManager startUpdatingHeading];
-        }
-        if (self.userWantsLocationUpdates) {
-            [self.locationManager startUpdatingLocation];
+        if (!self.locationServicesAvailable) {
+            NSLog(@"Location manager did change status: authorized");
+            self.locationServicesAvailable = YES;
+            if (self.userWantsHeadingUpdates) {
+                [self.locationManager startUpdatingHeading];
+            }
+            if (self.userWantsLocationUpdates) {
+                [self.locationManager startUpdatingLocation];
+            }
         }
     } else {
-        NSLog(@"Location services have been deauthorized");
         if (self.locationServicesAvailable) {
+            NSLog(@"Location manager did change status: deauthorized");
             self.locationServicesAvailable = NO;
             if (self.userWantsHeadingUpdates) {
                 [self.locationManager stopUpdatingHeading];
@@ -492,7 +495,7 @@
 - (void)mapViewDidLoad:(AGSMapView*)mapView
 {
     //Tells the delegate the map is loaded and ready for use. Fires when the map’s base layer loads.
-    NSLog(@"mapViewDidLoad");
+    NSLog(@"Basemap has been loaded");
     self.noMapLabel.hidden = YES;
     [self initializeGraphicsLayer];
     [self reloadGraphics];
@@ -951,6 +954,7 @@
 
 - (void)loadBaseMap
 {
+    NSLog(@"Loading the basemap");
     [self incrementBusy];
     if (!self.maps.selectedLocalMap.tileCache)
     {
@@ -974,7 +978,7 @@
     //removing all layers from the mapview does not "unload" the mapview.
     //to reset the mapView extents/SR, we need to call reset, then re-add the layers.
     //first we need to get the layers, so we can re-add them after setting the new basemap
-    NSLog(@"Reseting the basemap");
+    NSLog(@"Changing the basemap");
     [self incrementBusy];
     self.currentMapEntity = nil;
     if (!self.maps.selectedLocalMap.tileCache)
@@ -993,7 +997,7 @@
 
 - (void)initializeGraphicsLayer
 {
-    NSLog(@"Adding two graphics layers");
+    NSLog(@"Creating graphics layers");
     AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
     [symbol setSize:CGSizeMake(6,6)];
     [self.gpsPointsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
@@ -1008,27 +1012,32 @@
     [symbol setSize:CGSizeMake(14,14)];
     [self.missionPropertiesLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
     [self.mapView addMapLayer:self.missionPropertiesLayer withName:@"missionProperties"];
+
+    AGSSimpleLineSymbol *line = [AGSSimpleLineSymbol simpleLineSymbolWithColor:[UIColor blueColor] width:1.0];
+    [self.gpsTracksLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:line]];
+    [self.mapView addMapLayer:self.gpsTracksLayer withName:@"gpsTracksLayer"];
 }
 
 - (void)clearGraphics
 {
     [self.observationsLayer removeAllGraphics];
     [self.gpsPointsLayer removeAllGraphics];
+    [self.gpsTracksLayer removeAllGraphics];
     [self.missionPropertiesLayer removeAllGraphics];
 }
 
 - (void)reloadGraphics
 {
     if (!self.context || !self.mapView.loaded) {
-        NSLog(@"Can't reload Graphics.  Context and/or map is not available.");
+        NSLog(@"Loading graphics - can't because %@.", self.context ? @"map isn't loaded" : (self.mapView.loaded ? @"survey isn't loaded" : @"map AND survey are null! - how did that happen?"));
         return;
     }
-    NSLog(@"Loading exisitng graphics from coredata");
+    NSLog(@"Loading graphics from coredata");
     [self clearGraphics];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.context executeFetchRequest:request error:&error];
-    NSLog(@"Loading %d gpsPoints", results.count);
+    NSLog(@"  Loading %d gpsPoints", results.count);
     if (!results && error.code)
         NSLog(@"Error Fetching GpsPoint %@",error);
     for (GpsPoint *gpsPoint in results) {
@@ -1048,7 +1057,7 @@
     results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
         NSLog(@"Error Fetching Observations %@",error);
-    NSLog(@"Loading %d adhoc observations", results.count);
+    NSLog(@"  Loading %d adhoc observations", results.count);
     for (Observation *observation in results) {
         [self loadObservation:observation];
     }
@@ -1069,8 +1078,8 @@
 - (void)openSurvey
 {
     if (self.survey) {
-        NSLog(@"Opening Survey document");
-        self.selectSurveyButton.title = @"Loading Survey...";
+        NSLog(@"Opening survey document");
+        self.selectSurveyButton.title = @"Loading survey...";
         [self incrementBusy];
         [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
             //do any other background work;
@@ -1093,10 +1102,10 @@
 {
     //TODO: this works, but logs background errors when called after a active document is deleted.
     if (self.survey) {
-        NSLog(@"Closing Survey document");
+        NSLog(@"Closing survey document");
         [self incrementBusy];  //loading the survey document may block
         if (self.survey.document.documentState == UIDocumentStateNormal) {
-            self.selectSurveyButton.title = @"Closing Survey...";
+            self.selectSurveyButton.title = @"Closing survey...";
             [self stopRecording];
             [self.survey closeWithCompletionHandler:^(BOOL success) {
                 //do any other background work;
@@ -1470,22 +1479,22 @@
 
 - (void)logStats
 {
-    NSLog(@"survey document open");
+    NSLog(@"Survey document is open. It contains:");
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
     NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"There are %d GpsPoints", results.count);
+    NSLog(@"  %d GpsPoints", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"There are %d Observations", results.count);
+    NSLog(@"  %d Observations", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"There are %d MissionYroperties", results.count);
+    NSLog(@"  %d MissionProperties", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"Mission"];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"There are %d Missions", results.count);
+    NSLog(@"  %d Missions", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"Map"];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"There are %d Maps", results.count);
+    NSLog(@"  %d Maps", results.count);
 }
 
 @end
