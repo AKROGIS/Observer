@@ -24,6 +24,7 @@
 			<key>CFBundleTypeIconFiles</key>
 			<array>
 				<string>TilePackageIcon</string>
+				<string>TilePackageDocumentIcon</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>ESRI Tile Package</string>
