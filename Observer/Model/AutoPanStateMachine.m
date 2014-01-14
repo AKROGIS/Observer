@@ -134,20 +134,21 @@
             break;
         case kNoAutoPanNoAutoRotate:
             self.state = kNoAutoPanNoAutoRotateNorthUp;
-            self.mapView.rotationAngle = 0;
+            [self.mapView setRotationAngle:0.0 animated:YES];
             [self hideCompassRoseButton];
             break;
         case kAutoPanNoAutoRotate:
             self.state = kAutoPanNoAutoRotateNorthUp;
-            self.mapView.rotationAngle = 0;
+            [self.mapView setRotationAngle:0.0 animated:YES];
             [self hideCompassRoseButton];
             break;
         case kAutoPanAutoRotateByBearing:
         case kAutoPanAutoRotateByHeading:
             self.state = kAutoPanNoAutoRotateNorthUp;
-            self.mapView.rotationAngle = 0;
+            [self.mapView setRotationAngle:0.0 animated:YES];
             [self hideCompassRoseButton];
             [self.autoPanModeButton turnOnWithoutRotate];
+            self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
             break;
         default:
             NSLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userClickedCompassRoseButton", self.state);
