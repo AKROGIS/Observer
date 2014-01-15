@@ -52,7 +52,9 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 //load all properties
 - (void)readPropertiesWithCompletionHandler:(void (^)(NSError*))handler;
 - (void)openDocumentWithCompletionHandler:(void (^)(BOOL success))handler;
-//- (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+// saving is only for "SaveTO", normal saves are handled by UIKit with autosave
+// doing saves as overwrites can work if you get lucky, but may cause conflicts
+// I am not supporting saveTo
 - (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler;
 

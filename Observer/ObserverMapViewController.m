@@ -399,11 +399,6 @@
     return success;
 }
 
-//- (void)saveSurvey
-//{
-//    [self.survey saveWithCompletionHandler:nil];
-//}
-
 - (void)closeSurvey
 {
     [self closeSurvey:self.survey withConcurrentOpen:NO];

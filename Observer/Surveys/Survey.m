@@ -248,15 +248,6 @@
 #endif
 }
 
-// saving is only for "SaveTO", normal saves are handled by UIKit with autosave
-// doing saves as overwrites can work if you get lucky, but may cause conflicts
-//- (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler
-//{
-//    AKRLog(@"Saving document");
-//    [self logStats];
-//    [self.document saveToURL:self.documentUrl forSaveOperation:UIDocumentSaveForOverwriting completionHandler:completionHandler];
-//}
-
 - (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
 #ifdef DEBUG
