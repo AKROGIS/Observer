@@ -59,7 +59,7 @@
 
 - (void)splitViewController:(UISplitViewController *)splitController willHideViewController:(UIViewController *)viewController withBarButtonItem:(UIBarButtonItem *)barButtonItem forPopoverController:(UIPopoverController *)popoverController
 {
-    //NSLog (@"svc changed orientation to portrait");
+    //AKRLog (@"svc changed orientation to portrait");
     barButtonItem.title = NSLocalizedString(@"Master", @"Master");
     [self.navigationItem setLeftBarButtonItem:barButtonItem animated:YES];
     self.masterPopoverController = popoverController;
@@ -67,7 +67,7 @@
 
 - (void)splitViewController:(UISplitViewController *)splitController willShowViewController:(UIViewController *)viewController invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
 {
-    //NSLog (@"svc changed orientation to landscape");
+    //AKRLog (@"svc changed orientation to landscape");
     [self.navigationItem setLeftBarButtonItem:nil animated:YES];
     self.masterPopoverController = nil;
 }

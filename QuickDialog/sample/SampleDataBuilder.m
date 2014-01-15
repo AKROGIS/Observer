@@ -85,7 +85,7 @@
         bool1.onImage = [UIImage imageNamed:@"imgOn"];
         bool1.offImage = [UIImage imageNamed:@"imgOff"];
         bool1.onValueChanged = ^(QRootElement *el){
-            NSLog(@"Bool selected! ");
+            AKRLog(@"Bool selected! ");
         };
         [subsection addElement:bool1];
     }
@@ -269,7 +269,7 @@
         for (QElement *e in section.elements) {
             if ([e isKindOfClass:[QEntryElement class]]) {
                 ((QEntryElement *)e).onValueChanged = ^(QRootElement *el){
-                    NSLog(@"Value changed: %@", el);
+                    AKRLog(@"Value changed: %@", el);
                 };
             }
         }
@@ -278,7 +278,7 @@
 }
 
 + (void)QEntryEditingChangedForElement:(QEntryElement *)element andCell:(QEntryTableViewCell *)cell {
-    NSLog(@"Editing changed");
+    AKRLog(@"Editing changed");
 }
 
 
@@ -300,7 +300,7 @@
 
     QRadioSection *section2 = [[QRadioSection alloc] initWithItems:[NSArray arrayWithObjects:@"Football", @"Soccer", @"Formula 1", nil] selected:0 title:@"Sport"];
     __weak QRadioSection *_section2 = section2;
-    section2.onSelected = ^{ NSLog(@"selected index: %d", _section2.selected); };
+    section2.onSelected = ^{ AKRLog(@"selected index: %d", _section2.selected); };
     [root addSection:section2];
 
     return root;
@@ -320,7 +320,7 @@
     __weak QPickerElement *_simplePickerEl = simplePickerEl;
 
     simplePickerEl.onValueChanged = ^(QRootElement *el){
-        NSLog(@"Selected indexes: %@", [_simplePickerEl.selectedIndexes componentsJoinedByString:@","]);
+        AKRLog(@"Selected indexes: %@", [_simplePickerEl.selectedIndexes componentsJoinedByString:@","]);
     };
 
     QSection *simplePickerSection = [[QSection alloc] initWithTitle:@"Picker element"];
@@ -338,7 +338,7 @@
     
     periodPickerEl.valueParser = periodParser;
     __weak QPickerElement *_periodPickerEl = periodPickerEl;
-    periodPickerEl.onValueChanged = ^(QRootElement *el){ NSLog(@"New value: %@", _periodPickerEl.value); };
+    periodPickerEl.onValueChanged = ^(QRootElement *el){ AKRLog(@"New value: %@", _periodPickerEl.value); };
     
     [customParserSection addElement:periodPickerEl];
     [root addSection:customParserSection];

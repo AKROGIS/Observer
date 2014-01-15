@@ -34,7 +34,7 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    NSLog(@"Entering Background.  Synchronizing User Defaults and saving coredata");
+    AKRLog(@"Entering Background.  Synchronizing User Defaults and saving coredata");
     [[NSUserDefaults standardUserDefaults] synchronize];
     //[self.observerMapViewController saveSurvey];
 }
@@ -52,14 +52,14 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    NSLog(@"Terminating App.  Synchronizing User Defaults and saving coredata");
+    AKRLog(@"Terminating App.  Synchronizing User Defaults and saving coredata");
     [[NSUserDefaults standardUserDefaults] synchronize];
     [self.observerMapViewController closeSurvey];
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    NSLog(@"%@ asked me to open %@", sourceApplication, url);
+    AKRLog(@"%@ asked me to open %@", sourceApplication, url);
     return [self.observerMapViewController openURL:url sourceApplication:sourceApplication annotation:annotation];
 }
 

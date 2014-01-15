@@ -362,12 +362,12 @@ static ProtocolCollection *_sharedCollection = nil;
     NSError *error = nil;
     [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
     if (error) {
-        NSLog(@"ProtocolCollection.openURL: Unable to copy %@ to %@; error: %@",url, newUrl, error);
+        AKRLog(@"ProtocolCollection.openURL: Unable to copy %@ to %@; error: %@",url, newUrl, error);
         return nil;
     }
     SProtocol *protocol = [[SProtocol alloc] initWithURL:newUrl];
     if (!protocol.values) {
-        NSLog(@"data in %@ was not a valid protocol object",url.lastPathComponent);
+        AKRLog(@"data in %@ was not a valid protocol object",url.lastPathComponent);
         [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
         return nil;
@@ -378,7 +378,7 @@ static ProtocolCollection *_sharedCollection = nil;
     }];
     if (localIndex != NSNotFound)
     {
-        NSLog(@"We already have the protocol in %@.  Ignoring the duplicate.",url.lastPathComponent);
+        AKRLog(@"We already have the protocol in %@.  Ignoring the duplicate.",url.lastPathComponent);
         [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
         return self.localItems[localIndex];
@@ -440,7 +440,7 @@ static ProtocolCollection *_sharedCollection = nil;
                           options:(NSDirectoryEnumerationSkipsHiddenFiles)
                           error:&error];
         if (array == nil) {
-            NSLog(@"Unable to enumerate %@: %@",[directory lastPathComponent], error.localizedDescription);
+            AKRLog(@"Unable to enumerate %@: %@",[directory lastPathComponent], error.localizedDescription);
         } else {
             for (NSURL *doc in array) {
                 if ([doc.pathExtension isEqualToString:PROTOCOL_EXT]) {
@@ -479,7 +479,7 @@ static ProtocolCollection *_sharedCollection = nil;
     for (NSURL *url in urls) {
         SProtocol *protocol = [[SProtocol alloc] initWithURL:url];
         if (!protocol.values) {
-            NSLog(@"data at %@ was not a valid protocol object",url);
+            AKRLog(@"data at %@ was not a valid protocol object",url);
             [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         }
         [protocolsToAdd addObject:protocol];

@@ -131,7 +131,7 @@ NSString * const QPickerTableViewCellIdentifier = @"QPickerTableViewCell";
         }
     }
 
-    NSLog(@"AA%@", [self.pickerElement.valueParser objectFromComponentsValues:componentsValues]);
+    AKRLog(@"AA%@", [self.pickerElement.valueParser objectFromComponentsValues:componentsValues]);
     return [self.pickerElement.valueParser objectFromComponentsValues:componentsValues];
 }
 

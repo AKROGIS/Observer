@@ -102,7 +102,7 @@
         if ([_controller respondsToSelector:selector]) {
             objc_msgSend(_controller,selector, self);
         }  else {
-            NSLog(@"No method '%@' was found on controller %@", self.controllerAccessoryAction, [_controller class]);
+            AKRLog(@"No method '%@' was found on controller %@", self.controllerAccessoryAction, [_controller class]);
         }
     }
 }

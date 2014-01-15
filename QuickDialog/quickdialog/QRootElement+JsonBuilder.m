@@ -36,12 +36,12 @@
     NSString *filePath = [[NSBundle mainBundle] pathForResource:jsonPath ofType:@"json"];
     NSData *jsonData = [NSData dataWithContentsOfFile:filePath];
     if (jsonData==nil)
-            NSLog(@"Couldn't read any data for JSON file named: %@", jsonPath);
+            AKRLog(@"Couldn't read any data for JSON file named: %@", jsonPath);
 
     NSDictionary *jsonRoot = [JSONSerialization JSONObjectWithData:jsonData options:0 error:&jsonParsingError];
 
     if (jsonParsingError!=nil)
-        NSLog(@"Parsing error: %@", jsonParsingError.localizedDescription);
+        AKRLog(@"Parsing error: %@", jsonParsingError.localizedDescription);
     self = [self initWithJSON:jsonRoot andData:data];
     return self;
 }

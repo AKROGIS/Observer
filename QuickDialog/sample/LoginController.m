@@ -89,17 +89,17 @@
 }
 
 - (BOOL)QEntryShouldChangeCharactersInRangeForElement:(QEntryElement *)element andCell:(QEntryTableViewCell *)cell {
-    NSLog(@"Should change characters");
+    AKRLog(@"Should change characters");
     return YES;
 }
 
 - (void)QEntryEditingChangedForElement:(QEntryElement *)element andCell:(QEntryTableViewCell *)cell {
-    NSLog(@"Editing changed");
+    AKRLog(@"Editing changed");
 }
 
 
 - (void)QEntryMustReturnForElement:(QEntryElement *)element andCell:(QEntryTableViewCell *)cell {
-    NSLog(@"Must return");
+    AKRLog(@"Must return");
 
 }
 

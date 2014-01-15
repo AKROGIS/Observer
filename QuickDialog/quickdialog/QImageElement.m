@@ -86,7 +86,7 @@
     if ([UIImagePickerController isSourceTypeAvailable:_source]) {
         self.imagePickerController.sourceType = _source;
     } else {
-        NSLog(@"Source not available, using default Library type.");
+        AKRLog(@"Source not available, using default Library type.");
         self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     }
 

@@ -163,10 +163,10 @@
             _url = url;
             success = YES;
         } else {
-            NSLog(@"Protocol.downloadToURL:  Got data but write to %@ failed",url);
+            AKRLog(@"Protocol.downloadToURL:  Got data but write to %@ failed",url);
         }
     } else {
-        NSLog(@"Protocol.downloadToURL: Unable to get data at %@", self.url);
+        AKRLog(@"Protocol.downloadToURL: Unable to get data at %@", self.url);
     }
     self.downloading = NO;
     return success;

@@ -29,7 +29,7 @@
 }
 
 - (void)setDateValue:(NSDate *)dateValue {
-    NSLog(@"Don't set the date on the QCountdownElement");
+    AKRLog(@"Don't set the date on the QCountdownElement");
 }
 
 

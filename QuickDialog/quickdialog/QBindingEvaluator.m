@@ -145,7 +145,7 @@
                     [data setValue:value forKeyPath:valueName];
                 }
             @catch (NSException *exception) {
-                NSLog(@"Couldn't set property %@ on object %@", valueName, data);
+                AKRLog(@"Couldn't set property %@ on object %@", valueName, data);
             }
         }
     }

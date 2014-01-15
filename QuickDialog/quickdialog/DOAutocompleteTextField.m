@@ -104,18 +104,18 @@
 {
     CGRect returnRect = CGRectZero;
     CGRect textRect = [self textRectForBounds:self.bounds];
-    //    NSLog(@"textRect: %@", NSStringFromCGRect(textRect));
+    //    AKRLog(@"textRect: %@", NSStringFromCGRect(textRect));
     
     CGSize prefixTextSize = [self.text sizeWithFont:self.font
                                   constrainedToSize:textRect.size
                                       lineBreakMode:NSLineBreakByCharWrapping];
-    //    NSLog(@"prefixTextSize: %@",  NSStringFromCGSize(prefixTextSize));
+    //    AKRLog(@"prefixTextSize: %@",  NSStringFromCGSize(prefixTextSize));
     
     CGSize autocompleteTextSize = [_autoCompleteString sizeWithFont:self.font 
                                                   constrainedToSize:CGSizeMake(textRect.size.width-prefixTextSize.width, textRect.size.height)
                                                       lineBreakMode:NSLineBreakByCharWrapping];
     
-    //    NSLog(@"autocompleteTextSize: %@",  NSStringFromCGSize(autocompleteTextSize)); 
+    //    AKRLog(@"autocompleteTextSize: %@",  NSStringFromCGSize(autocompleteTextSize)); 
     
     returnRect = CGRectMake(textRect.origin.x + prefixTextSize.width,
                             textRect.origin.y,//+.5,

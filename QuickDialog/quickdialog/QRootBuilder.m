@@ -48,7 +48,7 @@ NSDictionary *QRootBuilderStringToTypeConversionDict;
                         [itemsTranslated replaceObjectAtIndex:i withObject:QTranslate(obj)];
                     }
                     @catch (NSException * e) {
-                        NSLog(@"Exception: %@", e);
+                        AKRLog(@"Exception: %@", e);
                     }
                 }
                 i++;
@@ -80,7 +80,7 @@ NSDictionary *QRootBuilderStringToTypeConversionDict;
 - (QElement *)buildElementWithObject:(id)obj {
     QElement *element = [[NSClassFromString([obj valueForKey:[NSString stringWithFormat:@"type"]]) alloc] init];
     if (element==nil) {
-        NSLog(@"Couldn't build element for type %@", [obj valueForKey:[NSString stringWithFormat:@"type"]]);
+        AKRLog(@"Couldn't build element for type %@", [obj valueForKey:[NSString stringWithFormat:@"type"]]);
         return nil;
     }
     [self updateObject:element withPropertiesFrom:obj];

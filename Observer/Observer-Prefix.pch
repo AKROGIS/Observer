@@ -4,6 +4,12 @@
 
 #import <Availability.h>
 
+#ifdef AKR_DEBUG
+#define AKRLog( s, ... ) NSLog( @"<%@:(%d)> %@", [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
+#else
+#define AKRLog( s, ... )
+#endif
+
 #ifndef __IPHONE_5_0
 #warning "This project uses features only available in iOS SDK 5.0 and later."
 #endif

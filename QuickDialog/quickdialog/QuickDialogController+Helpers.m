@@ -4,7 +4,7 @@
 NSString *QTranslate(NSString *value) {
     NSString * translated = NSLocalizedString(value, nil);
     //if ([translated isEqualToString:value])
-    //    NSLog(@"\"%@\" = \"%@\";", value, value);
+    //    AKRLog(@"\"%@\" = \"%@\";", value, value);
     return translated;
 }
 

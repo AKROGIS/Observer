@@ -22,14 +22,14 @@
 #ifdef DEBUG
 - (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    NSLog(@"Auto-Saving SurveyCoreDataDocument");
+    AKRLog(@"Auto-Saving SurveyCoreDataDocument");
     return [super contentsForType:typeName error:outError];
 }
 
 - (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
-    NSLog(@"SurveyCoreDataDocument %@ has error.", self.fileURL);
-    NSLog(@"    State: %d", self.documentState);
-    NSLog(@"    Error: %@", error);
+    AKRLog(@"SurveyCoreDataDocument %@ has error.", self.fileURL);
+    AKRLog(@"    State: %d", self.documentState);
+    AKRLog(@"    Error: %@", error);
     [super handleError:error userInteractionPermitted:userInteractionPermitted];
 }
 #endif

@@ -212,7 +212,7 @@
 
 - (void) newSurveyWithProtocol:(SProtocol *)protocol
 {
-    NSLog(@"New survey with protocol %@", protocol.title);
+    AKRLog(@"New survey with protocol %@", protocol.title);
     NSInteger row = [self.items newSurveyWithProtocol:protocol];
     if (0 <= row) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
@@ -242,7 +242,7 @@
             }
         }
     } else {
-        NSLog(@"Unexpected AlertView in SurveySelectViewController");
+        AKRLog(@"Unexpected AlertView in SurveySelectViewController");
     }
 }
 
@@ -269,7 +269,7 @@
     SurveyTableViewCell *cell = (SurveyTableViewCell *) view;
     NSIndexPath * indexPath = [self.tableView indexPathForCell:cell];
     Survey *survey = [self.items surveyAtIndex:indexPath.row];
-    NSLog(@"Going to rename %@ to %@", survey.title, textField.text);
+    AKRLog(@"Going to rename %@ to %@", survey.title, textField.text);
     survey.title = textField.text;
     if (survey == self.items.selectedSurvey && self.selectedSurveyChangedName) {
         self.selectedSurveyChangedName();

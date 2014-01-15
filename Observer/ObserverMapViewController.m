@@ -97,7 +97,7 @@
 
 - (void)viewDidLoad
 {
-    NSLog(@"Main view controller view did load");
+    AKRLog(@"Main view controller view did load");
     [super viewDidLoad];
 
     self.mapView.layerDelegate = self;
@@ -264,7 +264,7 @@
 - (IBAction)panMap:(UIPanGestureRecognizer *)sender
 {
     if (sender.state == UIGestureRecognizerStateBegan) {
-        //NSLog(@"User started Pan");
+        //AKRLog(@"User started Pan");
         // Map panning is done internally by ArcGIS, and the map view will turn off autopanning when the user pans.
         // However, I need to know when the user manually pans, so I can update the UI controls
         // mapView has no delegate messages for panning and the notifications provided does not distinguish between auto v. manual pans.
@@ -308,7 +308,7 @@
 
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
-    NSLog(@"Add Mission Property");
+    AKRLog(@"Add Mission Property");
     //FIXME: populate form with prior values or defaults
     //FIXME: if gps, then add at GPS else add adhoc at current location
     //launch pop up to enter attributes, use existing as defaults
@@ -419,7 +419,7 @@
     if (status == kCLAuthorizationStatusAuthorized)
     {
         if (!self.locationServicesAvailable) {
-            NSLog(@"Location manager did change status: authorized");
+            AKRLog(@"Location manager did change status: authorized");
             self.locationServicesAvailable = YES;
             if (self.userWantsHeadingUpdates) {
                 [self.locationManager startUpdatingHeading];
@@ -430,7 +430,7 @@
         }
     } else {
         if (self.locationServicesAvailable) {
-            NSLog(@"Location manager did change status: deauthorized");
+            AKRLog(@"Location manager did change status: deauthorized");
             self.locationServicesAvailable = NO;
             if (self.userWantsHeadingUpdates) {
                 [self.locationManager stopUpdatingHeading];
@@ -444,7 +444,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    //NSLog(@"locationManager: didUpdateLocations:%@",locations);
+    //AKRLog(@"locationManager: didUpdateLocations:%@",locations);
 
     //TODO: check how many locations might be returned (are we missing any?)
     CLLocation *location = [locations lastObject];
@@ -468,14 +468,14 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
-    //NSLog(@"locationManager: didUpdateHeading: %f",newHeading.trueHeading);
+    //AKRLog(@"locationManager: didUpdateHeading: %f",newHeading.trueHeading);
     [self rotateNorthArrow];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
     //TODO: put up an alertview
-    NSLog(@"Location Manager Failed: %@",error.localizedDescription);
+    AKRLog(@"Location Manager Failed: %@",error.localizedDescription);
 }
 
 
@@ -486,7 +486,7 @@
 - (void)layer:(AGSLayer *)layer didFailToLoadWithError:(NSError *)error
 {
     // Tells the delegate that the layer failed to load with the specified error.
-    NSLog(@"layer %@ failed to load with error %@", layer, error);
+    AKRLog(@"layer %@ failed to load with error %@", layer, error);
     [self decrementBusy];
     self.noMapLabel.hidden = NO;
     //TODO: put up an alertview
@@ -500,7 +500,7 @@
 - (void)mapViewDidLoad:(AGSMapView*)mapView
 {
     //Tells the delegate the map is loaded and ready for use. Fires when the map’s base layer loads.
-    NSLog(@"Basemap has been loaded");
+    AKRLog(@"Basemap has been loaded");
     self.noMapLabel.hidden = YES;
     [self initializeGraphicsLayer];
     [self reloadGraphics];
@@ -512,7 +512,7 @@
 {
     //Asks delegate whether to find which graphics in the specified layer intersect the tapped location. Default is YES.
     //This function may or may not be called on the main thread.
-    NSLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mappoint, graphicsLayer.name);
+    AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mappoint, graphicsLayer.name);
     return YES;
 }
 
@@ -523,9 +523,9 @@
 {
     //Tells the delegate the map was single-tapped at specified location.
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
-    NSLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mapPoint, graphics);
+    AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mapPoint, graphics);
     if ([graphics count]) {
-        NSLog(@"display attributes of selected graphic for editing/delete");
+        AKRLog(@"display attributes of selected graphic for editing/delete");
     }
     else
     {
@@ -542,9 +542,9 @@
 {
     //Tells the delegate that a point on the map was tapped and held at specified location.
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
-    NSLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, graphics);
+    AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, graphics);
     if (0 < [graphics count]) {
-        NSLog(@"Try to move selected graphic - if allowed");
+        AKRLog(@"Try to move selected graphic - if allowed");
     }
 }
 
@@ -553,7 +553,7 @@
     //Tells the delegate that the user moved his finger while tapping and holding on the map.
     //Sent continuously to allow tracking of the movement
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
-    NSLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, graphics);
+    AKRLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, graphics);
     AGSGraphic *graphic = [graphics[@"observations"] lastObject];
     if (graphic) {
         [graphic setGeometry:mappoint];
@@ -601,19 +601,19 @@
         _locationManager.delegate = self;
 
         if (![CLLocationManager locationServicesEnabled]) {
-            NSLog(@"Location Services Not Enabled");
+            AKRLog(@"Location Services Not Enabled");
         } else {
             if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
-                NSLog(@"Triggering a request for permission to use Location Services.");
+                AKRLog(@"Triggering a request for permission to use Location Services.");
                 [_locationManager startUpdatingLocation];
                 [_locationManager stopUpdatingLocation];
             }
             if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
             {
                 self.locationServicesAvailable = YES;
-                NSLog(@"Location Services Available and Authorized");
+                AKRLog(@"Location Services Available and Authorized");
             } else {
-                NSLog(@"Location Services NOT Authorized");
+                AKRLog(@"Location Services NOT Authorized");
             }
         }
     }
@@ -672,7 +672,7 @@
 {
     if (!_currentMapEntity) {
         // try to fetch it, otherwise create it.
-        NSLog(@"Looking for %@ in coredata",self.maps.selectedLocalMap);
+        AKRLog(@"Looking for %@ in coredata",self.maps.selectedLocalMap);
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Map"];
 
         request.predicate = [NSPredicate predicateWithFormat:@"name == %@ AND author == %@ AND date == %@",
@@ -680,7 +680,7 @@
         NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
         _currentMapEntity = [results firstObject];
         if(!_currentMapEntity) {
-            NSLog(@"  Map not found, creating new CoreData Entity");
+            AKRLog(@"  Map not found, creating new CoreData Entity");
             _currentMapEntity = [NSEntityDescription insertNewObjectForEntityForName:@"Map" inManagedObjectContext:self.context];
             _currentMapEntity.name = self.maps.selectedLocalMap.title;
             _currentMapEntity.author = self.maps.selectedLocalMap.author;
@@ -774,18 +774,18 @@
 
 - (void)incrementBusy
 {
-    NSLog(@"Start increment busy = %d",self.busyCount);
+    AKRLog(@"Start increment busy = %d",self.busyCount);
     if (self.busyCount == 0) {
         [self disableControls];
         [self.mapLoadingIndicator startAnimating];
     }
     self.busyCount++;
-    NSLog(@"Finished increment busy = %d",self.busyCount);
+    AKRLog(@"Finished increment busy = %d",self.busyCount);
 }
 
 - (void)decrementBusy
 {
-    NSLog(@"Start decrement busy = %d",self.busyCount);
+    AKRLog(@"Start decrement busy = %d",self.busyCount);
     if (self.busyCount == 0) {
         return;
     }
@@ -794,7 +794,7 @@
         [self.mapLoadingIndicator stopAnimating];
     }
     self.busyCount--;
-    NSLog(@"Finished decrement busy = %d",self.busyCount);
+    AKRLog(@"Finished decrement busy = %d",self.busyCount);
 }
 
 - (void)setupGPS
@@ -824,7 +824,7 @@
 - (void)rotateNorthArrow
 {
     double degrees = self.mapView.rotationAngle;
-    //NSLog(@"Rotating compass icon to %f degrees", degrees);
+    //AKRLog(@"Rotating compass icon to %f degrees", degrees);
     //angle in radians with positive being counterclockwise (on iOS)
     double radians = -1*degrees * M_PI / 180.0;
     self.compassRoseButton.transform = CGAffineTransformMakeRotation(radians);
@@ -832,7 +832,7 @@
 
 - (void)startRecording
 {
-    NSLog(@"start recording");
+    AKRLog(@"start recording");
     self.isRecording = YES;
     self.startStopObservingBarButtonItem.enabled = YES;
     [self setBarButtonAtIndex:5 action:@selector(startStopRecording:) ToPlay:NO];
@@ -843,7 +843,7 @@
 
 - (void)stopRecording
 {
-    NSLog(@"stop recording");
+    AKRLog(@"stop recording");
     self.isRecording = NO;
     if (self.isObserving) {
         [self stopObserving];
@@ -859,7 +859,7 @@
 
 - (void)startObserving
 {
-    NSLog(@"start observing");
+    AKRLog(@"start observing");
     self.isObserving = YES;
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:NO];
     //TDOO: populate the mission property dialog with the last/default dataset
@@ -874,7 +874,7 @@
 
 - (void)stopObserving
 {
-    NSLog(@"stop observing");
+    AKRLog(@"stop observing");
     self.isObserving = NO;
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:YES];
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
@@ -963,7 +963,7 @@
 
 - (void)loadBaseMap
 {
-    NSLog(@"Loading the basemap");
+    AKRLog(@"Loading the basemap");
     [self incrementBusy];
     if (!self.maps.selectedLocalMap.tileCache)
     {
@@ -987,7 +987,7 @@
     //removing all layers from the mapview does not "unload" the mapview.
     //to reset the mapView extents/SR, we need to call reset, then re-add the layers.
     //first we need to get the layers, so we can re-add them after setting the new basemap
-    NSLog(@"Changing the basemap");
+    AKRLog(@"Changing the basemap");
     [self incrementBusy];
     self.currentMapEntity = nil;
     if (!self.maps.selectedLocalMap.tileCache)
@@ -1006,7 +1006,7 @@
 
 - (void)initializeGraphicsLayer
 {
-    NSLog(@"Creating graphics layers");
+    AKRLog(@"Creating graphics layers");
     AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
     [symbol setSize:CGSizeMake(6,6)];
     [self.gpsPointsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
@@ -1038,17 +1038,17 @@
 - (void)reloadGraphics
 {
     if (!self.context || !self.mapView.loaded) {
-        NSLog(@"Loading graphics - can't because %@.", self.context ? @"map isn't loaded" : (self.mapView.loaded ? @"survey isn't loaded" : @"map AND survey are null! - how did that happen?"));
+        AKRLog(@"Loading graphics - can't because %@.", self.context ? @"map isn't loaded" : (self.mapView.loaded ? @"survey isn't loaded" : @"map AND survey are null! - how did that happen?"));
         return;
     }
-    NSLog(@"Loading graphics from coredata");
+    AKRLog(@"Loading graphics from coredata");
     [self clearGraphics];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.context executeFetchRequest:request error:&error];
-    NSLog(@"  Loading %d gpsPoints", results.count);
+    AKRLog(@"  Loading %d gpsPoints", results.count);
     if (!results && error.code)
-        NSLog(@"Error Fetching GpsPoint %@",error);
+        AKRLog(@"Error Fetching GpsPoint %@",error);
     for (GpsPoint *gpsPoint in results) {
         [self drawGpsPoint:gpsPoint];
         if (gpsPoint.observation) {
@@ -1065,8 +1065,8 @@
     request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint == NIL AND adhocLocation != NIL"];
     results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
-        NSLog(@"Error Fetching Observations %@",error);
-    NSLog(@"  Loading %d adhoc observations", results.count);
+        AKRLog(@"Error Fetching Observations %@",error);
+    AKRLog(@"  Loading %d adhoc observations", results.count);
     for (Observation *observation in results) {
         [self loadObservation:observation];
     }
@@ -1087,13 +1087,13 @@
 - (void)openSurvey
 {
     if (self.survey) {
-        NSLog(@"Opening survey document (%@)", self.survey.title);
+        AKRLog(@"Opening survey document (%@)", self.survey.title);
         self.selectSurveyButton.title = @"Loading survey...";
         [self incrementBusy];
         [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
             //do any other background work;
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"Start OpenSurvey completion handler");
+                AKRLog(@"Start OpenSurvey completion handler");
                 if (success) {
                     [self logStats];
                     [self reloadGraphics];
@@ -1112,7 +1112,7 @@
 {
     //TODO: this works, but logs background errors when called after a active document is deleted.
     if (survey) {
-        NSLog(@"Closing survey document (%@)", survey.title);
+        AKRLog(@"Closing survey document (%@)", survey.title);
         [self incrementBusy];  //loading the survey document may block
         if (survey.document.documentState == UIDocumentStateNormal) {
             self.selectSurveyButton.title = @"Closing survey...";
@@ -1121,7 +1121,7 @@
             }
             [survey closeWithCompletionHandler:^(BOOL success) {
                 //this completion handler runs on the main queue;
-                NSLog(@"Start CloseSurvey completion handler");
+                AKRLog(@"Start CloseSurvey completion handler");
                 [self decrementBusy];
                 if (success) {
                     if (!concurrentOpen) {
@@ -1132,7 +1132,7 @@
                 }
             }];
         } else if (self.survey.document.documentState != UIDocumentStateClosed) {
-            NSLog(@"Survey (%@) is in an abnormal state: %d", survey.title, survey.document.documentState);
+            AKRLog(@"Survey (%@) is in an abnormal state: %d", survey.title, survey.document.documentState);
             [self decrementBusy];
             [[[UIAlertView alloc] initWithTitle:@"Oh No!" message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
         }
@@ -1147,13 +1147,13 @@
 - (GpsPoint *)createGpsPoint:(CLLocation *)gpsData
 {
     if (!self.context) {
-        NSLog(@"Can't create GPS point, there is no data context (file)");
+        AKRLog(@"Can't create GPS point, there is no data context (file)");
         return nil;
     }
     if (self.lastGpsPointSaved && [self.lastGpsPointSaved.timestamp timeIntervalSinceDate:gpsData.timestamp] == 0) {
         return self.lastGpsPointSaved;
     }
-    NSLog(@"Saving GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
+    AKRLog(@"Saving GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
     GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:@"GpsPoint"
                                                        inManagedObjectContext:self.context];
     gpsPoint.mission = self.mission;
@@ -1189,7 +1189,7 @@
 - (void)drawGpsPoint:(GpsPoint *)gpsPoint atMapPoint:(AGSPoint *)mapPoint
 {
     if (!gpsPoint || !mapPoint) {
-        NSLog(@"Cannot draw gpsPoint (%@) @ mapPoint (%@)",gpsPoint, mapPoint);
+        AKRLog(@"Cannot draw gpsPoint (%@) @ mapPoint (%@)",gpsPoint, mapPoint);
         return;
     }
     //FIXME: figure out which attributes to show with GPS points
@@ -1208,10 +1208,10 @@
 - (Observation *)createObservation
 {
     if (!self.context) {
-        NSLog(@"Can't create Observation, there is no data context (file)");
+        AKRLog(@"Can't create Observation, there is no data context (file)");
         return nil;
     }
-    NSLog(@"Creating Observation managed object");
+    AKRLog(@"Creating Observation managed object");
     //FIXME: support more than one type of observation
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:@"Observation"
                                                              inManagedObjectContext:self.context];
@@ -1223,10 +1223,10 @@
 - (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint
 {
     if (!gpsPoint) {
-        NSLog(@"Can't save Observation at GPS point without a GPS Point");
+        AKRLog(@"Can't save Observation at GPS point without a GPS Point");
         return nil;
     }
-    NSLog(@"Creating Observation at GPS point");
+    AKRLog(@"Creating Observation at GPS point");
     Observation *observation = [self createObservation];
     observation.gpsPoint = gpsPoint;
     return observation;
@@ -1235,14 +1235,14 @@
 - (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint withAdhocLocation:(AGSPoint *)mapPoint
 {
     if (!mapPoint) {
-        NSLog(@"Can't save Observation at Adhoc Location without a Map Point");
+        AKRLog(@"Can't save Observation at Adhoc Location without a Map Point");
         return nil;
     }
     Observation *observation = [self createObservation];
     if (!observation) {
         return nil;
     }
-    NSLog(@"Adding Adhoc Location to Observation");
+    AKRLog(@"Adding Adhoc Location to Observation");
     AdhocLocation *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:@"AdhocLocation"
                                                                  inManagedObjectContext:self.context];
     //mapPoint is in the map coordinates, convert to WGS84
@@ -1262,14 +1262,14 @@
 - (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)location
 {
     if (!gpsPoint) {
-        NSLog(@"Can't save Observation at Angle/Distance without a GPS Point");
+        AKRLog(@"Can't save Observation at Angle/Distance without a GPS Point");
         return nil;
     }
     Observation *observation = [self createObservationAtGpsPoint:gpsPoint];
     if (!observation) {
         return nil;
     }
-    NSLog(@"Adding Angle = %f, Distance = %f, Course = %f to observation",
+    AKRLog(@"Adding Angle = %f, Distance = %f, Course = %f to observation",
           location.absoluteAngle, location.distanceMeters, location.deadAhead);
 
     AngleDistanceLocation *angleDistance = [NSEntityDescription insertNewObjectForEntityForName:@"AngleDistanceLocation"
@@ -1305,7 +1305,7 @@
 - (void)drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
 {
     if (!observation || !mapPoint) {
-        NSLog(@"Cannot draw observation (%@).  It has no location", observation);
+        AKRLog(@"Cannot draw observation (%@).  It has no location", observation);
         return;
     }
     //The graphic is drawn before we get the attributes, so set them to nil
@@ -1336,10 +1336,10 @@
 - (MissionProperty *)createMissionProperty
 {
     if (!self.context) {
-        NSLog(@"Can't create MissionProperty, there is no data context (file)");
+        AKRLog(@"Can't create MissionProperty, there is no data context (file)");
         return nil;
     }
-    NSLog(@"Creating MissionProperty managed object");
+    AKRLog(@"Creating MissionProperty managed object");
     //FIXME: support more than one type of observation
     MissionProperty *missionProperty = [NSEntityDescription insertNewObjectForEntityForName:@"MissionProperty" inManagedObjectContext:self.context];
     missionProperty.mission = self.mission;
@@ -1350,10 +1350,10 @@
 - (MissionProperty *)createMissionPropertyAtGpsPoint:(GpsPoint *)gpsPoint
 {
     if (!gpsPoint) {
-        NSLog(@"Can't save MissionProperty at GPS point without a GPS Point");
+        AKRLog(@"Can't save MissionProperty at GPS point without a GPS Point");
         return nil;
     }
-    NSLog(@"Creating MissionProperty at GPS point");
+    AKRLog(@"Creating MissionProperty at GPS point");
     MissionProperty *missionProperty = [self createMissionProperty];
     missionProperty.gpsPoint = gpsPoint;
     return missionProperty;
@@ -1371,7 +1371,7 @@
 - (void)drawMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
 {
     if (!missionProperty || !mapPoint) {
-        NSLog(@"Cannot draw missionProperty (%@).  It has no location", missionProperty);
+        AKRLog(@"Cannot draw missionProperty (%@).  It has no location", missionProperty);
         return;
     }
     //The graphic is drawn before we get the attributes, so set them to nil
@@ -1404,7 +1404,7 @@
 // Called by done button on attribute dialogs
 - (void)saveAttributes:(UIBarButtonItem *)sender
 {
-    NSLog(@"saving attributes");
+    AKRLog(@"saving attributes");
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     AttributeViewController *dialog = [self.modalAttributeCollector.viewControllers firstObject];
     [dialog.root fetchValueUsingBindingsIntoObject:dict];
@@ -1435,14 +1435,14 @@
 //    NSError *error = [[NSError alloc] init];
 //    NSArray *results = [self.context executeFetchRequest:request error:&error];
 //    if (!results && error.code)
-//        NSLog(@"Error Fetching Observation %@",error);
+//        AKRLog(@"Error Fetching Observation %@",error);
 //    for (Observation *observation in results) {
 //        [self.context deleteObject:observation];
 //    }
 //    request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
 //    results = [self.context executeFetchRequest:request error:&error];
 //    if (!results && error.code)
-//        NSLog(@"Error Fetching GpsPoints%@",error);
+//        AKRLog(@"Error Fetching GpsPoints%@",error);
 //    for (GpsPoint *gpsPoint in results) {
 //        [self.context deleteObject:gpsPoint];
 //    }
@@ -1490,22 +1490,22 @@
 
 - (void)logStats
 {
-    NSLog(@"Survey document is open. It contains:");
+    AKRLog(@"Survey document is open. It contains:");
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
     NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"  %d GpsPoints", results.count);
+    AKRLog(@"  %d GpsPoints", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"  %d Observations", results.count);
+    AKRLog(@"  %d Observations", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"  %d MissionProperties", results.count);
+    AKRLog(@"  %d MissionProperties", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"Mission"];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"  %d Missions", results.count);
+    AKRLog(@"  %d Missions", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"Map"];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"  %d Maps", results.count);
+    AKRLog(@"  %d Maps", results.count);
 }
 
 @end

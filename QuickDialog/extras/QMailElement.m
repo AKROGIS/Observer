@@ -67,7 +67,7 @@
         case MFMailComposeResultSent:
             break;
         case MFMailComposeResultFailed:
-            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            AKRLog(@"Mail sent failure: %@", [error localizedDescription]);
             break;
         default:
             break;

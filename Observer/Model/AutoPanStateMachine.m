@@ -58,7 +58,7 @@
             [self.autoPanModeButton turnOff];
             break;
         default:
-            NSLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userPannedMap", self.state);
+            AKRLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userPannedMap", self.state);
             break;
     }
 }
@@ -87,7 +87,7 @@
             [self showCompassRoseButton];
             break;
         default:
-            NSLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userRotatedMap", self.state);
+            AKRLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userRotatedMap", self.state);
             break;
     }
 }
@@ -121,7 +121,7 @@
             [self.autoPanModeButton turnOff];
             break;
         default:
-            NSLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userClickedAutoPanButton", self.state);
+            AKRLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userClickedAutoPanButton", self.state);
             break;
     }
 }
@@ -151,7 +151,7 @@
             self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
             break;
         default:
-            NSLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userClickedCompassRoseButton", self.state);
+            AKRLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userClickedCompassRoseButton", self.state);
             break;
     }
 }
@@ -177,7 +177,7 @@
             }
             break;
         default:
-            NSLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.speedUpdate", self.state);
+            AKRLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.speedUpdate", self.state);
             break;
     }
     self.priorSpeed = newSpeed;
@@ -242,7 +242,7 @@
 
 - (void)hideCompassRoseButton
 {
-    //NSLog(@"hide compass rose");
+    //AKRLog(@"hide compass rose");
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionFade;
     animation.duration = 0.4;
@@ -252,7 +252,7 @@
 
 - (void)showCompassRoseButton
 {
-    //NSLog(@"show compass rose");
+    //AKRLog(@"show compass rose");
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionFade;
     animation.duration = 0.4;

@@ -79,7 +79,7 @@
 - (Map *)localMapAtIndex:(NSUInteger)index
 {
     if (self.localItems.count <= index) {
-        NSLog(@"Array index out of bounds in [MapCollection localMapAtIndex:%d]; size = %d",index,self.localItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection localMapAtIndex:%d]; size = %d",index,self.localItems.count);
         return nil;
     }
     return self.localItems[index];
@@ -88,7 +88,7 @@
 - (Map *)remoteMapAtIndex:(NSUInteger)index
 {
     if (self.remoteItems.count <= index) {
-        NSLog(@"Array index out of bounds in [MapCollection remoteMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection remoteMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
         return nil;
     }
     return self.remoteItems[index];
@@ -107,7 +107,7 @@
 -(void)removeLocalMapAtIndex:(NSUInteger)index
 {
     if (self.localItems.count <= index) {
-        NSLog(@"Array index out of bounds in [MapCollection removeLocalMapAtIndex:%d] size = %d",index,self.localItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection removeLocalMapAtIndex:%d] size = %d",index,self.localItems.count);
         return;
     }
     Map *item = [self localMapAtIndex:index];
@@ -123,7 +123,7 @@
 -(void)moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
     if (self.localItems.count <= fromIndex || self.localItems.count <= toIndex) {
-        NSLog(@"Array index out of bounds in [MapCollection moveLocalMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.localItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection moveLocalMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.localItems.count);
         return;
     }
     if (fromIndex == toIndex)
@@ -152,7 +152,7 @@
 -(void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
     if (self.remoteItems.count <= fromIndex || self.remoteItems.count <= toIndex) {
-        NSLog(@"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.remoteItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.remoteItems.count);
         return;
     }
     if (fromIndex == toIndex)
@@ -261,7 +261,7 @@ static MapCollection *_sharedCollection = nil;
 -(void)prepareToDownloadMapAtIndex:(NSUInteger)index
 {
     if (self.remoteItems.count <= index) {
-        NSLog(@"Array index out of bounds in [MapCollection prepareToDownloadMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection prepareToDownloadMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
         return;
     }
     [self.remoteItems[index] prepareToDownload];
@@ -270,7 +270,7 @@ static MapCollection *_sharedCollection = nil;
 - (void)cancelDownloadMapAtIndex:(NSUInteger)index
 {
     if (self.remoteItems.count <= index) {
-        NSLog(@"Array index out of bounds in [MapCollection cancelDownloadMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection cancelDownloadMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
         return;
     }
     [self.remoteItems[index] stopDownload];
@@ -308,7 +308,7 @@ static MapCollection *_sharedCollection = nil;
 - (void) moveRemoteMapAtIndex:(NSUInteger)fromIndex toLocalMapAtIndex:(NSUInteger)toIndex
 {
     if (self.remoteItems.count <= fromIndex || self.localItems.count < toIndex) {
-        NSLog(@"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toLocalMapAtIndex:%d] size = (%d,%d)",fromIndex,toIndex,self.remoteItems.count,self.localItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toLocalMapAtIndex:%d] size = (%d,%d)",fromIndex,toIndex,self.remoteItems.count,self.localItems.count);
         return;
     }
     Map *map = [self.remoteItems objectAtIndex:fromIndex];
@@ -403,12 +403,12 @@ static MapCollection *_sharedCollection = nil;
     NSError *error = nil;
     [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
     if (error) {
-        NSLog(@"MapCollection.openURL: Unable to copy %@ to %@; error: %@",url, newUrl, error);
+        AKRLog(@"MapCollection.openURL: Unable to copy %@ to %@; error: %@",url, newUrl, error);
         return nil;
     }
     Map *map = [[Map alloc] initWithLocalTileCache:newUrl];
     if (!map.tileCache) {
-        NSLog(@"data in %@ was not a valid map object",url.lastPathComponent);
+        AKRLog(@"data in %@ was not a valid map object",url.lastPathComponent);
         [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
         return nil;
@@ -419,7 +419,7 @@ static MapCollection *_sharedCollection = nil;
     }];
     if (localIndex != NSNotFound)
     {
-        NSLog(@"We already have the map in %@.  Ignoring the duplicate.",url.lastPathComponent);
+        AKRLog(@"We already have the map in %@.  Ignoring the duplicate.",url.lastPathComponent);
         [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
         return self.localItems[localIndex];
@@ -492,7 +492,7 @@ static MapCollection *_sharedCollection = nil;
     for (NSURL *url in mapUrlsInDocumentsFolder) {
         Map *map = [[Map alloc] initWithLocalTileCache:url];
         if (!map.tileCache) {
-            NSLog(@"data at %@ was not a valid map object",url);
+            AKRLog(@"data at %@ was not a valid map object",url);
             [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         }
         [mapsToAdd addObject:map];

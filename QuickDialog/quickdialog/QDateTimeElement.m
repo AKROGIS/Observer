@@ -187,7 +187,7 @@
             date = [dict valueForKey:@"date"];
             time = [dict valueForKey:@"time"];
         } else {
-            NSLog(@"This control was not created to handle this time of UIDatePickerMode");
+            AKRLog(@"This control was not created to handle this time of UIDatePickerMode");
         }
 
         NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];

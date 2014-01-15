@@ -252,7 +252,7 @@
 // doing saves as overwrites can work if you get lucky, but may cause conflicts
 //- (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler
 //{
-//    NSLog(@"Saving document");
+//    AKRLog(@"Saving document");
 //    [self logStats];
 //    [self.document saveToURL:self.documentUrl forSaveOperation:UIDocumentSaveForOverwriting completionHandler:completionHandler];
 //}
@@ -260,7 +260,7 @@
 - (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
 #ifdef DEBUG
-    NSLog(@"Closing document");
+    AKRLog(@"Closing document");
     [self logStats];
     [self disconnectFromNotificationCenter];
 #endif
@@ -344,7 +344,7 @@
 - (void)objectsDidChange:(NSNotification *)notification
 {
 #ifdef DEBUG
-    NSLog(@"Survey.document.managedObjectContext objects did change.");
+    AKRLog(@"Survey.document.managedObjectContext objects did change.");
 #endif
     self.date = [NSDate date];
     self.state = kModified;
@@ -398,25 +398,25 @@
     //object should always be self.document
     //userinfo is nil
 
-    NSLog(@"Document (%@) state changed", self.title);
+    AKRLog(@"Document (%@) state changed", self.title);
     switch (self.document.documentState) {
         case UIDocumentStateNormal:
-            NSLog(@"  Document is normal");
+            AKRLog(@"  Document is normal");
             break;
         case UIDocumentStateClosed:
-            NSLog(@"  Document is closed");
+            AKRLog(@"  Document is closed");
             break;
         case UIDocumentStateEditingDisabled:
-            NSLog(@"  Document editing is disabled");
+            AKRLog(@"  Document editing is disabled");
             break;
         case UIDocumentStateInConflict:
-            NSLog(@"  Document is in conflict");
+            AKRLog(@"  Document is in conflict");
             break;
         case UIDocumentStateSavingError:
-            NSLog(@"  Document has an error saving state");
+            AKRLog(@"  Document has an error saving state");
             break;
         default:
-            NSLog(@"  Document has an unexpected state: %d",self.document.documentState);
+            AKRLog(@"  Document has an unexpected state: %d",self.document.documentState);
     }
 }
 
@@ -426,8 +426,8 @@
     //object should always be self.document
     //userinfo has keys NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey which all return arrays of objects
 
-    NSLog(@"Document (%@) data changed", self.title);
-    //NSLog(@"Data Changed; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
+    AKRLog(@"Document (%@) data changed", self.title);
+    //AKRLog(@"Data Changed; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
 }
 
 - (void) dataSaved: (NSNotification *)notification
@@ -436,28 +436,28 @@
     //object should always be self.document
     //userinfo has keys NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey which all return arrays of objects
 
-    NSLog(@"Document (%@) data saved", self.title);
-    //NSLog(@"Data Saved; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
+    AKRLog(@"Document (%@) data saved", self.title);
+    //AKRLog(@"Data Saved; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
 }
 
 - (void)logStats
 {
-    NSLog(@"  Survey (%@) contains:", self.title);
+    AKRLog(@"  Survey (%@) contains:", self.title);
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
     NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"    %d GpsPoints", results.count);
+    AKRLog(@"    %d GpsPoints", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"    %d Observations", results.count);
+    AKRLog(@"    %d Observations", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"    %d MissionProperties", results.count);
+    AKRLog(@"    %d MissionProperties", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"Mission"];
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"    %d Missions", results.count);
+    AKRLog(@"    %d Missions", results.count);
     request = [NSFetchRequest fetchRequestWithEntityName:@"Map"];
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    NSLog(@"    %d Maps", results.count);
+    AKRLog(@"    %d Maps", results.count);
 }
 
 #endif
