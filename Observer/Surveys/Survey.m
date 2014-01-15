@@ -256,7 +256,6 @@
 - (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
     NSLog(@"Closing document");
-    [self logStats];
     [self.document closeWithCompletionHandler:completionHandler];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self disconnectFromNotificationCenter];
