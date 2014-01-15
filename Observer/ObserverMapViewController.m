@@ -154,11 +154,15 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    UINavigationController *nav = [segue destinationViewController];
+    UIViewController *vc1 = [segue destinationViewController];
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        UINavigationController *nav = [segue destinationViewController];
+        vc1 = [nav.viewControllers firstObject];
+    }
 
     if ([[segue identifier] isEqualToString:@"AngleDistancePopOver"])
     {
-        AngleDistanceViewController *vc = (AngleDistanceViewController*)[nav.viewControllers firstObject];
+        AngleDistanceViewController *vc = (AngleDistanceViewController*)vc1;
 
         //create/save current GpsPoint, because it may take a while for the user to enter an angle/distance
         GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
@@ -197,7 +201,7 @@
     }
 
     if ([segue.identifier isEqualToString:@"Select Survey"]){
-        SurveySelectViewController *vc = (SurveySelectViewController *)[nav.childViewControllers firstObject];
+        SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
         vc.items = self.surveys;
         vc.selectedSurveyChanged = ^{
@@ -217,7 +221,7 @@
     }
 
     if ([segue.identifier isEqualToString:@"Select Map"]) {
-        MapSelectViewController *vc = (MapSelectViewController *)[nav.childViewControllers firstObject];
+        MapSelectViewController *vc = (MapSelectViewController *)vc1;
         vc.title = segue.identifier;
         vc.items = self.maps;
         vc.rowSelectedCallback = ^(NSIndexPath*indexPath){
