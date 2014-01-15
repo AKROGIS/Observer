@@ -101,7 +101,7 @@
                                     <action selector="resetNorth:" destination="TiC-11-YSU" eventType="touchUpInside" id="Oxa-wU-P3j"/>
                                 </connections>
                             </button>
-                            <imageView opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="center" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" image="Crosshairs.png" translatesAutoresizingMaskIntoConstraints="NO" id="fpV-JS-knH">
+                            <imageView opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="center" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" image="Crosshairs" translatesAutoresizingMaskIntoConstraints="NO" id="fpV-JS-knH">
                                 <rect key="frame" x="352" y="490" width="64" height="64"/>
                             </imageView>
                             <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="No background map selected. Click the Maps button to select one." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="009-3q-8gq">
@@ -1170,7 +1170,7 @@
     </scenes>
     <resources>
         <image name="CompassRose" width="30" height="30"/>
-        <image name="Crosshairs.png" width="64" height="64"/>
+        <image name="Crosshairs" width="64" height="64"/>
         <image name="Download" width="27" height="26"/>
         <image name="GpsOff" width="22" height="22"/>
     </resources>
