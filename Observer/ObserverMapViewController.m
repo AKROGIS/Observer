@@ -204,9 +204,10 @@
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
         vc.items = self.surveys;
+        Survey *initialSurvey = self.survey;
         vc.selectedSurveyChanged = ^{
             // on calling thread
-            [self closeSurveyWithConcurrentOpen:YES];
+            [self closeSurvey:initialSurvey withConcurrentOpen:YES];
             [self openSurvey];
         };
         vc.selectedSurveyChangedName = ^{
@@ -405,7 +406,7 @@
 
 - (void)closeSurvey
 {
-    [self closeSurveyWithConcurrentOpen:NO];
+    [self closeSurvey:self.survey withConcurrentOpen:NO];
 }
 
 
@@ -1086,7 +1087,7 @@
 - (void)openSurvey
 {
     if (self.survey) {
-        NSLog(@"Opening survey document");
+        NSLog(@"Opening survey document (%@)", self.survey.title);
         self.selectSurveyButton.title = @"Loading survey...";
         [self incrementBusy];
         [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
@@ -1107,16 +1108,18 @@
     }
 }
 
-- (void)closeSurveyWithConcurrentOpen:(BOOL)concurrentOpen
+- (void)closeSurvey:(Survey *)survey withConcurrentOpen:(BOOL)concurrentOpen
 {
     //TODO: this works, but logs background errors when called after a active document is deleted.
-    if (self.survey) {
-        NSLog(@"Closing survey document");
+    if (survey) {
+        NSLog(@"Closing survey document (%@)", survey.title);
         [self incrementBusy];  //loading the survey document may block
-        if (self.survey.document.documentState == UIDocumentStateNormal) {
+        if (survey.document.documentState == UIDocumentStateNormal) {
             self.selectSurveyButton.title = @"Closing survey...";
-            [self stopRecording];
-            [self.survey closeWithCompletionHandler:^(BOOL success) {
+            if (self.isRecording) {
+                [self stopRecording];
+            }
+            [survey closeWithCompletionHandler:^(BOOL success) {
                 //this completion handler runs on the main queue;
                 NSLog(@"Start CloseSurvey completion handler");
                 [self decrementBusy];
@@ -1129,7 +1132,7 @@
                 }
             }];
         } else if (self.survey.document.documentState != UIDocumentStateClosed) {
-            NSLog(@"Survey is in an abnormal state: %d", self.survey.document.documentState);
+            NSLog(@"Survey (%@) is in an abnormal state: %d", survey.title, survey.document.documentState);
             [self decrementBusy];
             [[[UIAlertView alloc] initWithTitle:@"Oh No!" message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
         }
