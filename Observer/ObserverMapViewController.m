@@ -1005,6 +1005,7 @@
 
 - (void)initializeGraphicsLayer
 {
+    //TODO: support multiple observation layers, support symbology defined by protocol (graphics are very limited in symbology)
     AKRLog(@"Creating graphics layers");
     AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
     [symbol setSize:CGSizeMake(6,6)];
@@ -1028,10 +1029,11 @@
 
 - (void)clearGraphics
 {
-    [self.observationsLayer removeAllGraphics];
-    [self.gpsPointsLayer removeAllGraphics];
-    [self.gpsTracksLayer removeAllGraphics];
-    [self.missionPropertiesLayer removeAllGraphics];
+    for (AGSLayer *layer in self.mapView.mapLayers) {
+        if ([layer isKindOfClass:[AGSGraphicsLayer class]]) {
+            [(AGSGraphicsLayer *)layer removeAllGraphics];
+        }
+    }
 }
 
 - (void)reloadGraphics
@@ -1168,6 +1170,7 @@
     return gpsPoint;
 }
 
+//TODO: not used - use or remove
 - (GpsPoint *)gpsPointAtTimestamp:(NSDate *)timestamp
 {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
