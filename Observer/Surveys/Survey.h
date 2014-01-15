@@ -52,7 +52,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 //load all properties
 - (void)readPropertiesWithCompletionHandler:(void (^)(NSError*))handler;
 - (void)openDocumentWithCompletionHandler:(void (^)(BOOL success))handler;
-- (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+//- (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler;
 

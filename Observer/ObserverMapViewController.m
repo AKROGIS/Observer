@@ -398,10 +398,10 @@
     return success;
 }
 
-- (void)saveSurvey
-{
-    [self.survey saveWithCompletionHandler:nil];
-}
+//- (void)saveSurvey
+//{
+//    [self.survey saveWithCompletionHandler:nil];
+//}
 
 - (void)closeSurvey
 {
@@ -773,15 +773,18 @@
 
 - (void)incrementBusy
 {
+    NSLog(@"Start increment busy = %d",self.busyCount);
     if (self.busyCount == 0) {
         [self disableControls];
         [self.mapLoadingIndicator startAnimating];
     }
     self.busyCount++;
+    NSLog(@"Finished increment busy = %d",self.busyCount);
 }
 
 - (void)decrementBusy
 {
+    NSLog(@"Start decrement busy = %d",self.busyCount);
     if (self.busyCount == 0) {
         return;
     }
@@ -790,6 +793,7 @@
         [self.mapLoadingIndicator stopAnimating];
     }
     self.busyCount--;
+    NSLog(@"Finished decrement busy = %d",self.busyCount);
 }
 
 - (void)setupGPS
@@ -848,7 +852,7 @@
     self.startStopObservingBarButtonItem.enabled = NO;
     [self setBarButtonAtIndex:5 action:@selector(startStopRecording:) ToPlay:YES];
     [self stopLocationUpdates];
-    [self.survey saveWithCompletionHandler:nil];
+    //[self.survey saveWithCompletionHandler:nil];
     self.mission = nil;
 }
 
@@ -1088,6 +1092,7 @@
         [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
             //do any other background work;
             dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"Start OpenSurvey completion handler");
                 if (success) {
                     [self logStats];
                     [self reloadGraphics];
@@ -1112,17 +1117,16 @@
             self.selectSurveyButton.title = @"Closing survey...";
             [self stopRecording];
             [self.survey closeWithCompletionHandler:^(BOOL success) {
-                //do any other background work;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self decrementBusy];
-                    if (success) {
-                        if (!concurrentOpen) {
-                            [self updateTitleBar];
-                        } //else similar actions will be performed when the concurrent open finishes
-                    } else {
-                        [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to close the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
-                    }
-                });
+                //this completion handler runs on the main queue;
+                NSLog(@"Start CloseSurvey completion handler");
+                [self decrementBusy];
+                if (success) {
+                    if (!concurrentOpen) {
+                        [self updateTitleBar];
+                    } //else similar actions will be performed when the concurrent open finishes
+                } else {
+                    [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to close the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
+                }
             }];
         } else if (self.survey.document.documentState != UIDocumentStateClosed) {
             NSLog(@"Survey is in an abnormal state: %d", self.survey.document.documentState);

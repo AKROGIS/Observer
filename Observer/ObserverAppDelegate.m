@@ -36,7 +36,7 @@
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     NSLog(@"Entering Background.  Synchronizing User Defaults and saving coredata");
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [self.observerMapViewController saveSurvey];
+    //[self.observerMapViewController saveSurvey];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application

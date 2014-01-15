@@ -16,6 +16,6 @@
 
 // To assist AppDelegate in saving/closing the survey data
 - (void)closeSurvey;
-- (void)saveSurvey;
+//- (void)saveSurvey;
 
 @end

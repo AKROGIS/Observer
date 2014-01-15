@@ -19,11 +19,19 @@
     return [SurveyObjectModel objectModelWithProtocol:survey.protocol];
 }
 
-- (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
-    NSLog(@"SurveyCoreDataDocument %@ has error.", self.fileURL);
-    NSLog(@"    State %u, %@", self.documentState, error);
-    [super handleError:error userInteractionPermitted:userInteractionPermitted];
+#ifdef DEBUG
+- (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
+{
+    NSLog(@"Auto-Saving SurveyCoreDataDocument");
+    return [super contentsForType:typeName error:outError];
 }
 
+- (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
+    NSLog(@"SurveyCoreDataDocument %@ has error.", self.fileURL);
+    NSLog(@"    State: %d", self.documentState);
+    NSLog(@"    Error: %@", error);
+    [super handleError:error userInteractionPermitted:userInteractionPermitted];
+}
+#endif
 
 @end

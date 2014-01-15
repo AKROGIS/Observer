@@ -243,22 +243,29 @@
                                              selector:@selector(objectsDidChange:)
                                                  name:NSManagedObjectContextObjectsDidChangeNotification
                                                object:self.document.managedObjectContext];
+#ifdef DEBUG
     [self connectToNotificationCenter];
+#endif
 }
 
-- (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler
-{
-    NSLog(@"Saving document");
-    [self logStats];
-    [self.document saveToURL:self.documentUrl forSaveOperation:UIDocumentSaveForOverwriting completionHandler:completionHandler];
-}
+// saving is only for "SaveTO", normal saves are handled by UIKit with autosave
+// doing saves as overwrites can work if you get lucky, but may cause conflicts
+//- (void)saveWithCompletionHandler:(void (^)(BOOL success))completionHandler
+//{
+//    NSLog(@"Saving document");
+//    [self logStats];
+//    [self.document saveToURL:self.documentUrl forSaveOperation:UIDocumentSaveForOverwriting completionHandler:completionHandler];
+//}
 
 - (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
+#ifdef DEBUG
     NSLog(@"Closing document");
+    [self logStats];
+    [self disconnectFromNotificationCenter];
+#endif
     [self.document closeWithCompletionHandler:completionHandler];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self disconnectFromNotificationCenter];
 }
 
 
@@ -343,6 +350,18 @@
     self.state = kModified;
 }
 
+- (NSString *)description
+{
+    if (self.state == kUnborn) {
+        return @"Unborn survey (properties not yet loaded from disk)";
+    } else {
+        return [NSString stringWithFormat:@"%@; %@; %@", self.title, self.subtitle2, self.protocolIsLoaded ? self.subtitle : @"protocol not yet loaded"];
+    }
+}
+
+#pragma mark - Diagnostic aids - remove when done
+
+#ifdef DEBUG
 
 - (void) connectToNotificationCenter
 {
@@ -379,7 +398,7 @@
     //object should always be self.document
     //userinfo is nil
 
-    NSLog(@"Document state changed");
+    NSLog(@"Document (%@) state changed", self.title);
     switch (self.document.documentState) {
         case UIDocumentStateNormal:
             NSLog(@"  Document is normal");
@@ -407,7 +426,7 @@
     //object should always be self.document
     //userinfo has keys NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey which all return arrays of objects
 
-    NSLog(@"Document data changed");
+    NSLog(@"Document (%@) data changed", self.title);
     //NSLog(@"Data Changed; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
 }
 
@@ -417,24 +436,13 @@
     //object should always be self.document
     //userinfo has keys NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey which all return arrays of objects
 
-    NSLog(@"Document data Saved");
+    NSLog(@"Document (%@) data saved", self.title);
     //NSLog(@"Data Saved; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
 }
 
-- (NSString *)description
-{
-    if (self.state == kUnborn) {
-        return @"Unborn survey (properties not yet loaded from disk)";
-    } else {
-        return [NSString stringWithFormat:@"%@; %@; %@", self.title, self.subtitle2, self.protocolIsLoaded ? self.subtitle : @"protocol not yet loaded"];
-    }
-}
-
-#pragma mark - Diagnostic aids - remove when done
-
 - (void)logStats
 {
-    NSLog(@"  Survey document contains:");
+    NSLog(@"  Survey (%@) contains:", self.title);
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
     NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
     NSLog(@"    %d GpsPoints", results.count);
@@ -451,5 +459,7 @@
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
     NSLog(@"    %d Maps", results.count);
 }
+
+#endif
 
 @end
