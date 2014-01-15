@@ -774,18 +774,18 @@
 
 - (void)incrementBusy
 {
-    AKRLog(@"Start increment busy = %d",self.busyCount);
+    //AKRLog(@"Start increment busy = %d",self.busyCount);
     if (self.busyCount == 0) {
         [self disableControls];
         [self.mapLoadingIndicator startAnimating];
     }
     self.busyCount++;
-    AKRLog(@"Finished increment busy = %d",self.busyCount);
+    //AKRLog(@"Finished increment busy = %d",self.busyCount);
 }
 
 - (void)decrementBusy
 {
-    AKRLog(@"Start decrement busy = %d",self.busyCount);
+    //AKRLog(@"Start decrement busy = %d",self.busyCount);
     if (self.busyCount == 0) {
         return;
     }
@@ -794,7 +794,7 @@
         [self.mapLoadingIndicator stopAnimating];
     }
     self.busyCount--;
-    AKRLog(@"Finished decrement busy = %d",self.busyCount);
+    //AKRLog(@"Finished decrement busy = %d",self.busyCount);
 }
 
 - (void)setupGPS
@@ -910,6 +910,7 @@
 {
     self.userWantsHeadingUpdates = YES;
     if (self.locationServicesAvailable) {
+        //AKRLog(@"Start Updating Heading");
         [self.locationManager startUpdatingHeading];
     }
 }
@@ -918,6 +919,7 @@
 {
     self.userWantsHeadingUpdates = NO;
     if (self.locationServicesAvailable) {
+        //AKRLog(@"Stop Updating Heading");
         [self.locationManager stopUpdatingHeading];
     }
 }
@@ -926,6 +928,7 @@
 {
     self.userWantsLocationUpdates = YES;
     if (self.locationServicesAvailable) {
+        //AKRLog(@"Start Updating Location");
         [self.locationManager startUpdatingLocation];
     }
 }
@@ -936,6 +939,7 @@
     if (!self.isRecording && ![self isAutoRotating]) {
         self.userWantsLocationUpdates = NO;
         if (self.locationServicesAvailable) {
+            //AKRLog(@"Stop Updating Location");
             [self.locationManager stopUpdatingLocation];
         }
     }
@@ -1093,7 +1097,7 @@
         [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
             //do any other background work;
             dispatch_async(dispatch_get_main_queue(), ^{
-                AKRLog(@"Start OpenSurvey completion handler");
+                //AKRLog(@"Start OpenSurvey completion handler");
                 if (success) {
                     [self logStats];
                     [self reloadGraphics];
@@ -1121,7 +1125,7 @@
             }
             [survey closeWithCompletionHandler:^(BOOL success) {
                 //this completion handler runs on the main queue;
-                AKRLog(@"Start CloseSurvey completion handler");
+                //AKRLog(@"Start CloseSurvey completion handler");
                 [self decrementBusy];
                 if (success) {
                     if (!concurrentOpen) {
