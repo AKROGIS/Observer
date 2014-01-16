@@ -78,7 +78,8 @@
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
 @property (strong, nonatomic) AGSGraphicsLayer *observationsLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *gpsPointsLayer;
-@property (strong, nonatomic) AGSGraphicsLayer *gpsTracksLayer;
+@property (strong, nonatomic) AGSGraphicsLayer *observingTracksLayer;
+@property (strong, nonatomic) AGSGraphicsLayer *notObservingTracksLayer;
 @property (strong, nonatomic) AGSGraphicsLayer *missionPropertiesLayer;
 
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
@@ -641,11 +642,18 @@
     return _gpsPointsLayer;
 }
 
-- (AGSGraphicsLayer *)gpsTracksLayer
+- (AGSGraphicsLayer *)observingTracksLayer
 {
-    if (!_gpsTracksLayer)
-        _gpsTracksLayer = [[AGSGraphicsLayer alloc] init];
-    return _gpsTracksLayer;
+    if (!_observingTracksLayer)
+        _observingTracksLayer = [[AGSGraphicsLayer alloc] init];
+    return _observingTracksLayer;
+}
+
+- (AGSGraphicsLayer *)notObservingTracksLayer
+{
+    if (!_notObservingTracksLayer)
+        _notObservingTracksLayer = [[AGSGraphicsLayer alloc] init];
+    return _notObservingTracksLayer;
 }
 
 - (AGSGraphicsLayer *)missionPropertiesLayer
@@ -1022,9 +1030,13 @@
     [self.missionPropertiesLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
     [self.mapView addMapLayer:self.missionPropertiesLayer withName:@"missionProperties"];
 
-    AGSSimpleLineSymbol *line = [AGSSimpleLineSymbol simpleLineSymbolWithColor:[UIColor blueColor] width:1.0];
-    [self.gpsTracksLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:line]];
-    [self.mapView addMapLayer:self.gpsTracksLayer withName:@"gpsTracksLayer"];
+    AGSSimpleLineSymbol *line = [AGSSimpleLineSymbol simpleLineSymbolWithColor:[UIColor redColor] width:1.0];
+    [self.observingTracksLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:line]];
+    [self.mapView addMapLayer:self.observingTracksLayer withName:@"observingTracksLayer"];
+
+    line = [AGSSimpleLineSymbol simpleLineSymbolWithColor:[UIColor grayColor] width:1.0];
+    [self.notObservingTracksLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:line]];
+    [self.mapView addMapLayer:self.notObservingTracksLayer withName:@"notObservingTracksLayer"];
 }
 
 - (void)clearGraphics
@@ -1045,13 +1057,35 @@
     AKRLog(@"Loading graphics from coredata");
     [self clearGraphics];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
+    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:YES]];
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.context executeFetchRequest:request error:&error];
     AKRLog(@"  Loading %d gpsPoints", results.count);
     if (!results && error.code)
         AKRLog(@"Error Fetching GpsPoint %@",error);
+    //draw a line connecting the GPS points
+    GpsPoint *previousPoint;
+    BOOL observing = NO;
     for (GpsPoint *gpsPoint in results) {
-        [self drawGpsPoint:gpsPoint];
+        if (!previousPoint) {
+            previousPoint = gpsPoint;
+            continue;
+        }
+        if (previousPoint.mission != gpsPoint.mission) {
+            previousPoint = gpsPoint;
+            continue;
+        }
+        if (previousPoint.missionProperty) {
+            observing = previousPoint.missionProperty.observing;
+        }
+        //TODO: draw a polyline instead of single lines
+        //TODO: do not connect gps points from different missions
+        //TODO: change symbology when missionProperties change.
+        [self drawTrackObserving:observing From:previousPoint to:gpsPoint];
+        previousPoint = gpsPoint;
+    }
+    for (GpsPoint *gpsPoint in results) {
+        //        [self drawGpsPoint:gpsPoint];
         if (gpsPoint.observation) {
             [self loadObservation:gpsPoint.observation];
         }
@@ -1397,6 +1431,28 @@
     self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
 }
+
+
+
+
+#pragma mark - Private Methods - support for data model - mission properties
+
+- (void)drawTrackObserving:(BOOL)observing From:(GpsPoint *)fromPoint to:(GpsPoint *)toPoint
+{
+    AGSPoint *point1 = [self mapPointFromGpsPoint:fromPoint];
+    AGSPoint *point2 = [self mapPointFromGpsPoint:toPoint];
+    AGSMutablePolyline *line = [[AGSMutablePolyline alloc] init];
+    [line addPathToPolyline];
+    [line addPointToPath:point1];
+    [line addPointToPath:point2];
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:line symbol:nil attributes:nil];
+    if (observing) {
+        [self.observingTracksLayer addGraphic:graphic];
+    } else {
+        [self.notObservingTracksLayer addGraphic:graphic];
+    }
+}
+
 
 
 
