@@ -795,6 +795,7 @@
     if (self.busyCount == 1) {
         [self enableControls];
         [self.mapLoadingIndicator stopAnimating];
+        AKRLog(@"Ready to go");
     }
     self.busyCount--;
     //AKRLog(@"Finished decrement busy = %d",self.busyCount);
@@ -1050,20 +1051,21 @@
 
 - (void)reloadGraphics
 {
-    if (!self.context || !self.mapView.loaded) {
-        AKRLog(@"Loading graphics - can't because %@.", self.context ? @"map isn't loaded" : (self.mapView.loaded ? @"survey isn't loaded" : @"map AND survey are null! - how did that happen?"));
+    BOOL surveyReady = self.survey.document.documentState == UIDocumentStateNormal;
+    if (!surveyReady || !self.mapView.loaded) {
+        AKRLog(@"Loading graphics - can't because %@.", surveyReady ? @"map isn't loaded" : (self.mapView.loaded ? @"survey isn't loaded" : @"map AND survey are null! - how did that happen?"));
         return;
     }
     AKRLog(@"Loading graphics from coredata");
     [self clearGraphics];
+    AKRLog(@"  Fetching gpsPoints");
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
     request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:YES]];
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.context executeFetchRequest:request error:&error];
-    AKRLog(@"  Loading %d gpsPoints", results.count);
+    AKRLog(@"  Drawing %d gpsPoints", results.count);
     if (!results && error.code)
         AKRLog(@"Error Fetching GpsPoint %@",error);
-    //draw a line connecting the GPS points
     GpsPoint *previousPoint;
     BOOL observing = NO;
     for (GpsPoint *gpsPoint in results) {
@@ -1078,33 +1080,36 @@
         if (previousPoint.missionProperty) {
             observing = previousPoint.missionProperty.observing;
         }
+        //draw the GPS tracks
         //TODO: draw a polyline instead of single lines
-        //TODO: do not connect gps points from different missions
-        //TODO: change symbology when missionProperties change.
         [self drawTrackObserving:observing From:previousPoint to:gpsPoint];
-        previousPoint = gpsPoint;
-    }
-    for (GpsPoint *gpsPoint in results) {
-        //        [self drawGpsPoint:gpsPoint];
+
+        //draw each individual GPS point
+        //[self drawGpsPoint:gpsPoint];
+
+        //draw related observations/propertys
         if (gpsPoint.observation) {
             [self loadObservation:gpsPoint.observation];
         }
         if (gpsPoint.missionProperty) {
             [self loadMissionProperty:gpsPoint.missionProperty];
         }
+        previousPoint = gpsPoint;
     }
 
     //Get adhoc observations (gpsPoint is null and adhocLocation is non nil
     //TODO: support more than one Observation feature
+    AKRLog(@"  Fetching adhoc observations");
     request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
     request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint == NIL AND adhocLocation != NIL"];
     results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
         AKRLog(@"Error Fetching Observations %@",error);
-    AKRLog(@"  Loading %d adhoc observations", results.count);
+    AKRLog(@"  Drawing %d adhoc observations", results.count);
     for (Observation *observation in results) {
         [self loadObservation:observation];
     }
+    AKRLog(@"  Done loading graphics");
 }
 
 - (AGSPoint *)mapPointFromGpsPoint:(GpsPoint *)gpsPoint
