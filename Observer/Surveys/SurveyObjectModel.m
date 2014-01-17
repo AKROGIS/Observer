@@ -7,6 +7,7 @@
 //
 
 #import "SurveyObjectModel.h"
+#import "ObserverModel.h"
 
 @implementation SurveyObjectModel
 
@@ -27,11 +28,11 @@
 {
     NSEntityDescription *entity;
     NSMutableArray *attributeProperties;
-    if ([name isEqualToString:@"MissionProperty"] || [name isEqualToString:@"Observation"]) {
+    if ([name isEqualToString:kMissionPropertyEntityName] || [name isEqualToString:kObservationEntityName]) {
         entity = [[mom entitiesByName] valueForKey:name];
         attributeProperties = [NSMutableArray arrayWithArray:entity.properties];
     } else {
-        NSEntityDescription *observation = [[mom entitiesByName] valueForKey:@"Observation"];
+        NSEntityDescription *observation = [[mom entitiesByName] valueForKey:kObservationEntityName];
         entity = [[NSEntityDescription alloc] init];
         entity.name = name;
         observation.subentities = [[observation subentities] arrayByAddingObject:entity];

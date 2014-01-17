@@ -9,6 +9,7 @@
 #import "Survey.h"
 #import "NSURL+unique.h"
 #import "NSDate+Formatting.h"
+#import "ObserverModel.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -434,19 +435,19 @@
 - (void)logStats
 {
     AKRLog(@"  Survey (%@) contains:", self.title);
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"GpsPoint"];
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
     NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
     AKRLog(@"    %d GpsPoints", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:@"Observation"];
+    request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
     AKRLog(@"    %d Observations", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:@"MissionProperty"];
+    request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
     AKRLog(@"    %d MissionProperties", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:@"Mission"];
+    request = [NSFetchRequest fetchRequestWithEntityName:kMissionEntityName];
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
     AKRLog(@"    %d Missions", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:@"Map"];
+    request = [NSFetchRequest fetchRequestWithEntityName:kMapEntityName];
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
     AKRLog(@"    %d Maps", results.count);
 }

@@ -21,3 +21,10 @@
 #import "MapReference.h"
 #import "Settings.h"
 
+#define kObservationEntityName           @"Observation"
+#define kMissionEntityName               @"Mission"
+#define kMissionPropertyEntityName       @"MissionProperty"
+#define kGpsPointEntityName              @"GpsPoint"
+#define kMapEntityName                   @"Map"
+#define kAngleDistanceLocationEntityName @"AngleDistanceLocation"
+#define kAdhocLocationEntityName         @"AdhocLocation"
