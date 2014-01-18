@@ -517,7 +517,7 @@
 {
     //Asks delegate whether to find which graphics in the specified layer intersect the tapped location. Default is YES.
     //This function may or may not be called on the main thread.
-    AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mappoint, graphicsLayer.name);
+    //AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mappoint, graphicsLayer.name);
     BOOL findableLayer = !([graphicsLayer.name isEqualToString:kGpsPointsLayer] ||
                            [graphicsLayer.name isEqualToString:kObservingTracksLayer] ||
                            [graphicsLayer.name isEqualToString:kNotObservingTracksLayer]);
@@ -1436,6 +1436,10 @@
     NSDictionary *attribs = @{@"timestamp":missionProperty.gpsPoint.timestamp};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     [self.missionPropertiesLayer addGraphic:graphic];
+    //ESRI BUG - date returned from graphic is not the same as the date that is provided
+//    NSDate *t1 = (NSDate *)attribs[@"timestamp"];
+//    NSDate *t2 = [graphic attributeAsDateForKey:@"timestamp"];
+//    AKRLog(@"dict-graphic: DateIn: %@ (%f) dateOut: %@ (%f) equal:%u",t1,[t1 timeIntervalSince1970],t2, [t2 timeIntervalSince1970], [t1 isEqualToDate:t2]);
 }
 
 - (void)setAttributesForMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
@@ -1509,16 +1513,24 @@
 
 - (Observation *)observationNamed:(NSString *)name atTimestamp:(NSDate *)timestamp
 {
+    //Deal with ESRI graphic date bug
+    NSDate *start = [timestamp dateByAddingTimeInterval:-0.01];
+    NSDate *end = [timestamp dateByAddingTimeInterval:+0.01];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:name];
-    request.predicate = [NSPredicate predicateWithFormat:@"gspPoint.timestamp = %@ || adhocLocation.timestamp = %@",timestamp,timestamp];
+    request.predicate = [NSPredicate predicateWithFormat:@"(%@ <= gpsPoint.timestamp AND gpsPoint.timestamp <= %@) || (%@ <= adhocLocation.timestamp AND adhocLocation.timestamp <= %@)",start,end,start,end];
     NSArray *results = [self.context executeFetchRequest:request error:nil];
     return (Observation *)[results lastObject]; // will return nil if there was an error, or no results
 }
 
 - (MissionProperty *)missionPropertyAtTimestamp:(NSDate *)timestamp
 {
+    //AKRLog(@"Find Mission Property at %@ (%f)",timestamp, [timestamp timeIntervalSince1970]);
+    //Deal with ESRI graphic date bug
+    NSDate *start = [timestamp dateByAddingTimeInterval:-0.01];
+    NSDate *end = [timestamp dateByAddingTimeInterval:+0.01];
+
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
-    request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint.timestamp = %@",timestamp];
+    request.predicate = [NSPredicate predicateWithFormat:@"%@ <= gpsPoint.timestamp AND gpsPoint.timestamp <= %@",start,end];
     NSArray *results = [self.context executeFetchRequest:request error:nil];
     return (MissionProperty *)[results lastObject]; // will return nil if there was an error, or no results
 }
