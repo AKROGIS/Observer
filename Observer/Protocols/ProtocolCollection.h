@@ -19,7 +19,7 @@
 #define PROTOCOL_EXT @"obsprot"
 #define PROTOCOL_DIR @"protocols"
 
-@interface ProtocolCollection : NSObject //<AKRTableViewItemCollection>
+@interface ProtocolCollection : NSObject
 
 @property (nonatomic, weak) id<CollectionChanged> delegate;
 

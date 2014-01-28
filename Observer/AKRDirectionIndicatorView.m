@@ -8,6 +8,8 @@
 
 #import "AKRDirectionIndicatorView.h"
 
+float mod(float a, float N);
+
 @implementation AKRDirectionIndicatorView
 
 - (id)initWithFrame:(CGRect)frame

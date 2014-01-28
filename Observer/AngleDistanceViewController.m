@@ -68,7 +68,7 @@
     if ([segue.identifier isEqualToString:@"PushAngleDistanceSettings"]) {
         self.modalInPopover = YES; //disable tap outside popover when sub VC is shown
         AngleDistanceSettingsTableViewController *vc = (AngleDistanceSettingsTableViewController *)segue.destinationViewController;
-        vc.completionBlock = ^(AngleDistanceSettingsTableViewController *sender) {
+        vc.completionBlock = ^(AngleDistanceSettingsTableViewController *controller) {
             BOOL userHasProgressed = self.location.isValid && [self anyInputFieldHasChanged];
             self.modalInPopover = userHasProgressed;
             [self updateLabel];

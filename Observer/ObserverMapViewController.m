@@ -198,13 +198,13 @@
             vc.popover = self.angleDistancePopoverController;
             vc.popover.delegate = self;
         }
-        vc.completionBlock = ^(AngleDistanceViewController *sender) {
+        vc.completionBlock = ^(AngleDistanceViewController *controller) {
             self.angleDistancePopoverController = nil;
-            Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAngleDistanceLocation:sender.location];
-            [self drawObservation:observation atPoint:[sender.location pointFromPoint:mapPoint]];
+            Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
+            [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
             [self setAttributesForObservation:observation atPoint:mapPoint];
         };
-        vc.cancellationBlock = ^(AngleDistanceViewController *sender) {
+        vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
             self.angleDistancePopoverController = nil;
         };
     }
@@ -392,7 +392,7 @@
     //I need to make sure I am getting the protocol collection it is using, and make sure updates are going to the delegate.
     if ([ProtocolCollection collectsURL:url]) {
         ProtocolCollection *protocols = [ProtocolCollection sharedCollection];
-        [protocols openWithCompletionHandler:^(BOOL success) {
+        [protocols openWithCompletionHandler:^(BOOL openSuccess) {
             SProtocol *protocol = [protocols openURL:url];
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (protocol) {
