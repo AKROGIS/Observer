@@ -65,14 +65,14 @@
         //Small outer circle
         CGContextSetLineWidth(context, 1);
         CGContextBeginPath(context);
-        CGContextAddArc(context, 0, 0, 14, 0, 2*M_PI, YES); //x,y,r,start angle,end,CW
+        CGContextAddArc(context, 0, 0, 14, 0, (CGFloat)(2*M_PI), YES); //x,y,r,start angle,end,CW
         CGContextClosePath(context);
         CGContextDrawPath(context, kCGPathStroke);
 
         //Small outer circle
         CGContextSetLineWidth(context, 3);
         CGContextBeginPath(context);
-        CGContextAddArc(context, 0, 0, 12, -M_PI_2, -M_PI_2 + (2*M_PI)*self.percentComplete, NO); //x,y,r,start angle,end,CW
+        CGContextAddArc(context, 0, 0, 12, (CGFloat)-M_PI_2, (CGFloat)(-M_PI_2 + (2*M_PI)*self.percentComplete), NO); //x,y,r,start angle,end,CW
         CGContextDrawPath(context, kCGPathStroke);
     }
 }

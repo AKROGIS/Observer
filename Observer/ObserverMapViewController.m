@@ -265,7 +265,7 @@
         _initialRotationOfViewAtGestureStart = atan2f(self.compassRoseButton.transform.b, self.compassRoseButton.transform.a);
     }
     CGFloat radians = _initialRotationOfViewAtGestureStart + sender.rotation;
-    CGFloat degrees = radians * (180 / M_PI);
+    CGFloat degrees = (CGFloat)(radians * (180 / M_PI));
     self.compassRoseButton.transform = CGAffineTransformMakeRotation(radians);
     [self.mapView setRotationAngle:-1*degrees];
 }
@@ -513,14 +513,14 @@
     [self decrementBusy];
 }
 
-- (BOOL)mapView:(AGSMapView *)mapView shouldFindGraphicsInLayer:(AGSGraphicsLayer *)graphicsLayer atPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint
+- (BOOL)mapView:(AGSMapView *)mapView shouldHitTestLayer:(AGSLayer *)layer atPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint
 {
     //Asks delegate whether to find which graphics in the specified layer intersect the tapped location. Default is YES.
     //This function may or may not be called on the main thread.
     //AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mappoint, graphicsLayer.name);
-    BOOL findableLayer = !([graphicsLayer.name isEqualToString:kGpsPointsLayer] ||
-                           [graphicsLayer.name isEqualToString:kObservingTracksLayer] ||
-                           [graphicsLayer.name isEqualToString:kNotObservingTracksLayer]);
+    BOOL findableLayer = !([layer.name isEqualToString:kGpsPointsLayer] ||
+                           [layer.name isEqualToString:kObservingTracksLayer] ||
+                           [layer.name isEqualToString:kNotObservingTracksLayer]);
     return findableLayer;
 }
 
@@ -529,13 +529,13 @@
 
 #pragma mark - Delegate Methods: AGSMapViewTouchDelegate (all optional)
 
-- (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint graphics:(NSDictionary *)graphics
+- (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
 {
     //Tells the delegate the map was single-tapped at specified location.
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
-    AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mapPoint, graphics);
-    if ([graphics count]) {
-        [graphics enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mappoint, features);
+    if ([features count]) {
+        [features enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
             NSString *layerName = (NSString *)key;
             NSArray *graphics = (NSArray *)obj;
             AKRLog(@"Found %u features in %@",[graphics count], layerName);
@@ -553,30 +553,30 @@
     } else {
         if (self.isObserving) {
             //create new ad-hoc observation at touch point
-            Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mapPoint];
-            [self drawObservation:observation atPoint:mapPoint];
-            [self setAttributesForObservation:observation atPoint:mapPoint];
+            Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
+            [self drawObservation:observation atPoint:mappoint];
+            [self setAttributesForObservation:observation atPoint:mappoint];
         }
     }
 }
 
-- (void)mapView:(AGSMapView *)mapView didTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint graphics:(NSDictionary *)graphics
+-(void)mapView:(AGSMapView *)mapView didTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
 {
     //Tells the delegate that a point on the map was tapped and held at specified location.
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
-    AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, graphics);
-    if (0 < [graphics count]) {
+    AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, features);
+    if (0 < [features count]) {
         AKRLog(@"Try to move selected graphic - if allowed");
     }
 }
 
-- (void)mapView:(AGSMapView *)mapView didMoveTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint graphics:(NSDictionary *)graphics
+-(void)mapView:(AGSMapView *)mapView didMoveTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
 {
     //Tells the delegate that the user moved his finger while tapping and holding on the map.
     //Sent continuously to allow tracking of the movement
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
-    AKRLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, graphics);
-    AGSGraphic *graphic = [graphics[kObservationLayer] lastObject];
+    AKRLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, features);
+    AGSGraphic *graphic = [features[kObservationLayer] lastObject];
     if (graphic) {
         [graphic setGeometry:mappoint];
     }

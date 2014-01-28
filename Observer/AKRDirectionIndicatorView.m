@@ -54,14 +54,14 @@ float mod(float a, float N)
 
         //Get angle for rotating coordinate system
         //float a = mod(self.azimuth, 360.0); // => [0,360.0)
-        CGFloat a = -1 * self.azimuth * M_PI / 180.0; //radians
+        double radians = -1 * self.azimuth * M_PI / 180.0; //radians
         
         //create a rotated coordinate system with origin in center and +y up
         CGFloat width = self.bounds.size.width;
         CGFloat height = self.bounds.size.height;
         CGContextTranslateCTM(context, width/2.0f, height/2.0f);
         CGContextScaleCTM(context, 1, -1);
-        CGContextRotateCTM(context, a); //angle in radians with + = CCW
+        CGContextRotateCTM(context, (CGFloat)radians); //angle in radians with + = CCW
         
         //Draw arrow straight up in a 20x20 grid
         CGContextSetLineWidth(context, 2);

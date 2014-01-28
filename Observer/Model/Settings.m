@@ -163,8 +163,8 @@
 
 - (BOOL) showRemoteMaps
 {
-    bool value = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_SHOW_REMOTE_MAPS];
-    return value ?: DEFAULTS_DEFAULT_SHOW_REMOTE_MAPS;
+    BOOL value = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_SHOW_REMOTE_MAPS];
+    return value ? value: DEFAULTS_DEFAULT_SHOW_REMOTE_MAPS;
 }
 
 - (void) setShowRemoteMaps:(BOOL)showRemoteMaps
@@ -182,7 +182,7 @@
 - (BOOL) showRemoteProtocols
 {
     bool value = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS];
-    return value ?: DEFAULTS_DEFAULT_SHOW_REMOTE_PROTOCOLS;
+    return value ? value : DEFAULTS_DEFAULT_SHOW_REMOTE_PROTOCOLS;
 }
 
 - (void) setShowRemoteProtocols:(BOOL)showRemoteProtocols
