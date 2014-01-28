@@ -1229,7 +1229,7 @@
     gpsPoint.latitude = gpsData.coordinate.latitude;
     gpsPoint.longitude = gpsData.coordinate.longitude;
     gpsPoint.speed = gpsData.speed;
-    gpsPoint.timestamp = gpsData.timestamp ?: [NSDate date]; //FIXME: added for testing on simulator, remove for production
+    gpsPoint.timestamp = gpsData.timestamp ? gpsData.timestamp : [NSDate date]; //FIXME: added for testing on simulator, remove for production
     gpsPoint.verticalAccuracy = gpsData.verticalAccuracy;
     self.lastGpsPointSaved = gpsPoint;
     return gpsPoint;
@@ -1569,7 +1569,8 @@
 //TODO: this is the dictionary of atttributes attached to the AGSGraphic.  not used at this point
 - (NSDictionary *)createAttributesFromObservation:(Observation *)observation
 {
-    NSDictionary *attributes = @{@"date":self.locationManager.location.timestamp?:[NSNull null]};
+    NSDate *date = self.locationManager.location.timestamp;
+    NSDictionary *attributes = @{ @"date":(date ? date : [NSNull null]) };
     return attributes;
 }
 

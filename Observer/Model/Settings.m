@@ -98,7 +98,7 @@
 - (NSInteger) indexOfCurrentMap
 {
     NSInteger value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
-    return value ?: DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP;
+    return value ? value : DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP;
 }
 
 - (void)setIndexOfCurrentMap:(NSInteger)indexOfCurrentMap
@@ -117,7 +117,7 @@
 - (NSInteger) indexOfCurrentSurvey
 {
     NSInteger value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
-    return value ?: DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY;
+    return value ? value : DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY;
 }
 
 - (void)setIndexOfCurrentSurvey:(NSInteger)indexOfCurrentSurvey
@@ -140,7 +140,7 @@
     value = [value mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
         return [NSURL URLWithString:obj];
     }];
-    return value ?: DEFAULTS_DEFAULT_SORTED_SURVEY_LIST;
+    return value ? value : DEFAULTS_DEFAULT_SORTED_SURVEY_LIST;
 }
 
 - (void) setSurveys:(NSArray *)surveys
@@ -203,7 +203,7 @@
     if ([value isKindOfClass:[NSString class]]) {
         value = [NSURL URLWithString:value];
     }
-    return value ?: DEFAULTS_DEFAULT_URL_FOR_MAPS;
+    return value ? value : DEFAULTS_DEFAULT_URL_FOR_MAPS;
 }
 
 - (void)setUrlForMaps:(NSURL *)urlForMaps
@@ -226,7 +226,7 @@
     if ([value isKindOfClass:[NSString class]]) {
         value = [NSURL URLWithString:value];
     }
-    return value ?: DEFAULTS_DEFAULT_URL_FOR_PROTOCOLS;
+    return value ? value : DEFAULTS_DEFAULT_URL_FOR_PROTOCOLS;
 }
 
 - (void)setUrlForProtocols:(NSURL *)urlForProtocols
@@ -246,7 +246,7 @@
 - (MapAutoPanState) autoPanMode
 {
     MapAutoPanState value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_AUTOPAN_MODE];
-    return value ?: DEFAULTS_DEFAULT_AUTOPAN_MODE;
+    return value ? value : DEFAULTS_DEFAULT_AUTOPAN_MODE;
 }
 
 - (void) setAutoPanMode:(MapAutoPanState)autoPanMode
@@ -264,7 +264,7 @@
 - (double)maxSpeedForBearing
 {
     double value = [[NSUserDefaults standardUserDefaults] doubleForKey:DEFAULTS_KEY_MAX_SPEED_FOR_BEARING];
-    return value ?: DEFAULTS_DEFAULT_MAX_SPEED_FOR_BEARING;
+    return value ? value : DEFAULTS_DEFAULT_MAX_SPEED_FOR_BEARING;
 }
 
 - (void)setMaxSpeedForBearing:(double)maxSpeedForBearing
@@ -282,7 +282,7 @@
 - (AGSSRUnit) distanceUnitsForSightings
 {
     AGSSRUnit value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_UOM_DISTANCE_SIGHTING];
-    return value ?: DEFAULTS_DEFAULT_UOM_DISTANCE_SIGHTING;
+    return value ? value : DEFAULTS_DEFAULT_UOM_DISTANCE_SIGHTING;
 }
 
 - (void) setDistanceUnitsForSightings:(AGSSRUnit)distanceUnitsForSightings
@@ -300,7 +300,7 @@
 - (AGSSRUnit) distanceUnitsForMeasuring
 {
     AGSSRUnit value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_UOM_DISTANCE_MEASURE];
-    return value ?: DEFAULTS_DEFAULT_UOM_DISTANCE_MEASURE;
+    return value ? value : DEFAULTS_DEFAULT_UOM_DISTANCE_MEASURE;
 }
 
 - (void) setDistanceUnitsForMeasuring:(AGSSRUnit)distanceUnitsForMeasuring
@@ -318,7 +318,7 @@
 - (AngleDirection) angleDistanceAngleDirection
 {
     AngleDirection value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_ANGLE_DISTANCE_ANGLE_DIRECTION];
-    return value ?: DEFAULTS_DEFAULT_ANGLE_DISTANCE_ANGLE_DIRECTION;
+    return value ? value : DEFAULTS_DEFAULT_ANGLE_DISTANCE_ANGLE_DIRECTION;
 }
 
 - (void) setAngleDistanceAngleDirection:(AngleDirection)angleDistanceAngleDirection
@@ -336,7 +336,7 @@
 - (double) angleDistanceDeadAhead
 {
     double value = [[NSUserDefaults standardUserDefaults] doubleForKey:DEFAULTS_KEY_ANGLE_DISTANCE_DEAD_AHEAD];
-    return value ?: DEFAULTS_DEFAULT_ANGLE_DISTANCE_DEAD_AHEAD;
+    return value ? value : DEFAULTS_DEFAULT_ANGLE_DISTANCE_DEAD_AHEAD;
 }
 
 - (void) setAngleDistanceDeadAhead:(double)angleDistanceDeadAhead
