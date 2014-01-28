@@ -12,6 +12,7 @@
 #import "SurveySelectViewController.h"
 #import "SProtocol.h"
 #import "Survey.h"
+#import "NSIndexPath+unsignedAccessors.h"
 
 @interface SurveySelectViewController ()
 @property (strong, nonatomic) UIBarButtonItem *addButton;
@@ -117,13 +118,13 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.items.numberOfSurveys;
+    return (NSInteger)self.items.numberOfSurveys;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     SurveyTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SurveyCell" forIndexPath:indexPath];
-    id<AKRTableViewItem> item = [self.items surveyAtIndex:indexPath.row];
+    id<AKRTableViewItem> item = [self.items surveyAtIndex:indexPath.urow];
     cell.titleTextField.text = item.title;
     cell.protocolLabel.text = item.subtitle;
     cell.detailsLabel.text = item.subtitle2;
@@ -133,7 +134,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.items setSelectedSurvey:indexPath.row];
+    [self.items setSelectedSurvey:indexPath.urow];
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         [self.popover dismissPopoverAnimated:YES];
         if (self.selectedSurveyChanged) {
@@ -156,7 +157,7 @@
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-    [self.items moveSurveyAtIndex:fromIndexPath.row toIndex:toIndexPath.row];
+    [self.items moveSurveyAtIndex:fromIndexPath.urow toIndex:toIndexPath.urow];
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -172,7 +173,7 @@
                                                   otherButtonTitles:@"Delete",nil];
             [alert show];
         } else {
-            [self.items removeSurveyAtIndex:indexPath.row];
+            [self.items removeSurveyAtIndex:indexPath.urow];
             [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
             if (self.selectedSurveyChanged) {
                 self.selectedSurveyChanged();
@@ -192,7 +193,7 @@
 {
     if ([[segue identifier] isEqualToString:@"Show Detail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-        id<AKRTableViewItem> item = [self.items surveyAtIndex:indexPath.row];
+        id<AKRTableViewItem> item = [self.items surveyAtIndex:indexPath.urow];
         [[segue destinationViewController] setDetailItem:item];
         //if we are in a popover, we want the new vc to stay the same size.
         [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
@@ -202,7 +203,7 @@
         vc.title = segue.identifier;
         vc.items = self.protocols;
         vc.rowSelectedCallback = ^(NSIndexPath *indexPath){
-            [self newSurveyWithProtocol:[self.protocols localProtocolAtIndex:indexPath.row]];
+            [self newSurveyWithProtocol:[self.protocols localProtocolAtIndex:indexPath.urow]];
         };
         //if we are in a popover, we want the new vc to stay the same size.
         [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
@@ -213,16 +214,16 @@
 - (void) newSurveyWithProtocol:(SProtocol *)protocol
 {
     AKRLog(@"New survey with protocol %@", protocol.title);
-    NSInteger row = [self.items newSurveyWithProtocol:protocol];
-    if (0 <= row) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
-        [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-    } else {
+    NSUInteger row = [self.items newSurveyWithProtocol:protocol];
+    if (row == NSNotFound) {
         [[[UIAlertView alloc] initWithTitle:@"Error"
                                     message:@"The new survey could not be created."
                                    delegate:nil
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil] show];
+    } else {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(NSInteger)row inSection:0];
+        [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
 
@@ -234,7 +235,7 @@
 {
     if ([alertView.title isEqualToString:@"Unsaved Changes"]) {
         if (buttonIndex == 1 && self.indexPathToDelete) {
-            [self.items removeSurveyAtIndex:self.indexPathToDelete.row];
+            [self.items removeSurveyAtIndex:self.indexPathToDelete.urow];
             [self.tableView deleteRowsAtIndexPaths:@[self.indexPathToDelete] withRowAnimation:UITableViewRowAnimationFade];
             self.indexPathToDelete = nil;
             if (self.selectedSurveyChanged) {
@@ -268,7 +269,7 @@
     }
     SurveyTableViewCell *cell = (SurveyTableViewCell *) view;
     NSIndexPath * indexPath = [self.tableView indexPathForCell:cell];
-    Survey *survey = [self.items surveyAtIndex:indexPath.row];
+    Survey *survey = [self.items surveyAtIndex:indexPath.urow];
     AKRLog(@"Going to rename %@ to %@", survey.title, textField.text);
     survey.title = textField.text;
     if (survey == self.items.selectedSurvey && self.selectedSurveyChangedName) {

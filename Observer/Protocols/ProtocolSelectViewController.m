@@ -12,6 +12,7 @@
 #import "NSIndexSet+indexPath.h"
 #import "NSDate+Formatting.h"
 #import "Settings.h"
+#import "NSIndexPath+unsignedAccessors.h"
 
 @interface ProtocolSelectViewController ()
 @property (nonatomic) BOOL showRemoteProtocols;
@@ -129,10 +130,10 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section == 0) {
-        return self.items.numberOfLocalProtocols;
+        return (NSInteger)self.items.numberOfLocalProtocols;
     }
     if (section == 1 && self.showRemoteProtocols) {
-        return self.items.numberOfRemoteProtocols;
+        return (NSInteger)self.items.numberOfRemoteProtocols;
     }
     if (section == 2) {
         return tableView.isEditing ? 0 : 1;
@@ -159,7 +160,7 @@
         cell.textLabel.text = self.showRemoteProtocols ? @"Show Only Downloaded Protocols" : @"Show All Protocols";
         return cell;
     } else {
-        SProtocol *item = (indexPath.section == 0) ? [self.items localProtocolAtIndex:indexPath.row] : [self.items remoteProtocolAtIndex:indexPath.row];
+        SProtocol *item = (indexPath.section == 0) ? [self.items localProtocolAtIndex:indexPath.urow] : [self.items remoteProtocolAtIndex:indexPath.urow];
         NSString *identifier = (indexPath.section == 0) ? @"LocalProtocolCell" : @"RemoteProtocolCell";
         ProtocolTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
         cell.titleLabel.text = item.title;
@@ -189,7 +190,7 @@
         }
     }
 
-    [self.items setSelectedLocalProtocol:indexPath.row];
+    [self.items setSelectedLocalProtocol:indexPath.urow];
     if (self.popover) {
         [self.popover dismissPopoverAnimated:YES];
     } else {
@@ -232,10 +233,10 @@
         return;
     }
     if (fromIndexPath.section == 0) {
-        [self.items moveLocalProtocolAtIndex:fromIndexPath.row toIndex:toIndexPath.row];
+        [self.items moveLocalProtocolAtIndex:fromIndexPath.urow toIndex:toIndexPath.urow];
     }
     if (fromIndexPath.section == 1) {
-        [self.items moveRemoteProtocolAtIndex:fromIndexPath.row toIndex:toIndexPath.row];
+        [self.items moveRemoteProtocolAtIndex:fromIndexPath.urow toIndex:toIndexPath.urow];
     }
 }
 
@@ -247,7 +248,7 @@
         return;
     }
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [self.items removeLocalProtocolAtIndex:indexPath.row];
+        [self.items removeLocalProtocolAtIndex:indexPath.urow];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
@@ -271,7 +272,7 @@
 {
     if ([segue.identifier isEqualToString:@"Protocol Details"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-        SProtocol *item = indexPath.section == 0 ? [self.items localProtocolAtIndex:indexPath.row] :  [self.items remoteProtocolAtIndex:indexPath.row];
+        SProtocol *item = indexPath.section == 0 ? [self.items localProtocolAtIndex:indexPath.urow] :  [self.items remoteProtocolAtIndex:indexPath.urow];
         ProtocolDetailViewController *vc = (ProtocolDetailViewController *)[segue destinationViewController];
         vc.title = segue.identifier;
         vc.protocol = item;
@@ -305,10 +306,10 @@
 
 - (void) downloadItem:(NSIndexPath *)indexPath
 {
-    [self.items prepareToDownloadProtocolAtIndex:indexPath.row];
+    [self.items prepareToDownloadProtocolAtIndex:indexPath.urow];
     UITableView *tableView = self.tableView;
     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    [self.items downloadProtocolAtIndex:indexPath.row WithCompletionHandler:^(BOOL success) {
+    [self.items downloadProtocolAtIndex:indexPath.urow WithCompletionHandler:^(BOOL success) {
         //on background thread
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!success) {

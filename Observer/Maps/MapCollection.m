@@ -14,8 +14,8 @@
 @interface MapCollection()
 @property (nonatomic, strong) NSMutableArray *localItems;  // of Map
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of Map
-//selectedLocalIndex < 0  means that no item is selected
-@property (nonatomic) NSInteger selectedLocalIndex;
+//selectedLocalIndex == NSNotFound  means that no item is selected
+@property (nonatomic) NSUInteger selectedLocalIndex;
 @property (nonatomic, strong) NSURL *documentsDirectory;
 @property (nonatomic, strong) NSURL *cacheFile;
 @property (nonatomic) BOOL isLoading;
@@ -60,15 +60,13 @@
     return _cacheFile;
 }
 
-- (void) setSelectedLocalIndex:(NSInteger)selectedLocalIndex
+- (void) setSelectedLocalIndex:(NSUInteger)selectedLocalIndex
 {
     if (_selectedLocalIndex == selectedLocalIndex)
         return;
-    //Since self.items.count is unsigned, the comparison is unsigned, so 2 < -1
-    if (0 < selectedLocalIndex && self.localItems.count <= selectedLocalIndex) {
+    if ( self.localItems.count <= selectedLocalIndex && selectedLocalIndex != NSNotFound) {
         return; //ignore bogus indexes
     }
-    //Allow setting selected index to -1 (or any negative) to indicate no selected item
     _selectedLocalIndex = selectedLocalIndex;
     [Settings manager].indexOfCurrentMap = selectedLocalIndex;
 }

@@ -15,8 +15,8 @@
 @property (nonatomic, strong) NSMutableArray *items;
 @property (nonatomic) BOOL isLoading;
 @property (nonatomic) BOOL isLoaded;
-//selectedIndex < 0  meaning that no item is selected
-@property (nonatomic) NSInteger selectedIndex;
+//selectedIndex == NSNotFound  meaning that no item is selected
+@property (nonatomic) NSUInteger selectedIndex;
 @property (nonatomic, strong) NSURL *documentsDirectory;
 
 @end
@@ -63,15 +63,13 @@
     return _items;
 }
 
-- (void) setSelectedIndex:(NSInteger)selectedIndex
+- (void) setSelectedIndex:(NSUInteger)selectedIndex
 {
     if (_selectedIndex == selectedIndex)
         return;
-    //Since self.items.count is unsigned, the comparison is unsigned, so 2 < -1
-    if (0 < selectedIndex && self.items.count <= selectedIndex) {
+    if (self.items.count <= selectedIndex && selectedIndex != NSNotFound) {
         return; //ignore bogus indexes
     }
-    //Allow setting selected index to -1 (or any negative) to indicate no selected item
     _selectedIndex = selectedIndex;
     [Settings manager].indexOfCurrentSurvey = selectedIndex;
 }
@@ -162,7 +160,7 @@
     }
 }
 
-- (NSInteger)newSurveyWithProtocol:(SProtocol *)protocol {
+- (NSUInteger)newSurveyWithProtocol:(SProtocol *)protocol {
     Survey *newSurvey = [[Survey alloc] initWithProtocol:protocol];
     if (newSurvey) {
         NSUInteger index = 0;     //insert at top of list
@@ -170,7 +168,7 @@
         [self saveCache];
         return index;
     } else {
-        return -1;
+        return NSNotFound;
     }
 }
 
@@ -240,7 +238,7 @@
 
 - (Survey *)selectedSurvey
 {
-    if (self.selectedIndex < 0 || self.items.count <= self.selectedIndex) {
+    if (self.selectedIndex == NSNotFound || self.items.count <= self.selectedIndex) {
         return nil;
     }
     if (self.items.count == 0) {
@@ -282,7 +280,7 @@
     if (cacheWasOutdated) {
         [self saveCache];
         //Need to validate/fix the selected index (if files were added or deleted, it may not be valid)
-        if (0 <= self.selectedIndex && self.selectedIndex < cachedSurveyUrls.count) {
+        if (self.selectedIndex != NSNotFound && self.selectedIndex < cachedSurveyUrls.count) {
             NSURL *url = cachedSurveyUrls[self.selectedIndex];
             NSUInteger index = [self.items indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
                 return [url isEqual:((Survey *)obj).url];

@@ -95,18 +95,20 @@
 
 @synthesize indexOfCurrentMap = _indexOfCurrentMap;
 
-- (NSInteger) indexOfCurrentMap
+- (NSUInteger) indexOfCurrentMap
 {
-    NSInteger value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
+    NSInteger archivedInt = [[NSUserDefaults standardUserDefaults]  integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
+    NSUInteger value = archivedInt < 0 ? NSNotFound : (NSUInteger)archivedInt;
     return value ? value : DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP;
 }
 
-- (void)setIndexOfCurrentMap:(NSInteger)indexOfCurrentMap
+- (void)setIndexOfCurrentMap:(NSUInteger)indexOfCurrentMap
 {
     if (indexOfCurrentMap == DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
     } else {
-        [[NSUserDefaults standardUserDefaults] setInteger:indexOfCurrentMap forKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
+        NSInteger archiveInt = indexOfCurrentMap == NSNotFound ? -1 : (NSInteger)indexOfCurrentMap;
+        [[NSUserDefaults standardUserDefaults] setInteger:archiveInt forKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
     }
 }
 
@@ -114,18 +116,20 @@
 
 @synthesize indexOfCurrentSurvey = _indexOfCurrentSurvey;
 
-- (NSInteger) indexOfCurrentSurvey
+- (NSUInteger) indexOfCurrentSurvey
 {
-    NSInteger value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
+    NSInteger archivedInt = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
+    NSUInteger value = archivedInt < 0 ? NSNotFound : (NSUInteger)archivedInt;
     return value ? value : DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY;
 }
 
-- (void)setIndexOfCurrentSurvey:(NSInteger)indexOfCurrentSurvey
+- (void)setIndexOfCurrentSurvey:(NSUInteger)indexOfCurrentSurvey
 {
     if (indexOfCurrentSurvey == DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
     } else {
-        [[NSUserDefaults standardUserDefaults] setInteger:indexOfCurrentSurvey forKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
+        NSInteger archiveInt = indexOfCurrentSurvey == NSNotFound ? -1 : (NSInteger)indexOfCurrentSurvey;
+        [[NSUserDefaults standardUserDefaults] setInteger:archiveInt forKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
     }
 }
 
@@ -245,8 +249,9 @@
 
 - (MapAutoPanState) autoPanMode
 {
-    MapAutoPanState value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_AUTOPAN_MODE];
-    return value ? value : DEFAULTS_DEFAULT_AUTOPAN_MODE;
+    NSInteger archivedInt = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_AUTOPAN_MODE];
+    MapAutoPanState value = archivedInt <= 0 ? DEFAULTS_DEFAULT_AUTOPAN_MODE : (NSUInteger)archivedInt;
+    return value;
 }
 
 - (void) setAutoPanMode:(MapAutoPanState)autoPanMode
@@ -281,8 +286,9 @@
 
 - (AGSSRUnit) distanceUnitsForSightings
 {
-    AGSSRUnit value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_UOM_DISTANCE_SIGHTING];
-    return value ? value : DEFAULTS_DEFAULT_UOM_DISTANCE_SIGHTING;
+    NSInteger archivedInt = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_UOM_DISTANCE_SIGHTING];
+    AGSSRUnit value = archivedInt <= 0 ? DEFAULTS_DEFAULT_UOM_DISTANCE_SIGHTING : (NSUInteger)archivedInt;
+    return value;
 }
 
 - (void) setDistanceUnitsForSightings:(AGSSRUnit)distanceUnitsForSightings
@@ -299,8 +305,9 @@
 
 - (AGSSRUnit) distanceUnitsForMeasuring
 {
-    AGSSRUnit value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_UOM_DISTANCE_MEASURE];
-    return value ? value : DEFAULTS_DEFAULT_UOM_DISTANCE_MEASURE;
+    NSInteger archivedInt = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_UOM_DISTANCE_MEASURE];
+    AGSSRUnit value = archivedInt <= 0 ? DEFAULTS_DEFAULT_UOM_DISTANCE_MEASURE : (NSUInteger)archivedInt;
+    return value;
 }
 
 - (void) setDistanceUnitsForMeasuring:(AGSSRUnit)distanceUnitsForMeasuring
@@ -317,8 +324,9 @@
 
 - (AngleDirection) angleDistanceAngleDirection
 {
-    AngleDirection value = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_ANGLE_DISTANCE_ANGLE_DIRECTION];
-    return value ? value : DEFAULTS_DEFAULT_ANGLE_DISTANCE_ANGLE_DIRECTION;
+    NSInteger archivedInt = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_ANGLE_DISTANCE_ANGLE_DIRECTION];
+    AngleDirection value = archivedInt <= 0 ? DEFAULTS_DEFAULT_ANGLE_DISTANCE_ANGLE_DIRECTION : (NSUInteger)archivedInt;
+    return value;
 }
 
 - (void) setAngleDistanceAngleDirection:(AngleDirection)angleDistanceAngleDirection

@@ -129,7 +129,7 @@
 {
     if (textField.returnKeyType == UIReturnKeyNext) {
         NSInteger nextTag = textField.tag + 1;
-        if (nextTag > self.textFields.count)
+        if (nextTag < 0 || (NSUInteger)nextTag > self.textFields.count)
             nextTag = 1;
         [[self.view viewWithTag:nextTag] becomeFirstResponder];
         return NO;

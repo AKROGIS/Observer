@@ -9,9 +9,10 @@
 #ifndef Observer_Enumerations_h
 #define Observer_Enumerations_h
 
-typedef enum {
-    AngleDirectionClockwise = 0,
-    AngleDirectionCounterClockwise
-} AngleDirection;
+
+typedef NS_ENUM(NSUInteger, AngleDirection) {
+    AngleDirectionClockwise         = 0,
+    AngleDirectionCounterClockwise  = 1
+};
 
 #endif

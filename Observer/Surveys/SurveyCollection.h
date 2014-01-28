@@ -40,8 +40,8 @@
 - (BOOL)openURL:(NSURL *)url;
 
 // Creates a new survey from the protocol and adds it to the list
-// returns the index of the new survey (-1 if it could not be created)
-- (NSInteger)newSurveyWithProtocol:(SProtocol *)protcol;
+// returns the index of the new survey (NSNotFound if it could not be created)
+- (NSUInteger)newSurveyWithProtocol:(SProtocol *)protcol;
 
 // UITableView DataSource Support
 - (NSUInteger) numberOfSurveys;

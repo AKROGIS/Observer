@@ -9,6 +9,7 @@
 #import "MapSelectViewController.h"
 #import "Map.h"
 #import "NSIndexSet+indexPath.h"
+#import "NSIndexPath+unsignedAccessors.h"
 
 #import "MapDetailViewController.h"
 #import "MapTableViewCell.h"
@@ -132,10 +133,10 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section == 0) {
-        return self.items.numberOfLocalMaps;
+        return (NSInteger)self.items.numberOfLocalMaps;
     }
     if (section == 1 && self.showRemoteMaps) {
-        return self.items.numberOfRemoteMaps;
+        return (NSInteger)self.items.numberOfRemoteMaps;
     }
     if (section == 2) {
         return tableView.isEditing ? 0 : 1;
@@ -167,7 +168,7 @@
         cell.textLabel.text = self.showRemoteMaps ? @"Show Only Downloaded Maps" : @"Show All Maps";
         return cell;
     } else {
-        Map *item = (indexPath.section == 0) ? [self.items localMapAtIndex:indexPath.row] : [self.items remoteMapAtIndex:indexPath.row];
+        Map *item = (indexPath.section == 0) ? [self.items localMapAtIndex:indexPath.urow] : [self.items remoteMapAtIndex:indexPath.urow];
         NSString *identifier = (indexPath.section == 0) ? @"LocalMapCell" : @"RemoteMapCell";
         MapTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
         cell.titleLabel.text = item.title;
@@ -204,7 +205,7 @@
         }
     }
 
-    [self.items setSelectedLocalMap:indexPath.row];
+    [self.items setSelectedLocalMap:indexPath.urow];
     if (self.popover) {
         [self.popover dismissPopoverAnimated:YES];
     } else {
@@ -247,10 +248,10 @@
         return;
     }
     if (fromIndexPath.section == 0) {
-        [self.items moveLocalMapAtIndex:fromIndexPath.row toIndex:toIndexPath.row];
+        [self.items moveLocalMapAtIndex:fromIndexPath.urow toIndex:toIndexPath.urow];
     }
     if (fromIndexPath.section == 1) {
-        [self.items moveRemoteMapAtIndex:fromIndexPath.row toIndex:toIndexPath.row];
+        [self.items moveRemoteMapAtIndex:fromIndexPath.urow toIndex:toIndexPath.urow];
     }
 }
 
@@ -262,7 +263,7 @@
         return;
     }
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [self.items removeLocalMapAtIndex:indexPath.row];
+        [self.items removeLocalMapAtIndex:indexPath.urow];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
@@ -283,7 +284,7 @@
 {
     if ([segue.identifier isEqualToString:@"Map Details"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-        Map *item = indexPath.section == 0 ? [self.items localMapAtIndex:indexPath.row] :  [self.items remoteMapAtIndex:indexPath.row];
+        Map *item = indexPath.section == 0 ? [self.items localMapAtIndex:indexPath.urow] :  [self.items remoteMapAtIndex:indexPath.urow];
         MapDetailViewController *vc = (MapDetailViewController *)[segue destinationViewController];
         vc.title = segue.identifier;
         vc.map = item;
@@ -321,13 +322,13 @@
     if (cell.downloadView.downloading) {
         cell.downloadImageView.hidden = NO;
         cell.downloadView.downloading = NO;
-        [self.items cancelDownloadMapAtIndex:indexPath.row];
+        [self.items cancelDownloadMapAtIndex:indexPath.urow];
     } else {
-        [self.items prepareToDownloadMapAtIndex:indexPath.row];
+        [self.items prepareToDownloadMapAtIndex:indexPath.urow];
         cell.downloadView.percentComplete = 0;
         cell.downloadImageView.hidden = YES;
         cell.downloadView.downloading = YES;
-        Map *map = [self.items remoteMapAtIndex:indexPath.row];
+        Map *map = [self.items remoteMapAtIndex:indexPath.urow];
         map.progressAction = ^(double bytesWritten, double bytesExpected) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 cell.downloadView.percentComplete =  bytesWritten/bytesExpected;
@@ -337,7 +338,7 @@
             //on background thread
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
-                    [self.items moveRemoteMapAtIndex:indexPath.row toLocalMapAtIndex:0];
+                    [self.items moveRemoteMapAtIndex:indexPath.urow toLocalMapAtIndex:0];
                 } else {
                     [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't download map" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
                     cell.downloadView.downloading = NO;
@@ -351,7 +352,7 @@
 
 - (void) stopDownloadItem:(NSIndexPath *)indexPath
 {
-    Map *map = [self.items remoteMapAtIndex:indexPath.row];
+    Map *map = [self.items remoteMapAtIndex:indexPath.urow];
     [map stopDownload];
 }
 

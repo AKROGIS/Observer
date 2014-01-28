@@ -132,7 +132,8 @@
                 map.author = [aDecoder decodeObjectForKey:kAuthorKey];
                 map.date = [aDecoder decodeObjectForKey:kDateKey];
                 map.description = [aDecoder decodeObjectForKey:kDescriptionKey];
-                map.byteCount = [aDecoder decodeIntegerForKey:kSizeKey];
+                NSNumber *bytes = [aDecoder decodeObjectForKey:kSizeKey];
+                map.byteCount = [bytes unsignedIntegerValue];
                 map.thumbnailUrl = [aDecoder decodeObjectForKey:kThumbnailUrlKey];
                 map.extents = [[AGSEnvelope alloc] initWithJSON:[aDecoder decodeObjectForKey:kExtentsKey]];
             }
@@ -151,7 +152,7 @@
     [aCoder encodeObject:self.author forKey:kAuthorKey];
     [aCoder encodeObject:self.date forKey:kDateKey];
     [aCoder encodeObject:self.description forKey:kDescriptionKey];
-    [aCoder encodeInteger:self.byteCount forKey:kSizeKey];
+    [aCoder encodeObject:[NSNumber numberWithUnsignedInteger:self.byteCount] forKey:kSizeKey];
     [aCoder encodeObject:self.thumbnailUrl forKey:kThumbnailUrlKey];
     [aCoder encodeObject:[self.extents encodeToJSON] forKey:kExtentsKey];
 }

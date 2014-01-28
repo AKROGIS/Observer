@@ -21,6 +21,7 @@
 		396775A817A0911E009ECD34 /* AGSPointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775A717A0911E009ECD34 /* AGSPointTests.m */; };
 		396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */; };
 		396E1E8C18984EFF00B735EF /* Warnings.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */; };
+		396E1E90189864AE00B735EF /* NSIndexPath+unsignedAccessors.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E8F189864AE00B735EF /* NSIndexPath+unsignedAccessors.m */; };
 		398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 398908041857DDFD007B3F67 /* ArcGIS.bundle */; };
 		398908221857EB2F007B3F67 /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908191857EB2F007B3F67 /* Map.m */; };
 		398908231857EB2F007B3F67 /* MapCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989081B1857EB2F007B3F67 /* MapCollection.m */; };
@@ -156,6 +157,8 @@
 		396775C617A1C7B5009ECD34 /* AngleDistanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AngleDistanceViewController.h; sourceTree = "<group>"; };
 		396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AngleDistanceViewController.m; sourceTree = "<group>"; };
 		396E1E8B18984EFF00B735EF /* Warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = SOURCE_ROOT; };
+		396E1E8E189864AE00B735EF /* NSIndexPath+unsignedAccessors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSIndexPath+unsignedAccessors.h"; path = "Categories/NSIndexPath+unsignedAccessors.h"; sourceTree = "<group>"; };
+		396E1E8F189864AE00B735EF /* NSIndexPath+unsignedAccessors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSIndexPath+unsignedAccessors.m"; path = "Categories/NSIndexPath+unsignedAccessors.m"; sourceTree = "<group>"; };
 		398908041857DDFD007B3F67 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
 		398908181857EB2F007B3F67 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
 		398908191857EB2F007B3F67 /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Map.m; sourceTree = "<group>"; };
@@ -418,6 +421,8 @@
 				3989085A1857EDE1007B3F67 /* NSIndexSet+indexPath.m */,
 				3989085B1857EDE1007B3F67 /* NSURL+unique.h */,
 				3989085C1857EDE1007B3F67 /* NSURL+unique.m */,
+				396E1E8E189864AE00B735EF /* NSIndexPath+unsignedAccessors.h */,
+				396E1E8F189864AE00B735EF /* NSIndexPath+unsignedAccessors.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -750,6 +755,7 @@
 				394CC2531858F11800FA859C /* Observation.m in Sources */,
 				39A836CB185FDAB8008BF4E3 /* AttributeViewController.m in Sources */,
 				398908511857ED00007B3F67 /* SurveySelectViewController.m in Sources */,
+				396E1E90189864AE00B735EF /* NSIndexPath+unsignedAccessors.m in Sources */,
 				3989084E1857ED00007B3F67 /* SurveyCollection.m in Sources */,
 				398908241857EB2F007B3F67 /* MapDetailViewController.m in Sources */,
 				398908261857EB2F007B3F67 /* MapTableViewCell.m in Sources */,
