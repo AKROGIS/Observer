@@ -21,9 +21,9 @@
 @property (nonatomic, weak) UIPopoverController *popover;
 
 // A method to call when the selected survey changes
-@property (copy) void (^selectedSurveyChanged)(void);
+@property (nonatomic, copy) void (^selectedSurveyChanged)(void);
 
 // A method to call when the name of the selected survey changes
-@property (copy) void (^selectedSurveyChangedName)(void);
+@property (nonatomic, copy) void (^selectedSurveyChangedName)(void);
 
 @end

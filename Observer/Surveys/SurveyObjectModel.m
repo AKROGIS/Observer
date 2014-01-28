@@ -46,7 +46,7 @@
             [attributeProperties addObject:attributeDescription];
             //TODO: Check that unexpected values in an attribute dictionary does not cause a failure
             [attributeDescription setName:attribute[@"name"]];
-            [attributeDescription setAttributeType:[attribute[@"type"] intValue]];
+            [attributeDescription setAttributeType:[attribute[@"type"] unsignedIntegerValue]];
             [attributeDescription setOptional:![attribute[@"required"] boolValue]];
             [attributeDescription setDefaultValue:attribute[@"default"]];
             NSArray *constraints = attribute[@"constraints"];

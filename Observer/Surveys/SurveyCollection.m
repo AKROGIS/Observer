@@ -153,7 +153,7 @@
     }
     Survey *newSurvey = [[Survey alloc] initWithURL:newUrl];
     if (newSurvey.protocol) {
-        NSInteger index = 0;     //insert at top of list
+        NSUInteger index = 0;     //insert at top of list
         [self.items insertObject:newSurvey atIndex:index];
         [self saveCache];
         return YES;
@@ -165,7 +165,7 @@
 - (NSInteger)newSurveyWithProtocol:(SProtocol *)protocol {
     Survey *newSurvey = [[Survey alloc] initWithProtocol:protocol];
     if (newSurvey) {
-        NSInteger index = 0;     //insert at top of list
+        NSUInteger index = 0;     //insert at top of list
         [self.items insertObject:newSurvey atIndex:index];
         [self saveCache];
         return index;
@@ -284,7 +284,7 @@
         //Need to validate/fix the selected index (if files were added or deleted, it may not be valid)
         if (0 <= self.selectedIndex && self.selectedIndex < cachedSurveyUrls.count) {
             NSURL *url = cachedSurveyUrls[self.selectedIndex];
-            NSInteger index = [self.items indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            NSUInteger index = [self.items indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
                 return [url isEqual:((Survey *)obj).url];
             }];
             if (index == NSNotFound) {

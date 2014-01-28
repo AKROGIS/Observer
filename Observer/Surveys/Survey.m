@@ -278,7 +278,7 @@
     switch (version) {
         case 1:
             _title = plist[kTitleKey];
-            _state = [plist[kStateKey] integerValue];
+            _state = [plist[kStateKey] unsignedIntegerValue];
             _date = plist[kDateKey];
             return YES;
         default:

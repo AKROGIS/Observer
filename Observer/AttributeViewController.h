@@ -10,6 +10,6 @@
 
 @interface AttributeViewController : QuickDialogController
 
-@property NSManagedObject *managedObject;
+@property (nonatomic, strong) NSManagedObject *managedObject;
 
 @end

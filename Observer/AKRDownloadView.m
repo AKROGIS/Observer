@@ -52,7 +52,7 @@
  
         CGFloat width = self.bounds.size.width;
         CGFloat height = self.bounds.size.height;
-        CGContextTranslateCTM(context, width/2.0, height/2.0);
+        CGContextTranslateCTM(context, width/2.0f, height/2.0f);
 
         //Inner Square
         CGContextMoveToPoint(context, -4,-4);

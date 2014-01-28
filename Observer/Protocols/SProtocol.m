@@ -251,7 +251,7 @@
 
 - (AGSSRUnit)distanceUnits
 {
-    return [self.values[@"distance units"] intValue];
+    return [self.values[@"distance units"] unsignedIntegerValue];
 }
 
 - (double) angleBaseline
@@ -261,7 +261,7 @@
 
 - (AngleDirection) angleDirection
 {
-    return [self.values[@"angle direction"] intValue];
+    return [self.values[@"angle direction"] unsignedIntegerValue];
 }
 
 -(NSString *)description

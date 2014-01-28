@@ -21,10 +21,10 @@
 
 float mod(float a, float N)
 {
-    return a - N*floor(a/N);
+    return a - N*floorf(a/N);
 } //return in range [0, N)
 
-- (void)setAzimuth:(float)azimuth
+- (void)setAzimuth:(CGFloat)azimuth
 {
     if (fabs(azimuth - _azimuth) < 0.02)
         return;
@@ -54,12 +54,12 @@ float mod(float a, float N)
 
         //Get angle for rotating coordinate system
         //float a = mod(self.azimuth, 360.0); // => [0,360.0)
-        float a = -1 * self.azimuth * M_PI / 180.0; //radians
+        CGFloat a = -1 * self.azimuth * M_PI / 180.0; //radians
         
         //create a rotated coordinate system with origin in center and +y up
         CGFloat width = self.bounds.size.width;
         CGFloat height = self.bounds.size.height;
-        CGContextTranslateCTM(context, width/2.0, height/2.0);
+        CGContextTranslateCTM(context, width/2.0f, height/2.0f);
         CGContextScaleCTM(context, 1, -1);
         CGContextRotateCTM(context, a); //angle in radians with + = CCW
         

@@ -473,7 +473,7 @@ static MapCollection *_sharedCollection = nil;
 
     //remove cache items not in filesystem
     NSMutableIndexSet *itemsToRemove = [NSMutableIndexSet new];
-    for (int i = 0; i < self.localItems.count; i++) {
+    for (uint i = 0; i < self.localItems.count; i++) {
         Map *p = self.localItems[i];
         if (p.isLocal) {
             NSUInteger index = [mapUrlsInDocumentsFolder indexOfObject:p.url];
@@ -593,7 +593,7 @@ static MapCollection *_sharedCollection = nil;
 
     //remove maps in remoteItems not in serverMaps
     NSMutableIndexSet *itemsToRemove = [NSMutableIndexSet new];
-    for (int i = 0; i < self.remoteItems.count; i++) {
+    for (uint i = 0; i < self.remoteItems.count; i++) {
         Map *p = self.remoteItems[i];
         if (!p.isLocal) {
             NSUInteger index = [serverMaps  indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
@@ -632,8 +632,8 @@ static MapCollection *_sharedCollection = nil;
     if (self.delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             for (id key in [mapsToUpdate allKeys]) {
-                self.remoteItems[[key integerValue]] = [mapsToUpdate objectForKey:key];
-                [self.delegate collection:self changedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:[key integerValue]]];
+                self.remoteItems[[key unsignedIntegerValue]] = [mapsToUpdate objectForKey:key];
+                [self.delegate collection:self changedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:[key unsignedIntegerValue]]];
             }
             if (0 < itemsToRemove.count) {
                 [self.remoteItems removeObjectsAtIndexes:itemsToRemove];
@@ -647,7 +647,7 @@ static MapCollection *_sharedCollection = nil;
         });
     } else {
         for (id key in [mapsToUpdate allKeys]) {
-            self.remoteItems[[key integerValue]] = [mapsToUpdate objectForKey:key];
+            self.remoteItems[[key unsignedIntegerValue]] = [mapsToUpdate objectForKey:key];
         }
         [self.remoteItems removeObjectsAtIndexes:itemsToRemove];
         [self.remoteItems addObjectsFromArray:mapsToAdd];

@@ -15,6 +15,6 @@
 @property (strong, nonatomic) MapDetailViewController *detailViewController;
 @property (nonatomic, weak) MapCollection *items;
 @property (nonatomic, weak) UIPopoverController *popover;
-@property (copy) void (^rowSelectedCallback)(NSIndexPath *indexPath);
+@property (nonatomic, copy) void (^rowSelectedCallback)(NSIndexPath *indexPath);
 
 @end

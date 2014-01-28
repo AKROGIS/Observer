@@ -15,6 +15,6 @@
 @property (strong, nonatomic) ProtocolDetailViewController *detailViewController;
 @property (nonatomic, weak) ProtocolCollection *items;
 @property (nonatomic, weak) UIPopoverController *popover;
-@property (copy) void (^rowSelectedCallback)(NSIndexPath *indexPath);
+@property (nonatomic, copy) void (^rowSelectedCallback)(NSIndexPath *indexPath);
 
 @end
