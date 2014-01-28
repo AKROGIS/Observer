@@ -20,6 +20,7 @@
 		394CC2531858F11800FA859C /* Observation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC2521858F11800FA859C /* Observation.m */; };
 		396775A817A0911E009ECD34 /* AGSPointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775A717A0911E009ECD34 /* AGSPointTests.m */; };
 		396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */; };
+		396E1E8C18984EFF00B735EF /* Warnings.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */; };
 		398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 398908041857DDFD007B3F67 /* ArcGIS.bundle */; };
 		398908221857EB2F007B3F67 /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908191857EB2F007B3F67 /* Map.m */; };
 		398908231857EB2F007B3F67 /* MapCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989081B1857EB2F007B3F67 /* MapCollection.m */; };
@@ -154,6 +155,7 @@
 		396775C517A09B4D009ECD34 /* ObserverTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ObserverTests copy-Info.plist"; path = "/Users/regan_sarwas/Documents/Developer/ArcGIS iOS/Observer/ObserverTests copy-Info.plist"; sourceTree = "<absolute>"; };
 		396775C617A1C7B5009ECD34 /* AngleDistanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AngleDistanceViewController.h; sourceTree = "<group>"; };
 		396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AngleDistanceViewController.m; sourceTree = "<group>"; };
+		396E1E8B18984EFF00B735EF /* Warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = SOURCE_ROOT; };
 		398908041857DDFD007B3F67 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
 		398908181857EB2F007B3F67 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
 		398908191857EB2F007B3F67 /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Map.m; sourceTree = "<group>"; };
@@ -488,6 +490,7 @@
 		39955E51178334C000D225D7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				396E1E8B18984EFF00B735EF /* Warnings.xcconfig */,
 				39C53E661885D96100C0CECE /* Images */,
 				39890DA21858C99E007B3F67 /* Images.xcassets */,
 				398908041857DDFD007B3F67 /* ArcGIS.bundle */,
@@ -667,6 +670,7 @@
 				39C53E6B1885D98400C0CECE /* SurveyDocumentIcon.png in Resources */,
 				39C53E6E1885D9DF00C0CECE /* ProtocolDocumentIcon.png in Resources */,
 				39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */,
+				396E1E8C18984EFF00B735EF /* Warnings.xcconfig in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
 				39C53E701885DAB000C0CECE /* TilePackageDocumentIcon.png in Resources */,
 				59C60FF31864206500470791 /* Localizable.strings in Resources */,
@@ -825,6 +829,7 @@
 /* Begin XCBuildConfiguration section */
 		39955E8B178334C000D225D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
@@ -898,6 +903,7 @@
 		};
 		39955E8C178334C000D225D7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;

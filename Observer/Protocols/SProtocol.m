@@ -239,7 +239,7 @@
 
 #pragma mark - fields for angle distance measuring
 
-- (BOOL)definesAngleDistanceMeasures;
+- (BOOL)definesAngleDistanceMeasures
 {
     return self.values[@"angle baseline"] != nil;
 }

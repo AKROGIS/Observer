@@ -237,7 +237,7 @@ static MapCollection *_sharedCollection = nil;
 }
 
 
-- (void)refreshWithCompletionHandler:(void (^)(BOOL))completionHandler;
+- (void)refreshWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
         self.refreshDate = [NSDate date];
@@ -459,7 +459,7 @@ static MapCollection *_sharedCollection = nil;
 }
 
 //done on background thread
-- (BOOL)refreshLocalMaps;
+- (BOOL)refreshLocalMaps
 {
     [self syncWithFileSystem];
     return YES;
@@ -540,7 +540,7 @@ static MapCollection *_sharedCollection = nil;
 
 
 //done on background thread
-- (BOOL)refreshRemoteMaps;
+- (BOOL)refreshRemoteMaps
 {
     NSURL *url = [Settings manager].urlForMaps;
     NSMutableArray *serverMaps = [self fetchMapListFromURL:url];

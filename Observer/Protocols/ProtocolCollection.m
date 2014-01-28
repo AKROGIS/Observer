@@ -246,7 +246,7 @@ static ProtocolCollection *_sharedCollection = nil;
 }
 
 
-- (void)refreshWithCompletionHandler:(void (^)(BOOL))completionHandler;
+- (void)refreshWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
         self.refreshDate = [NSDate date];
@@ -418,7 +418,7 @@ static ProtocolCollection *_sharedCollection = nil;
 }
 
 //done on background thread
-- (BOOL)refreshLocalProtocols;
+- (BOOL)refreshLocalProtocols
 {
     [self moveIncomingDocuments];
     [self syncWithFileSystem];
@@ -508,7 +508,7 @@ static ProtocolCollection *_sharedCollection = nil;
 
 
 //done on background thread
-- (BOOL)refreshRemoteProtocols;
+- (BOOL)refreshRemoteProtocols
 {
     NSURL *url = [Settings manager].urlForProtocols;
     NSMutableArray *serverProtocols = [self fetchProtocolListFromURL:url];

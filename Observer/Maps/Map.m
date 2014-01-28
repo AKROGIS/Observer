@@ -182,7 +182,7 @@
     }
 }
 
-- (void)openThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)openThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
         UIImage *thumbnail = self.thumbnail;
@@ -192,7 +192,7 @@
     });
 }
 
-- (void)openTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)openTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
         AGSLocalTiledLayer *tileCache = self.tileCache;
