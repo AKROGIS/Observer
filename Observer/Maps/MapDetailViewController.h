@@ -11,6 +11,6 @@
 
 @interface MapDetailViewController : UIViewController <CLLocationManagerDelegate>
 
-@property (nonatomic, strong) Map *map;
+@property (strong, nonatomic) Map *map;
 
 @end

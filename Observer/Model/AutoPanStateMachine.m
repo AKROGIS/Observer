@@ -43,6 +43,7 @@
 {
     //When the user pans the map, the mapView will automatically turn off autopan in the mapView,
     //but we must update the state we control.
+    AutoPanButton *autoPanModeButton = self.autoPanModeButton;
     switch (self.state) {
         case kNoAutoPanNoAutoRotate:
         case kNoAutoPanNoAutoRotateNorthUp:
@@ -51,11 +52,11 @@
         case kAutoPanAutoRotateByHeading:
         case kAutoPanNoAutoRotate:
             self.state = kNoAutoPanNoAutoRotate;
-            [self.autoPanModeButton turnOff];
+            [autoPanModeButton turnOff];
             break;
         case kAutoPanNoAutoRotateNorthUp:
             self.state = kNoAutoPanNoAutoRotateNorthUp;
-            [self.autoPanModeButton turnOff];
+            [autoPanModeButton turnOff];
             break;
         default:
             AKRLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userPannedMap", self.state);
@@ -68,6 +69,8 @@
     //When the user rotates the map, the mapView will automatically turn off autorotate (but not autopan) in the mapView,
     //but we must update the state we control.
     //The mapViewController takes care of rotating the compassRoseButton
+    AutoPanButton *autoPanModeButton = self.autoPanModeButton;
+    AGSMapView *mapView = self.mapView;
     switch (self.state) {
         case kNoAutoPanNoAutoRotate:
         case kAutoPanNoAutoRotate:
@@ -75,8 +78,8 @@
         case kAutoPanAutoRotateByBearing:
         case kAutoPanAutoRotateByHeading:
             self.state = kAutoPanNoAutoRotate;
-            [self.autoPanModeButton turnOnWithoutRotate];
-            self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
+            [autoPanModeButton turnOnWithoutRotate];
+            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
             break;
         case kAutoPanNoAutoRotateNorthUp:
             self.state = kAutoPanNoAutoRotate;
@@ -94,31 +97,33 @@
 
 - (void)userClickedAutoPanButton
 {
+    AutoPanButton *autoPanModeButton = self.autoPanModeButton;
+    AGSMapView *mapView = self.mapView;
     switch (self.state) {
         case kNoAutoPanNoAutoRotateNorthUp:
             self.state = kAutoPanNoAutoRotateNorthUp;
-            [self.autoPanModeButton turnOnWithoutRotate];
-            self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
+            [autoPanModeButton turnOnWithoutRotate];
+            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
             break;
         case kNoAutoPanNoAutoRotate:
             self.state = kAutoPanNoAutoRotate;
-            [self.autoPanModeButton turnOnWithoutRotate];
-            self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
+            [autoPanModeButton turnOnWithoutRotate];
+            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
             break;
         case kAutoPanNoAutoRotateNorthUp:
             [self showCompassRoseButton];
             [self selectRotationStyleBasedOnSpeed];
-            [self.autoPanModeButton turnOnWithRotate];
+            [autoPanModeButton turnOnWithRotate];
             break;
         case kAutoPanNoAutoRotate:
             [self selectRotationStyleBasedOnSpeed];
-            [self.autoPanModeButton turnOnWithRotate];
+            [autoPanModeButton turnOnWithRotate];
             break;
         case kAutoPanAutoRotateByBearing:
         case kAutoPanAutoRotateByHeading:
             self.state = kNoAutoPanNoAutoRotate;
-            self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
-            [self.autoPanModeButton turnOff];
+            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
+            [autoPanModeButton turnOff];
             break;
         default:
             AKRLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userClickedAutoPanButton", self.state);
@@ -128,27 +133,29 @@
 
 - (void)userClickedCompassRoseButton
 {
+    AutoPanButton *autoPanModeButton = self.autoPanModeButton;
+    AGSMapView *mapView = self.mapView;
     switch (self.state) {
         case kNoAutoPanNoAutoRotateNorthUp:
         case kAutoPanNoAutoRotateNorthUp:
             break;
         case kNoAutoPanNoAutoRotate:
             self.state = kNoAutoPanNoAutoRotateNorthUp;
-            [self.mapView setRotationAngle:0.0 animated:YES];
+            [mapView setRotationAngle:0.0 animated:YES];
             [self hideCompassRoseButton];
             break;
         case kAutoPanNoAutoRotate:
             self.state = kAutoPanNoAutoRotateNorthUp;
-            [self.mapView setRotationAngle:0.0 animated:YES];
+            [mapView setRotationAngle:0.0 animated:YES];
             [self hideCompassRoseButton];
             break;
         case kAutoPanAutoRotateByBearing:
         case kAutoPanAutoRotateByHeading:
             self.state = kAutoPanNoAutoRotateNorthUp;
-            [self.mapView setRotationAngle:0.0 animated:YES];
+            [mapView setRotationAngle:0.0 animated:YES];
             [self hideCompassRoseButton];
-            [self.autoPanModeButton turnOnWithoutRotate];
-            self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
+            [autoPanModeButton turnOnWithoutRotate];
+            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
             break;
         default:
             AKRLog(@"Unexpected MapAutoPanState (%d) in AutoPanStateMachine.userClickedCompassRoseButton", self.state);
@@ -158,6 +165,7 @@
 
 - (void)speedUpdate:(double)newSpeed
 {
+    AGSMapView *mapView = self.mapView;
     switch (self.state) {
         case kNoAutoPanNoAutoRotateNorthUp:
         case kNoAutoPanNoAutoRotate:
@@ -167,13 +175,13 @@
         case kAutoPanAutoRotateByBearing:
             if (self.maxSpeedForBearing < newSpeed) {
                 self.state = kAutoPanAutoRotateByHeading;
-                self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
+                mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
             }
             break;
         case kAutoPanAutoRotateByHeading:
             if (newSpeed <= self.maxSpeedForBearing) {
                 self.state = kAutoPanAutoRotateByBearing;
-                self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
+                mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
             }
             break;
         default:
@@ -182,6 +190,7 @@
     }
     self.priorSpeed = newSpeed;
 }
+
 
 
 #pragma mark - private methods
@@ -243,31 +252,34 @@
 - (void)hideCompassRoseButton
 {
     //AKRLog(@"hide compass rose");
+    UIButton *compassRoseButton = self.compassRoseButton;
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionFade;
     animation.duration = 0.4;
-    [self.compassRoseButton.layer addAnimation:animation forKey:nil];
-    self.compassRoseButton.hidden = YES;
+    [compassRoseButton.layer addAnimation:animation forKey:nil];
+    compassRoseButton.hidden = YES;
 }
 
 - (void)showCompassRoseButton
 {
     //AKRLog(@"show compass rose");
+    UIButton *compassRoseButton = self.compassRoseButton;
     CATransition *animation = [CATransition animation];
     animation.type = kCATransitionFade;
     animation.duration = 0.4;
-    [self.compassRoseButton.layer addAnimation:animation forKey:nil];
-    self.compassRoseButton.hidden = NO;
+    [compassRoseButton.layer addAnimation:animation forKey:nil];
+    compassRoseButton.hidden = NO;
 }
 
 - (void)selectRotationStyleBasedOnSpeed
 {
+    AGSMapView *mapView = self.mapView;
     if (self.maxSpeedForBearing < self.priorSpeed) {
         self.state = kAutoPanAutoRotateByHeading;
-        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
+        mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeNavigation;
     } else {
         self.state = kAutoPanAutoRotateByBearing;
-        self.mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
+        mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
     }
 }
 

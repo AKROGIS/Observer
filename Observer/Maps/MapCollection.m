@@ -310,10 +310,11 @@ static MapCollection *_sharedCollection = nil;
         return;
     }
     Map *map = [self.remoteItems objectAtIndex:fromIndex];
+    id<CollectionChanged> delegate = self.delegate;
     [self.remoteItems removeObjectAtIndex:fromIndex];
-    [self.delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex]];
+    [delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex]];
     [self.localItems insertObject:map atIndex:toIndex];
-    [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:toIndex]];
+    [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:toIndex]];
     //Update the selectedIndex, unless this the list was empty (self.selectedIndex was already 0), 
     if (toIndex <= self.selectedLocalIndex && 1 < self.localItems.count ) {
         self.selectedLocalIndex++;
@@ -429,14 +430,15 @@ static MapCollection *_sharedCollection = nil;
         return [map isEqualtoMap:obj];
     }];
 
-    if (self.delegate) {
+    id<CollectionChanged> delegate = self.delegate;
+    if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.localItems insertObject:map atIndex:0];
-            [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
+            [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
             if (remoteIndex != NSNotFound)
             {
                 [self.remoteItems removeObjectAtIndex:remoteIndex];
-                [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
+                [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
             }
             if (shouldSaveCache) {
                 [self saveCache];
@@ -447,7 +449,7 @@ static MapCollection *_sharedCollection = nil;
         if (remoteIndex != NSNotFound)
         {
             [self.remoteItems removeObjectAtIndex:remoteIndex];
-            [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
+            [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
         }
         if (shouldSaveCache) {
             [self saveCache];
@@ -497,16 +499,17 @@ static MapCollection *_sharedCollection = nil;
     }
 
     //update lists and UI synchronously on UI thread if there is a delegate
-    if (self.delegate) {
+    id<CollectionChanged> delegate = self.delegate;
+    if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (0 < itemsToRemove.count) {
                 [self.localItems removeObjectsAtIndexes:itemsToRemove];
-                [self.delegate collection:self removedLocalItemsAtIndexes:itemsToRemove];
+                [delegate collection:self removedLocalItemsAtIndexes:itemsToRemove];
             }
             if (0 < mapsToAdd.count) {
                 NSIndexSet *indexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(self.localItems.count, mapsToAdd.count)];
                 [self.localItems addObjectsFromArray:mapsToAdd];
-                [self.delegate collection:self addedLocalItemsAtIndexes:indexes];
+                [delegate collection:self addedLocalItemsAtIndexes:indexes];
             }
             [self checkAndFixSelectedIndex];
         });
@@ -627,20 +630,21 @@ static MapCollection *_sharedCollection = nil;
         }
     }
     //update lists and UI synchronosly on UI thread if there is a delegate
-    if (self.delegate) {
+    id<CollectionChanged> delegate = self.delegate;
+    if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             for (id key in [mapsToUpdate allKeys]) {
                 self.remoteItems[[key unsignedIntegerValue]] = [mapsToUpdate objectForKey:key];
-                [self.delegate collection:self changedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:[key unsignedIntegerValue]]];
+                [delegate collection:self changedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:[key unsignedIntegerValue]]];
             }
             if (0 < itemsToRemove.count) {
                 [self.remoteItems removeObjectsAtIndexes:itemsToRemove];
-                [self.delegate collection:self removedRemoteItemsAtIndexes:itemsToRemove];
+                [delegate collection:self removedRemoteItemsAtIndexes:itemsToRemove];
             }
             if (0 < mapsToAdd.count) {
                 NSIndexSet *indexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(self.remoteItems.count, mapsToAdd.count)];
                 [self.remoteItems addObjectsFromArray:mapsToAdd];
-                [self.delegate collection:self addedRemoteItemsAtIndexes:indexes];
+                [delegate collection:self addedRemoteItemsAtIndexes:indexes];
             }
         });
     } else {

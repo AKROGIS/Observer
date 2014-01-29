@@ -29,14 +29,15 @@
 -(void) setEditing:(BOOL)editing animated:(BOOL)animated
 {
     [super setEditing:editing animated:animated];
+    UITextField *titleTextField = self.titleTextField;
     [UIView animateWithDuration:0.1 animations:^{
         //FIXME: does not turn off in all cases
         if (editing && !self.showingDeleteConfirmation) {
-            self.titleTextField.enabled = YES;
-            self.titleTextField.borderStyle = UITextBorderStyleRoundedRect;
+            titleTextField.enabled = YES;
+            titleTextField.borderStyle = UITextBorderStyleRoundedRect;
         } else {
-            self.titleTextField.enabled = NO;
-            self.titleTextField.borderStyle = UITextBorderStyleNone;
+            titleTextField.enabled = NO;
+            titleTextField.borderStyle = UITextBorderStyleNone;
         }
     }];
 }

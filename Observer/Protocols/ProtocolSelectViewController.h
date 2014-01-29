@@ -13,8 +13,8 @@
 @interface ProtocolSelectViewController : UITableViewController <CollectionChanged>
 
 @property (strong, nonatomic) ProtocolDetailViewController *detailViewController;
-@property (nonatomic, weak) ProtocolCollection *items;
-@property (nonatomic, weak) UIPopoverController *popover;
-@property (nonatomic, copy) void (^rowSelectedCallback)(NSIndexPath *indexPath);
+@property (strong, nonatomic) ProtocolCollection *items;
+@property (strong, nonatomic) UIPopoverController *popover;
+@property (copy, nonatomic) void (^rowSelectedCallback)(NSIndexPath *indexPath);
 
 @end

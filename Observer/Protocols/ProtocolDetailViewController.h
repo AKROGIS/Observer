@@ -11,6 +11,6 @@
 
 @interface ProtocolDetailViewController : UIViewController
 
-@property (nonatomic, strong) SProtocol *protocol;
+@property (strong, nonatomic) SProtocol *protocol;
 
 @end

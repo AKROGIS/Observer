@@ -13,8 +13,8 @@
 @interface MapSelectViewController : UITableViewController <CollectionChanged>
 
 @property (strong, nonatomic) MapDetailViewController *detailViewController;
-@property (nonatomic, weak) MapCollection *items;
-@property (nonatomic, weak) UIPopoverController *popover;
-@property (nonatomic, copy) void (^rowSelectedCallback)(NSIndexPath *indexPath);
+@property (strong, nonatomic) MapCollection *items;
+@property (strong, nonatomic) UIPopoverController *popover;
+@property (copy, nonatomic) void (^rowSelectedCallback)(NSIndexPath *indexPath);
 
 @end

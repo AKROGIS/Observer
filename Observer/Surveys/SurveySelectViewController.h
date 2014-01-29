@@ -15,10 +15,10 @@
 
 // The list of items to present in the table view
 // TODO: should I make the collection the datasource delegate?
-@property (nonatomic, weak) SurveyCollection *items;
+@property (nonatomic, strong) SurveyCollection *items;
 
 // The popover (maybe nil) that this view controller is presented in
-@property (nonatomic, weak) UIPopoverController *popover;
+@property (nonatomic, strong) UIPopoverController *popover;
 
 // A method to call when the selected survey changes
 @property (nonatomic, copy) void (^selectedSurveyChanged)(void);

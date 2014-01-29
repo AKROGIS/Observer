@@ -283,12 +283,13 @@ static ProtocolCollection *_sharedCollection = nil;
         newUrl = [newUrl URLByUniquingPath];
         BOOL success = [protocol downloadToURL:newUrl];
         if (success) {
-            if (self.delegate) {
+            id<CollectionChanged> delegate = self.delegate;
+            if (delegate) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.remoteItems removeObjectAtIndex:index];
-                    [self.delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
+                    [delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
                     [self.localItems insertObject:protocol atIndex:0];
-                    [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
+                    [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
                     [self saveCache];
                 });
             } else {
@@ -390,14 +391,15 @@ static ProtocolCollection *_sharedCollection = nil;
         return [protocol isEqualtoProtocol:obj];
     }];
 
-    if (self.delegate) {
+    id<CollectionChanged> delegate = self.delegate;
+    if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.localItems insertObject:protocol atIndex:0];
-            [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
+            [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
             if (remoteIndex != NSNotFound)
             {
                 [self.remoteItems removeObjectAtIndex:remoteIndex];
-                [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
+                [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
             }
             if (shouldSaveCache) {
                 [self saveCache];
@@ -408,7 +410,7 @@ static ProtocolCollection *_sharedCollection = nil;
         if (remoteIndex != NSNotFound)
         {
             [self.remoteItems removeObjectAtIndex:remoteIndex];
-            [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
+            [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
         }
         if (shouldSaveCache) {
             [self saveCache];
@@ -486,16 +488,17 @@ static ProtocolCollection *_sharedCollection = nil;
     }
 
     //update lists and UI synchronosly on UI thread if there is a delegate
-    if (self.delegate) {
+    id<CollectionChanged> delegate = self.delegate;
+    if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (0 < itemsToRemove.count) {
                 [self.localItems removeObjectsAtIndexes:itemsToRemove];
-                [self.delegate collection:self removedLocalItemsAtIndexes:itemsToRemove];
+                [delegate collection:self removedLocalItemsAtIndexes:itemsToRemove];
             }
             if (0 < protocolsToAdd.count) {
                 NSIndexSet *indexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(self.localItems.count, protocolsToAdd.count)];
                 [self.localItems addObjectsFromArray:protocolsToAdd];
-                [self.delegate collection:self addedLocalItemsAtIndexes:indexes];
+                [delegate collection:self addedLocalItemsAtIndexes:indexes];
             }
             [self checkAndFixSelectedIndex];
         });
@@ -600,20 +603,21 @@ static ProtocolCollection *_sharedCollection = nil;
         }
     }
     //update lists and UI synchronosly on UI thread if there is a delegate
-    if (self.delegate) {
+    id<CollectionChanged> delegate = self.delegate;
+    if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             for (id key in [protocolsToUpdate allKeys]) {
                 self.remoteItems[[key unsignedIntegerValue]] = [protocolsToUpdate objectForKey:key];
-                [self.delegate collection:self changedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:[key unsignedIntegerValue]]];
+                [delegate collection:self changedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:[key unsignedIntegerValue]]];
             }
             if (0 < itemsToRemove.count) {
                 [self.remoteItems removeObjectsAtIndexes:itemsToRemove];
-                [self.delegate collection:self removedRemoteItemsAtIndexes:itemsToRemove];
+                [delegate collection:self removedRemoteItemsAtIndexes:itemsToRemove];
             }
             if (0 < protocolsToAdd.count) {
                 NSIndexSet *indexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(self.remoteItems.count, protocolsToAdd.count)];
                 [self.remoteItems addObjectsFromArray:protocolsToAdd];
-                [self.delegate collection:self addedRemoteItemsAtIndexes:indexes];
+                [delegate collection:self addedRemoteItemsAtIndexes:indexes];
             }
         });
     } else {
