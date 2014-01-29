@@ -26,7 +26,7 @@ CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES
 CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES
 
 // Warn about implicit property synthesis.
-// Property synthesis is now a compiler feature, and the warning is obsolete
+// Implicit property synthesis is a compiler feature (since Xcode 4.4). The warning is for backwards compatibility
 CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = NO
 
 // Warn about sending messages to a reference that may evaporate mid message.
