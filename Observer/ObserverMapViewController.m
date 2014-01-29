@@ -108,18 +108,10 @@
 {
     AKRLog(@"Main view controller view did load");
     [super viewDidLoad];
-
-    self.mapView.layerDelegate = self;
-    self.mapView.touchDelegate = self;
-    self.mapView.callout.delegate = self;
-    self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
-
-    self.autoPanController = [[AutoPanStateMachine alloc] init];
-    self.autoPanController.mapView = self.mapView;
-    self.autoPanController.compassRoseButton = self.compassRoseButton;
-    self.autoPanController.autoPanModeButton = self.panButton;
-
-    [self configureView];
+    [self configureMapView];
+    [self configureGpsButton];
+    [self configureObservationButton];
+    [self initializeData];
 }
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
@@ -551,7 +543,8 @@
             }
         }];
     } else {
-        if (self.isObserving) {
+        if (self.isObserving && self.survey.protocol.allowsAdhocTouchLocations) {
+
             //create new ad-hoc observation at touch point
             Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
             [self drawObservation:observation atPoint:mappoint];
@@ -567,6 +560,12 @@
     AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, features);
     if (0 < [features count]) {
         AKRLog(@"Try to move selected graphic - if allowed");
+        //if feature is an adhoc location (no need to check if adhoc is allowed, as it must be since the user created one)
+        //   then just move it
+        //if feature is an angle distance feature
+        //   then flash the gps observation point and open the angle distance dialog on that point (try not to hide observation)
+        //   move the feature when the dialog is dismissed.
+        //ignore GPS locations
     }
 }
 
@@ -737,7 +736,28 @@
 
 #pragma mark - Private - UI configuration
 
-- (void)configureView
+- (void)configureMapView
+{
+    self.mapView.layerDelegate = self;
+    self.mapView.touchDelegate = self;
+    self.mapView.callout.delegate = self;
+    self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
+}
+
+- (void)configureGpsButton
+{
+    self.autoPanController = [[AutoPanStateMachine alloc] init];
+    self.autoPanController.mapView = self.mapView;
+    self.autoPanController.compassRoseButton = self.compassRoseButton;
+    self.autoPanController.autoPanModeButton = self.panButton;
+}
+
+- (void)configureObservationButton
+{
+
+}
+
+- (void)initializeData
 {
     [self incrementBusy];
     self.surveys = [SurveyCollection sharedCollection];

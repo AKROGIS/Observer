@@ -237,33 +237,6 @@
 }
 
 
-#pragma mark - fields for angle distance measuring
-
-- (BOOL)definesAngleDistanceMeasures
-{
-    return self.values[@"angle baseline"] != nil;
-}
-
-- (BOOL)requireAngleDistance
-{
-    return [self.values[@"requires angle-distance"] boolValue];
-}
-
-- (AGSSRUnit)distanceUnits
-{
-    return [self.values[@"distance units"] unsignedIntegerValue];
-}
-
-- (double) angleBaseline
-{
-    return [self.values[@"angle baseline"] doubleValue];
-}
-
-- (AngleDirection) angleDirection
-{
-    return [self.values[@"angle direction"] unsignedIntegerValue];
-}
-
 -(NSString *)description
 {
     return [NSString stringWithFormat:@"%@; %@",self.title, self.subtitle];

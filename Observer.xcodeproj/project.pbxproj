@@ -22,6 +22,8 @@
 		396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */; };
 		396E1E8C18984EFF00B735EF /* Warnings.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */; };
 		396E1E90189864AE00B735EF /* NSIndexPath+unsignedAccessors.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E8F189864AE00B735EF /* NSIndexPath+unsignedAccessors.m */; };
+		396E1E961899AD2900B735EF /* ProtocolFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E951899AD2900B735EF /* ProtocolFeature.m */; };
+		396E1E991899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E981899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m */; };
 		398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 398908041857DDFD007B3F67 /* ArcGIS.bundle */; };
 		398908221857EB2F007B3F67 /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908191857EB2F007B3F67 /* Map.m */; };
 		398908231857EB2F007B3F67 /* MapCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989081B1857EB2F007B3F67 /* MapCollection.m */; };
@@ -159,6 +161,10 @@
 		396E1E8B18984EFF00B735EF /* Warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = SOURCE_ROOT; };
 		396E1E8E189864AE00B735EF /* NSIndexPath+unsignedAccessors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSIndexPath+unsignedAccessors.h"; path = "Categories/NSIndexPath+unsignedAccessors.h"; sourceTree = "<group>"; };
 		396E1E8F189864AE00B735EF /* NSIndexPath+unsignedAccessors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSIndexPath+unsignedAccessors.m"; path = "Categories/NSIndexPath+unsignedAccessors.m"; sourceTree = "<group>"; };
+		396E1E941899AD2900B735EF /* ProtocolFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolFeature.h; path = Protocols/ProtocolFeature.h; sourceTree = "<group>"; };
+		396E1E951899AD2900B735EF /* ProtocolFeature.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolFeature.m; path = Protocols/ProtocolFeature.m; sourceTree = "<group>"; };
+		396E1E971899AD4B00B735EF /* ProtocolFeatureAllowedLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolFeatureAllowedLocations.h; path = Protocols/ProtocolFeatureAllowedLocations.h; sourceTree = "<group>"; };
+		396E1E981899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolFeatureAllowedLocations.m; path = Protocols/ProtocolFeatureAllowedLocations.m; sourceTree = "<group>"; };
 		398908041857DDFD007B3F67 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
 		398908181857EB2F007B3F67 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
 		398908191857EB2F007B3F67 /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Map.m; sourceTree = "<group>"; };
@@ -364,6 +370,10 @@
 				398908381857EBF6007B3F67 /* ProtocolSelectViewController.m */,
 				398908391857EBF6007B3F67 /* ProtocolTableViewCell.h */,
 				3989083A1857EBF6007B3F67 /* ProtocolTableViewCell.m */,
+				396E1E941899AD2900B735EF /* ProtocolFeature.h */,
+				396E1E951899AD2900B735EF /* ProtocolFeature.m */,
+				396E1E971899AD4B00B735EF /* ProtocolFeatureAllowedLocations.h */,
+				396E1E981899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m */,
 			);
 			name = Protocol;
 			sourceTree = "<group>";
@@ -718,6 +728,7 @@
 				39955E57178334C000D225D7 /* main.m in Sources */,
 				3989085E1857EDE1007B3F67 /* NSArray+map.m in Sources */,
 				394CC24D1858F11800FA859C /* Mission.m in Sources */,
+				396E1E991899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m in Sources */,
 				398908251857EB2F007B3F67 /* MapSelectViewController.m in Sources */,
 				39955E5B178334C000D225D7 /* ObserverAppDelegate.m in Sources */,
 				398908231857EB2F007B3F67 /* MapCollection.m in Sources */,
@@ -725,6 +736,7 @@
 				3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */,
 				394CC2411858F11700FA859C /* MapReference.m in Sources */,
 				39A836C4185A668D008BF4E3 /* AKRAngleDistance.m in Sources */,
+				396E1E961899AD2900B735EF /* ProtocolFeature.m in Sources */,
 				3989085F1857EDE1007B3F67 /* NSDate+Formatting.m in Sources */,
 				3989084F1857ED00007B3F67 /* SurveyCoreDataDocument.m in Sources */,
 				59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */,

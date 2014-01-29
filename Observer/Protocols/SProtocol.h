@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "AKRTableViewItem.h"
-#import "Enumerations.h"
 
 @interface SProtocol : NSObject <NSCoding, AKRTableViewItem>
 
@@ -25,7 +24,7 @@
 // features is guaranteed to contain 0 or more NSDictionary with at least the following
 // key:@"name" value:NSString
 // key:@"attributes" value:NSArray (types in array are not guaranteed)
-@property (nonatomic, strong, readonly) NSArray *features;
+@property (nonatomic, strong, readonly) NSArray *features;  // of ProtocolFeatures
 
 @property (nonatomic, strong, readonly) NSDictionary *dialogs;
 
@@ -48,20 +47,6 @@
 - (BOOL)saveCopyToURL:(NSURL *)url;
 
 
-//Does the protocol define the units of measure for angle/distance observations
-@property (nonatomic, readonly) BOOL definesAngleDistanceMeasures;
-
-// Does the protocol require that all observations are angle distance
-@property (nonatomic, readonly) BOOL requireAngleDistance;
-
-// The units of measure (meters, feet, etc) for distances to observed items
-@property (nonatomic, readonly) AGSSRUnit distanceUnits;
-
-// The angle in degrees for dead ahead or true north
-@property (nonatomic, readonly) double angleBaseline;
-
-// What is the direction of increasing angles (clockwise or counter-clockwise)
-@property (nonatomic, readonly) AngleDirection angleDirection;
-
+@property (nonatomic, readonly) BOOL allowsAdhocTouchLocations;
 
 @end
