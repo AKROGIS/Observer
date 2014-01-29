@@ -8,8 +8,6 @@
 
 #import "AKRDirectionIndicatorView.h"
 
-float mod(float a, float N);
-
 @implementation AKRDirectionIndicatorView
 
 - (id)initWithFrame:(CGRect)frame
@@ -20,11 +18,6 @@ float mod(float a, float N);
     }
     return self;
 }
-
-float mod(float a, float N)
-{
-    return a - N*floorf(a/N);
-} //return in range [0, N)
 
 - (void)setAzimuth:(CGFloat)azimuth
 {
@@ -52,10 +45,8 @@ float mod(float a, float N)
         
         //Set color
         [[UIColor darkGrayColor] set];
-        //CGContextSetRGBStrokeColor(context, 0.3, 0.3, 0.3, 1.0); //rgba (0..1)
 
         //Get angle for rotating coordinate system
-        //float a = mod(self.azimuth, 360.0); // => [0,360.0)
         double radians = -1 * self.azimuth * M_PI / 180.0; //radians
         
         //create a rotated coordinate system with origin in center and +y up
