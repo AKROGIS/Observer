@@ -27,27 +27,27 @@
 						{"type":"QEntryElement", "key":"o2", "bind":"textValue:Observer2",   "title":"Observer #2", "placeholder":"Initials"},
 						{"type":"QRadioElement", "key":"w",  "bind":"selected:Weather",      "title":"Weather",     "items":["<50% clouds", ">50% clouds", "Fog", "Mist", "Rain"], "selected":2},
 						{"type":"QRadioElement", "key":"v2", "bind":"selected:Visibility",   "title":"Visibility",  "items":["<250m", "250-500m", ">500m"], "selected":2},
-						{"type":"QRadioElement", "key":"b",  "bind":"selected:Beaufort",     "title":"Beaufort",    "items":["0:Glossy", "1:Ripples", "2:Few whitecaps", "3:Scattered whitecaps", "4:Spray and whitecaps"], "selected":0},
+						{"type":"QRadioElement", "key":"b",  "bind":"selected:Beaufort",     "title":"Beaufort",    "items":["0:Glossy", "1:Ripples", "2:Few whitecaps", "3:Scattered whitecaps", "4:Spray and whitecaps"], "selected":0}
 				  	]
 				}
 			]
 		},
-		symbology:{
+		"symbology":{
 			"color":"#00FF00",
 			"size":13
 		},
-		on-symbology:{
+		"on-symbology":{
 			"color":"#FF0000",
 			"size":2
 		},
-		off-symbology:{
+		"off-symbology":{
 			"color":"#808080",
 			"size":1
 		}
 	},
     "features":[
 		{
-    		"name":"Observations",
+    		"name":"BirdGroups",
     		"attributes":[
 				{"name":"countWaterPending",  "type":100},
 				{"name":"countWaterMarbled",  "type":100},
@@ -88,7 +88,7 @@
 					}
 				]
 			},
-			symbology:{
+			"symbology":{
 				"color":"#00FF00",
 				"size":13
 			}
