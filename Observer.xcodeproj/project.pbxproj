@@ -24,6 +24,7 @@
 		396E1E90189864AE00B735EF /* NSIndexPath+unsignedAccessors.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E8F189864AE00B735EF /* NSIndexPath+unsignedAccessors.m */; };
 		396E1E961899AD2900B735EF /* ProtocolFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E951899AD2900B735EF /* ProtocolFeature.m */; };
 		396E1E991899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E981899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m */; };
+		396E1E9D189ADE8F00B735EF /* ProtocolFeatureSymbology.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E9C189ADE8F00B735EF /* ProtocolFeatureSymbology.m */; };
 		398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 398908041857DDFD007B3F67 /* ArcGIS.bundle */; };
 		398908221857EB2F007B3F67 /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908191857EB2F007B3F67 /* Map.m */; };
 		398908231857EB2F007B3F67 /* MapCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989081B1857EB2F007B3F67 /* MapCollection.m */; };
@@ -165,6 +166,9 @@
 		396E1E951899AD2900B735EF /* ProtocolFeature.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolFeature.m; path = Protocols/ProtocolFeature.m; sourceTree = "<group>"; };
 		396E1E971899AD4B00B735EF /* ProtocolFeatureAllowedLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolFeatureAllowedLocations.h; path = Protocols/ProtocolFeatureAllowedLocations.h; sourceTree = "<group>"; };
 		396E1E981899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolFeatureAllowedLocations.m; path = Protocols/ProtocolFeatureAllowedLocations.m; sourceTree = "<group>"; };
+		396E1E9A189AD87000B735EF /* Sample Protocol.obsprot */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Sample Protocol.obsprot"; sourceTree = "<group>"; };
+		396E1E9B189ADE8F00B735EF /* ProtocolFeatureSymbology.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolFeatureSymbology.h; path = Protocols/ProtocolFeatureSymbology.h; sourceTree = "<group>"; };
+		396E1E9C189ADE8F00B735EF /* ProtocolFeatureSymbology.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolFeatureSymbology.m; path = Protocols/ProtocolFeatureSymbology.m; sourceTree = "<group>"; };
 		398908041857DDFD007B3F67 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
 		398908181857EB2F007B3F67 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
 		398908191857EB2F007B3F67 /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Map.m; sourceTree = "<group>"; };
@@ -374,6 +378,8 @@
 				396E1E951899AD2900B735EF /* ProtocolFeature.m */,
 				396E1E971899AD4B00B735EF /* ProtocolFeatureAllowedLocations.h */,
 				396E1E981899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m */,
+				396E1E9B189ADE8F00B735EF /* ProtocolFeatureSymbology.h */,
+				396E1E9C189ADE8F00B735EF /* ProtocolFeatureSymbology.m */,
 			);
 			name = Protocol;
 			sourceTree = "<group>";
@@ -505,6 +511,7 @@
 		39955E51178334C000D225D7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				396E1E9A189AD87000B735EF /* Sample Protocol.obsprot */,
 				396E1E8B18984EFF00B735EF /* Warnings.xcconfig */,
 				39C53E661885D96100C0CECE /* Images */,
 				39890DA21858C99E007B3F67 /* Images.xcassets */,
@@ -765,6 +772,7 @@
 				39C53E61187F411B00C0CECE /* AutoPanStateMachine.m in Sources */,
 				3989085D1857EDE1007B3F67 /* AGSPoint+AKRAdditions.m in Sources */,
 				394CC2531858F11800FA859C /* Observation.m in Sources */,
+				396E1E9D189ADE8F00B735EF /* ProtocolFeatureSymbology.m in Sources */,
 				39A836CB185FDAB8008BF4E3 /* AttributeViewController.m in Sources */,
 				398908511857ED00007B3F67 /* SurveySelectViewController.m in Sources */,
 				396E1E90189864AE00B735EF /* NSIndexPath+unsignedAccessors.m in Sources */,

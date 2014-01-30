@@ -14,21 +14,32 @@
 {
     if (self = [super init]) {
         if ([json isKindOfClass:[NSDictionary class]]) {
-            _json = [json copy];
+            [self defineReadonlyProperties:json];
         }
     }
     return self;
 }
 
-@synthesize allowedLocations = _allowedLocations;
-
-- (ProtocolFeatureAllowedLocations *)allowedLocations
+// lazy loading doesn't work well when some of the properties may have a valid zero value
+// so I just load it all up once when initialized
+- (void)defineReadonlyProperties:(NSDictionary *)json
 {
-    if (!_allowedLocations) {
-        _allowedLocations = [[ProtocolFeatureAllowedLocations alloc] initWithLocations:self.json[@"location"]];
+    _allowedLocations = [[ProtocolFeatureAllowedLocations alloc] initWithLocationsJSON:json[@"locations"]];
+    _symbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"symbology"]];
+    _attributes = [self buildAttributeArrayWithJSON:json[@"attributes"]];
+    id dialog = json[@"dialog"];
+    if ([dialog isKindOfClass:[NSDictionary class]]) {
+        _dialogJSON = (NSDictionary *)dialog;
     }
-    return _allowedLocations;
 }
 
+- (NSArray *)buildAttributeArrayWithJSON:(id)json
+{
+    if ([json isKindOfClass:[NSArray class]]) {
+        //FIXME: implement
+        return nil;
+    }
+    return nil;
+}
 
 @end

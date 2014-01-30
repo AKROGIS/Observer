@@ -20,20 +20,22 @@
 
 @implementation ProtocolFeatureAllowedLocations
 
-- (id)initWithLocations:(NSArray *)locations
+- (id)initWithLocationsJSON:(id)json
 {
     if (self = [super init]) {
-        _locations = locations;
-        [self defineReadonlyProperties];
+        if ([json isKindOfClass:[NSArray class]]) {
+            [self defineReadonlyProperties:(NSArray *)json];
+        }
     }
     return self;
 }
 
-//lazy loading properties doesn't work well when the properties may have a valid zero value
-- (void)defineReadonlyProperties
+// lazy loading doesn't work well when some of the properties may have a valid zero value
+// so I just load it all up once when initialized
+- (void)defineReadonlyProperties:(NSArray *)json
 {
     //gpsLocation
-    for (id item in self.locations) {
+    for (id item in json) {
         if ([self dictionary:item hasValues:@[@"gps", @"gpslocation", @"gps-location"] forKey:@"type"]) {
             _includesGps = YES;
             _gpsLocation = (NSDictionary *)item;
@@ -42,7 +44,7 @@
     }
     
     //angleDistanceLocation
-    for (id item in self.locations) {
+    for (id item in json) {
         if ([self dictionary:item hasValues:@[@"ad", @"angledistance", @"angle-distance"] forKey:@"type"]) {
             _includesAngleDistance = YES;
             _angleDistanceLocation = (NSDictionary *)item;
@@ -51,7 +53,7 @@
     }
     
     //adhocTouch
-    for (id item in self.locations) {
+    for (id item in json) {
         if ([self dictionary:item hasValues:@[@"touch", @"adhoctouch", @"adhoc-touch"] forKey:@"type"]) {
             _includesAdhocTouch = YES;
             _adhocTouch = (NSDictionary *)item;
@@ -60,7 +62,7 @@
     }
     
     //adhocTarget
-    for (id item in self.locations) {
+    for (id item in json) {
         if ([self dictionary:item hasValues:@[@"target", @"adhoctarget", @"adhoc-target"] forKey:@"type"]) {
             _includesAdhocTarget = YES;
             _adhocTarget = (NSDictionary *)item;

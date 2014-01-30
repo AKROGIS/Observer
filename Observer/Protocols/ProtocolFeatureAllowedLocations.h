@@ -9,13 +9,15 @@
 #import <Foundation/Foundation.h>
 #import "Enumerations.h"
 
+
+// This immutable class is a protocol support object and is only created by a protocol feature
+// It is highly dependent on the specification for a protocol document.
+// property values are undefined (but generally nil) if initialized with non-conformant json
 @interface ProtocolFeatureAllowedLocations : NSObject
 
-//locations is not copied, because it (and its contents are immuttable
-- (id)initWithLocations:(NSArray *)locations;
-- (id) init __attribute__((unavailable("Must use initWithLocations: instead.")));
-
-@property (strong, nonatomic, readonly) NSArray *locations;
+// If locations is not a NSArray, then all the properties will be nil
+- (id)initWithLocationsJSON:(id)json;
+- (id) init __attribute__((unavailable("Must use initWithLocationsJSON: instead.")));
 
 @property (nonatomic, readonly) BOOL includesGps;
 @property (nonatomic, readonly) BOOL includesAngleDistance;
