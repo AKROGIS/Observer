@@ -82,6 +82,7 @@
 @property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
 @property (strong, nonatomic) MapReference *currentMapEntity;
 @property (strong, nonatomic) Mission *mission;
+@property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
 
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
 @property (strong, nonatomic) AGSGraphicsLayer *observationsLayer;
@@ -172,15 +173,15 @@
 
         LocationAngleDistance *location;
         if (0 <= currentCourse) {
-            location = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocol:self.survey.protocol];
+            location = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocolFeature:self.currentProtocolFeature];
         }
         else {
             double currentHeading = self.locationManager.heading.trueHeading;
             if (0 <= currentHeading) {
-                location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocol:self.survey.protocol];
+                location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocolFeature:self.currentProtocolFeature];
             }
             else {
-                location = [[LocationAngleDistance alloc] initWithDeadAhead:0.0 protocol:self.survey.protocol];
+                location = [[LocationAngleDistance alloc] initWithDeadAhead:0.0 protocolFeature:self.currentProtocolFeature];
             }
         }
         vc.location = location;
@@ -1361,7 +1362,7 @@
     AGSPoint *point;
     if (observation.angleDistanceLocation) {
         LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:observation.angleDistanceLocation.direction
-                                                                                  protocol:self.survey.protocol
+                                                                           protocolFeature:self.currentProtocolFeature
                                                                              absoluteAngle:observation.angleDistanceLocation.angle
                                                                                   distance:observation.angleDistanceLocation.distance];
         //The point must be in a projected coordinate system to apply an angle and distance

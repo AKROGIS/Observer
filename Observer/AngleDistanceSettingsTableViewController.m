@@ -68,9 +68,9 @@
 
 #pragma mark - Public API
 
-- (void) setProtocol:(SProtocol *)protocol
+- (void) setFeature:(ProtocolFeature *)feature
 {
-    _protocol = protocol;
+    _feature = feature;
     [self settingsDidChange:nil];
 }
 
@@ -79,11 +79,11 @@
 
 - (void) settingsDidChange:(NSNotification *)notification
 {
-    if (self.protocol)
+    if (self.feature)
     {
-        [self selectSettingsWithDistanceUnits:self.protocol.distanceUnits
-                                angleBaseline:self.protocol.angleBaseline
-                               angleDirection:self.protocol.angleDirection];
+        [self selectSettingsWithDistanceUnits:self.feature.allowedLocations.distanceUnits
+                                angleBaseline:self.feature.allowedLocations.angleBaseline
+                               angleDirection:self.feature.allowedLocations.angleDirection];
     }
     else
     {
@@ -186,19 +186,19 @@
 
 - (void) updateAngleDirection: (AngleDirection)angleDirection
 {
-    if (!self.protocol)
+    if (!self.feature)
         [Settings manager].angleDistanceAngleDirection = angleDirection;
 }
 
 - (void) updateAngleBaseline:(double)baseline
 {
-    if (!self.protocol)
+    if (!self.feature)
         [Settings manager].angleDistanceDeadAhead = baseline;
 }
 
 - (void) updateDistanceUnits:(AGSSRUnit)units
 {
-    if (!self.protocol)
+    if (!self.feature)
         [Settings manager].distanceUnitsForSightings = units;
 }
 

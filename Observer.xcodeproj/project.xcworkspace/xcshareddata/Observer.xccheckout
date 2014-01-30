@@ -5,13 +5,11 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>75467652-08DF-4F20-A6CF-D134D7C3C46B</string>
+	<string>0CA5C832-7188-4152-B779-1D99DDEE700C</string>
 	<key>IDESourceControlProjectName</key>
 	<string>Observer</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>0DA7BF8F-7780-45F0-92C6-0867FC303F1C</key>
-		<string>ssh://github.com/escoz/QuickDialog.git</string>
 		<key>EB742802-8704-4F04-BBC5-8154983BBC2D</key>
 		<string>https://github.com/regan-sarwas/Observer.git</string>
 	</dict>
@@ -19,8 +17,6 @@
 	<string>Observer.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>0DA7BF8F-7780-45F0-92C6-0867FC303F1C</key>
-		<string>../../QuickDialog</string>
 		<key>EB742802-8704-4F04-BBC5-8154983BBC2D</key>
 		<string>../..</string>
 	</dict>
@@ -39,14 +35,6 @@
 			<string>EB742802-8704-4F04-BBC5-8154983BBC2D</string>
 			<key>IDESourceControlWCCName</key>
 			<string>Observer</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>0DA7BF8F-7780-45F0-92C6-0867FC303F1C</string>
-			<key>IDESourceControlWCCName</key>
-			<string>QuickDialog</string>
 		</dict>
 	</array>
 </dict>

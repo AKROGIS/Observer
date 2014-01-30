@@ -39,20 +39,20 @@
 
 #import <Foundation/Foundation.h>
 #import <ArcGIS/ArcGIS.h>
-#import "SProtocol.h"
+#import "ProtocolFeature.h"
 #import "Enumerations.h"
 
 @interface LocationAngleDistance : NSObject
 
 //designated initializer
-//This will initialize the readonly properties deadAhead, protocol, distanceMeters and absoluteAngles.
+//This will initialize the readonly properties deadAhead, protocol feature, distanceMeters and absoluteAngles.
 //values must be provided in the database neutral units and frame of reference specified below.
-- (id) initWithDeadAhead:(double)deadAhead protocol:(SProtocol *)protocol absoluteAngle:(double)angle distance:(double)distance;
+- (id) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature absoluteAngle:(double)angle distance:(double)distance;
 
 //convenience initializer with default values of -1 for angle and distance.
-- (id) initWithDeadAhead:(double)deadAhead protocol:(SProtocol *)protocol;
+- (id) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature;
 
-//convenience initializer with default values of 0 for deadAhead, nil for protocol and -1 for angle and distance.
+//convenience initializer with default values of 0 for deadAhead, nil for protocol feature and -1 for angle and distance.
 - (id) init;
 
 @property (strong,nonatomic) AGSPoint *gpsPoint;
@@ -61,8 +61,8 @@
 //default value = 0.0
 @property (nonatomic,readonly) double deadAhead;
 
-//the protocol may specify how angle/distance measurements are to be taken
-@property (nonatomic,strong,readonly) SProtocol *protocol;
+//the protocol feature may specify how angle/distance measurements are to be taken
+@property (nonatomic,strong,readonly) ProtocolFeature *feature;
 
 //the current angle provided by the user - a nullable double
 //in the reference frame provided by the protocol, or the NSUserDefaults
