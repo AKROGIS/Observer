@@ -33,7 +33,9 @@
     AGSSimpleMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbol];
     if ([color isKindOfClass:[NSString class]]) {
         UIColor *realColor = [self colorFromHexString:(NSString *)color];
-        symbol.color =  realColor;
+        if (realColor) {
+            symbol.color =  realColor;
+        }
     }
     if ([size isKindOfClass:[NSNumber class]]) {
         CGFloat realSize = [(NSNumber *)size floatValue];
@@ -45,10 +47,16 @@
 // Assumes input like "#00FF00" (#RRGGBB).
 - (UIColor *)colorFromHexString:(NSString *)hexString {
     unsigned rgbValue = 0;
+    if ([hexString characterAtIndex:0] != '#') {
+        return nil;
+    }
     NSScanner *scanner = [NSScanner scannerWithString:hexString];
     [scanner setScanLocation:1]; // bypass '#' character
-    [scanner scanHexInt:&rgbValue];
-    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0f green:((rgbValue & 0xFF00) >> 8)/255.0f blue:(rgbValue & 0xFF)/255.0f alpha:1.0f];
+    if ([scanner scanHexInt:&rgbValue]) {
+        return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0f green:((rgbValue & 0xFF00) >> 8)/255.0f blue:(rgbValue & 0xFF)/255.0f alpha:1.0f];
+    } else {
+        return nil;
+    }
 }
 
 @end
