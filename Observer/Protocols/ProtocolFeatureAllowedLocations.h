@@ -24,19 +24,19 @@
 @property (nonatomic, readonly) BOOL hasDefault;
 @property (nonatomic, readonly) BOOL multipleChoices;
 
-//Does the protocol define the units of measure for angle/distance observations
-@property (nonatomic, readonly) BOOL definesAngleDistanceMeasures;
-
 // Does the protocol require that all observations are angle distance
-@property (nonatomic, readonly) BOOL requireAngleDistance;
+@property (nonatomic, readonly) BOOL XXrequireAngleDistance;
 
 // The units of measure (meters, feet, etc) for distances to observed items
+@property (nonatomic, readonly) BOOL definesDistanceUnits;
 @property (nonatomic, readonly) AGSSRUnit distanceUnits;
 
 // The angle in degrees for dead ahead or true north
+@property (nonatomic, readonly) BOOL definesAngleBaseline;
 @property (nonatomic, readonly) double angleBaseline;
 
 // What is the direction of increasing angles (clockwise or counter-clockwise)
+@property (nonatomic, readonly) BOOL definesAngleDirection;
 @property (nonatomic, readonly) AngleDirection angleDirection;
 
 @end

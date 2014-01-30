@@ -47,9 +47,9 @@
 
 - (NSString *)basisDescription
 {
-    double referenceAngle = self.usesProtocol ? self.feature.allowedLocations.angleBaseline : [Settings manager].angleDistanceDeadAhead;
-    AGSSRUnit distanceUnits = self.usesProtocol ? self.feature.allowedLocations.distanceUnits : [Settings manager].distanceUnitsForSightings;
-    AngleDirection angleDirection = self.usesProtocol ? self.feature.allowedLocations.angleDirection : [Settings manager].angleDistanceAngleDirection;
+    double referenceAngle = self.feature.allowedLocations.definesAngleBaseline ? self.feature.allowedLocations.angleBaseline : [Settings manager].angleDistanceDeadAhead;
+    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesDistanceUnits ? self.feature.allowedLocations.distanceUnits : [Settings manager].distanceUnitsForSightings;
+    AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDirection ? self.feature.allowedLocations.angleDirection : [Settings manager].angleDistanceAngleDirection;
     
     NSString *description =
     [NSString stringWithFormat:@"Angle increases %@ with dead ahead equal to %u degrees. Distance is in %@.",
@@ -70,11 +70,6 @@
 - (double) distanceMeters
 {
     return [self doubleFromDistance:self.distance];
-}
-
-- (BOOL) usesProtocol
-{
-    return self.feature.allowedLocations.definesAngleDistanceMeasures;
 }
 
 - (BOOL) isValid
@@ -112,8 +107,8 @@
     if (angle < 0)
         return nil;
 
-    double referenceAngle = self.usesProtocol ? self.feature.allowedLocations.angleBaseline : [Settings manager].angleDistanceDeadAhead;
-    AngleDirection angleDirection = self.usesProtocol ? self.feature.allowedLocations.angleDirection : [Settings manager].angleDistanceAngleDirection;
+    double referenceAngle = self.feature.allowedLocations.definesAngleBaseline ? self.feature.allowedLocations.angleBaseline : [Settings manager].angleDistanceDeadAhead;
+    AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDirection ? self.feature.allowedLocations.angleDirection : [Settings manager].angleDistanceAngleDirection;
     double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
     double localAngle = referenceAngle + direction * (angle - self.deadAhead);
     return [NSNumber numberWithDouble:localAngle];
@@ -124,7 +119,7 @@
     if (distance <= 0)
         return nil;
 
-    AGSSRUnit distanceUnits = self.usesProtocol ? self.feature.allowedLocations.distanceUnits : [Settings manager].distanceUnitsForSightings;
+    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesDistanceUnits ? self.feature.allowedLocations.distanceUnits : [Settings manager].distanceUnitsForSightings;
     double localDistance = [self.srWithMeters convertValue:distance toUnit:distanceUnits];
     return [NSNumber numberWithDouble:localDistance];
 }
@@ -134,8 +129,8 @@
     if (!angle)
         return -1.0;
 
-    double referenceAngle = self.usesProtocol ? self.feature.allowedLocations.angleBaseline : [Settings manager].angleDistanceDeadAhead;
-    AngleDirection angleDirection = self.usesProtocol ? self.feature.allowedLocations.angleDirection : [Settings manager].angleDistanceAngleDirection;
+    double referenceAngle = self.feature.allowedLocations.definesAngleBaseline ? self.feature.allowedLocations.angleBaseline : [Settings manager].angleDistanceDeadAhead;
+    AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDirection ? self.feature.allowedLocations.angleDirection : [Settings manager].angleDistanceAngleDirection;
     double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
     double absoluteAngle = self.deadAhead + direction * ([angle doubleValue] - referenceAngle);
     if (absoluteAngle < 0)
@@ -150,7 +145,7 @@
     if (!distance || [distance doubleValue] <= 0)
         return -1.0;
     
-    AGSSRUnit distanceUnits = self.usesProtocol ? self.feature.allowedLocations.distanceUnits : [Settings manager].distanceUnitsForSightings;
+    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesDistanceUnits ? self.feature.allowedLocations.distanceUnits : [Settings manager].distanceUnitsForSightings;
     //Despite working in the debugger, the following fails with EXC_BAD_ACCESS in production.
     //return [self.srWithMeters convertValue:[distance doubleValue] fromUnit:distanceUnits];
     //My simple workaround
