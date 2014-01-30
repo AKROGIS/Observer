@@ -7,6 +7,7 @@
 //
 
 #import "ProtocolFeatureSymbology.h"
+#import <ArcGIS/ArcGIS.h>
 
 @implementation ProtocolFeatureSymbology
 
@@ -24,8 +25,30 @@
 // so I just load it all up once when initialized
 - (void)defineReadonlyProperties:(NSDictionary *)json
 {
-    //FIXME: implement
+    _agsSymbol = [self simpleMarkerSymbolFromColor:json[@"color"] Size:json[@"size"]];
 }
 
+- (AGSSimpleMarkerSymbol *)simpleMarkerSymbolFromColor:(id)color Size:(id)size
+{
+    AGSSimpleMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbol];
+    if ([color isKindOfClass:[NSString class]]) {
+        UIColor *realColor = [self colorFromHexString:(NSString *)color];
+        symbol.color =  realColor;
+    }
+    if ([size isKindOfClass:[NSNumber class]]) {
+        CGFloat realSize = [(NSNumber *)size floatValue];
+        symbol.size = CGSizeMake(realSize, realSize);
+    }
+    return symbol;
+}
+
+// Assumes input like "#00FF00" (#RRGGBB).
+- (UIColor *)colorFromHexString:(NSString *)hexString {
+    unsigned rgbValue = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:hexString];
+    [scanner setScanLocation:1]; // bypass '#' character
+    [scanner scanHexInt:&rgbValue];
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0f green:((rgbValue & 0xFF00) >> 8)/255.0f blue:(rgbValue & 0xFF)/255.0f alpha:1.0f];
+}
 
 @end
