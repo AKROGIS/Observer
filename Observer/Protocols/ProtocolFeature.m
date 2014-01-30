@@ -51,6 +51,7 @@
                 [attributeProperties addObject:attributeDescription];
                 id value = item[@"name"];
                 if ([value isKindOfClass:[NSString class]]) {
+                    //TODO: consider adding a generic 'obscuring' prefix to avoid reserved names
                     [attributeDescription setName:(NSString*)value];
                 }
                 value = item[@"type"];

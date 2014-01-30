@@ -29,49 +29,29 @@
     NSEntityDescription *entity = [[mom entitiesByName] valueForKey:kMissionPropertyEntityName];
     NSMutableArray *attributeProperties = [NSMutableArray arrayWithArray:entity.properties];
     [attributeProperties addObjectsFromArray:attributes];
+    [entity setProperties:attributeProperties];
     return mom;
 }
 
 + (NSManagedObjectModel *) mergeMom:(NSManagedObjectModel *)mom featureName:(NSString *)name attributes:(NSArray *)attributes
 {
-    NSEntityDescription *entity;
-    NSMutableArray *attributeProperties;
-    if ([name isEqualToString:kMissionPropertyEntityName] || [name isEqualToString:kObservationEntityName]) {
-        entity = [[mom entitiesByName] valueForKey:name];
-        attributeProperties = [NSMutableArray arrayWithArray:entity.properties];
-    } else {
-        NSEntityDescription *observation = [[mom entitiesByName] valueForKey:kObservationEntityName];
-        entity = [[NSEntityDescription alloc] init];
-        entity.name = name;
-        observation.subentities = [[observation subentities] arrayByAddingObject:entity];
-        mom.entities = [[mom entities] arrayByAddingObject:entity];
-        attributeProperties = [NSMutableArray new];
+    //TODO: test proper behavior when name exists
+    //bail if the name is taken
+    NSEntityDescription *testEntity = [[mom entitiesByName] valueForKey:name];
+    if (testEntity) {
+        return mom;
     }
-    for (id obj in attributes) {
-        if ([obj isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *attribute = (NSDictionary *)obj;
-            NSAttributeDescription *attributeDescription = [[NSAttributeDescription alloc] init];
-            [attributeProperties addObject:attributeDescription];
-            //TODO: Check that unexpected values in an attribute dictionary does not cause a failure
-            [attributeDescription setName:attribute[@"name"]];
-            [attributeDescription setAttributeType:[attribute[@"type"] unsignedIntegerValue]];
-            [attributeDescription setOptional:![attribute[@"required"] boolValue]];
-            [attributeDescription setDefaultValue:attribute[@"default"]];
-            NSArray *constraints = attribute[@"constraints"];
-            if (constraints)
-            {
-                NSMutableArray *predicates = [[NSMutableArray alloc] init];
-                NSMutableArray *warnings = [[NSMutableArray alloc] init];
-                for (NSDictionary *constraint in constraints) {
-                    [predicates addObject:[NSPredicate predicateWithFormat:constraint[@"predicate"]]];
-                    [warnings addObject:constraint[@"warning"]];
-                    [attributeDescription setValidationPredicates:predicates
-                                           withValidationWarnings:warnings];
-                }
-            }
-        }
-    }
-    [entity setProperties:attributeProperties];
+    //TODO: consider adding a generic 'obscuring' prefix to avoid reserved names
+    NSEntityDescription *observation = [[mom entitiesByName] valueForKey:kObservationEntityName];
+    NSEntityDescription *entity = [[NSEntityDescription alloc] init];
+    entity.name = name;
+    observation.subentities = [[observation subentities] arrayByAddingObject:entity];
+    mom.entities = [[mom entities] arrayByAddingObject:entity];
+//    // Do I need to copy the parent attributes when it is a sub entitity?  I don't think so
+//    NSMutableArray *attributeProperties = [NSMutableArray arrayWithArray:entity.properties];
+//    [attributeProperties addObjectsFromArray:attributes];
+//    [attributeProperties addObjectsFromArray:attributes];
+    [entity setProperties:attributes];
     return mom;
 }
 
