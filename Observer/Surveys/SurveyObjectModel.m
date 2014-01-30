@@ -16,15 +16,23 @@
     NSAssert(protocol,@"protocol must be non-null");
     NSManagedObjectModel *mom = [NSManagedObjectModel mergedModelFromBundles:nil];
     if (mom) {
-        NSArray *features = protocol.features;
-        for (NSDictionary *feature in features) {
-            mom = [self mergeMom:mom entityName:feature[@"name"] attributes:feature[@"attributes"]];
+        mom = [self mergeMom:mom missionAttributes:protocol.missionFeature.attributes];
+        for (ProtocolFeature *feature in protocol.features) {
+            mom = [self mergeMom:mom featureName:feature.name attributes:feature.attributes];
         }
     }
     return mom;
 }
 
-+ (NSManagedObjectModel *) mergeMom:(NSManagedObjectModel *)mom entityName:(NSString *)name attributes:(NSArray *)attributes
++ (NSManagedObjectModel *) mergeMom:(NSManagedObjectModel *)mom missionAttributes:(NSArray *)attributes
+{
+    NSEntityDescription *entity = [[mom entitiesByName] valueForKey:kMissionPropertyEntityName];
+    NSMutableArray *attributeProperties = [NSMutableArray arrayWithArray:entity.properties];
+    [attributeProperties addObjectsFromArray:attributes];
+    return mom;
+}
+
++ (NSManagedObjectModel *) mergeMom:(NSManagedObjectModel *)mom featureName:(NSString *)name attributes:(NSArray *)attributes
 {
     NSEntityDescription *entity;
     NSMutableArray *attributeProperties;

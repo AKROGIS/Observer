@@ -319,7 +319,7 @@
         return;
     }
     //create VC from QDialog json in protocol, add newController to popover, display popover
-    NSDictionary *dialog = self.survey.protocol.dialogs[kMissionPropertyEntityName];
+    NSDictionary *dialog = self.survey.protocol.missionFeature.dialogJSON;
     QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
     QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
     //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
@@ -808,18 +808,17 @@
 
     self.panButton.enabled = self.mapView.loaded;
 
-    NSDictionary *dialogs = self.survey.protocol.dialogs;
     self.startStopRecordingBarButtonItem.enabled = self.survey != nil;
     self.startStopObservingBarButtonItem.enabled = self.isRecording && self.survey;
     //TODO: if there are no mission properties, we should remove this button.
-    self.editEnvironmentBarButton.enabled = self.isRecording && self.survey && dialogs[kMissionPropertyEntityName] != nil;
+    self.editEnvironmentBarButton.enabled = self.isRecording && self.survey && self.survey.protocol.missionFeature.attributes.count > 0;
     //TODO: support more than just one feature called "Observations"
     //TODO:can we support adding observations that have no attributes (no dialog)
-    self.addObservationBarButton.enabled = self.isObserving && self.survey && dialogs[kObservationEntityName] != nil;
-    self.addGpsObservationBarButton.enabled = self.isObserving && self.survey && dialogs[kObservationEntityName] != nil;
+    self.addObservationBarButton.enabled = self.isObserving && self.survey && self.survey.protocol.features.count > 0;
+    self.addGpsObservationBarButton.enabled = self.isObserving && self.survey &&self.survey.protocol.features.count > 0;
     //TODO: if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
     //TODO: availability of the Angle Distance button is dependent on protocol
-    self.addAdObservationBarButton.enabled = self.isObserving && self.maps.selectedLocalMap && self.survey && dialogs[kObservationEntityName] != nil;
+    self.addAdObservationBarButton.enabled = self.isObserving && self.maps.selectedLocalMap && self.survey && self.survey.protocol.features.count > 0;
 }
 
 - (void)incrementBusy
@@ -1397,7 +1396,7 @@
 - (void)setAttributesForObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
 {
     //TODO: support more than just one feature called Observations
-    NSDictionary *config = self.survey.protocol.dialogs[kObservationEntityName];
+    NSDictionary *config = self.survey.protocol.missionFeature.dialogJSON;
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = observation;
@@ -1468,7 +1467,7 @@
     if (self.modalAttributeCollector) {
         return;
     }
-    NSDictionary *config = self.survey.protocol.dialogs[kMissionPropertyEntityName];
+    NSDictionary *config = self.survey.protocol.missionFeature.dialogJSON;
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = missionProperty;

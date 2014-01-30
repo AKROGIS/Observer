@@ -22,6 +22,7 @@
 @interface SProtocol() {
     NSString *_title;  //properties from an implemented cannot be synthesized
 }
+@property (nonatomic, strong, readonly) NSDictionary *values;
 @property (nonatomic) BOOL downloading;
 @end
 
@@ -121,6 +122,8 @@
                 _title = ([title isKindOfClass:[NSString class]] ? title : nil);
                 _version = ([version isKindOfClass:[NSNumber class]] ? version : nil);
                 _date = [AKRFormatter dateFromISOString:([date isKindOfClass:[NSString class]] ? date : nil)];
+                _missionFeature = [[ProtocolFeature alloc] initWithJSON:_values[@"mission"]];
+                _features = [self buildFeaturelist:_values[@"features"]];
             }
         }
     }
@@ -130,6 +133,12 @@
 - (BOOL)isLocal
 {
     return self.url.isFileURL;
+}
+
+- (BOOL)isValid
+{
+    //FIXME: currently only tests if protocol has values
+    return self.title != nil;
 }
 
 // I do not override isEqual to use this method, because title,version and date could change
@@ -153,7 +162,6 @@
 {
     return self.downloading;
 }
-
 
 - (BOOL)downloadToURL:(NSURL *)url
 {
@@ -208,33 +216,47 @@
 
 #pragma mark - convenience methods for protocol values
 
-- (NSArray *)features
+- (NSArray *)buildFeaturelist:(id)json
 {
-    NSMutableArray *results = [NSMutableArray new];
-    id jsonObj = self.values[@"features"];
-    if ([jsonObj isKindOfClass:[NSArray class]]) {
-        NSArray *entities = (NSArray *)jsonObj;
-        for (id jsonEntity in entities) {
-            if ([jsonEntity isKindOfClass:[NSDictionary class]]) {
-                NSDictionary *entity = (NSDictionary *)jsonEntity;
-                if ([entity[@"name"] isKindOfClass:[NSString class]] &&
-                    [entity[@"attributes"] isKindOfClass:[NSArray class]]) {
-                    [results addObject:entity];
-                }
+    NSMutableArray *features = [[NSMutableArray alloc] init];
+    if ([json isKindOfClass:[NSArray class]]) {
+        for (id item in json) {
+            ProtocolFeature *feature = [[ProtocolFeature alloc] initWithJSON:item];
+            if (feature) {
+                [features addObject:feature];
             }
         }
     }
-    return results;
+    return [features copy];
 }
 
-- (NSDictionary *)dialogs
-{
-    id jsonObj = self.values[@"dialogs"];
-    if ([jsonObj isKindOfClass:[NSDictionary class]]) {
-        return jsonObj;
-    }
-    return nil;
-}
+//- (NSArray *)features
+//{
+//    NSMutableArray *results = [NSMutableArray new];
+//    id jsonObj = self.values[@"features"];
+//    if ([jsonObj isKindOfClass:[NSArray class]]) {
+//        NSArray *entities = (NSArray *)jsonObj;
+//        for (id jsonEntity in entities) {
+//            if ([jsonEntity isKindOfClass:[NSDictionary class]]) {
+//                NSDictionary *entity = (NSDictionary *)jsonEntity;
+//                if ([entity[@"name"] isKindOfClass:[NSString class]] &&
+//                    [entity[@"attributes"] isKindOfClass:[NSArray class]]) {
+//                    [results addObject:entity];
+//                }
+//            }
+//        }
+//    }
+//    return results;
+//}
+//
+//- (NSDictionary *)dialogs
+//{
+//    id jsonObj = self.values[@"missionProperty"];
+//    if ([jsonObj isKindOfClass:[NSDictionary class]]) {
+//        return jsonObj;
+//    }
+//    return nil;
+//}
 
 
 -(NSString *)description

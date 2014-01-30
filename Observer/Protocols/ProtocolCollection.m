@@ -367,7 +367,7 @@ static ProtocolCollection *_sharedCollection = nil;
         return nil;
     }
     SProtocol *protocol = [[SProtocol alloc] initWithURL:newUrl];
-    if (!protocol.values) {
+    if (!protocol.isValid) {
         AKRLog(@"data in %@ was not a valid protocol object",url.lastPathComponent);
         [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
@@ -480,7 +480,7 @@ static ProtocolCollection *_sharedCollection = nil;
     NSMutableArray *protocolsToAdd = [NSMutableArray new];
     for (NSURL *url in urls) {
         SProtocol *protocol = [[SProtocol alloc] initWithURL:url];
-        if (!protocol.values) {
+        if (!protocol.isValid) {
             AKRLog(@"data at %@ was not a valid protocol object",url);
             [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         }

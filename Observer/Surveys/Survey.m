@@ -66,7 +66,7 @@
 - (id)initWithProtocol:(SProtocol *)protocol
 {
     //verify the input - reading protocol values may cause protocol to load from filesystem
-    if (!protocol.values) {
+    if (!protocol.isValid) {
         return nil;
     }
     //find a suitable URL (reads filesystem)
@@ -290,7 +290,7 @@
 {
     self.protocolIsLoaded = YES;
     _protocol = [[SProtocol alloc] initWithURL:self.protocolUrl];
-    if (!_protocol.values) {
+    if (!_protocol.isValid) {
         self.state = kCorrupt;
         _protocol = nil;
         return NO;

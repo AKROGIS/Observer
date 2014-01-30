@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AKRTableViewItem.h"
+#import "ProtocolFeature.h"
 
 @interface SProtocol : NSObject <NSCoding, AKRTableViewItem>
 
@@ -17,19 +18,16 @@
 @property (nonatomic, strong, readonly) NSDate *date;
 @property (nonatomic, strong, readonly) NSString *dateString;
 @property (nonatomic, strong, readonly) NSString *details;
-
-//@property (nonatomic, strong, readonly) NSString *date;
-@property (nonatomic, strong, readonly) NSDictionary *values;
-
-// features is guaranteed to contain 0 or more NSDictionary with at least the following
-// key:@"name" value:NSString
-// key:@"attributes" value:NSArray (types in array are not guaranteed)
 @property (nonatomic, strong, readonly) NSArray *features;  // of ProtocolFeatures
-
-@property (nonatomic, strong, readonly) NSDictionary *dialogs;
+@property (nonatomic, strong, readonly) ProtocolFeature *missionFeature;
+@property (nonatomic,         readonly) BOOL allowsAdhocTouchLocations;
 
 //YES if the protocol is available locally, NO otherwise;
 - (BOOL)isLocal;
+
+//YES if the protocol is valid
+// currently defined by being able to load the data at url, and find at least one valid property
+- (BOOL)isValid;
 
 //YES if two protocols are the same (same title, version and date)
 //    do not compare urls, because the same protocol will have either a local, or a server url
@@ -46,7 +44,5 @@
 - (BOOL)downloadToURL:(NSURL *)url;
 - (BOOL)saveCopyToURL:(NSURL *)url;
 
-
-@property (nonatomic, readonly) BOOL allowsAdhocTouchLocations;
 
 @end
