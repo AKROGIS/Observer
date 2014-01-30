@@ -24,9 +24,6 @@
 @property (nonatomic, readonly) BOOL hasDefault;
 @property (nonatomic, readonly) BOOL multipleChoices;
 
-// Does the protocol require that all observations are angle distance
-@property (nonatomic, readonly) BOOL XXrequireAngleDistance;
-
 // The units of measure (meters, feet, etc) for distances to observed items
 @property (nonatomic, readonly) BOOL definesDistanceUnits;
 @property (nonatomic, readonly) AGSSRUnit distanceUnits;

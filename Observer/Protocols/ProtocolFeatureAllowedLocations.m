@@ -14,6 +14,7 @@
 @property (strong, nonatomic, readonly) NSDictionary *adhocTouch;
 @property (strong, nonatomic, readonly) NSDictionary *adhocTarget;
 @property (strong, nonatomic, readonly) NSDictionary *gpsLocation;
+@property (strong, nonatomic, readonly) NSDictionary *defaultLocation;
 
 @end
 
@@ -23,13 +24,13 @@
 {
     if (self = [super init]) {
         _locations = locations;
-        [self loadLocationsProperties];
+        [self defineReadonlyProperties];
     }
     return self;
 }
 
 //lazy loading properties doesn't work well when the properties may have a valid zero value
-- (void)loadLocationsProperties
+- (void)defineReadonlyProperties
 {
     //gpsLocation
     for (id item in self.locations) {
@@ -68,36 +69,58 @@
     }
     
     //distanceUnits
-    NSString *key = [self keyForDictionary:self.angleDistanceLocation possibleKeys:@[@"units", @"distanceunits", @"distance-units"]];
+    NSString *key = [self keyForDictionary:_angleDistanceLocation possibleKeys:@[@"units", @"distanceunits", @"distance-units"]];
     if (key) {
-        id value = self.angleDistanceLocation[key];
+        id value = _angleDistanceLocation[key];
         if ([value isKindOfClass:[NSNumber class]]) {
             _definesDistanceUnits = YES;
             _distanceUnits = [(NSNumber *)value unsignedIntegerValue];
         }
     }
     //angleBaseline
-    key = [self keyForDictionary:self.angleDistanceLocation possibleKeys:@[@"baseline", @"anglebaseline", @"angle-baseline", @"baselineangle", @"baseline-angle"]];
+    key = [self keyForDictionary:_angleDistanceLocation possibleKeys:@[@"baseline", @"anglebaseline", @"angle-baseline", @"baselineangle", @"baseline-angle"]];
     if (key) {
-        id value = self.angleDistanceLocation[key];
+        id value = _angleDistanceLocation[key];
         if ([value isKindOfClass:[NSNumber class]]) {
             _definesAngleBaseline = YES;
             _angleBaseline = [(NSNumber *)value  doubleValue];
         }
     }
     //angleDirection
-    key = [self keyForDictionary:self.angleDistanceLocation possibleKeys:@[@"direction", @"angledirection", @"angle-direction"]];
+    key = [self keyForDictionary:_angleDistanceLocation possibleKeys:@[@"direction", @"angledirection", @"angle-direction"]];
     if (key) {
-        if ([self dictionary:self.angleDistanceLocation hasValues:@[@"cw", @"clockwise"] forKey:key]) {
+        if ([self dictionary:_angleDistanceLocation hasValues:@[@"cw", @"clockwise"] forKey:key]) {
             _definesAngleDirection = YES;
             _angleDirection = AngleDirectionClockwise;
         } else {
-            if ([self dictionary:self.angleDistanceLocation hasValues:@[@"ccw", @"counterclockwise", @"counter-clockwise"] forKey:key]) {
+            if ([self dictionary:_angleDistanceLocation hasValues:@[@"ccw", @"counterclockwise", @"counter-clockwise"] forKey:key]) {
                 _definesAngleDirection = YES;
                 _angleDirection = AngleDirectionCounterClockwise;
             }
         }
     }
+    
+    //multipleChoices
+    int counter = 0;
+    if (_includesGps) counter++;
+    if (_includesAngleDistance) counter++;
+    if (_includesAdhocTouch) counter++;
+    if (_includesAdhocTarget) counter++;
+    _multipleChoices =  (counter > 1);
+    //TODO: define behavior for no choices
+    
+    //hasDefault
+    //TODO: define behavior for multiple defaults
+    for (NSDictionary *dict in @[_gpsLocation, _angleDistanceLocation, _adhocTouch, _adhocTarget]) {
+        id value = dict[@"default"];
+        if ([value isKindOfClass:[NSNumber class]]) {
+            if ([(NSNumber *)value boolValue]) {
+                _defaultLocation = dict;
+                break;
+            }
+        }
+    }
+    _hasDefault = _defaultLocation != nil;
 }
 
 

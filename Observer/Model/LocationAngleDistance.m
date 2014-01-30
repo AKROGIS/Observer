@@ -72,6 +72,13 @@
     return [self doubleFromDistance:self.distance];
 }
 
+- (BOOL) usesProtocol
+{
+    return self.feature.allowedLocations.definesAngleBaseline ||
+           self.feature.allowedLocations.definesDistanceUnits ||
+           self.feature.allowedLocations.definesAngleDirection;
+}
+
 - (BOOL) isValid
 {
     return 0 <= self.deadAhead;
