@@ -24,6 +24,10 @@
 // so I just load it all up once when initialized
 - (void)defineReadonlyProperties:(NSDictionary *)json
 {
+    id name = json[@"name"];
+    if ([name isKindOfClass:[NSString class]]) {
+        _name = (NSString *)name;
+    }
     _allowedLocations = [[ProtocolFeatureAllowedLocations alloc] initWithLocationsJSON:json[@"locations"]];
     _symbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"symbology"]];
     _attributes = [self buildAttributeArrayWithJSON:json[@"attributes"]];

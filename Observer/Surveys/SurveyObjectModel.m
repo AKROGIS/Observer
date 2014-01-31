@@ -13,7 +13,7 @@
 
 + (NSManagedObjectModel *)objectModelWithProtocol:(SProtocol *)protocol
 {
-    NSAssert(protocol,@"protocol must be non-null");
+    NSAssert(protocol.isValid,@"protocol is not valid");
     NSManagedObjectModel *mom = [NSManagedObjectModel mergedModelFromBundles:nil];
     if (mom) {
         mom = [self mergeMom:mom missionAttributes:protocol.missionFeature.attributes];

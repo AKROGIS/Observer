@@ -138,7 +138,8 @@
 - (BOOL)isValid
 {
     //FIXME: currently only tests if protocol has values
-    return self.title != nil;
+    //return self.values && self.features.count;  // we might want to only collect tracks or observations with no attributes
+    return self.values && self.title;
 }
 
 // I do not override isEqual to use this method, because title,version and date could change
