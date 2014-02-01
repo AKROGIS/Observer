@@ -9,6 +9,7 @@
 #import "SProtocol.h"
 #import "AKRFormatter.h"
 #import "NSDate+Formatting.h"
+#import "NSArray+map.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -124,6 +125,7 @@
                 _date = [AKRFormatter dateFromISOString:([date isKindOfClass:[NSString class]] ? date : nil)];
                 _missionFeature = [[ProtocolFeature alloc] initWithJSON:_values[@"mission"]];
                 _features = [self buildFeaturelist:_values[@"features"]];
+                _featuresWithLocateByTouch = [self buildFeaturesWithLocateByTouch:_features];
             }
         }
     }
@@ -231,34 +233,17 @@
     return [features copy];
 }
 
-//- (NSArray *)features
-//{
-//    NSMutableArray *results = [NSMutableArray new];
-//    id jsonObj = self.values[@"features"];
-//    if ([jsonObj isKindOfClass:[NSArray class]]) {
-//        NSArray *entities = (NSArray *)jsonObj;
-//        for (id jsonEntity in entities) {
-//            if ([jsonEntity isKindOfClass:[NSDictionary class]]) {
-//                NSDictionary *entity = (NSDictionary *)jsonEntity;
-//                if ([entity[@"name"] isKindOfClass:[NSString class]] &&
-//                    [entity[@"attributes"] isKindOfClass:[NSArray class]]) {
-//                    [results addObject:entity];
-//                }
-//            }
-//        }
-//    }
-//    return results;
-//}
-//
-//- (NSDictionary *)dialogs
-//{
-//    id jsonObj = self.values[@"missionProperty"];
-//    if ([jsonObj isKindOfClass:[NSDictionary class]]) {
-//        return jsonObj;
-//    }
-//    return nil;
-//}
-
+- (NSArray *)buildFeaturesWithLocateByTouch:(NSArray *)features
+{
+    NSMutableArray *newArray = [[NSMutableArray alloc] init];
+    for (ProtocolFeature *feature in features) {
+        if (feature.allowedLocations.includesAdhocTouch) {
+            [newArray addObject:feature];
+            break;
+        }
+    }
+    return [newArray copy];
+}
 
 -(NSString *)description
 {

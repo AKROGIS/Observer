@@ -19,6 +19,7 @@
 @property (nonatomic, strong, readonly) NSString *dateString;
 @property (nonatomic, strong, readonly) NSString *details;
 @property (nonatomic, strong, readonly) NSArray *features;  // of ProtocolFeatures
+@property (nonatomic, strong, readonly) NSArray *featuresWithLocateByTouch;  // of ProtocolFeatures
 @property (nonatomic, strong, readonly) ProtocolFeature *missionFeature;
 @property (nonatomic,         readonly) BOOL allowsAdhocTouchLocations;
 

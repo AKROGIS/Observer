@@ -525,36 +525,87 @@
 - (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
 {
     //Tells the delegate the map was single-tapped at specified location.
-    //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
+    //features: id<AGSFeature> objects from all hit-testable layers in the map that intersect or contain the location.
+    //The dictionary contains layer name (key) : Array of id<AGSFeature> (value)
+
     AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mappoint, features);
-    if ([features count]) {
-        [features enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            NSString *layerName = (NSString *)key;
-            NSArray *graphics = (NSArray *)obj;
-            AKRLog(@"Found %u features in %@",[graphics count], layerName);
-            for (AGSGraphic *graphic in graphics) {
-                NSDate *timestamp = [graphic attributeAsDateForKey:@"timestamp"];
-                if ([key isEqualToString:kMissionPropertiesLayer]) {
-                    MissionProperty *mp = [self missionPropertyAtTimestamp:timestamp];
-                    AKRLog(@"Mission Property %@",mp);
-                } else {
-                    Observation *obs = [self observationAtTimestamp:timestamp];
-                    AKRLog(@"Observation %@",obs);
+
+    switch (features.count) {
+        case 0:
+            if (self.isObserving) {
+                switch (self.survey.protocol.featuresWithLocateByTouch.count) {
+                    case 0:
+                        break;
+                    case 1:
+                        [self addFeature:self.survey.protocol.featuresWithLocateByTouch[0] atMapPoint:mappoint];
+                        break;
+                    default:
+                        [self presentProtocolFeatureSelector:self.survey.protocol.featuresWithLocateByTouch];
+                        break;
                 }
             }
-        }];
-    } else {
-        if (self.isObserving && self.survey.protocol.allowsAdhocTouchLocations) {
-
-            //create new ad-hoc observation at touch point
-            Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
-            [self drawObservation:observation atPoint:mappoint];
-            [self setAttributesForObservation:observation atPoint:mappoint];
+            break;
+        case 1: {
+            NSString *layerName = (NSString *)[features.keyEnumerator nextObject];
+            [self presentFeature:features[layerName] fromLayer:layerName];
+            break;
         }
+        default:
+            [self presentAGSFeatureSelector:features];
+            break;
     }
 }
 
--(void)mapView:(AGSMapView *)mapView didTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
+- (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mappoint
+{
+    //FIXME: use feature parameter to create the correct type of feature
+    Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
+    [self drawObservation:observation atPoint:mappoint];
+    [self setAttributesForObservation:observation atPoint:mappoint];
+
+}
+
+- (void)presentFeature:(id<AGSFeature>)feature fromLayer:(NSString *)layerName
+{
+    //FIXME: implement
+    //present a details view,
+    //if feature is editable, allow editing
+    //if feature is deletable, provide a delete button.
+}
+
+- (void)presentProtocolFeatureSelector:(NSArray *)features
+{
+    //FIXME: implement
+    //present popover with table view controller (layernames = sections, features = rows),
+    //send selected feature to
+    //[self presentFeature:feature[layerName] fromLayer:layerName];
+}
+
+- (void)presentAGSFeatureSelector:(NSDictionary *)features
+{
+    //FIXME: implement
+    //present popover with table view controller (layernames = sections, features = rows),
+    //send selected feature to
+    //[self presentFeature:feature[layerName] fromLayer:layerName];
+        
+    [features enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSString *layerName = (NSString *)key;
+        NSArray *graphics = (NSArray *)obj;
+        AKRLog(@"Found %u features in %@",[graphics count], layerName);
+        for (AGSGraphic *graphic in graphics) {
+            NSDate *timestamp = [graphic attributeAsDateForKey:@"timestamp"];
+            if ([key isEqualToString:kMissionPropertiesLayer]) {
+                MissionProperty *mp = [self missionPropertyAtTimestamp:timestamp];
+                AKRLog(@"Mission Property %@",mp);
+            } else {
+                Observation *obs = [self observationAtTimestamp:timestamp];
+                AKRLog(@"Observation %@",obs);
+            }
+        }
+    }];
+}
+
+- (void)mapView:(AGSMapView *)mapView didTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
 {
     //Tells the delegate that a point on the map was tapped and held at specified location.
     //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
@@ -570,7 +621,7 @@
     }
 }
 
--(void)mapView:(AGSMapView *)mapView didMoveTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
+- (void)mapView:(AGSMapView *)mapView didMoveTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
 {
     //Tells the delegate that the user moved his finger while tapping and holding on the map.
     //Sent continuously to allow tracking of the movement
