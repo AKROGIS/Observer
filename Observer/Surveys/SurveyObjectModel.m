@@ -37,14 +37,14 @@
 {
     //TODO: test proper behavior when name exists
     //bail if the name is taken
-    NSEntityDescription *testEntity = [[mom entitiesByName] valueForKey:name];
+    NSString *entityName = [NSString stringWithFormat:@"%@_%@",kObservationPrefix,name];
+    NSEntityDescription *testEntity = [[mom entitiesByName] valueForKey:entityName];
     if (testEntity) {
         return mom;
     }
-    //TODO: consider adding a generic 'obscuring' prefix to avoid reserved names
     NSEntityDescription *observation = [[mom entitiesByName] valueForKey:kObservationEntityName];
     NSEntityDescription *entity = [[NSEntityDescription alloc] init];
-    entity.name = name;
+    entity.name = entityName;
     observation.subentities = [[observation subentities] arrayByAddingObject:entity];
     mom.entities = [[mom entities] arrayByAddingObject:entity];
 //    // Do I need to copy the parent attributes when it is a sub entitity?  I don't think so

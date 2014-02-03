@@ -193,7 +193,7 @@
         }
         vc.completionBlock = ^(AngleDistanceViewController *controller) {
             self.angleDistancePopoverController = nil;
-            Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
+            Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
             [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
             [self setAttributesForObservation:observation atPoint:mapPoint];
         };
@@ -332,7 +332,7 @@
 - (IBAction)addGpsObservation:(UIBarButtonItem *)sender
 {
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    Observation *observation = [self createObservationAtGpsPoint:gpsPoint];
+    Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self drawObservation:observation atPoint:mapPoint];
     [self setAttributesForObservation:observation atPoint:mapPoint];
@@ -349,7 +349,7 @@
     //ignore the gpsPoint if it is over a second old
     if ([gpsPoint.timestamp timeIntervalSinceNow] < -2.0)
         gpsPoint = nil;
-    Observation *observation = [self createObservationAtGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
+    Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
     [self setAttributesForObservation:observation atPoint:self.mapView.mapAnchor];
 }
@@ -559,7 +559,7 @@
 - (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mappoint
 {
     //FIXME: use feature parameter to create the correct type of feature
-    Observation *observation = [self createObservationAtGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
+    Observation *observation = [self createObservation:feature atGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
     [self drawObservation:observation atPoint:mappoint];
     [self setAttributesForObservation:observation atPoint:mappoint];
 
@@ -1331,7 +1331,7 @@
 
 #pragma mark - Private Methods - support for data model - observations
 
-- (Observation *)createObservation
+- (Observation *)createObservation:(ProtocolFeature *)feature
 {
     if (!self.context) {
         AKRLog(@"Can't create Observation, there is no data context (file)");
@@ -1339,32 +1339,33 @@
     }
     AKRLog(@"Creating Observation managed object");
     //FIXME: support more than one type of observation
-    Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:kObservationEntityName
+    NSString *entityName = [NSString stringWithFormat:@"%@_%@",kObservationPrefix,feature.name];
+    Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:entityName
                                                              inManagedObjectContext:self.context];
     observation.mission = self.mission;
     //We don't have any attributes yet, that will get created/added later depending on the protocol
     return observation;
 }
 
-- (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint
+- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint
 {
     if (!gpsPoint) {
         AKRLog(@"Can't save Observation at GPS point without a GPS Point");
         return nil;
     }
     AKRLog(@"Creating Observation at GPS point");
-    Observation *observation = [self createObservation];
+    Observation *observation = [self createObservation:feature];
     observation.gpsPoint = gpsPoint;
     return observation;
 }
 
-- (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint withAdhocLocation:(AGSPoint *)mapPoint
+- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint withAdhocLocation:(AGSPoint *)mapPoint
 {
     if (!mapPoint) {
         AKRLog(@"Can't save Observation at Adhoc Location without a Map Point");
         return nil;
     }
-    Observation *observation = [self createObservation];
+    Observation *observation = [self createObservation:feature];
     if (!observation) {
         return nil;
     }
@@ -1385,13 +1386,13 @@
     return observation;
 }
 
-- (Observation *)createObservationAtGpsPoint:(GpsPoint *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)location
+- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)location
 {
     if (!gpsPoint) {
         AKRLog(@"Can't save Observation at Angle/Distance without a GPS Point");
         return nil;
     }
-    Observation *observation = [self createObservationAtGpsPoint:gpsPoint];
+    Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
     if (!observation) {
         return nil;
     }

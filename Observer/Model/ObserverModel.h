@@ -21,6 +21,8 @@
 #import "MapReference.h"
 #import "Settings.h"
 
+
+#define kObservationPrefix               @"Obs"
 #define kObservationEntityName           @"Observation"
 #define kMissionEntityName               @"Mission"
 #define kMissionPropertyEntityName       @"MissionProperty"
