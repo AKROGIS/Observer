@@ -1197,14 +1197,14 @@
     //Get adhoc observations (gpsPoint is null and adhocLocation is non nil
     //TODO: support more than one Observation feature
     AKRLog(@"  Fetching adhoc observations");
-    request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
-    request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint == NIL AND adhocLocation != NIL"];
+    request = [NSFetchRequest fetchRequestWithEntityName:kAdhocLocationEntityName];
+    //request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint == NIL AND adhocLocation != NIL"];
     results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
         AKRLog(@"Error Fetching Observations %@",error);
     AKRLog(@"  Drawing %d adhoc observations", results.count);
-    for (Observation *observation in results) {
-        [self loadObservation:observation];
+    for (AdhocLocation *adhocLocation in results) {
+        [self loadObservation:adhocLocation.observation];
     }
     AKRLog(@"  Done loading graphics");
 }
@@ -1429,6 +1429,7 @@
     [self drawObservation:observation atPoint:point];
 }
 
+//FIXME: need to get the featureType to know how to draw the feature.
 - (void)drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
 {
     if (!observation || !mapPoint) {
@@ -1436,29 +1437,20 @@
         return;
     }
     NSDictionary *attribs;
+    NSDate *timestamp = nil;
     if (observation.gpsPoint) {
-        attribs = @{@"timestamp":observation.gpsPoint.timestamp};
+        timestamp = observation.gpsPoint.timestamp;
     } else {
-        attribs = @{@"timestamp":observation.adhocLocation.timestamp};
+        timestamp = observation.adhocLocation.timestamp;
+    }
+    if (timestamp) {
+        attribs = @{@"timestamp":timestamp};
+    } else {
+        attribs = @{@"timestamp":[NSNull null]};
     }
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     [self.observationsLayer addGraphic:graphic];
 }
-
-//- (void)setAttributesForObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
-//{
-//    //TODO: support more than just one feature called Observations
-//    NSDictionary *config = self.survey.protocol.missionFeature.dialogJSON;
-//    QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
-//    AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
-//    dialog.managedObject = observation;
-//    self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
-//    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
-//    dialog.toolbarItems = @[doneButton];
-//    self.modalAttributeCollector.toolbarHidden = NO;
-//    self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
-//    [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
-//}
 
 
 
@@ -1513,23 +1505,6 @@
 //    NSDate *t2 = [graphic attributeAsDateForKey:@"timestamp"];
 //    AKRLog(@"dict-graphic: DateIn: %@ (%f) dateOut: %@ (%f) equal:%u",t1,[t1 timeIntervalSince1970],t2, [t2 timeIntervalSince1970], [t1 isEqualToDate:t2]);
 }
-
-//- (void)setAttributesForMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
-//{
-//    if (self.modalAttributeCollector) {
-//        return;
-//    }
-//    NSDictionary *config = self.survey.protocol.missionFeature.dialogJSON;
-//    QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
-//    AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
-//    dialog.managedObject = missionProperty;
-//    self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
-//    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
-//    dialog.toolbarItems = @[doneButton];
-//    self.modalAttributeCollector.toolbarHidden = NO;
-//    self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
-//    [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
-//}
 
 
 
