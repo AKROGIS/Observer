@@ -44,19 +44,19 @@
         <relationship name="gpsPoint" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GpsPoint" inverseName="missionProperty" inverseEntity="GpsPoint" syncable="YES"/>
         <relationship name="mission" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Mission" inverseName="missionProperties" inverseEntity="Mission" syncable="YES"/>
     </entity>
-    <entity name="Observation" representedClassName="Observation" syncable="YES">
+    <entity name="Observation" representedClassName="" syncable="YES">
         <relationship name="adhocLocation" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AdhocLocation" inverseName="observation" inverseEntity="AdhocLocation" syncable="YES"/>
         <relationship name="angleDistanceLocation" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AngleDistanceLocation" inverseName="observation" inverseEntity="AngleDistanceLocation" syncable="YES"/>
         <relationship name="gpsPoint" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GpsPoint" inverseName="observation" inverseEntity="GpsPoint" syncable="YES"/>
         <relationship name="mission" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Mission" inverseName="observations" inverseEntity="Mission" syncable="YES"/>
     </entity>
     <elements>
-        <element name="AdhocLocation" positionX="70" positionY="-97" width="128" height="133"/>
-        <element name="AngleDistanceLocation" positionX="81" positionY="104" width="144" height="103"/>
+        <element name="AdhocLocation" positionX="16" positionY="-682" width="128" height="133"/>
+        <element name="AngleDistanceLocation" positionX="18" positionY="-490" width="144" height="103"/>
         <element name="GpsPoint" positionX="25" positionY="-361" width="128" height="208"/>
-        <element name="Map" positionX="-198" positionY="-151" width="101" height="103"/>
-        <element name="Mission" positionX="-135" positionY="-484" width="110" height="88"/>
+        <element name="Map" positionX="-155" positionY="-715" width="101" height="103"/>
+        <element name="Mission" positionX="-0" positionY="-70" width="110" height="88"/>
         <element name="MissionProperty" positionX="-315" positionY="-319" width="128" height="103"/>
-        <element name="Observation" positionX="376" positionY="-316" width="128" height="103"/>
+        <element name="Observation" positionX="387" positionY="-346" width="128" height="103"/>
     </elements>
 </model>
