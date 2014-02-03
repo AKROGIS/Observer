@@ -82,6 +82,7 @@
 @property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
 @property (strong, nonatomic) MapReference *currentMapEntity;
 @property (strong, nonatomic) Mission *mission;
+//FIXME: remove this property, it is a hack to make things compile while testing
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
 
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
@@ -195,7 +196,7 @@
             self.angleDistancePopoverController = nil;
             Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
             [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
-            [self setAttributesForObservation:observation atPoint:mapPoint];
+            [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation atPoint:mapPoint];
         };
         vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
             self.angleDistancePopoverController = nil;
@@ -335,7 +336,7 @@
     Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self drawObservation:observation atPoint:mapPoint];
-    [self setAttributesForObservation:observation atPoint:mapPoint];
+    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation atPoint:mapPoint];
     //TODO: is there any reason to add the attributes to the graphic?
     //    NSDictionary *attributes = [self createAttributesFromObservation:observation];
     //    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
@@ -351,7 +352,7 @@
         gpsPoint = nil;
     Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
-    [self setAttributesForObservation:observation atPoint:self.mapView.mapAnchor];
+    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation atPoint:self.mapView.mapAnchor];
 }
 
 
@@ -561,8 +562,7 @@
     //FIXME: use feature parameter to create the correct type of feature
     Observation *observation = [self createObservation:feature atGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
     [self drawObservation:observation atPoint:mappoint];
-    [self setAttributesForObservation:observation atPoint:mappoint];
-
+    [self setAttributesForFeatureType:feature entity:observation atPoint:mappoint];
 }
 
 - (void)presentFeature:(id<AGSFeature>)feature fromLayer:(NSString *)layerName
@@ -968,7 +968,7 @@
     MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
     mission.observing = YES;
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    [self setAttributesForMissionProperty:mission atPoint:mapPoint];
+    [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:mission atPoint:mapPoint];
     [self drawMissionProperty:mission atPoint:mapPoint];
     [self enableControls];
 }
@@ -1445,20 +1445,20 @@
     [self.observationsLayer addGraphic:graphic];
 }
 
-- (void)setAttributesForObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
-{
-    //TODO: support more than just one feature called Observations
-    NSDictionary *config = self.survey.protocol.missionFeature.dialogJSON;
-    QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
-    AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
-    dialog.managedObject = observation;
-    self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
-    dialog.toolbarItems = @[doneButton];
-    self.modalAttributeCollector.toolbarHidden = NO;
-    self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
-    [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
-}
+//- (void)setAttributesForObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
+//{
+//    //TODO: support more than just one feature called Observations
+//    NSDictionary *config = self.survey.protocol.missionFeature.dialogJSON;
+//    QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
+//    AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
+//    dialog.managedObject = observation;
+//    self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
+//    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
+//    dialog.toolbarItems = @[doneButton];
+//    self.modalAttributeCollector.toolbarHidden = NO;
+//    self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
+//    [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
+//}
 
 
 
@@ -1514,22 +1514,22 @@
 //    AKRLog(@"dict-graphic: DateIn: %@ (%f) dateOut: %@ (%f) equal:%u",t1,[t1 timeIntervalSince1970],t2, [t2 timeIntervalSince1970], [t1 isEqualToDate:t2]);
 }
 
-- (void)setAttributesForMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
-{
-    if (self.modalAttributeCollector) {
-        return;
-    }
-    NSDictionary *config = self.survey.protocol.missionFeature.dialogJSON;
-    QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
-    AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
-    dialog.managedObject = missionProperty;
-    self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
-    dialog.toolbarItems = @[doneButton];
-    self.modalAttributeCollector.toolbarHidden = NO;
-    self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
-    [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
-}
+//- (void)setAttributesForMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
+//{
+//    if (self.modalAttributeCollector) {
+//        return;
+//    }
+//    NSDictionary *config = self.survey.protocol.missionFeature.dialogJSON;
+//    QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
+//    AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
+//    dialog.managedObject = missionProperty;
+//    self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
+//    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
+//    dialog.toolbarItems = @[doneButton];
+//    self.modalAttributeCollector.toolbarHidden = NO;
+//    self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
+//    [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
+//}
 
 
 
@@ -1556,6 +1556,20 @@
 
 
 #pragma mark - Private Methods - misc support
+
+- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity atPoint:mappoint
+{
+    NSDictionary *config = feature.dialogJSON;
+    QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
+    AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
+    dialog.managedObject = entity;
+    self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
+    dialog.toolbarItems = @[doneButton];
+    self.modalAttributeCollector.toolbarHidden = NO;
+    self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
+}
 
 // Called by done button on attribute dialogs
 - (void)saveAttributes:(UIBarButtonItem *)sender
