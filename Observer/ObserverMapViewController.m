@@ -1429,7 +1429,6 @@
     [self drawObservation:observation atPoint:point];
 }
 
-//FIXME: need to get the featureType to know how to draw the feature.
 - (void)drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
 {
     if (!observation || !mapPoint) {
@@ -1449,6 +1448,8 @@
         attribs = @{@"timestamp":[NSNull null]};
     }
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
+    AKRLog(@"Drawing observation type %@",observation.entity.name);
+    //FIXME: pick the right layer based on the observation type
     [self.observationsLayer addGraphic:graphic];
 }
 
@@ -1527,11 +1528,6 @@
     }
 }
 
-
-
-
-#pragma mark - Private Methods - misc support
-
 - (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity atPoint:mappoint
 {
     NSDictionary *config = feature.dialogJSON;
@@ -1564,6 +1560,12 @@
     self.modalAttributeCollector = nil;
 }
 
+
+
+
+
+
+#pragma mark - Private Methods - misc support
 
 //TODO: not used - use or remove
 
