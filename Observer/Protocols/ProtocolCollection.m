@@ -437,7 +437,7 @@ static ProtocolCollection *_sharedCollection = nil;
         SProtocol *p = self.localItems[i];
         if (p.isLocal) {
             NSUInteger index = [localProtocolUrls indexOfObject:p.url];
-            if (index == NSNotFound) {
+            if (index == NSNotFound || !p.isValid) {
                 [itemsToRemove addIndex:i];
             } else {
                 [localProtocolUrls removeObjectAtIndex:index];
@@ -450,11 +450,12 @@ static ProtocolCollection *_sharedCollection = nil;
     for (NSURL *url in localProtocolUrls) {
         //add the URL only if we can create and validate (read/parse) a protocol with it.
         SProtocol *protocol = [[SProtocol alloc] initWithURL:url];
-        if (!protocol.isValid) {
+        if (protocol.isValid) {
+            [protocolsToAdd addObject:protocol];
+        } else {
             AKRLog(@"Data in %@ was not a valid protocol object. It is being deleted.",[url lastPathComponent]);
             [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         }
-        [protocolsToAdd addObject:protocol];
     }
 
     //update lists and UI synchronosly on UI thread if there is a delegate
