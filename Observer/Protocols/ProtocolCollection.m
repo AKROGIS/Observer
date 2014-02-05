@@ -38,8 +38,6 @@
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of SProtocol
 @property (nonatomic) NSUInteger selectedLocalIndex;
 @property (nonatomic, strong) NSURL *documentsDirectory;
-@property (nonatomic, strong) NSURL *protocolDirectory;
-@property (nonatomic, strong) NSURL *inboxDirectory;
 @property (nonatomic, strong) NSURL *cacheFile;
 @property (nonatomic) BOOL isLoaded;
 @end
@@ -71,26 +69,6 @@
         _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
     }
     return _documentsDirectory;
-}
-
-- (NSURL *)protocolDirectory
-{
-    if (!_protocolDirectory) {
-        _protocolDirectory = [self.documentsDirectory URLByAppendingPathComponent:PROTOCOL_DIR];
-        if(![[NSFileManager defaultManager] fileExistsAtPath:[_protocolDirectory path]]) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:[_protocolDirectory path]
-                                      withIntermediateDirectories:YES attributes:nil error:nil];
-        }
-    }
-    return _protocolDirectory;
-}
-
-- (NSURL *)inboxDirectory
-{
-    if (!_inboxDirectory) {
-        _inboxDirectory = [self.documentsDirectory URLByAppendingPathComponent:@"Inbox"];
-    }
-    return _inboxDirectory;
 }
 
 - (NSURL *)cacheFile
@@ -279,7 +257,7 @@ static ProtocolCollection *_sharedCollection = nil;
     //if (self.remoteItems.count <= index) return; //safety check
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
         SProtocol *protocol = [self remoteProtocolAtIndex:index];
-        NSURL *newUrl = [self.protocolDirectory URLByAppendingPathComponent:protocol.url.lastPathComponent];
+        NSURL *newUrl = [self.documentsDirectory URLByAppendingPathComponent:protocol.url.lastPathComponent];
         newUrl = [newUrl URLByUniquingPath];
         BOOL success = [protocol downloadToURL:newUrl];
         if (success) {
@@ -358,7 +336,7 @@ static ProtocolCollection *_sharedCollection = nil;
 //done on callers thread
 - (SProtocol *)openURL:(NSURL *)url saveCache:(BOOL)shouldSaveCache
 {
-    NSURL *newUrl = [self.protocolDirectory URLByAppendingPathComponent:url.lastPathComponent];
+    NSURL *newUrl = [self.documentsDirectory URLByAppendingPathComponent:url.lastPathComponent];
     newUrl = [newUrl URLByUniquingPath];
     NSError *error = nil;
     [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
@@ -422,66 +400,58 @@ static ProtocolCollection *_sharedCollection = nil;
 //done on background thread
 - (BOOL)refreshLocalProtocols
 {
-    [self moveIncomingDocuments];
     [self syncWithFileSystem];
     return YES;
 }
 
-
-//done on background thread
-- (void) moveIncomingDocuments
+- (NSMutableArray *)potentialProtocolDocuments
 {
-    //If a file is added to the inbox, then the protocolcollection was created to add the inbox object, it will not be there when openURL is called.
-    //OpenURL returns a protocol whcih can't be found if the URL is gone. therefore we cannot add Inbox items on open.
-    //for (NSURL *directory in @[self.inboxDirectory, self.documentsDirectory]) {
-    for (NSURL *directory in @[self.documentsDirectory]) {
-        NSError *error = nil;
-        NSArray *array = [[NSFileManager defaultManager]
-                          contentsOfDirectoryAtURL:directory
-                          includingPropertiesForKeys:nil
-                          options:(NSDirectoryEnumerationSkipsHiddenFiles)
-                          error:&error];
-        if (array == nil) {
-            AKRLog(@"Unable to enumerate %@: %@",[directory lastPathComponent], error.localizedDescription);
-        } else {
-            for (NSURL *doc in array) {
-                if ([doc.pathExtension isEqualToString:PROTOCOL_EXT]) {
-                    [self openURL:doc saveCache:NO];
-                }
+    NSError *error = nil;
+    NSMutableArray *protocols = [[NSMutableArray alloc] init];
+    NSArray *allFiles = [[NSFileManager defaultManager]
+                         contentsOfDirectoryAtURL:self.documentsDirectory
+                         includingPropertiesForKeys:nil
+                         options:NSDirectoryEnumerationSkipsHiddenFiles
+                         error:&error];
+    if (allFiles == nil) {
+        AKRLog(@"Unable to enumerate %@: %@",[self.documentsDirectory lastPathComponent], error.localizedDescription);
+    } else {
+        for (NSURL *fileUrl in allFiles) {
+            if ([fileUrl.pathExtension isEqualToString:PROTOCOL_EXT]) {
+                [protocols addObject:fileUrl];
             }
         }
     }
+    return protocols;
 }
 
 //done on background thread
 - (void)syncWithFileSystem
 {
-    //urls in the protocols directory
-    NSMutableArray *urls = [NSMutableArray arrayWithArray:[[NSFileManager defaultManager]
-                                                    contentsOfDirectoryAtURL:self.protocolDirectory
-                                                    includingPropertiesForKeys:nil
-                                                    options:NSDirectoryEnumerationSkipsSubdirectoryDescendants
-                                                    error:nil]];
+    //local protocol urls
+    NSMutableArray *localProtocolUrls = [self potentialProtocolDocuments];
+
     //remove cache items not in filesystem
     NSMutableIndexSet *itemsToRemove = [NSMutableIndexSet new];
     for (uint i = 0; i < self.localItems.count; i++) {
         SProtocol *p = self.localItems[i];
         if (p.isLocal) {
-            NSUInteger index = [urls indexOfObject:p.url];
+            NSUInteger index = [localProtocolUrls indexOfObject:p.url];
             if (index == NSNotFound) {
                 [itemsToRemove addIndex:i];
             } else {
-                [urls removeObjectAtIndex:index];
+                [localProtocolUrls removeObjectAtIndex:index];
             }
         }
     }
 
-    //add filesystem urls not in cache
+    //add filesystem urls not in cache that are valid protocols
     NSMutableArray *protocolsToAdd = [NSMutableArray new];
-    for (NSURL *url in urls) {
+    for (NSURL *url in localProtocolUrls) {
+        //add the URL only if we can create and validate (read/parse) a protocol with it.
         SProtocol *protocol = [[SProtocol alloc] initWithURL:url];
         if (!protocol.isValid) {
-            AKRLog(@"data at %@ was not a valid protocol object",url);
+            AKRLog(@"Data in %@ was not a valid protocol object. It is being deleted.",[url lastPathComponent]);
             [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         }
         [protocolsToAdd addObject:protocol];
@@ -541,6 +511,8 @@ static ProtocolCollection *_sharedCollection = nil;
                                                                      title:item[@"name"]
                                                                    version:item[@"version"]
                                                                       date:item[@"date"]];
+                    //Do not check validity - trust the server for now.
+                    //Checking validity will cause protocol to be downloaded and parsed
                     if (protocol) {
                         [protocols addObject:protocol];
                     }

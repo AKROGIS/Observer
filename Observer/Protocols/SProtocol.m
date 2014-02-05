@@ -174,7 +174,7 @@
 - (BOOL)downloadToURL:(NSURL *)url
 {
     BOOL success = NO;
-    if (!self.isLocal && self.values) {
+    if (!self.isLocal && self.isValid) {
         if ([self saveCopyToURL:url]) {
             _url = url;
             success = YES;
