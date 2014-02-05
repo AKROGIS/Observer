@@ -37,7 +37,7 @@
 {
     //TODO: test proper behavior when name exists
     //bail if the name is taken
-    NSString *entityName = [NSString stringWithFormat:@"%@_%@",kObservationPrefix,name];
+    NSString *entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,name];
     NSEntityDescription *testEntity = [[mom entitiesByName] valueForKey:entityName];
     if (testEntity) {
         return mom;

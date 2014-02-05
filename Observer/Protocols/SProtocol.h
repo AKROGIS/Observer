@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "AKRTableViewItem.h"
 #import "ProtocolFeature.h"
+#import "ProtocolMissionFeature.h"
 
 @interface SProtocol : NSObject <NSCoding, AKRTableViewItem>
 
@@ -20,7 +21,7 @@
 @property (nonatomic, strong, readonly) NSString *details;
 @property (nonatomic, strong, readonly) NSArray *features;  // of ProtocolFeatures
 @property (nonatomic, strong, readonly) NSArray *featuresWithLocateByTouch;  // of ProtocolFeatures
-@property (nonatomic, strong, readonly) ProtocolFeature *missionFeature;
+@property (nonatomic, strong, readonly) ProtocolMissionFeature *missionFeature;
 @property (nonatomic,         readonly) BOOL allowsAdhocTouchLocations;
 
 //YES if the protocol is available locally, NO otherwise;

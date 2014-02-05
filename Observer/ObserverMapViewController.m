@@ -86,11 +86,7 @@
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
 
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
-@property (strong, nonatomic) AGSGraphicsLayer *observationsLayer;
-@property (strong, nonatomic) AGSGraphicsLayer *gpsPointsLayer;
-@property (strong, nonatomic) AGSGraphicsLayer *observingTracksLayer;
-@property (strong, nonatomic) AGSGraphicsLayer *notObservingTracksLayer;
-@property (strong, nonatomic) AGSGraphicsLayer *missionPropertiesLayer;
+@property (strong, nonatomic) NSMutableDictionary *graphicsLayers; // of AGSGraphicsLayer
 
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
@@ -705,39 +701,11 @@
     self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation;
 }
 
-- (AGSGraphicsLayer *)observationsLayer
+- (NSMutableDictionary *)graphicsLayers
 {
-    if (!_observationsLayer)
-        _observationsLayer = [[AGSGraphicsLayer alloc] init];
-    return _observationsLayer;
-}
-
-- (AGSGraphicsLayer *)gpsPointsLayer
-{
-    if (!_gpsPointsLayer)
-        _gpsPointsLayer = [[AGSGraphicsLayer alloc] init];
-    return _gpsPointsLayer;
-}
-
-- (AGSGraphicsLayer *)observingTracksLayer
-{
-    if (!_observingTracksLayer)
-        _observingTracksLayer = [[AGSGraphicsLayer alloc] init];
-    return _observingTracksLayer;
-}
-
-- (AGSGraphicsLayer *)notObservingTracksLayer
-{
-    if (!_notObservingTracksLayer)
-        _notObservingTracksLayer = [[AGSGraphicsLayer alloc] init];
-    return _notObservingTracksLayer;
-}
-
-- (AGSGraphicsLayer *)missionPropertiesLayer
-{
-    if (!_missionPropertiesLayer)
-        _missionPropertiesLayer = [[AGSGraphicsLayer alloc] init];
-    return _missionPropertiesLayer;
+    if (!_graphicsLayers)
+        _graphicsLayers = [[NSMutableDictionary alloc] init];
+    return _graphicsLayers;
 }
 
 - (AGSSpatialReference *)wgs84
@@ -1113,28 +1081,41 @@
 {
     //TODO: support multiple observation layers, support symbology defined by protocol (graphics are very limited in symbology)
     AKRLog(@"Creating graphics layers");
+
+    //gps points layer
+    AGSGraphicsLayer *graphicsLayer = [[AGSGraphicsLayer alloc] init];
     AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
     [symbol setSize:CGSizeMake(6,6)];
-    [self.gpsPointsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
-    [self.mapView addMapLayer:self.gpsPointsLayer withName:kGpsPointsLayer];
+    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
+    [self.mapView addMapLayer:graphicsLayer withName:kGpsPointEntityName];
+    self.graphicsLayers[kGpsPointEntityName] = graphicsLayer;
 
-    symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[[UIColor purpleColor] colorWithAlphaComponent:.5]];
-    [symbol setSize:CGSizeMake(18,18)];
-    [self.observationsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
-    [self.mapView addMapLayer:self.observationsLayer withName:kObservationLayer];
+    //All Features
+    for (ProtocolFeature *feature in self.survey.protocol.features) {
+        graphicsLayer = [[AGSGraphicsLayer alloc] init];
+        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.symbology.agsSymbol]];
+        [self.mapView addMapLayer:graphicsLayer withName:feature.name];
+        self.graphicsLayers[feature.name] = graphicsLayer;
+    }
 
-    symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[[UIColor greenColor] colorWithAlphaComponent:.5]];
-    [symbol setSize:CGSizeMake(14,14)];
-    [self.missionPropertiesLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
-    [self.mapView addMapLayer:self.missionPropertiesLayer withName:kMissionPropertiesLayer];
-
-    AGSSimpleLineSymbol *line = [AGSSimpleLineSymbol simpleLineSymbolWithColor:[UIColor redColor] width:1.0];
-    [self.observingTracksLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:line]];
-    [self.mapView addMapLayer:self.observingTracksLayer withName:kObservingTracksLayer];
-
-    line = [AGSSimpleLineSymbol simpleLineSymbolWithColor:[UIColor grayColor] width:1.0];
-    [self.notObservingTracksLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:line]];
-    [self.mapView addMapLayer:self.notObservingTracksLayer withName:kNotObservingTracksLayer];
+    //Mission Property points
+    ProtocolMissionFeature *feature = self.survey.protocol.missionFeature;
+    graphicsLayer = [[AGSGraphicsLayer alloc] init];
+    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.symbology.agsSymbol]];
+    [self.mapView addMapLayer:graphicsLayer withName:kMissionPropertyEntityName];
+    self.graphicsLayers[kMissionPropertyEntityName] = graphicsLayer;
+    //Mission Property observing tracks
+    NSString * name = [NSString stringWithFormat:@"%@_On", kMissionPropertyEntityName];
+    graphicsLayer = [[AGSGraphicsLayer alloc] init];
+    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.observingymbology.agsSymbol]];
+    [self.mapView addMapLayer:graphicsLayer withName:name];
+    self.graphicsLayers[name] = graphicsLayer;
+    //Mission Property not observing track
+    name = [NSString stringWithFormat:@"%@_Off", kMissionPropertyEntityName];
+    graphicsLayer = [[AGSGraphicsLayer alloc] init];
+    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.notObservingymbology.agsSymbol]];
+    [self.mapView addMapLayer:graphicsLayer withName:name];
+    self.graphicsLayers[name] = graphicsLayer;
 }
 
 - (void)clearGraphics
@@ -1322,7 +1303,7 @@
         return;
     }
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:nil];
-    [self.gpsPointsLayer addGraphic:graphic];
+    [self.graphicsLayers[kGpsPointEntityName] addGraphic:graphic];
     //TODO: Add segment to polyline
 }
 
@@ -1339,7 +1320,7 @@
     }
     AKRLog(@"Creating Observation managed object");
     //FIXME: support more than one type of observation
-    NSString *entityName = [NSString stringWithFormat:@"%@_%@",kObservationPrefix,feature.name];
+    NSString *entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,feature.name];
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:entityName
                                                              inManagedObjectContext:self.context];
     observation.mission = self.mission;
@@ -1450,7 +1431,8 @@
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     AKRLog(@"Drawing observation type %@",observation.entity.name);
     //FIXME: pick the right layer based on the observation type
-    [self.observationsLayer addGraphic:graphic];
+    NSString * name = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
+    [self.graphicsLayers[name] addGraphic:graphic];
 }
 
 
@@ -1500,7 +1482,7 @@
     }
     NSDictionary *attribs = @{@"timestamp":missionProperty.gpsPoint.timestamp};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
-    [self.missionPropertiesLayer addGraphic:graphic];
+    [self.graphicsLayers[kMissionPropertyEntityName] addGraphic:graphic];
     //ESRI BUG - date returned from graphic is not the same as the date that is provided
 //    NSDate *t1 = (NSDate *)attribs[@"timestamp"];
 //    NSDate *t2 = [graphic attributeAsDateForKey:@"timestamp"];
@@ -1521,11 +1503,8 @@
     [line addPointToPath:point1];
     [line addPointToPath:point2];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:line symbol:nil attributes:nil];
-    if (observing) {
-        [self.observingTracksLayer addGraphic:graphic];
-    } else {
-        [self.notObservingTracksLayer addGraphic:graphic];
-    }
+    NSString *name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, (observing ? @"On" : @"Off")];
+    [self.graphicsLayers[name] addGraphic:graphic];
 }
 
 - (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity atPoint:mappoint

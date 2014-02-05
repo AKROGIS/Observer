@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
 		394CC2381858E05F00FA859C /* libQuickDialog.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 394CC2351858DFFA00FA859C /* libQuickDialog.a */; };
@@ -134,6 +135,8 @@
 
 /* Begin PBXFileReference section */
 		3929196617BEB6A8008B0FFC /* Todo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Todo.rtf; sourceTree = "<group>"; };
+		39336F4418A1BA2100620A3A /* ProtocolMissionFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolMissionFeature.h; path = Protocols/ProtocolMissionFeature.h; sourceTree = "<group>"; };
+		39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolMissionFeature.m; path = Protocols/ProtocolMissionFeature.m; sourceTree = "<group>"; };
 		393E8AFA17A2E1D8009AD0AC /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = Model/Settings.h; sourceTree = "<group>"; };
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
 		393E8AFD17A30012009AD0AC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -380,6 +383,8 @@
 				396E1E981899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m */,
 				396E1E9B189ADE8F00B735EF /* ProtocolFeatureSymbology.h */,
 				396E1E9C189ADE8F00B735EF /* ProtocolFeatureSymbology.m */,
+				39336F4418A1BA2100620A3A /* ProtocolMissionFeature.h */,
+				39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */,
 			);
 			name = Protocol;
 			sourceTree = "<group>";
@@ -554,6 +559,7 @@
 			isa = PBXGroup;
 			children = (
 				394CC23C1858EF5800FA859C /* ObserverModel.xcdatamodeld */,
+				39D1D97B17BC51630014C68F /* ObserverModel.h */,
 				394CC2511858F11800FA859C /* Observation.h */,
 				394CC2521858F11800FA859C /* Observation.m */,
 				394CC24E1858F11800FA859C /* AngleDistanceLocation.h */,
@@ -571,7 +577,6 @@
 				393E8AFF17A318F5009AD0AC /* Enumerations.h */,
 				39D1D94A17B464B40014C68F /* LocationAngleDistance.h */,
 				39D1D94B17B464B40014C68F /* LocationAngleDistance.m */,
-				39D1D97B17BC51630014C68F /* ObserverModel.h */,
 				393E8AFA17A2E1D8009AD0AC /* Settings.h */,
 				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
 				39C53E5F187F411B00C0CECE /* AutoPanStateMachine.h */,
@@ -745,6 +750,7 @@
 				39A836C4185A668D008BF4E3 /* AKRAngleDistance.m in Sources */,
 				396E1E961899AD2900B735EF /* ProtocolFeature.m in Sources */,
 				3989085F1857EDE1007B3F67 /* NSDate+Formatting.m in Sources */,
+				39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */,
 				3989084F1857ED00007B3F67 /* SurveyCoreDataDocument.m in Sources */,
 				59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */,
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,

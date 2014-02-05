@@ -123,7 +123,7 @@
                 _title = ([title isKindOfClass:[NSString class]] ? title : nil);
                 _version = ([version isKindOfClass:[NSNumber class]] ? version : nil);
                 _date = [AKRFormatter dateFromISOString:([date isKindOfClass:[NSString class]] ? date : nil)];
-                _missionFeature = [[ProtocolFeature alloc] initWithJSON:_values[@"mission"]];
+                _missionFeature = [[ProtocolMissionFeature alloc] initWithJSON:_values[@"mission"]];
                 _features = [self buildFeaturelist:_values[@"features"]];
                 _featuresWithLocateByTouch = [self buildFeaturesWithLocateByTouch:_features];
             }
