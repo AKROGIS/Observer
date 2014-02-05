@@ -199,6 +199,7 @@
 #pragma mark - public methods
 
 //TODO: figure out error handling.
+//FIXME: this public method isn't used - justify the API or remove
 - (void)readPropertiesWithCompletionHandler:(void (^)(NSError*))handler
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
@@ -220,7 +221,12 @@
 
 - (void)openDocumentWithCompletionHandler:(void (^)(BOOL success))handler
 {
-     dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
+    dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
+        //during development, it is possible that a previously valid protocol is no longer recognized as valid
+        //we might be able to remove this check in production code.
+        if (!self.protocol.isValid) {
+            self.state = kCorrupt;
+        }
         if (self.state == kCorrupt) {
             if (handler) handler(NO);
         } else {
@@ -239,7 +245,7 @@
                 });
             }
         }
-     });
+    });
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(objectsDidChange:)
                                                  name:NSManagedObjectContextObjectsDidChangeNotification

@@ -41,10 +41,9 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 @property (nonatomic, strong, readonly) UIManagedDocument *document;
 
 //Initializers
-// Designated Initializer  (for subclasses, clients will typically not call this directly)
+// NOTE: The Designated Initializer is not public, THIS CLASS CANNOT BE SUB-CLASSED
+- (id)init __attribute__((unavailable("Must use initWithProtocol: or initWithURL: instead.")));
 - (id)initWithURL:(NSURL *)url;
-- (id) init __attribute__((unavailable("Must use initWithProtocol: instead.")));
-
 //This involve doing IO (to find and create the unused url), it should be called on a background thread
 - (id)initWithProtocol:(SProtocol *)protocol;
 

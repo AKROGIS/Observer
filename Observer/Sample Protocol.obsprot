@@ -1,6 +1,6 @@
 {
-	"meta-name":"NPS-Protocol-Specification"
-	"meta-version":1
+	"meta-name":"NPS-Protocol-Specification",
+	"meta-version":1,
 	"name":"KIMU Protocol",
 	"version":4.0,
 	"date":"2014-01-30",
