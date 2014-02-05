@@ -11,11 +11,18 @@
 
 @implementation ProtocolFeatureSymbology
 
-- (id)initWithSymbologyJSON:(id)json
+- (id)initWithSymbologyJSON:(id)json version:(NSInteger) version
 {
     if (self = [super init]) {
         if ([json isKindOfClass:[NSDictionary class]]) {
-            [self defineReadonlyProperties:json];
+            switch (version) {
+                case 1:
+                    [self defineReadonlyProperties:json];
+                    break;
+                default:
+                    AKRLog(@"Unsupported version (%d) of the NPS-Protocol-Specification", version);
+                    break;
+            }
         }
     }
     return self;

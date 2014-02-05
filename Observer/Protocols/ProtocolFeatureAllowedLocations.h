@@ -16,8 +16,8 @@
 @interface ProtocolFeatureAllowedLocations : NSObject
 
 // If locations is not a NSArray, then all the properties will be nil
-- (id)initWithLocationsJSON:(id)json;
-- (id) init __attribute__((unavailable("Must use initWithLocationsJSON: instead.")));
+- (id)initWithLocationsJSON:(id)json version:(NSInteger) version;
+- (id) init __attribute__((unavailable("Must use initWithLocationsJSON:version: instead.")));
 
 @property (nonatomic, readonly) BOOL includesGps;
 @property (nonatomic, readonly) BOOL includesAngleDistance;

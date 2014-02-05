@@ -10,7 +10,7 @@
 
 @interface ProtocolMissionFeature : ProtocolFeature
 
-- (id)initWithJSON:(id)json;
+- (id)initWithJSON:(id)json version:(NSInteger) version;
 
 // How should these features be drawn on the map
 @property (strong, nonatomic, readonly) ProtocolFeatureSymbology *observingymbology;

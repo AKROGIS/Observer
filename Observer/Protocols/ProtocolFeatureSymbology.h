@@ -14,8 +14,8 @@
 @interface ProtocolFeatureSymbology : NSObject
 
 // If the JSON is not a NSDictionary, then all the properties will be nil
-- (id)initWithSymbologyJSON:(id)json;
-- (id) init __attribute__((unavailable("Must use initWithSymbologyJSON: instead.")));
+- (id)initWithSymbologyJSON:(id)json version:(NSInteger) version;
+- (id) init __attribute__((unavailable("Must use initWithSymbologyJSON:version: instead.")));
 
 @property (strong, nonatomic, readonly) AGSSymbol *agsSymbol;
 

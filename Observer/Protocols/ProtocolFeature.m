@@ -10,11 +10,18 @@
 
 @implementation ProtocolFeature
 
-- (id)initWithJSON:(id)json
+- (id)initWithJSON:(id)json version:(NSInteger) version
 {
     if (self = [super init]) {
         if ([json isKindOfClass:[NSDictionary class]]) {
-            [self defineReadonlyProperties:json];
+            switch (version) {
+                case 1:
+                    [self defineReadonlyProperties:json version:version];
+                    break;
+                default:
+                    AKRLog(@"Unsupported version (%d) of the NPS-Protocol-Specification", version);
+                    break;
+            }
         }
     }
     return self;
@@ -22,15 +29,15 @@
 
 // lazy loading doesn't work well when some of the properties may have a valid zero value
 // so I just load it all up once when initialized
-- (void)defineReadonlyProperties:(NSDictionary *)json
+- (void)defineReadonlyProperties:(NSDictionary *)json version:(NSInteger) version
 {
     id name = json[@"name"];
     if ([name isKindOfClass:[NSString class]]) {
         _name = (NSString *)name;
     }
-    _allowedLocations = [[ProtocolFeatureAllowedLocations alloc] initWithLocationsJSON:json[@"locations"]];
-    _symbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"symbology"]];
-    _attributes = [self buildAttributeArrayWithJSON:json[@"attributes"]];
+    _allowedLocations = [[ProtocolFeatureAllowedLocations alloc] initWithLocationsJSON:json[@"locations"]version:version];
+    _symbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"symbology"] version:version];
+    _attributes = [self buildAttributeArrayWithJSON:json[@"attributes"] version:version];
     id dialog = json[@"dialog"];
     if ([dialog isKindOfClass:[NSDictionary class]]) {
         _dialogJSON = (NSDictionary *)dialog;
@@ -45,7 +52,7 @@
 // first priority is to use care when creating the protocol
 // big problems will be discovered when the MOM is created (or rather not created)
 // other problem need to be fereted out by testing.
-- (NSArray *)buildAttributeArrayWithJSON:(id)json
+- (NSArray *)buildAttributeArrayWithJSON:(id)json  version:(NSInteger) version
 {
     if ([json isKindOfClass:[NSArray class]]) {
         NSMutableArray *attributeProperties = [[NSMutableArray alloc] init];

@@ -116,16 +116,21 @@
             id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
             if ([json isKindOfClass:[NSDictionary class]])
             {
-                _values = json;
-                id title = _values[@"name"];
-                id version =  _values[@"version"];
-                id date = _values[@"date"];
-                _title = ([title isKindOfClass:[NSString class]] ? title : nil);
-                _version = ([version isKindOfClass:[NSNumber class]] ? version : nil);
-                _date = [AKRFormatter dateFromISOString:([date isKindOfClass:[NSString class]] ? date : nil)];
-                _missionFeature = [[ProtocolMissionFeature alloc] initWithJSON:_values[@"mission"]];
-                _features = [self buildFeaturelist:_values[@"features"]];
-                _featuresWithLocateByTouch = [self buildFeaturesWithLocateByTouch:_features];
+                if ([@"NPS-Protocol-Specification" isEqual:json[@"meta-name"]]) {
+                    id item = json[@"meta-version"];
+                    if ([item isKindOfClass:[NSNumber class]]) {
+                        NSInteger version = [(NSNumber *)item integerValue];
+                        switch (version) {
+                            case 1:
+                                _values = json;
+                                [self processProtocolFileVersion1];
+                                break;
+                            default:
+                                AKRLog(@"Unsupported version (%d) of the NPS-Protocol-Specification", version);
+                                break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -219,12 +224,25 @@
 
 #pragma mark - convenience methods for protocol values
 
-- (NSArray *)buildFeaturelist:(id)json
+- (void)processProtocolFileVersion1
+{
+    id title = _values[@"name"];
+    id version =  _values[@"version"];
+    id date = _values[@"date"];
+    _title = ([title isKindOfClass:[NSString class]] ? title : nil);
+    _version = ([version isKindOfClass:[NSNumber class]] ? version : nil);
+    _date = [AKRFormatter dateFromISOString:([date isKindOfClass:[NSString class]] ? date : nil)];
+    _missionFeature = [[ProtocolMissionFeature alloc] initWithJSON:_values[@"mission"] version:1];
+    _features = [self buildFeaturelist:_values[@"features"] version:1];
+    _featuresWithLocateByTouch = [self buildFeaturesWithLocateByTouch:_features];
+}
+
+- (NSArray *)buildFeaturelist:(id)json version:(NSInteger) version
 {
     NSMutableArray *features = [[NSMutableArray alloc] init];
     if ([json isKindOfClass:[NSArray class]]) {
         for (id item in json) {
-            ProtocolFeature *feature = [[ProtocolFeature alloc] initWithJSON:item];
+            ProtocolFeature *feature = [[ProtocolFeature alloc] initWithJSON:item version:version];
             if (feature) {
                 [features addObject:feature];
             }

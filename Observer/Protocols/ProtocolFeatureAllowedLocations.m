@@ -20,11 +20,18 @@
 
 @implementation ProtocolFeatureAllowedLocations
 
-- (id)initWithLocationsJSON:(id)json
+- (id)initWithLocationsJSON:(id)json version:(NSInteger) version
 {
     if (self = [super init]) {
         if ([json isKindOfClass:[NSArray class]]) {
-            [self defineReadonlyProperties:(NSArray *)json];
+            switch (version) {
+                case 1:
+                    [self defineReadonlyProperties:(NSArray *)json];
+                    break;
+                default:
+                    AKRLog(@"Unsupported version (%d) of the NPS-Protocol-Specification", version);
+                    break;
+            }
         }
     }
     return self;
