@@ -1147,6 +1147,10 @@
     GpsPoint *previousPoint;
     BOOL observing = NO;
     for (GpsPoint *gpsPoint in results) {
+        //draw each individual GPS point
+        //[self drawGpsPoint:gpsPoint];
+
+        //Keep track of the previous point to draw tracks
         if (!previousPoint) {
             previousPoint = gpsPoint;
             continue;
@@ -1162,31 +1166,30 @@
         //TODO: draw a polyline instead of single lines
         [self drawTrackObserving:observing From:previousPoint to:gpsPoint];
 
-        //draw each individual GPS point
-        //[self drawGpsPoint:gpsPoint];
-
-        //draw related observations/propertys
-        if (gpsPoint.observation) {
-            [self loadObservation:gpsPoint.observation];
-        }
-        if (gpsPoint.missionProperty) {
-            [self loadMissionProperty:gpsPoint.missionProperty];
-        }
         previousPoint = gpsPoint;
     }
 
-    //Get adhoc observations (gpsPoint is null and adhocLocation is non nil
-    //TODO: support more than one Observation feature
-    AKRLog(@"  Fetching adhoc observations");
-    request = [NSFetchRequest fetchRequestWithEntityName:kAdhocLocationEntityName];
-    //request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint == NIL AND adhocLocation != NIL"];
+    //Get adhoc observations - these are the only observations where gpsPoint might be null
+    AKRLog(@"  Fetching observations");
+    request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
     results = [self.context executeFetchRequest:request error:&error];
     if (!results && error.code)
         AKRLog(@"Error Fetching Observations %@",error);
-    AKRLog(@"  Drawing %d adhoc observations", results.count);
-    for (AdhocLocation *adhocLocation in results) {
-        [self loadObservation:adhocLocation.observation];
+    AKRLog(@"  Drawing %d observations", results.count);
+    for (Observation *observation in results) {
+        [self loadObservation:observation];
     }
+    //Get MissionProperties were gpsPoint is null
+    AKRLog(@"  Fetching mission properties");
+    request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
+    results = [self.context executeFetchRequest:request error:&error];
+    if (!results && error.code)
+        AKRLog(@"Error Fetching Mission Properties %@",error);
+    AKRLog(@"  Drawing %d Mission Properties", results.count);
+    for (MissionProperty *missionProperty in results) {
+        [self loadMissionProperty:missionProperty];
+    }
+
     AKRLog(@"  Done loading graphics");
 }
 
@@ -1319,12 +1322,10 @@
         return nil;
     }
     AKRLog(@"Creating Observation managed object");
-    //FIXME: support more than one type of observation
     NSString *entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,feature.name];
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:entityName
                                                              inManagedObjectContext:self.context];
     observation.mission = self.mission;
-    //We don't have any attributes yet, that will get created/added later depending on the protocol
     return observation;
 }
 
@@ -1391,6 +1392,7 @@
 
 - (void)loadObservation:(Observation *)observation
 {
+    //AKRLog(@"    Loading observation");
     AGSPoint *point;
     if (observation.angleDistanceLocation) {
         LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:observation.angleDistanceLocation.direction
@@ -1429,8 +1431,7 @@
         attribs = @{@"timestamp":[NSNull null]};
     }
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
-    AKRLog(@"Drawing observation type %@",observation.entity.name);
-    //FIXME: pick the right layer based on the observation type
+    //AKRLog(@"    Drawing observation type %@",observation.entity.name);
     NSString * name = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
     [self.graphicsLayers[name] addGraphic:graphic];
 }
@@ -1449,7 +1450,6 @@
     AKRLog(@"Creating MissionProperty managed object");
     MissionProperty *missionProperty = [NSEntityDescription insertNewObjectForEntityForName:kMissionPropertyEntityName inManagedObjectContext:self.context];
     missionProperty.mission = self.mission;
-    //We don't have any attributes yet, that will get created/added later depending on the protocol
     return missionProperty;
 }
 
@@ -1467,6 +1467,7 @@
 
 - (void)loadMissionProperty:(MissionProperty *)missionProperty
 {
+    //AKRLog(@"    Loading missionProperty");
     AGSPoint *point;
     if (missionProperty.gpsPoint) {
         point = [self mapPointFromGpsPoint:missionProperty.gpsPoint];
@@ -1483,10 +1484,6 @@
     NSDictionary *attribs = @{@"timestamp":missionProperty.gpsPoint.timestamp};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     [self.graphicsLayers[kMissionPropertyEntityName] addGraphic:graphic];
-    //ESRI BUG - date returned from graphic is not the same as the date that is provided
-//    NSDate *t1 = (NSDate *)attribs[@"timestamp"];
-//    NSDate *t2 = [graphic attributeAsDateForKey:@"timestamp"];
-//    AKRLog(@"dict-graphic: DateIn: %@ (%f) dateOut: %@ (%f) equal:%u",t1,[t1 timeIntervalSince1970],t2, [t2 timeIntervalSince1970], [t1 isEqualToDate:t2]);
 }
 
 
@@ -1547,6 +1544,12 @@
 #pragma mark - Private Methods - misc support
 
 //TODO: not used - use or remove
+
+//ESRI BUG - date returned from graphic is not the same as the date that is provided
+//    NSDate *t1 = (NSDate *)attribs[@"timestamp"];
+//    NSDate *t2 = [graphic attributeAsDateForKey:@"timestamp"];
+//    AKRLog(@"dict-graphic: DateIn: %@ (%f) dateOut: %@ (%f) equal:%u",t1,[t1 timeIntervalSince1970],t2, [t2 timeIntervalSince1970], [t1 isEqualToDate:t2]);
+
 
 - (Observation *)observationAtTimestamp:(NSDate *)timestamp
 {
