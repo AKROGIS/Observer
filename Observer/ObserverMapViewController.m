@@ -1527,10 +1527,9 @@
     [dialog.root fetchValueUsingBindingsIntoObject:dict];
     NSManagedObject *obj = dialog.managedObject;
     for (NSString *aKey in dict){
-        //TODO: do I need to add error checking, respondsToSelector did not work
-        //if ([obj respondsToSelector:NSSelectorFromString(aKey)]) {
-        [obj setValue:[dict valueForKey:aKey] forKey:aKey];
-        //}
+        //This will throw an exception if the key is not valid. This will only happen with a bad protocol file - catch problem in testing, or protocol load
+        NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,aKey];
+        [obj setValue:[dict valueForKey:aKey] forKey:obscuredKey];
     }
     [self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;

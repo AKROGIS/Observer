@@ -22,7 +22,8 @@
 #import "Settings.h"
 
 
-#define kObservationPrefix               @"Obs_"
+#define kAttributePrefix                 @"A_"
+#define kObservationPrefix               @"O_"
 #define kObservationEntityName           @"Observation"
 #define kMissionEntityName               @"Mission"
 #define kMissionPropertyEntityName       @"MissionProperty"

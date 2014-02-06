@@ -7,6 +7,7 @@
 //
 
 #import "ProtocolFeature.h"
+#import "ObserverModel.h"
 
 @implementation ProtocolFeature
 
@@ -45,13 +46,13 @@
 }
 
 // There are way to many ways to screw this up than I can test, for example:
-// predicate ort warning may not be properly formated string
+// predicate or warning may not be properly formated strings
 // name may be one of hundreds of illegal names
 // type must be one of a limited number of non-sequential integers
-// the default object must match the type.
+// a default object (if provided) must match the type.
 // first priority is to use care when creating the protocol
 // big problems will be discovered when the MOM is created (or rather not created)
-// other problem need to be fereted out by testing.
+// other problem need to be fereted out by testing protocol before field work.
 - (NSArray *)buildAttributeArrayWithJSON:(id)json  version:(NSInteger) version
 {
     if ([json isKindOfClass:[NSArray class]]) {
@@ -62,8 +63,8 @@
                 [attributeProperties addObject:attributeDescription];
                 id value = item[@"name"];
                 if ([value isKindOfClass:[NSString class]]) {
-                    //TODO: consider adding a generic 'obscuring' prefix to avoid reserved names
-                    [attributeDescription setName:(NSString*)value];
+                    NSString *obscuredName = [NSString stringWithFormat:@"%@%@",kAttributePrefix,value];
+                    [attributeDescription setName:obscuredName];
                 }
                 value = item[@"type"];
                 if ([value isKindOfClass:[NSNumber class]]) {
