@@ -21,9 +21,9 @@
 
 
 @interface SProtocol() {
-    NSString *_title;  //properties from an implemented cannot be synthesized
+    NSString *_title;  //properties from a protocol cannot be synthesized
 }
-@property (nonatomic, strong, readonly) NSDictionary *values;
+@property (nonatomic) BOOL parsedJSON;
 @property (nonatomic) BOOL downloading;
 @end
 
@@ -106,37 +106,6 @@
 
 #pragma mark - public methods
 
-@synthesize values = _values;  //need to synthesize because I am implementing all property methods
-
-- (NSDictionary *)values
-{
-    if (!_values) {
-        NSData *data = [NSData dataWithContentsOfURL:self.url];
-        if (data) {
-            id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-            if ([json isKindOfClass:[NSDictionary class]])
-            {
-                if ([@"NPS-Protocol-Specification" isEqual:json[@"meta-name"]]) {
-                    id item = json[@"meta-version"];
-                    if ([item isKindOfClass:[NSNumber class]]) {
-                        NSInteger version = [(NSNumber *)item integerValue];
-                        switch (version) {
-                            case 1:
-                                _values = json;
-                                [self processProtocolFileVersion1];
-                                break;
-                            default:
-                                AKRLog(@"Unsupported version (%d) of the NPS-Protocol-Specification", version);
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return _values;
-}
-
 - (BOOL)isLocal
 {
     return self.url.isFileURL;
@@ -144,9 +113,7 @@
 
 - (BOOL)isValid
 {
-    //FIXME: currently only tests if protocol has values
-    //return self.values && self.features.count;  // we might want to only collect tracks or observations with no attributes
-    return self.values && self.title;
+    return self.features.count > 0 && self.missionFeature != nil;
 }
 
 // I do not override isEqual to use this method, because title,version and date could change
@@ -190,26 +157,11 @@
 
 - (BOOL)saveCopyToURL:(NSURL *)url
 {
-    NSOutputStream *stream = [NSOutputStream outputStreamWithURL:url append:NO];
-    [stream open];
-    NSInteger numberOfBytesWritten =  [NSJSONSerialization writeJSONObject:self.values toStream:stream options:NSJSONWritingPrettyPrinted error:nil];
-    [stream close];
-    return numberOfBytesWritten > 0;
+    return [[NSData dataWithContentsOfURL:self.url] writeToURL:url options:0 error:nil];
 }
 
 
 #pragma mark - formatting for UI views
-
-
-- (NSString *)details
-{
-    id d = self.values[@"description"];
-    if ([d isKindOfClass:[NSString class]]) {
-        return d;
-    } else {
-        return @"";
-    }
-}
 
 - (NSString *)dateString
 {
@@ -222,18 +174,99 @@
 }
 
 
-#pragma mark - convenience methods for protocol values
+#pragma mark - property accessors
 
-- (void)processProtocolFileVersion1
+@synthesize details = _details;
+
+- (NSString *)details
 {
-    id title = _values[@"name"];
-    id version =  _values[@"version"];
-    id date = _values[@"date"];
+    if (!self.parsedJSON) {
+        [self parseJSON];
+    }
+    return _details;
+}
+
+@synthesize features = _features;
+
+- (NSArray *)features
+{
+    if (!self.parsedJSON) {
+        [self parseJSON];
+    }
+    return _features;
+}
+
+@synthesize missionFeature = _missionFeature;
+
+- (ProtocolMissionFeature *)missionFeature
+{
+    if (!self.parsedJSON) {
+        [self parseJSON];
+    }
+    return _missionFeature;
+}
+
+@synthesize featuresWithLocateByTouch = _featuresWithLocateByTouch;
+
+- (NSArray *) featuresWithLocateByTouch
+{
+    if (!self.parsedJSON) {
+        [self parseJSON];
+    }
+    return _featuresWithLocateByTouch;
+}
+
+-(NSString *)description
+{
+    return [NSString stringWithFormat:@"%@; %@",self.title, self.subtitle];
+}
+
+
+
+#pragma mark - JSON parsing
+
+- (void)parseJSON
+{
+    self.parsedJSON = YES;
+    NSData *data = [NSData dataWithContentsOfURL:self.url];
+    if (data) {
+        id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        if ([json isKindOfClass:[NSDictionary class]])
+        {
+            if ([@"NPS-Protocol-Specification" isEqual:json[@"meta-name"]]) {
+                id item = json[@"meta-version"];
+                if ([item isKindOfClass:[NSNumber class]]) {
+                    NSInteger version = [(NSNumber *)item integerValue];
+                    switch (version) {
+                        case 1:
+                            [self processProtocolJSON:json version:version];
+                            break;
+                        default:
+                            AKRLog(@"Unsupported version (%d) of the NPS-Protocol-Specification", version);
+                            break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+- (void)processProtocolJSON:(NSDictionary *)json version:(NSInteger)jsonVersion
+{
+    id title = json[@"name"];
     _title = ([title isKindOfClass:[NSString class]] ? title : nil);
+
+    id version =  json[@"version"];
     _version = ([version isKindOfClass:[NSNumber class]] ? version : nil);
+
+    id date = json[@"date"];
     _date = [AKRFormatter dateFromISOString:([date isKindOfClass:[NSString class]] ? date : nil)];
-    _missionFeature = [[ProtocolMissionFeature alloc] initWithJSON:_values[@"mission"] version:1];
-    _features = [self buildFeaturelist:_values[@"features"] version:1];
+
+    id details = json[@"description"];
+    _details = [details isKindOfClass:[NSString class]] ? details : @"";
+
+    _missionFeature = [[ProtocolMissionFeature alloc] initWithJSON:json[@"mission"] version:jsonVersion];
+    _features = [self buildFeaturelist:json[@"features"] version:jsonVersion];
     _featuresWithLocateByTouch = [self buildFeaturesWithLocateByTouch:_features];
 }
 
@@ -261,11 +294,6 @@
         }
     }
     return [newArray copy];
-}
-
--(NSString *)description
-{
-    return [NSString stringWithFormat:@"%@; %@",self.title, self.subtitle];
 }
 
 @end

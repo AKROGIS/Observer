@@ -28,7 +28,8 @@
 - (BOOL)isLocal;
 
 //YES if the protocol is valid
-// currently defined by being able to load the data at url, and find at least one valid property
+// currently defined by being able to load/parse the data at url, and find a missionFeature,
+// and at least one valid feature in the data.
 - (BOOL)isValid;
 
 //YES if two protocols are the same (same title, version and date)
