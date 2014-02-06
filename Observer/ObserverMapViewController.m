@@ -82,6 +82,8 @@
 @property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
 @property (strong, nonatomic) MapReference *currentMapEntity;
 @property (strong, nonatomic) Mission *mission;
+@property (strong, nonatomic) MissionProperty *currentMissionProperty;
+
 //FIXME: remove this property, it is a hack to make things compile while testing
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
 
@@ -192,7 +194,7 @@
             self.angleDistancePopoverController = nil;
             Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
             [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
-            [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation atPoint:mapPoint];
+            [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:mapPoint];
         };
         vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
             self.angleDistancePopoverController = nil;
@@ -332,7 +334,7 @@
     Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self drawObservation:observation atPoint:mapPoint];
-    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation atPoint:mapPoint];
+    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:mapPoint];
     //TODO: is there any reason to add the attributes to the graphic?
     //    NSDictionary *attributes = [self createAttributesFromObservation:observation];
     //    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
@@ -348,7 +350,7 @@
         gpsPoint = nil;
     Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
-    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation atPoint:self.mapView.mapAnchor];
+    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:self.mapView.mapAnchor];
 }
 
 
@@ -537,68 +539,118 @@
                         [self addFeature:self.survey.protocol.featuresWithLocateByTouch[0] atMapPoint:mappoint];
                         break;
                     default:
-                        [self presentProtocolFeatureSelector:self.survey.protocol.featuresWithLocateByTouch];
+                        [self presentProtocolFeatureSelector:self.survey.protocol.featuresWithLocateByTouch atPoint:screen mapPoint:mappoint];
                         break;
                 }
             }
             break;
         case 1: {
             NSString *layerName = (NSString *)[features.keyEnumerator nextObject];
-            [self presentFeature:features[layerName] fromLayer:layerName];
+            [self presentFeature:features[layerName] fromLayer:layerName atPoint:screen];
             break;
         }
         default:
-            [self presentAGSFeatureSelector:features];
+            [self presentAGSFeatureSelector:features atPoint:screen];
             break;
     }
+}
+
+
+
+
+#pragma mark - move these 4 methods
+
+- (void)presentProtocolFeatureSelector:(NSArray *)features atPoint:(CGPoint)screenpoint mapPoint:(AGSPoint *)mappoint
+{
+    //FIXME: implement
+    //present popover at screenpoint with table view controller (1 section, rows = feature.names),
+    //send selected feature to     [self addFeature:feature atMapPoint:mappoint];
+    [features enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSString *name = ((ProtocolFeature *)obj).name;
+        AKRLog(@"Found features %@", name);
+    }];
+    [self addFeature:[features lastObject] atMapPoint:mappoint];
 }
 
 - (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mappoint
 {
     Observation *observation = [self createObservation:feature atGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
     [self drawObservation:observation atPoint:mappoint];
-    [self setAttributesForFeatureType:feature entity:observation atPoint:mappoint];
+    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mappoint];
 }
 
-- (void)presentFeature:(id<AGSFeature>)feature fromLayer:(NSString *)layerName
-{
-    //FIXME: implement
-    //present a details view,
-    //if feature is editable, allow editing
-    //if feature is deletable, provide a delete button.
-}
-
-- (void)presentProtocolFeatureSelector:(NSArray *)features
+- (void)presentAGSFeatureSelector:(NSDictionary *)features atPoint:(CGPoint)screen
 {
     //FIXME: implement
     //present popover with table view controller (layernames = sections, features = rows),
     //send selected feature to
     //[self presentFeature:feature[layerName] fromLayer:layerName];
-}
-
-- (void)presentAGSFeatureSelector:(NSDictionary *)features
-{
-    //FIXME: implement
-    //present popover with table view controller (layernames = sections, features = rows),
-    //send selected feature to
-    //[self presentFeature:feature[layerName] fromLayer:layerName];
-        
+    __block NSString *layerName;
+    __block id<AGSFeature> graphic;
     [features enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        NSString *layerName = (NSString *)key;
+        layerName = (NSString *)key;
         NSArray *graphics = (NSArray *)obj;
+        graphic = [graphics lastObject];
         AKRLog(@"Found %u features in %@",[graphics count], layerName);
-        for (AGSGraphic *graphic in graphics) {
-            NSDate *timestamp = [graphic attributeAsDateForKey:@"timestamp"];
-            if ([key isEqualToString:kMissionPropertiesLayer]) {
-                MissionProperty *mp = [self missionPropertyAtTimestamp:timestamp];
-                AKRLog(@"Mission Property %@",mp);
-            } else {
-                Observation *obs = [self observationAtTimestamp:timestamp];
-                AKRLog(@"Observation %@",obs);
+    }];
+    [self presentFeature:graphic fromLayer:layerName atPoint:screen];
+}
+
+- (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atPoint:(CGPoint)screen
+{
+    NSDate *timestamp = (NSDate *)[agsFeature safeAttributeForKey:@"timestamp"];
+
+    AKRLog(@"Presenting feature for layer %@ with timestamp %@", layerName, timestamp);
+
+    //Note: entityNamed:atTimestamp: only works with layers that have a gpspoint or an adhoc, so missionProperties and Observations
+    //Note: gpsPoints do not have a QuickDialog definition; tracklogs would need to use the related missionProperty
+    //TODO: expand to work on gpsPoints and tracklog segments
+    for (NSString *badName in @[kGpsPointsLayer,
+                                [NSString stringWithFormat:@"%@_On", kMissionPropertyEntityName],
+                                [NSString stringWithFormat:@"%@_Off", kMissionPropertyEntityName]]) {
+        if ([layerName isEqualToString:badName]) {
+            AKRLog(@"  Bailing. layer type is not supported");
+            return;
+        }
+    }
+
+    //get the feature type from the layername
+    ProtocolFeature * feature = nil;
+    if ([layerName isEqualToString:self.survey.protocol.missionFeature.name]) {
+        feature =  self.survey.protocol.missionFeature;
+    } else {
+        for (ProtocolFeature *f in self.survey.protocol.features) {
+            if ([f.name isEqualToString:layerName]) {
+                feature = f;
+                break;
             }
         }
-    }];
+    }
+
+    //get entity using the timestamp on the layername and the timestamp on the AGS Feature
+    NSManagedObject *entity = [self entityNamed:layerName atTimestamp:timestamp];
+
+    if (feature || !entity) {
+        AKRLog(@"  Bailing. Could not find the dialog configuration, and/or the feature");
+        return;
+    }
+
+    //get data from entity attributes (unobscure the key names)
+    [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:nil];
+
+    //FIXME: if this is an angle distance location, provide button for angle distance editor
+    //FIXME: if the feature was changed, save the changes.  (non-editable features i.e. gps points should have a special non-editable dialog)
+    //FIXME: can I support a readonly survey, and just look at the attributes with editing disabled??
+    //FIXME: if feature is deletable, provide a delete button.
 }
+
+
+
+
+
+
+
+
 
 - (void)mapView:(AGSMapView *)mapView didTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
 {
@@ -935,7 +987,7 @@
     MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
     mission.observing = YES;
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:mission atPoint:mapPoint];
+    [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:mission defaults:self.currentMissionProperty atPoint:mapPoint];
     [self drawMissionProperty:mission atPoint:mapPoint];
     [self enableControls];
 }
@@ -1503,10 +1555,21 @@
     [self.graphicsLayers[name] addGraphic:graphic];
 }
 
-- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity atPoint:mappoint
+
+- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity defaults:(NSManagedObject *)template atPoint:mappoint
 {
+    //get data from entity attributes (unobscure the key names)
+    NSMutableDictionary *data;
+    if (template) {
+        data = [[NSMutableDictionary alloc] init];
+        for (NSAttributeDescription *attribute in feature.attributes) {
+            NSString *cleanName = [attribute.name stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
+            data[cleanName] = [template valueForKey:attribute.name];
+        }
+        AKRLog(@"default data attributes %@", data);
+    }
     NSDictionary *config = feature.dialogJSON;
-    QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:nil];
+    QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
     self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
@@ -1528,6 +1591,7 @@
     for (NSString *aKey in dict){
         //This will throw an exception if the key is not valid. This will only happen with a bad protocol file - catch problem in testing, or protocol load
         NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,aKey];
+        AKRLog(@"Saving Attributes from Dialog key:%@ (%@) Value:%@", aKey, obscuredKey, [dict valueForKey:aKey]);
         [obj setValue:[dict valueForKey:aKey] forKey:obscuredKey];
     }
     [self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
@@ -1549,35 +1613,24 @@
 //    AKRLog(@"dict-graphic: DateIn: %@ (%f) dateOut: %@ (%f) equal:%u",t1,[t1 timeIntervalSince1970],t2, [t2 timeIntervalSince1970], [t1 isEqualToDate:t2]);
 
 
-- (Observation *)observationAtTimestamp:(NSDate *)timestamp
+- (NSManagedObject *)entityNamed:(NSString *)name atTimestamp:(NSDate *)timestamp
 {
-    return [self observationNamed:kObservationEntityName atTimestamp:timestamp];
-}
+    for (NSString *badName in @[kGpsPointsLayer,
+                                [NSString stringWithFormat:@"%@_On", kMissionPropertyEntityName],
+                                [NSString stringWithFormat:@"%@_Off", kMissionPropertyEntityName]]) {
+        if ([name isEqualToString:badName]) {
+            return nil;
+        }
+    }
 
-- (Observation *)observationNamed:(NSString *)name atTimestamp:(NSDate *)timestamp
-{
     //Deal with ESRI graphic date bug
     NSDate *start = [timestamp dateByAddingTimeInterval:-0.01];
     NSDate *end = [timestamp dateByAddingTimeInterval:+0.01];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:name];
     request.predicate = [NSPredicate predicateWithFormat:@"(%@ <= gpsPoint.timestamp AND gpsPoint.timestamp <= %@) || (%@ <= adhocLocation.timestamp AND adhocLocation.timestamp <= %@)",start,end,start,end];
     NSArray *results = [self.context executeFetchRequest:request error:nil];
-    return (Observation *)[results lastObject]; // will return nil if there was an error, or no results
+    return (NSManagedObject *)[results lastObject]; // will return nil if there was an error, or no results
 }
-
-- (MissionProperty *)missionPropertyAtTimestamp:(NSDate *)timestamp
-{
-    //AKRLog(@"Find Mission Property at %@ (%f)",timestamp, [timestamp timeIntervalSince1970]);
-    //Deal with ESRI graphic date bug
-    NSDate *start = [timestamp dateByAddingTimeInterval:-0.01];
-    NSDate *end = [timestamp dateByAddingTimeInterval:+0.01];
-
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
-    request.predicate = [NSPredicate predicateWithFormat:@"%@ <= gpsPoint.timestamp AND gpsPoint.timestamp <= %@",start,end];
-    NSArray *results = [self.context executeFetchRequest:request error:nil];
-    return (MissionProperty *)[results lastObject]; // will return nil if there was an error, or no results
-}
-
 
 
 
