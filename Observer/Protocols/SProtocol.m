@@ -141,6 +141,7 @@
 - (BOOL)downloadToURL:(NSURL *)url
 {
     BOOL success = NO;
+    //TODO: This check causes remote data to be downloaded and parsed, then we downloaded it again if it is valid
     if (!self.isLocal && self.isValid) {
         if ([self saveCopyToURL:url]) {
             _url = url;
