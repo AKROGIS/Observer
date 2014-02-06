@@ -555,7 +555,6 @@
 
 - (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mappoint
 {
-    //FIXME: use feature parameter to create the correct type of feature
     Observation *observation = [self createObservation:feature atGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
     [self drawObservation:observation atPoint:mappoint];
     [self setAttributesForFeatureType:feature entity:observation atPoint:mappoint];
