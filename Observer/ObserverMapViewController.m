@@ -1306,6 +1306,7 @@
         [self incrementBusy];  //loading the survey document may block
         if (survey.document.documentState == UIDocumentStateNormal) {
             self.selectSurveyButton.title = @"Closing survey...";
+            self.currentMapEntity = nil;
             if (self.isRecording) {
                 [self stopRecording];
             }
