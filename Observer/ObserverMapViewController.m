@@ -546,7 +546,7 @@
             break;
         case 1: {
             NSString *layerName = (NSString *)[features.keyEnumerator nextObject];
-            [self presentFeature:features[layerName] fromLayer:layerName atPoint:screen];
+            [self presentFeature:features[layerName][0] fromLayer:layerName atPoint:screen];
             break;
         }
         default:
@@ -630,7 +630,7 @@
     //get entity using the timestamp on the layername and the timestamp on the AGS Feature
     NSManagedObject *entity = [self entityNamed:layerName atTimestamp:timestamp];
 
-    if (feature || !entity) {
+    if (!feature || !entity) {
         AKRLog(@"  Bailing. Could not find the dialog configuration, and/or the feature");
         return;
     }
@@ -1615,6 +1615,9 @@
 
 - (NSManagedObject *)entityNamed:(NSString *)name atTimestamp:(NSDate *)timestamp
 {
+    if (!name || !timestamp) {
+        return nil;
+    }
     for (NSString *badName in @[kGpsPointsLayer,
                                 [NSString stringWithFormat:@"%@_On", kMissionPropertyEntityName],
                                 [NSString stringWithFormat:@"%@_Off", kMissionPropertyEntityName]]) {
@@ -1626,7 +1629,8 @@
     //Deal with ESRI graphic date bug
     NSDate *start = [timestamp dateByAddingTimeInterval:-0.01];
     NSDate *end = [timestamp dateByAddingTimeInterval:+0.01];
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:name];
+    NSString *obscuredName = [NSString stringWithFormat:@"%@%@",kObservationPrefix, name];
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:obscuredName];
     request.predicate = [NSPredicate predicateWithFormat:@"(%@ <= gpsPoint.timestamp AND gpsPoint.timestamp <= %@) || (%@ <= adhocLocation.timestamp AND adhocLocation.timestamp <= %@)",start,end,start,end];
     NSArray *results = [self.context executeFetchRequest:request error:nil];
     return (NSManagedObject *)[results lastObject]; // will return nil if there was an error, or no results
