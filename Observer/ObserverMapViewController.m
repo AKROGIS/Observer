@@ -207,9 +207,9 @@
         vc.items = self.surveys;
         Survey *initialSurvey = self.survey;
         vc.selectedSurveyChanged = ^{
-            // on calling thread
             [self closeSurvey:initialSurvey withConcurrentOpen:YES];
             [self openSurvey];
+            self.surveysPopoverController = nil;
         };
         vc.selectedSurveyChangedName = ^{
             [self updateTitleBar];
@@ -228,6 +228,7 @@
         vc.items = self.maps;
         vc.rowSelectedCallback = ^(NSIndexPath*indexPath){
             [self resetBasemap];
+            self.mapsPopoverController = nil;
         };
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
             self.mapsPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
@@ -408,7 +409,7 @@
 
 
 
-#pragma mark - CLLocationManagerDelegate Protocol
+#pragma mark - Delegate Methods: CLLocationManagerDelegate
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
@@ -529,7 +530,7 @@
 
     AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mappoint, features);
 
-    switch (features.count) {
+    switch (features.count) {  //Number of layers with selected features
         case 0:
             if (self.isObserving) {
                 switch (self.survey.protocol.featuresWithLocateByTouch.count) {
@@ -547,7 +548,7 @@
         case 1: {
             NSString *layerName = (NSString *)[features.keyEnumerator nextObject];
             NSArray *featureList = features[layerName];
-            if (featureList.count == 1) {
+            if (featureList.count == 1) {  //Number of selected features in layer
                 [self presentFeature:featureList[0] fromLayer:layerName atPoint:screen];
             } else {
                 [self presentAGSFeatureSelector:features atPoint:screen];
@@ -698,10 +699,15 @@
 //This is not called if the popover is programatically dismissed.
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
 {
-    if (popoverController == self.angleDistancePopoverController)
+    if (popoverController == self.surveysPopoverController) {
+        self.surveysPopoverController = nil;
+    }
+    if (popoverController == self.angleDistancePopoverController) {
         self.angleDistancePopoverController = nil;
-    if (popoverController == self.mapsPopoverController)
+    }
+    if (popoverController == self.mapsPopoverController) {
         self.mapsPopoverController = nil;
+    }
     if (popoverController == self.quickDialogPopoverController) {
         [self dismissQuickDialogPopover:popoverController];
     }
@@ -710,7 +716,7 @@
 
 
 
-#pragma mark - Delegate Methods - UIAlertViewDelegate
+#pragma mark - Delegate Methods: UIAlertViewDelegate
 
 
 
