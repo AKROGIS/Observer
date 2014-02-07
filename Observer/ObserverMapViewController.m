@@ -546,7 +546,12 @@
             break;
         case 1: {
             NSString *layerName = (NSString *)[features.keyEnumerator nextObject];
-            [self presentFeature:features[layerName][0] fromLayer:layerName atPoint:screen];
+            NSArray *featureList = features[layerName];
+            if (featureList.count == 1) {
+                [self presentFeature:featureList[0] fromLayer:layerName atPoint:screen];
+            } else {
+                [self presentAGSFeatureSelector:features atPoint:screen];
+            }
             break;
         }
         default:
