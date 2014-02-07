@@ -1130,7 +1130,6 @@
 
 - (void)initializeGraphicsLayer
 {
-    //TODO: support multiple observation layers, support symbology defined by protocol (graphics are very limited in symbology)
     AKRLog(@"Creating graphics layers");
 
     //gps points layer
@@ -1171,11 +1170,16 @@
 
 - (void)clearGraphics
 {
+    NSMutableArray *graphicsLayers = [NSMutableArray new];
     for (AGSLayer *layer in self.mapView.mapLayers) {
         if ([layer isKindOfClass:[AGSGraphicsLayer class]]) {
-            [(AGSGraphicsLayer *)layer removeAllGraphics];
+            [graphicsLayers addObject:layer];
         }
     }
+    for (AGSLayer *layer in graphicsLayers) {
+        [self.mapView removeMapLayer:layer];
+    }
+    [self initializeGraphicsLayer];
 }
 
 - (void)reloadGraphics
@@ -1555,7 +1559,6 @@
     [self.graphicsLayers[name] addGraphic:graphic];
 }
 
-
 - (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity defaults:(NSManagedObject *)template atPoint:mappoint
 {
     //get data from entity attributes (unobscure the key names)
@@ -1566,7 +1569,7 @@
             NSString *cleanName = [attribute.name stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
             data[cleanName] = [template valueForKey:attribute.name];
         }
-        AKRLog(@"default data attributes %@", data);
+        //AKRLog(@"default data attributes %@", data);
     }
     NSDictionary *config = feature.dialogJSON;
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
@@ -1591,7 +1594,7 @@
     for (NSString *aKey in dict){
         //This will throw an exception if the key is not valid. This will only happen with a bad protocol file - catch problem in testing, or protocol load
         NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,aKey];
-        AKRLog(@"Saving Attributes from Dialog key:%@ (%@) Value:%@", aKey, obscuredKey, [dict valueForKey:aKey]);
+        //AKRLog(@"Saving Attributes from Dialog key:%@ (%@) Value:%@", aKey, obscuredKey, [dict valueForKey:aKey]);
         [obj setValue:[dict valueForKey:aKey] forKey:obscuredKey];
     }
     [self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
@@ -1604,14 +1607,6 @@
 
 
 #pragma mark - Private Methods - misc support
-
-//TODO: not used - use or remove
-
-//ESRI BUG - date returned from graphic is not the same as the date that is provided
-//    NSDate *t1 = (NSDate *)attribs[@"timestamp"];
-//    NSDate *t2 = [graphic attributeAsDateForKey:@"timestamp"];
-//    AKRLog(@"dict-graphic: DateIn: %@ (%f) dateOut: %@ (%f) equal:%u",t1,[t1 timeIntervalSince1970],t2, [t2 timeIntervalSince1970], [t1 isEqualToDate:t2]);
-
 
 - (NSManagedObject *)entityNamed:(NSString *)name atTimestamp:(NSDate *)timestamp
 {
@@ -1639,6 +1634,14 @@
 
 
 #pragma mark - Diagnostic Aids - to be removed
+
+//TODO: not used - use or remove
+
+//ESRI BUG - date returned from graphic is not the same as the date that is provided
+//    NSDate *t1 = (NSDate *)attribs[@"timestamp"];
+//    NSDate *t2 = [graphic attributeAsDateForKey:@"timestamp"];
+//    AKRLog(@"dict-graphic: DateIn: %@ (%f) dateOut: %@ (%f) equal:%u",t1,[t1 timeIntervalSince1970],t2, [t2 timeIntervalSince1970], [t1 isEqualToDate:t2]);
+
 
 //FIXME: Rob some of the following code for deleting an individual observation
 //- (void)clearData
