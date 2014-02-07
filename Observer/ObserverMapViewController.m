@@ -205,10 +205,13 @@
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
         vc.items = self.surveys;
-        Survey *initialSurvey = self.survey;
-        vc.selectedSurveyChanged = ^{
-            [self closeSurvey:initialSurvey withConcurrentOpen:YES];
-            [self openSurvey];
+        vc.selectedSurveyChanged = ^(Survey *oldSurvey, Survey *newSurvey){
+            if (oldSurvey != newSurvey) {
+                [self closeSurvey:oldSurvey withConcurrentOpen:YES];
+                [self openSurvey];
+            }
+        };
+        vc.popoverDismissed = ^{
             self.surveysPopoverController = nil;
         };
         vc.selectedSurveyChangedName = ^{
@@ -1306,7 +1309,7 @@
             if (self.isRecording) {
                 [self stopRecording];
             }
-            [survey closeWithCompletionHandler:^(BOOL success) {
+            [survey closeDocumentWithCompletionHandler:^(BOOL success) {
                 //this completion handler runs on the main queue;
                 //AKRLog(@"Start CloseSurvey completion handler");
                 [self decrementBusy];

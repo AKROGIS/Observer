@@ -54,7 +54,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 // saving is only for "SaveTO", normal saves are handled by UIKit with autosave
 // doing saves as overwrites can work if you get lucky, but may cause conflicts
 // I am not supporting saveTo
-- (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)closeDocumentWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler;
 
 //TODO: memory releaser (unload properties), reset object to unborn

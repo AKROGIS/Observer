@@ -16,6 +16,7 @@
     NSAssert(protocol.isValid,@"protocol is not valid");
     NSManagedObjectModel *mom = [NSManagedObjectModel mergedModelFromBundles:nil];
     if (mom) {
+        //AKRLog(@"Merging MOM, starting with %@",mom);
         mom = [self mergeMom:mom missionAttributes:protocol.missionFeature.attributes];
         for (ProtocolFeature *feature in protocol.features) {
             mom = [self mergeMom:mom featureName:feature.name attributes:feature.attributes];
@@ -29,6 +30,9 @@
     NSEntityDescription *entity = [[mom entitiesByName] valueForKey:kMissionPropertyEntityName];
     NSMutableArray *attributeProperties = [NSMutableArray arrayWithArray:entity.properties];
     [attributeProperties addObjectsFromArray:attributes];
+    //FIXME: adding attributes causes errors and eventurally fails, if we created a similar MOM prior
+    // open a suvey, then open a different survey, then reopen the first survey -- generates error that properties already exist, although you cant see them.
+    //do this again, and the app will crash.
     [entity setProperties:attributeProperties];
     return mom;
 }
@@ -47,10 +51,8 @@
     entity.name = entityName;
     observation.subentities = [[observation subentities] arrayByAddingObject:entity];
     mom.entities = [[mom entities] arrayByAddingObject:entity];
-//    // Do I need to copy the parent attributes when it is a sub entitity?  I don't think so
-//    NSMutableArray *attributeProperties = [NSMutableArray arrayWithArray:entity.properties];
-//    [attributeProperties addObjectsFromArray:attributes];
-//    [attributeProperties addObjectsFromArray:attributes];
+    //FIXME: adding attributes causes errors and eventurally fails, if we created a similar MOM prior
+    //see discussion above.
     [entity setProperties:attributes];
     return mom;
 }

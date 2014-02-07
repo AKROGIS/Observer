@@ -230,16 +230,15 @@
         if (self.state == kCorrupt) {
             if (handler) handler(NO);
         } else {
+            self.document = [[SurveyCoreDataDocument alloc] initWithFileURL:self.documentUrl];
             BOOL documentExists = [[NSFileManager defaultManager] fileExistsAtPath:[self.documentUrl path]];
             if (documentExists) {
-                self.document = [[SurveyCoreDataDocument alloc] initWithFileURL:self.documentUrl];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.document openWithCompletionHandler:handler];  //fails unless executed on UI thread
                 });
             }
             else
             {
-                self.document = [[SurveyCoreDataDocument alloc] initWithFileURL:self.documentUrl];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.document saveToURL:self.documentUrl forSaveOperation:UIDocumentSaveForCreating completionHandler:handler];
                 });
@@ -255,7 +254,7 @@
 #endif
 }
 
-- (void)closeWithCompletionHandler:(void (^)(BOOL success))completionHandler
+- (void)closeDocumentWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
 #ifdef DEBUG
     AKRLog(@"Closing document");

@@ -134,11 +134,15 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    Survey *oldSurvey = self.items.selectedSurvey;
     [self.items setSelectedSurvey:indexPath.urow];
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         [self.popover dismissPopoverAnimated:YES];
+        if (self.popoverDismissed) {
+            self.popoverDismissed();
+        }
         if (self.selectedSurveyChanged) {
-            self.selectedSurveyChanged();
+            self.selectedSurveyChanged(oldSurvey, self.items.selectedSurvey);
         }
     } else {
         [self.navigationController popViewControllerAnimated:YES];
@@ -163,9 +167,9 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        Survey *survey = self.items.selectedSurvey;
-        if (survey.state == kModified) {
-            self.indexPathToDelete = indexPath;
+        Survey *surveyToDelete = [self.items surveyAtIndex:indexPath.urow];
+        self.indexPathToDelete = indexPath;
+        if (surveyToDelete.state == kModified) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Unsaved Changes"
                                                             message:@"You will lose your unsaved data.  This cannot be undone."
                                                            delegate:self
@@ -173,11 +177,7 @@
                                                   otherButtonTitles:@"Delete",nil];
             [alert show];
         } else {
-            [self.items removeSurveyAtIndex:indexPath.urow];
-            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            if (self.selectedSurveyChanged) {
-                self.selectedSurveyChanged();
-            }
+            [self deleteSurvey];
         }
     }
 }
@@ -234,19 +234,27 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if ([alertView.title isEqualToString:@"Unsaved Changes"]) {
-        if (buttonIndex == 1 && self.indexPathToDelete) {
-            [self.items removeSurveyAtIndex:self.indexPathToDelete.urow];
-            [self.tableView deleteRowsAtIndexPaths:@[self.indexPathToDelete] withRowAnimation:UITableViewRowAnimationFade];
-            self.indexPathToDelete = nil;
-            if (self.selectedSurveyChanged) {
-                self.selectedSurveyChanged();
-            }
+        if (buttonIndex == 1) {
+            [self deleteSurvey];
         }
     } else {
         AKRLog(@"Unexpected AlertView in SurveySelectViewController");
     }
 }
 
+- (void)deleteSurvey
+{
+    if(self.indexPathToDelete) {
+        Survey *oldSelectedSurvey = self.items.selectedSurvey;
+        [self.items removeSurveyAtIndex:self.indexPathToDelete.urow];
+        [self.tableView deleteRowsAtIndexPaths:@[self.indexPathToDelete] withRowAnimation:UITableViewRowAnimationFade];
+        self.indexPathToDelete = nil;
+        //Deleting a survey may change the selected survey
+        if (self.selectedSurveyChanged && oldSelectedSurvey != self.items.selectedSurvey) {
+            self.selectedSurveyChanged(oldSelectedSurvey, self.items.selectedSurvey);
+        }
+    }
+}
 
 #pragma mark - UITextFieldDelegate
 
