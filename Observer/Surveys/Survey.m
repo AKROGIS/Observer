@@ -345,6 +345,7 @@
 #endif
     self.date = [NSDate date];
     self.state = kModified;
+    //do not save properties (write a file to disk) here, since this is called a lot - do it when coredata saves
 }
 
 - (NSString *)description
@@ -435,6 +436,7 @@
 
     AKRLog(@"Document (%@) data saved", self.title);
     //AKRLog(@"Data Saved; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
+    [self saveProperties];
 }
 
 - (void)logStats
