@@ -394,7 +394,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (openSuccess && protocol.isValid) {
                     self.protocolForSurveyCreation = protocol;
-                    [[[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to open a new survey file with this protocol?" delegate:nil cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil] show];
+                    [[[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to open a new survey file with this protocol?" delegate:self cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil] show];
                     // handle response in UIAlertView delegate method
                 } else {
                     [[[UIAlertView alloc] initWithTitle:@"Protocol Problem" message:@"Can't open/read the protocol file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];

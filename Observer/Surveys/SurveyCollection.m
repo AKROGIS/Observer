@@ -153,6 +153,7 @@
     if (newSurvey.protocol) {
         NSUInteger index = 0;     //insert at top of list
         [self.items insertObject:newSurvey atIndex:index];
+        self.selectedIndex++;
         [self saveCache];
         return YES;
     } else {
@@ -165,6 +166,7 @@
     if (newSurvey) {
         NSUInteger index = 0;     //insert at top of list
         [self.items insertObject:newSurvey atIndex:index];
+        self.selectedIndex++;
         [self saveCache];
         return index;
     } else {
