@@ -30,4 +30,8 @@
 // (programatically dismissal does not call the UIPopoverContoller Delegate dismissed method)
 @property (nonatomic, copy) void (^popoverDismissed)(void);
 
+// Create a new survey and add it to the tableview.
+// presents an alert view if the survey cannot be created
+- (void) newSurveyWithProtocol:(SProtocol *)protocol;
+
 @end

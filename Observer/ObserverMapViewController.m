@@ -83,6 +83,7 @@
 @property (strong, nonatomic) MapReference *currentMapEntity;
 @property (strong, nonatomic) Mission *mission;
 @property (strong, nonatomic) MissionProperty *currentMissionProperty;
+@property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
 
 //FIXME: remove this property, it is a hack to make things compile while testing
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
@@ -391,11 +392,12 @@
         [protocols openWithCompletionHandler:^(BOOL openSuccess) {
             SProtocol *protocol = [protocols openURL:url];
             dispatch_async(dispatch_get_main_queue(), ^{
-                if (protocol) {
-                    [[[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to create a new survey file with this protocol?" delegate:nil cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil] show];
-                    //FIXME: read the response, and acta accordingly
+                if (openSuccess && protocol.isValid) {
+                    self.protocolForSurveyCreation = protocol;
+                    [[[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to open a new survey file with this protocol?" delegate:nil cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil] show];
+                    // handle response in UIAlertView delegate method
                 } else {
-                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                    [[[UIAlertView alloc] initWithTitle:@"Protocol Problem" message:@"Can't open/read the protocol file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
                 }
             });
         }];
@@ -721,7 +723,33 @@
 
 #pragma mark - Delegate Methods: UIAlertViewDelegate
 
-
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if ([alertView.title isEqualToString:@"New Protocol"]) {
+        if (buttonIndex == 1) {  //Yes to create/open a new survey
+            if (self.surveysPopoverController) {
+                UIViewController *vc = self.surveysPopoverController.contentViewController;
+                if ([vc isKindOfClass:[UINavigationController class]]) {
+                    vc = ((UINavigationController *)vc).visibleViewController;
+                }
+                if ([vc isKindOfClass:[SurveySelectViewController class]]) {
+                    //This method will put up its own alert if it cannot create the survey
+                    [(SurveySelectViewController *)vc newSurveyWithProtocol:self.protocolForSurveyCreation];
+                    //since the survey select view is up, let the user decide which survey they want to select
+                }
+            } else {
+                NSUInteger indexOfNewSurvey = [self.surveys newSurveyWithProtocol:self.protocolForSurveyCreation];
+                if (indexOfNewSurvey != NSNotFound) {
+                    [self closeSurvey:self.survey withConcurrentOpen:YES];
+                    [self.surveys setSelectedSurvey:indexOfNewSurvey];
+                    [self openSurvey];
+                } else {
+                    [[[UIAlertView alloc] initWithTitle:@"Survey Problem" message:@"Can't create a survey with this protocol" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                }
+            }
+        }
+    }
+}
 
 
 #pragma mark - Private Properties
