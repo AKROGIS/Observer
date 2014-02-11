@@ -6,10 +6,11 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
+#import "SurveySelectViewController.h"
+#import "ProtocolCollection.h"
 #import "SurveyDetailViewController.h"
 #import "SurveyTableViewCell.h"
 #import "ProtocolSelectViewController.h"
-#import "SurveySelectViewController.h"
 #import "SProtocol.h"
 #import "Survey.h"
 #import "NSIndexPath+unsignedAccessors.h"
@@ -85,7 +86,9 @@
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         [self.navigationController setToolbarHidden:YES animated:NO];
     }
-    [ProtocolCollection releaseSharedCollection];
+    //Cannot release shared collection when view disappears because app was put in the background
+    //we may wake up with a new protocol, and we need to get the delegate from the shared instance to update the table view.
+    //[ProtocolCollection releaseSharedCollection];
 }
 
 - (void)didReceiveMemoryWarning

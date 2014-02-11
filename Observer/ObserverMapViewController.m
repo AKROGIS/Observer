@@ -28,6 +28,7 @@
 #import "AngleDistanceViewController.h"
 #import "ProtocolCollection.h"
 #import "SurveySelectViewController.h"
+#import "ProtocolSelectViewController.h"
 #import "MapSelectViewController.h"
 #import "AttributeViewController.h"
 #import "AutoPanStateMachine.h"
@@ -384,9 +385,6 @@
             [[[UIAlertView alloc] initWithTitle:@"Thanks" message:@"I should do something now." delegate:nil cancelButtonTitle:@"Do it later" otherButtonTitles:nil] show];
         }
     }
-
-    //FIXME: this isn't working when the Protocol view is up
-    //I need to make sure I am getting the protocol collection it is using, and make sure updates are going to the delegate.
     if ([ProtocolCollection collectsURL:url]) {
         ProtocolCollection *protocols = [ProtocolCollection sharedCollection];
         [protocols openWithCompletionHandler:^(BOOL openSuccess) {
@@ -736,16 +734,17 @@
                     //This method will put up its own alert if it cannot create the survey
                     [(SurveySelectViewController *)vc newSurveyWithProtocol:self.protocolForSurveyCreation];
                     //since the survey select view is up, let the user decide which survey they want to select
+                    return;
                 }
+            }
+            //FIXME: not refreshing tableview in survey VC is protocol VC is displayed
+            NSUInteger indexOfNewSurvey = [self.surveys newSurveyWithProtocol:self.protocolForSurveyCreation];
+            if (indexOfNewSurvey != NSNotFound) {
+                [self closeSurvey:self.survey withConcurrentOpen:YES];
+                [self.surveys setSelectedSurvey:indexOfNewSurvey];
+                [self openSurvey];
             } else {
-                NSUInteger indexOfNewSurvey = [self.surveys newSurveyWithProtocol:self.protocolForSurveyCreation];
-                if (indexOfNewSurvey != NSNotFound) {
-                    [self closeSurvey:self.survey withConcurrentOpen:YES];
-                    [self.surveys setSelectedSurvey:indexOfNewSurvey];
-                    [self openSurvey];
-                } else {
-                    [[[UIAlertView alloc] initWithTitle:@"Survey Problem" message:@"Can't create a survey with this protocol" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-                }
+                [[[UIAlertView alloc] initWithTitle:@"Survey Problem" message:@"Can't create a survey with this protocol" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
             }
         }
     }

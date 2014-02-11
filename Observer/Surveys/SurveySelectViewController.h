@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ProtocolCollection.h"
 #import "SurveyCollection.h"
 #import "SurveyDetailViewController.h"
 
