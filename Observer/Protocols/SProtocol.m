@@ -289,7 +289,7 @@
 {
     NSMutableArray *newArray = [[NSMutableArray alloc] init];
     for (ProtocolFeature *feature in features) {
-        if (feature.allowedLocations.includesAdhocTouch) {
+        if (feature.allowedLocations.countOfTouchChoices > 0) {
             [newArray addObject:feature];
             break;
         }

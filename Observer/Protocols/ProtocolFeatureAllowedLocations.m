@@ -11,10 +11,14 @@
 @interface ProtocolFeatureAllowedLocations()
 
 @property (strong, nonatomic, readonly) NSDictionary *angleDistanceLocation;
-@property (strong, nonatomic, readonly) NSDictionary *adhocTouch;
-@property (strong, nonatomic, readonly) NSDictionary *adhocTarget;
+@property (strong, nonatomic, readonly) NSDictionary *mapTouch;
+@property (strong, nonatomic, readonly) NSDictionary *mapTarget;
 @property (strong, nonatomic, readonly) NSDictionary *gpsLocation;
-@property (strong, nonatomic, readonly) NSDictionary *defaultLocation;
+//@property (strong, nonatomic, readonly) NSDictionary *defaultLocation;
+@property (nonatomic, readonly) BOOL includesGps;
+@property (nonatomic, readonly) BOOL includesAngleDistance;
+@property (nonatomic, readonly) BOOL includesmapTouch;
+@property (nonatomic, readonly) BOOL includesmapTarget;
 
 @end
 
@@ -43,7 +47,8 @@
 {
     //gpsLocation
     for (id item in json) {
-        if ([self dictionary:item hasValues:@[@"gps", @"gpslocation", @"gps-location"] forKey:@"type"]) {
+        if ([self dictionary:item hasValues:@[@"gps", @"gpslocation", @"gps-location"] forKey:@"type"] &&
+            [self dictionary:item is:@"allow"]) {
             _includesGps = YES;
             _gpsLocation = (NSDictionary *)item;
             break;
@@ -52,38 +57,54 @@
     
     //angleDistanceLocation
     for (id item in json) {
-        if ([self dictionary:item hasValues:@[@"ad", @"angledistance", @"angle-distance"] forKey:@"type"]) {
+        if ([self dictionary:item hasValues:@[@"ad", @"angledistance", @"angle-distance"] forKey:@"type"] &&
+            [self dictionary:item is:@"allow"]) {
             _includesAngleDistance = YES;
             _angleDistanceLocation = (NSDictionary *)item;
             break;
         }
     }
     
-    //adhocTouch
+    //mapTouch
     for (id item in json) {
-        if ([self dictionary:item hasValues:@[@"touch", @"maptouch", @"adhoctouch", @"adhoc-touch"] forKey:@"type"]) {
-            _includesAdhocTouch = YES;
-            _adhocTouch = (NSDictionary *)item;
+        if ([self dictionary:item hasValues:@[@"touch", @"maptouch", @"map-touch", @"adhoctouch", @"adhoc-touch"] forKey:@"type"] &&
+            [self dictionary:item is:@"allow"]) {
+            _includesmapTouch = YES;
+            _mapTouch = (NSDictionary *)item;
             break;
         }
     }
     
-    //adhocTarget
+    //mapTarget
     for (id item in json) {
-        if ([self dictionary:item hasValues:@[@"target", @"maptarget", @"adhoctarget", @"adhoc-target"] forKey:@"type"]) {
-            _includesAdhocTarget = YES;
-            _adhocTarget = (NSDictionary *)item;
+        if ([self dictionary:item hasValues:@[@"target", @"maptarget", @"map-target", @"adhoctarget", @"adhoc-target"] forKey:@"type"] &&
+            [self dictionary:item is:@"allow"]) {
+            _includesmapTarget = YES;
+            _mapTarget = (NSDictionary *)item;
             break;
         }
     }
-    
+
+    //default Angle/Distance parameters
+    _distanceUnits = AGSSRUnitMeter;
+    _angleBaseline = 0.0;
+    _angleDirection = AngleDirectionClockwise;
+
     //distanceUnits
     NSString *key = [self keyForDictionary:_angleDistanceLocation possibleKeys:@[@"units", @"distanceunits", @"distance-units"]];
     if (key) {
         id value = _angleDistanceLocation[key];
-        if ([value isKindOfClass:[NSNumber class]]) {
-            _definesDistanceUnits = YES;
-            _distanceUnits = [(NSNumber *)value unsignedIntegerValue];
+        if ([value isKindOfClass:[NSString class]]) {
+            NSString *units = (NSString *)value;
+            if ([@[@"feet", @"foot"] containsObject:[units lowercaseString]]) {
+                _distanceUnits = AGSSRUnitFoot;
+            }
+            if ([@[@"yard", @"yards"] containsObject:[units lowercaseString]]) {
+                _distanceUnits = AGSSRUnitFoot;
+            }
+            if ([@[@"meter", @"metre", @"metres", @"meters"] containsObject:[units lowercaseString]]) {
+                _distanceUnits = AGSSRUnitMeter;
+            }
         }
     }
     //angleBaseline
@@ -91,7 +112,7 @@
     if (key) {
         id value = _angleDistanceLocation[key];
         if ([value isKindOfClass:[NSNumber class]]) {
-            _definesAngleBaseline = YES;
+            _definesAngleDistance = YES;
             _angleBaseline = [(NSNumber *)value  doubleValue];
         }
     }
@@ -99,37 +120,48 @@
     key = [self keyForDictionary:_angleDistanceLocation possibleKeys:@[@"direction", @"angledirection", @"angle-direction"]];
     if (key) {
         if ([self dictionary:_angleDistanceLocation hasValues:@[@"cw", @"clockwise"] forKey:key]) {
-            _definesAngleDirection = YES;
+            _definesAngleDistance = YES;
             _angleDirection = AngleDirectionClockwise;
         } else {
             if ([self dictionary:_angleDistanceLocation hasValues:@[@"ccw", @"counterclockwise", @"counter-clockwise"] forKey:key]) {
-                _definesAngleDirection = YES;
+                _definesAngleDistance = YES;
                 _angleDirection = AngleDirectionCounterClockwise;
             }
         }
     }
     
-    //multipleChoices
-    int counter = 0;
+    //Count of choices
+    NSUInteger counter = 0;
     if (_includesGps) counter++;
     if (_includesAngleDistance) counter++;
-    if (_includesAdhocTouch) counter++;
-    if (_includesAdhocTarget) counter++;
-    _multipleChoices =  (counter > 1);
-    //TODO: define behavior for no choices
-    
-    //hasDefault
-    //TODO: define behavior for multiple defaults
-    for (NSDictionary *dict in @[_gpsLocation, _angleDistanceLocation, _adhocTouch, _adhocTarget]) {
-        id value = dict[@"default"];
-        if ([value isKindOfClass:[NSNumber class]]) {
-            if ([(NSNumber *)value boolValue]) {
-                _defaultLocation = dict;
-                break;
-            }
-        }
+    if (_includesmapTarget) counter++;
+    _countOfNonTouchChoices =  counter;
+
+    counter = 0;
+    if (_includesmapTouch) counter++;
+    _countOfTouchChoices =  counter;
+
+    //Default Non-Touch Choice
+    if ([self dictionary:_angleDistanceLocation is:@"default"]) {
+        _defaultNonTouchChoice = LocateFeatureWithAngleDistance;
     }
-    _hasDefault = _defaultLocation != nil;
+    if ([self dictionary:_mapTarget is:@"default"]) {
+        _defaultNonTouchChoice = LocateFeatureWithMapTarget;
+    }
+    if ([self dictionary:_gpsLocation is:@"default"]) {
+        _defaultNonTouchChoice = LocateFeatureWithGPS;
+    }
+
+    //Initial Non-Touch Choice
+    if (_includesAngleDistance) {
+        _initialNonTouchChoice = LocateFeatureWithAngleDistance;
+    }
+    if (_includesmapTarget) {
+        _initialNonTouchChoice = LocateFeatureWithMapTarget;
+    }
+    if (_includesGps) {
+        _initialNonTouchChoice = LocateFeatureWithGPS;
+    }
 }
 
 
@@ -165,5 +197,17 @@
     }
     return NO;
 }
+
+             - (BOOL) dictionary:(id)possibleDict is:(NSString *)key
+             {
+                 if ([possibleDict isKindOfClass:[NSDictionary class]]) {
+                     NSDictionary *dict = (NSDictionary *)possibleDict;
+                     id value = dict[key];
+                 if ([value isKindOfClass:[NSNumber class]]) {
+                     return [(NSNumber *)value boolValue];
+                 }
+                 }
+                     return NO;
+             }
 
 @end

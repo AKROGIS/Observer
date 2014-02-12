@@ -19,23 +19,19 @@
 - (id)initWithLocationsJSON:(id)json version:(NSInteger) version;
 - (id) init __attribute__((unavailable("Must use initWithLocationsJSON:version: instead.")));
 
-@property (nonatomic, readonly) BOOL includesGps;
-@property (nonatomic, readonly) BOOL includesAngleDistance;
-@property (nonatomic, readonly) BOOL includesAdhocTouch;
-@property (nonatomic, readonly) BOOL includesAdhocTarget;
-@property (nonatomic, readonly) BOOL hasDefault;
-@property (nonatomic, readonly) BOOL multipleChoices;
-
+// The protocol provides the Angle Distance parameters
+@property (nonatomic, readonly) BOOL definesAngleDistance;
 // The units of measure (meters, feet, etc) for distances to observed items
-@property (nonatomic, readonly) BOOL definesDistanceUnits;
 @property (nonatomic, readonly) AGSSRUnit distanceUnits;
-
 // The angle in degrees for dead ahead or true north
-@property (nonatomic, readonly) BOOL definesAngleBaseline;
 @property (nonatomic, readonly) double angleBaseline;
-
 // What is the direction of increasing angles (clockwise or counter-clockwise)
-@property (nonatomic, readonly) BOOL definesAngleDirection;
 @property (nonatomic, readonly) AngleDirection angleDirection;
+
+
+@property (nonatomic, readonly) NSUInteger countOfTouchChoices;
+@property (nonatomic, readonly) NSUInteger countOfNonTouchChoices;
+@property (nonatomic, readonly) WaysToLocateFeature initialNonTouchChoice;
+@property (nonatomic, readonly) WaysToLocateFeature defaultNonTouchChoice;
 
 @end

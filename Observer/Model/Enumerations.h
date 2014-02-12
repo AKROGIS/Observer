@@ -15,4 +15,11 @@ typedef NS_ENUM(NSUInteger, AngleDirection) {
     AngleDirectionCounterClockwise  = 1
 };
 
+typedef NS_ENUM(NSUInteger, WaysToLocateFeature) {
+    LocateFeatureWithGPS           = 1<<0,
+    LocateFeatureWithAngleDistance = 1<<1,
+    LocateFeatureWithMapTouch      = 1<<2,
+    LocateFeatureWithMapTarget     = 1<<3
+};
+
 #endif
