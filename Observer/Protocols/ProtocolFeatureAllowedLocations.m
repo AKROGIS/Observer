@@ -61,7 +61,7 @@
     
     //adhocTouch
     for (id item in json) {
-        if ([self dictionary:item hasValues:@[@"touch", @"adhoctouch", @"adhoc-touch"] forKey:@"type"]) {
+        if ([self dictionary:item hasValues:@[@"touch", @"maptouch", @"adhoctouch", @"adhoc-touch"] forKey:@"type"]) {
             _includesAdhocTouch = YES;
             _adhocTouch = (NSDictionary *)item;
             break;
@@ -70,7 +70,7 @@
     
     //adhocTarget
     for (id item in json) {
-        if ([self dictionary:item hasValues:@[@"target", @"adhoctarget", @"adhoc-target"] forKey:@"type"]) {
+        if ([self dictionary:item hasValues:@[@"target", @"maptarget", @"adhoctarget", @"adhoc-target"] forKey:@"type"]) {
             _includesAdhocTarget = YES;
             _adhocTarget = (NSDictionary *)item;
             break;
@@ -87,7 +87,7 @@
         }
     }
     //angleBaseline
-    key = [self keyForDictionary:_angleDistanceLocation possibleKeys:@[@"baseline", @"anglebaseline", @"angle-baseline", @"baselineangle", @"baseline-angle"]];
+    key = [self keyForDictionary:_angleDistanceLocation possibleKeys:@[@"deadAhead", @"baseline", @"anglebaseline", @"angle-baseline", @"baselineangle", @"baseline-angle"]];
     if (key) {
         id value = _angleDistanceLocation[key];
         if ([value isKindOfClass:[NSNumber class]]) {

@@ -1,0 +1,162 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;\f2\fnil\fcharset0 Monaco;
+}
+{\colortbl;\red255\green255\blue255;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid2\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid3\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li2160\lin2160 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid4\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li2880\lin2880 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid5\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li3600\lin3600 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid6\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li4320\lin4320 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid7\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li5040\lin5040 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid8\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li5760\lin5760 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\sl480\slmult1\pardirnatural
+
+\f0\b\fs28 \cf0 \ul \ulc0 Protocol Specifications\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural
+\ls1\ilvl0
+\b0\fs24 \cf0 \ulnone {\listtext	\'95	}Features\
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}Locations\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}Each feature must have a 
+\f1\fs22 \CocoaLigature0 "locations" 
+\f0\fs24 \CocoaLigature1 element with a non-empty list of location methods (a technique for locating a feature).\
+{\listtext	\uc0\u8259 	}Each location method must have a 
+\f1\fs22 \CocoaLigature0 "type"
+\f0\fs24 \CocoaLigature1  element\
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}The value must be one of 
+\f1\fs22 \CocoaLigature0 "gps", "mapTarget", "mapTouch", "angleDistance"\
+\ls1\ilvl3
+\f0\fs24 \CocoaLigature1 {\listtext	\uc0\u8259 	}Any location type containing the text "Touch" is a touch location, the others are non-touch locations.\
+{\listtext	\uc0\u8259 	}Providing multiple methods with the same type is allowed but discouraged as the behavior is undefined.\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}A location method can have an optional 
+\f1\fs22 \CocoaLigature0  "allow" 
+\f0\fs24 \CocoaLigature1 element with a value of either 
+\f1\fs22 \CocoaLigature0 true
+\f0\fs24 \CocoaLigature1  or 
+\f1\fs22 \CocoaLigature0 false
+\f0\fs24 \CocoaLigature1 . \
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}The value of 
+\f1\fs22 \CocoaLigature0 true
+\f0\fs24 \CocoaLigature1  is assumed if this element is absent.\
+{\listtext	\uc0\u8259 	}If the value is 
+\f1\fs22 \CocoaLigature0 false
+\f0\fs24 \CocoaLigature1 , this type of location method is not allowed.  This is equivalent to not providing the location method in the list.\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}A location method can have an optional default element with a value of either 
+\f1\fs22 \CocoaLigature0 true
+\f0\fs24 \CocoaLigature1  or 
+\f1\fs22 \CocoaLigature0 false
+\f0\fs24 \CocoaLigature1 .\
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}A value of 
+\f1\fs22 \CocoaLigature0 false
+\f0\fs24 \CocoaLigature1  is assumed if this element is absent\
+{\listtext	\uc0\u8259 	}Only one non-touch locations should have a 
+\f1\fs22 \CocoaLigature0 true
+\f0\fs24 \CocoaLigature1  value, otherwise the behavior is undefined.\
+\pard\tx1660\tx2160\tx2240\tx2800\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}A location method of 
+\f1\fs22 \CocoaLigature0 "type":"angleDistance"
+\f0\fs24 \CocoaLigature1  has the following requirements\
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}An optional element 
+\f1\fs22 \CocoaLigature0 "deadAhead"
+\f0\fs24 \CocoaLigature1  with a numeric value between 
+\f1\fs22 \CocoaLigature0 0.0
+\f0\fs24 \CocoaLigature1  and 
+\f1\fs22 \CocoaLigature0 360.0
+\f0\fs24 \CocoaLigature1 \
+\pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}The numeric value provided is the angle measurement in degrees that means the feature is dead ahead\
+{\listtext	\uc0\u8259 	}The default is 
+\f1\fs22 \CocoaLigature0 0.0
+\f0\fs24 \CocoaLigature1 \
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3
+\f1\fs22 \cf0 {\listtext	
+\f2 \uc0\u8259 
+\f1 	}
+\f0\fs24 An optional element 
+\f1\fs22 \CocoaLigature0 "direction"
+\f0\fs24 \CocoaLigature1  with a value of 
+\f1\fs22 \CocoaLigature0 "cw"
+\f0\fs24 \CocoaLigature1  or 
+\f1\fs22 \CocoaLigature0 "ccw"
+\f0\fs24 \CocoaLigature1 \
+\pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}Angles increase in the clockwise (
+\f1\fs22 \CocoaLigature0 "cw"
+\f0\fs24 \CocoaLigature1 ) or counter-clockwise (
+\f1\fs22 \CocoaLigature0 "ccw"
+\f0\fs24 \CocoaLigature1 ) direction\
+{\listtext	\uc0\u8259 	}The default is 
+\f1\fs22 \CocoaLigature0 "cw"
+\f0\fs24 \CocoaLigature1 \
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}An optional element 
+\f1\fs22 \CocoaLigature0 "units"
+\f0\fs24 \CocoaLigature1  with value of 
+\f1\fs22 \CocoaLigature0 "feet"
+\f0\fs24 \CocoaLigature1  or 
+\f1\fs22 \CocoaLigature0 "meters"
+\f0\fs24 \CocoaLigature1  or 
+\f1\fs22 \CocoaLigature0 "yards"
+\f0\fs24 \CocoaLigature1 \
+\pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}Distance measurements to the feature are reported in these units\
+{\listtext	\uc0\u8259 	}The default is 
+\f1\fs22 \CocoaLigature0 "meters"
+\f0\fs24 \CocoaLigature1 \
+\pard\tx2380\tx2880\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}If all these elements are omitted\
+\pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}Then the user is free to set their own preferences for these parameters in the user interface\
+\pard\tx2380\tx2880\tx3360\tx3920\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}If any of these elements is provided\
+\pard\tx3100\tx3600\tx3920\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}The user interface locks the user into using the parameters (or their defaults) as provided\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}If a touch location method is allowed\
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}A feature will be created when the user touches the map without selecting an existing feature\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}If one or more non-touch location methods allowed\
+\pard\tx2380\tx2880\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}Then an Add Feature button is added to the user interface\
+\pard\tx1660\tx2160\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}The Add Feature button has the following behavior if more than one non-touch location method is allowed\
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}Tap:\
+\pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}If there is a location method with 
+\f1\fs22 \CocoaLigature0 "default":true
+\f0\fs24 \CocoaLigature1 \
+\pard\tx3820\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li4320\fi-4320\pardirnatural
+\ls1\ilvl5\cf0 {\listtext	\uc0\u8259 	}Use that location method to add a new feature\
+\pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}If there is no location method with 
+\f1\fs22 \CocoaLigature0 "default":true
+\f0\fs24 \CocoaLigature1 \
+\pard\tx3820\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li4320\fi-4320\pardirnatural
+\ls1\ilvl5\cf0 {\listtext	\uc0\u8259 	}If the feature's preferred location method (see Long Press) is not set\
+\pard\tx4540\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li5040\fi-5040\pardirnatural
+\ls1\ilvl6\cf0 {\listtext	\uc0\u8259 	}Set the feature's preferred method to the first of the following types to be allowed\
+\pard\tx5260\tx5760\tx6480\tx7200\tx7920\tx8640\li5760\fi-5760\pardirnatural
+\ls1\ilvl7\cf0 {\listtext	\uc0\u8259 	}
+\f1\fs22 \CocoaLigature0 "gps", "adhocTarget", "angleDistance"
+\f0\fs24 \CocoaLigature1 \
+\pard\tx3820\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li4320\fi-4320\pardirnatural
+\ls1\ilvl5\cf0 {\listtext	\uc0\u8259 	}Use the user's preferred location method to add a new feature\
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}Long Press:\
+\pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}Provide the user with a selection list of all the allowed non-touch location methods\
+{\listtext	\uc0\u8259 	}If the user selects one\
+\pard\tx3820\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li4320\fi-4320\pardirnatural
+\ls1\ilvl5\cf0 {\listtext	\uc0\u8259 	}A feature is added using the selected location method\
+\pard\tx3820\tx4320\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li4320\fi-4320\pardirnatural
+\ls1\ilvl5\cf0 {\listtext	\uc0\u8259 	}Set the feature's preferred location method to the selected location method\
+\pard\tx220\tx720\tx1120\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural
+\ls2\ilvl0\cf0 {\listtext	\'95	}Missions\
+}

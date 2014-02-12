@@ -62,9 +62,9 @@
  			],
 			"locations":[
 				{"type":"gps",           "default":false, "allow":true},
-				{"type":"adhocTarget",   "default":false, "allow":true},
-				{"type":"adhocTouch",    "default":false, "allow":false},
-				{"type":"angleDistance", "default":true,  "allow":true, "baseline":180.0, "units":"feet", "direction":"cw" }
+				{"type":"mapTarget",     "default":false, "allow":true},
+				{"type":"mapTouch",      "default":false, "allow":false},
+				{"type":"angleDistance", "default":true,  "allow":true, "deadAhead":180.0, "units":"feet", "direction":"cw" }
 			],
 			"dialog":{
 				"title":"Bird Groups",
