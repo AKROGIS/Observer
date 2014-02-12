@@ -70,14 +70,14 @@
                                     </barButtonItem>
                                     <barButtonItem title="+AD" id="XBC-1H-O73">
                                         <connections>
-                                            <segue destination="x7W-Nj-vNE" kind="popover" identifier="AngleDistancePopOver" popoverAnchorBarButtonItem="XBC-1H-O73" id="ArD-os-wTm">
+                                            <segue destination="x7W-Nj-vNE" kind="popover" identifier="Select AngleDistance" popoverAnchorBarButtonItem="XBC-1H-O73" id="ArD-os-wTm">
                                                 <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                                             </segue>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="+GPS" id="C8B-tf-jAe">
+                                    <barButtonItem title="+GPS" id="C8B-tf-jAe" customClass="AddFeatureBarButtonItem">
                                         <connections>
-                                            <action selector="addGpsObservation:" destination="TiC-11-YSU" id="TXf-do-BMA"/>
+                                            <action selector="addFeature:" destination="TiC-11-YSU" id="6e9-GE-k1v"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem systemItem="add" id="zVE-98-VDX">

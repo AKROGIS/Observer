@@ -33,6 +33,7 @@
 #import "AttributeViewController.h"
 #import "AutoPanStateMachine.h"
 #import "AutoPanButton.h"
+#import "AddFeatureBarButtonItem.h"
 
 
 #define kGpsPointsLayer            @"gpsPointsLayer"
@@ -134,7 +135,7 @@
             return NO;
         }
     }
-    if ([identifier isEqualToString:@"AngleDistancePopOver"])
+    if ([identifier isEqualToString:@"Select AngleDistance"])
     {
         if (self.angleDistancePopoverController) {
             [self.angleDistancePopoverController dismissPopoverAnimated:YES];
@@ -163,7 +164,7 @@
         vc1 = [nav.viewControllers firstObject];
     }
 
-    if ([[segue identifier] isEqualToString:@"AngleDistancePopOver"])
+    if ([[segue identifier] isEqualToString:@"Select AngleDistance"])
     {
         AngleDistanceViewController *vc = (AngleDistanceViewController*)vc1;
 
@@ -336,28 +337,89 @@
 
 - (IBAction)addGpsObservation:(UIBarButtonItem *)sender
 {
-    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint];
-    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    [self drawObservation:observation atPoint:mapPoint];
-    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:mapPoint];
-    //TODO: is there any reason to add the attributes to the graphic?
-    //    NSDictionary *attributes = [self createAttributesFromObservation:observation];
-    //    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
-    //    [self.observationsLayer removeGraphic:oldGraphic]; //how do we get the old graphic
-    //    [self.observationsLayer addGraphic:graphic];
+    [self addFeatureAtGps:self.currentProtocolFeature];
 }
 
 - (IBAction)addAdhocObservation:(UIBarButtonItem *)sender
 {
+    [self addFeatureAtTarget:self.currentProtocolFeature];
+}
+
+- (IBAction)addFeature:(AddFeatureBarButtonItem *)sender {
+    ProtocolFeature *feature = sender.feature;
+    WaysToLocateFeature locationMethod = feature.allowedLocations.defaultNonTouchChoice;
+    if (!locationMethod) {
+        locationMethod = sender.preferredLocationMethod;
+    }
+    [self addFeature:feature withLocationMethod:locationMethod];
+}
+
+- (IBAction)selectFeatureLocationMethod:(UILongPressGestureRecognizer *)sender {
+    AddFeatureBarButtonItem * button = (AddFeatureBarButtonItem *)sender.view;
+    ProtocolFeature *feature = button.feature;
+    self.currentProtocolFeature = feature;
+    //TODO: present an action sheet at the button with all allowed touch locations for feature
+}
+
+- (void)actionSheetdelegate:(WaysToLocateFeature) locateMethod sender:(AddFeatureBarButtonItem *)sender
+{
+    ProtocolFeature *feature = sender.feature;
+    WaysToLocateFeature locationMethod = sender.preferredLocationMethod;
+    sender.preferredLocationMethod = 1;//TODO: set the selected location method on feature of the long press button to the method selected
+    [self addFeature:feature withLocationMethod:locationMethod];
+}
+
+//When configuring the barbutton type
+// only build the barbutton if feature.allowedLocations.CountOfNonTouchChoices > 0
+// if (feature.allowedLocations.CountOfNonTouchChoices > 1) then add a UILongPressGestureRecognizer
+// sender.preferedLocationMethod = feature.allowedLocations.initialNonTouchChoice
+
+- (void)addFeature:(ProtocolFeature *)feature withLocationMethod:(WaysToLocateFeature)locationMethod
+{
+    switch (locationMethod) {
+        case LocateFeatureWithGPS:
+            [self addFeatureAtGps:feature];
+            break;
+        case LocateFeatureWithMapTarget:
+            [self addFeatureAtTarget:feature];
+            break;
+        case LocateFeatureWithAngleDistance:
+            [self addFeatureAtTarget:feature];
+            break;
+        default:
+            AKRLog(@"Location method (%u) specified is not valid",locationMethod);
+    }
+}
+
+- (void)addFeatureAtGps:(ProtocolFeature *)feature
+{
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    //ignore the gpsPoint if it is over a second old
+    Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
+    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+    [self drawObservation:observation atPoint:mapPoint];
+    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:mapPoint];
+}
+
+- (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
+{
+    self.currentProtocolFeature = feature;
+    [self performSegueWithIdentifier:@"Select AngleDistance" sender:self];
+}
+
+- (void)addFeatureAtTarget:(ProtocolFeature *)feature
+{
+    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    //ignore the gpsPoint if it is more than two seconds old (adhoc location will get current device time)
     if ([gpsPoint.timestamp timeIntervalSinceNow] < -2.0)
         gpsPoint = nil;
-    Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
+    Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
     [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:self.mapView.mapAnchor];
 }
+
+
+
+
 
 
 
