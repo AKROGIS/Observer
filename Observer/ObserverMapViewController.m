@@ -84,10 +84,10 @@
 @property (strong, nonatomic) MapReference *currentMapEntity;
 @property (strong, nonatomic) Mission *mission;
 @property (strong, nonatomic) MissionProperty *currentMissionProperty;
-@property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
 
-//Used to save state for delegate callbacks (action sheet and segue)
+//Used to save state for delegate callbacks (alertview, actionsheet and segue)
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
+@property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
 
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
 @property (strong, nonatomic) NSMutableDictionary *graphicsLayers; // of AGSGraphicsLayer
@@ -489,22 +489,20 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    //TODO: put up an alertview
-    AKRLog(@"Location Manager Failed: %@",error.localizedDescription);
+    [[[UIAlertView alloc] initWithTitle:@"Location Failure" message:error.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 }
 
 
 
 
-#pragma mark - Delegate Methods: AGSLayerDelegate (all optional)
+#pragma mark - Delegate Methods: AGSLayerDelegate
 
 - (void)layer:(AGSLayer *)layer didFailToLoadWithError:(NSError *)error
 {
-    // Tells the delegate that the layer failed to load with the specified error.
-    AKRLog(@"layer %@ failed to load with error %@", layer, error);
     [self decrementBusy];
     self.noMapLabel.hidden = NO;
-    //TODO: put up an alertview
+    NSString *errorMessage = [NSString stringWithFormat:@"Layer %@ failed to load with error: %@",layer.name, error.localizedDescription];
+    [[[UIAlertView alloc] initWithTitle:@"Layer Load Failure" message:errorMessage delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 }
 
 
