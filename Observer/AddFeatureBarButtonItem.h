@@ -14,5 +14,7 @@
 @interface AddFeatureBarButtonItem : UIBarButtonItem
 
 @property (strong, nonatomic) ProtocolFeature *feature;
+@property (strong, nonatomic) UILongPressGestureRecognizer *longPress;
+
 
 @end

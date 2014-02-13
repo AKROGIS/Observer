@@ -64,21 +64,6 @@
                                             <action selector="changeEnvironment:" destination="xq4-n4-1ok" id="17E-t6-egO"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="+AD" id="FPu-g6-CJL">
-                                        <connections>
-                                            <segue destination="mtM-Zu-F9c" kind="push" identifier="AngleDistancePopOver" id="SWW-Te-Djy"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem title="+GPS" id="OY8-qE-qVR">
-                                        <connections>
-                                            <action selector="addGpsObservation:" destination="xq4-n4-1ok" id="RJO-bF-8cR"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem systemItem="add" id="enz-rt-MSc">
-                                        <connections>
-                                            <action selector="addAdhocObservation:" destination="xq4-n4-1ok" id="TPE-T8-Nc9"/>
-                                        </connections>
-                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hip-2A-pjr">
@@ -126,9 +111,6 @@
                     </view>
                     <navigationItem key="navigationItem" title="Untitled Survey" id="RN4-j6-RXw"/>
                     <connections>
-                        <outlet property="addAdObservationBarButton" destination="FPu-g6-CJL" id="idj-0l-iKo"/>
-                        <outlet property="addGpsObservationBarButton" destination="OY8-qE-qVR" id="MdH-UB-MiY"/>
-                        <outlet property="addObservationBarButton" destination="enz-rt-MSc" id="jqz-e9-8cr"/>
                         <outlet property="compassRoseButton" destination="Hip-2A-pjr" id="QvZ-cu-aDt"/>
                         <outlet property="editEnvironmentBarButton" destination="Afo-Bf-zXG" id="KVv-Bh-MlH"/>
                         <outlet property="mapLoadingIndicator" destination="xql-Dp-opF" id="RWj-Nu-d3O"/>
@@ -271,7 +253,7 @@
                             <tableViewSection headerTitle="Angles Increase" id="XaT-Sz-fB6">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="16Q-NH-aOa" style="IBUITableViewCellStyleDefault" id="OcG-Ck-2Is" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="119" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="55" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="OcG-Ck-2Is" id="ZGE-bH-zBA">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -287,7 +269,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="NI4-04-U5a" style="IBUITableViewCellStyleDefault" id="Rya-vw-OYR" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="163" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="99" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Rya-vw-OYR" id="RyV-C3-qux">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -306,7 +288,7 @@
                             <tableViewSection headerTitle="Dead Ahead" id="wg8-oF-Qmr">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="WLT-be-x2j" style="IBUITableViewCellStyleDefault" id="WB1-QM-EaH" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="255" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="191" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WB1-QM-EaH" id="TfA-Ff-dOv">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -323,7 +305,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="NiS-uZ-bTo" style="IBUITableViewCellStyleDefault" id="mpA-mM-Lgm" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="299" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="235" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mpA-mM-Lgm" id="Fpy-qO-rKs">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -340,7 +322,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="mb1-a1-xUP" style="IBUITableViewCellStyleDefault" id="meS-Zt-xwc" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="343" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="279" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="meS-Zt-xwc" id="6fc-br-epp">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -361,7 +343,7 @@
                             <tableViewSection headerTitle="Distance Units" id="BkD-Pi-Id6">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="mnD-ZS-Acs" style="IBUITableViewCellStyleDefault" id="izY-qk-7LH" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="435" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="371" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="izY-qk-7LH" id="SsR-e2-iUj">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -377,7 +359,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="0EM-xw-oXx" style="IBUITableViewCellStyleDefault" id="tyA-gO-YKr" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="479" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="415" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tyA-gO-YKr" id="2QU-O0-SYw">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -393,7 +375,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="wxt-U1-o1w" style="IBUITableViewCellStyleDefault" id="FdT-Dz-ggM" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="523" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="459" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="FdT-Dz-ggM" id="Ler-Kt-7cF">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>

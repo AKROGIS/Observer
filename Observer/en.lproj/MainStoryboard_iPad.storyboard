@@ -69,27 +69,7 @@
                                             <action selector="changeEnvironment:" destination="TiC-11-YSU" id="ICq-DA-pR3"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="+AD" id="XBC-1H-O73">
-                                        <connections>
-                                            <segue destination="x7W-Nj-vNE" kind="popover" identifier="Select AngleDistance" popoverAnchorBarButtonItem="XBC-1H-O73" id="ArD-os-wTm">
-                                                <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                                            </segue>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem title="+GPS" id="C8B-tf-jAe" customClass="AddFeatureBarButtonItem">
-                                        <connections>
-                                            <action selector="addFeature:" destination="TiC-11-YSU" id="6e9-GE-k1v"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem systemItem="add" id="zVE-98-VDX">
-                                        <connections>
-                                            <action selector="addAdhocObservation:" destination="TiC-11-YSU" id="b30-q9-obS"/>
-                                        </connections>
-                                    </barButtonItem>
                                 </items>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="RWc-te-AS2" appends="YES" id="WPQ-1b-GJd"/>
-                                </connections>
                             </toolbar>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fOP-b6-5IU">
                                 <rect key="frame" x="718" y="28" width="30" height="30"/>
@@ -136,9 +116,6 @@
                     </view>
                     <navigationItem key="navigationItem" title="Untitled Survey" id="DZH-KF-4La"/>
                     <connections>
-                        <outlet property="addAdObservationBarButton" destination="XBC-1H-O73" id="Xx8-Pi-TnE"/>
-                        <outlet property="addGpsObservationBarButton" destination="C8B-tf-jAe" id="KF1-bm-Whs"/>
-                        <outlet property="addObservationBarButton" destination="zVE-98-VDX" id="DG8-bz-NK6"/>
                         <outlet property="compassRoseButton" destination="fOP-b6-5IU" id="MRd-X5-ZrB"/>
                         <outlet property="editEnvironmentBarButton" destination="Fdi-yp-sWi" id="cJv-sd-s4Y"/>
                         <outlet property="mapLoadingIndicator" destination="zJv-q7-y2x" id="hBV-WL-ipD"/>
@@ -163,11 +140,6 @@
                         <action selector="panMap:" destination="TiC-11-YSU" id="UK5-dV-80W"/>
                     </connections>
                 </panGestureRecognizer>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="RWc-te-AS2">
-                    <connections>
-                        <action selector="selectFeatureLocationMethod:" destination="TiC-11-YSU" id="dC1-dy-rf1"/>
-                    </connections>
-                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="580" y="-1203"/>
         </scene>

@@ -66,9 +66,8 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopRecordingBarButtonItem;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopObservingBarButtonItem;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *addAdObservationBarButton;
-@property (weak, nonatomic) IBOutlet AddFeatureBarButtonItem *addGpsObservationBarButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *addObservationBarButton;
+
+@property (strong, nonatomic) NSMutableArray *addFeatureBarButtonItems;  //NSArray of AddFeatureBarButtonItem
 
 //Support
 @property (nonatomic) int  busyCount;
@@ -113,7 +112,7 @@
     [super viewDidLoad];
     [self configureMapView];
     [self configureGpsButton];
-    [self configureObservationButton];
+    [self configureObservationButtons];
     [self initializeData];
 }
 
@@ -335,17 +334,13 @@
     [self.quickDialogPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 }
 
-- (IBAction)addGpsObservation:(UIBarButtonItem *)sender
-{
-    [self addFeatureAtGps:self.currentProtocolFeature];
-}
 
-- (IBAction)addAdhocObservation:(UIBarButtonItem *)sender
-{
-    [self addFeatureAtTarget:self.currentProtocolFeature];
-}
 
-- (IBAction)addFeature:(AddFeatureBarButtonItem *)sender {
+
+#pragma mark - Actions wired up programatically
+
+- (void)pleaseAddFeature:(AddFeatureBarButtonItem *)sender
+{
     ProtocolFeature *feature = sender.feature;
     WaysToLocateFeature locationMethod = feature.allowedLocations.defaultNonTouchChoice;
     if (!locationMethod) {
@@ -354,79 +349,32 @@
     [self addFeature:feature withLocationMethod:locationMethod];
 }
 
-- (IBAction)selectFeatureLocationMethod:(UILongPressGestureRecognizer *)sender {
-    AddFeatureBarButtonItem * button = self.addGpsObservationBarButton;
-    //TODO: get the bar button that did the long press (note: this is tricky)
-    //AddFeatureBarButtonItem *)sender.view;
+- (void)selectFeatureLocationMethod:(UILongPressGestureRecognizer *)sender
+{
+    //Find the bar button the initiated the long press;
+    //Normally I would use the view property of the Gesture, but bar buttons are not UIViews
+    AddFeatureBarButtonItem * button = nil;
+    for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
+        if (sender == item.longPress) {
+            button = item;
+            break;
+        }
+    }
+    if (!button) {
+        AKRLog(@"Oh No!  I didn't find the button the belongs to the long press");
+    }
     ProtocolFeature *feature = button.feature;
     self.currentProtocolFeature = feature;
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Locate By" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    //TODO: get the allowed names from the ProtocolFeature
+    //FIXME: get the allowed names from the ProtocolFeature, need to be indexed
+    //TODO: choices allowed is dependent on map
+    //      if map is nil, then maptarget is not allowed
+    //      if map is not projected then angleDistance is not allowed
     for (NSString *title in @[@"GPS", @"Target", @"Angle Distance"]) {
         [sheet addButtonWithTitle:title];
     }
     [sheet showFromBarButtonItem:button animated:YES];
 }
-
- - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    ProtocolFeature *feature = self.currentProtocolFeature;
-    WaysToLocateFeature locationMethod = 1<<buttonIndex; //TODO: set the selected location method on feature of the long press button to the method selected
-    feature.preferredLocationMethod = locationMethod;
-    [self addFeature:feature withLocationMethod:locationMethod];
-}
-
-//When configuring the barbutton type
-// only build the barbutton if feature.allowedLocations.CountOfNonTouchChoices > 0
-// if (feature.allowedLocations.CountOfNonTouchChoices > 1) then add a UILongPressGestureRecognizer
-// feature.preferedLocationMethod = feature.allowedLocations.initialNonTouchChoice
-
-- (void)addFeature:(ProtocolFeature *)feature withLocationMethod:(WaysToLocateFeature)locationMethod
-{
-    switch (locationMethod) {
-        case LocateFeatureWithGPS:
-            [self addFeatureAtGps:feature];
-            break;
-        case LocateFeatureWithMapTarget:
-            [self addFeatureAtTarget:feature];
-            break;
-        case LocateFeatureWithAngleDistance:
-            [self addFeatureAtTarget:feature];
-            break;
-        default:
-            AKRLog(@"Location method (%u) specified is not valid",locationMethod);
-    }
-}
-
-- (void)addFeatureAtGps:(ProtocolFeature *)feature
-{
-    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
-    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    [self drawObservation:observation atPoint:mapPoint];
-    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:mapPoint];
-}
-
-- (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
-{
-    self.currentProtocolFeature = feature;
-    [self performSegueWithIdentifier:@"Select AngleDistance" sender:self];
-}
-
-- (void)addFeatureAtTarget:(ProtocolFeature *)feature
-{
-    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    //ignore the gpsPoint if it is more than two seconds old (adhoc location will get current device time)
-    if ([gpsPoint.timestamp timeIntervalSinceNow] < -2.0)
-        gpsPoint = nil;
-    Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
-    [self drawObservation:observation atPoint:self.mapView.mapAnchor];
-    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:self.mapView.mapAnchor];
-}
-
-
-
-
 
 
 
@@ -824,6 +772,16 @@
 
 #pragma mark - Delegate Methods: UIActionSheetDelegate
 
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    ProtocolFeature *feature = self.currentProtocolFeature;
+    //FIXME: set the selected location method on feature of the long press button to the method selected
+    WaysToLocateFeature locationMethod = 1<<buttonIndex;
+    feature.preferredLocationMethod = locationMethod;
+    [self addFeature:feature withLocationMethod:locationMethod];
+}
+
+
 
 
 #pragma mark - Private Properties
@@ -919,6 +877,13 @@
     return self.surveys.selectedSurvey.document.managedObjectContext;
 }
 
+- (NSMutableArray *)addFeatureBarButtonItems
+{
+    if (!_addFeatureBarButtonItems) {
+        _addFeatureBarButtonItems = [NSMutableArray new];
+    }
+    return _addFeatureBarButtonItems;
+}
 
 
 #pragma mark - Private - UI configuration
@@ -939,9 +904,46 @@
     self.autoPanController.autoPanModeButton = self.panButton;
 }
 
-- (void)configureObservationButton
+- (void)configureObservationButtons
 {
+    //FIXME: use the private property
+    NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
+    //Remove any existing Add Feature buttons
+    [toolbarButtons removeObjectsInArray:self.addFeatureBarButtonItems];
 
+    [self.addFeatureBarButtonItems removeAllObjects];
+    if (self.survey) {
+        for (ProtocolFeature *feature in self.survey.protocol.features) {
+            //TODO: count of non-touch choices is dependent on map
+            //      if map is nil, then maptarget is not allowed
+            //      if map is not projected then angleDistance is not allowed
+            if (feature.allowedLocations.countOfNonTouchChoices > 0) {
+                //TODO: feature names are too long for buttons, use a short name, or an icon
+                AddFeatureBarButtonItem *addFeatureButton = [[AddFeatureBarButtonItem alloc] initWithTitle:feature.name style:UIBarButtonItemStylePlain target:self action:@selector(pleaseAddFeature:)];
+                addFeatureButton.feature = feature;
+                if (feature.allowedLocations.countOfNonTouchChoices > 1) {
+                    feature.preferredLocationMethod = feature.allowedLocations.initialNonTouchChoice;
+                    //Gesture recognizers have to be attached to a view, BarButtonItems do not have a view until they are added to the toolbar, and even then they are private
+                    addFeatureButton.longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(selectFeatureLocationMethod:)];
+                }
+                [self.addFeatureBarButtonItems addObject:addFeatureButton];
+            }
+        }
+    }
+    [toolbarButtons addObjectsFromArray:self.addFeatureBarButtonItems];
+    [self.toolbar setItems:toolbarButtons animated:YES];
+    [self hookupBarButtonGestures];
+}
+
+-(void)hookupBarButtonGestures
+{
+    //Hack to hookup gesture recognizer to a bar button item.
+    //BarButtonItems do not have a view until they have been added to a toolbar
+    //A BarButtonItems view will change everytime the toolbar items array is changed.
+    for (AddFeatureBarButtonItem *barButton in self.addFeatureBarButtonItems) {
+        //DODGY: we are using a public method to access a private variable (http://stackoverflow.com/a/9371184/542911)
+        [[barButton valueForKey:@"view"] addGestureRecognizer:barButton.longPress];
+    }
 }
 
 - (void)initializeData
@@ -982,9 +984,9 @@
     self.startStopRecordingBarButtonItem.enabled = NO;
     self.startStopObservingBarButtonItem.enabled = NO;
     self.editEnvironmentBarButton.enabled = NO;
-    self.addObservationBarButton.enabled = NO;
-    self.addGpsObservationBarButton.enabled = NO;
-    self.addAdObservationBarButton.enabled = NO;
+    for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
+        item.enabled = NO;
+    }
 }
 
 -(void)enableControls
@@ -998,13 +1000,10 @@
     self.startStopObservingBarButtonItem.enabled = self.isRecording && self.survey;
     //TODO: if there are no mission properties, we should remove this button.
     self.editEnvironmentBarButton.enabled = self.isRecording && self.survey && self.survey.protocol.missionFeature.attributes.count > 0;
-    //TODO: support more than just one feature called "Observations"
-    //TODO:can we support adding observations that have no attributes (no dialog)
-    self.addObservationBarButton.enabled = self.isObserving && self.survey && self.survey.protocol.features.count > 0;
-    self.addGpsObservationBarButton.enabled = self.isObserving && self.survey &&self.survey.protocol.features.count > 0;
-    //TODO: if basemap is in a geographic projection, then angle and distance calculations will not work, so disable angle/distance button
-    //TODO: availability of the Angle Distance button is dependent on protocol
-    self.addAdObservationBarButton.enabled = self.isObserving && self.maps.selectedLocalMap && self.survey && self.survey.protocol.features.count > 0;
+    for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
+        item.enabled = self.isObserving;
+    }
+
 }
 
 - (void)incrementBusy
@@ -1134,6 +1133,7 @@
     [toolbarButtons removeObjectAtIndex:index];
     [toolbarButtons insertObject:newBarButton atIndex:index];
     [self.toolbar setItems:toolbarButtons animated:YES];
+    [self hookupBarButtonGestures];
     return newBarButton;
 }
 
@@ -1389,6 +1389,7 @@
                 if (success) {
                     [self logStats];
                     [self reloadGraphics];
+                    [self configureObservationButtons];
                 } else {
                     [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
 
@@ -1486,6 +1487,50 @@
 
 
 #pragma mark - Private Methods - support for data model - observations
+
+- (void)addFeature:(ProtocolFeature *)feature withLocationMethod:(WaysToLocateFeature)locationMethod
+{
+    switch (locationMethod) {
+        case LocateFeatureWithGPS:
+            [self addFeatureAtGps:feature];
+            break;
+        case LocateFeatureWithMapTarget:
+            [self addFeatureAtTarget:feature];
+            break;
+        case LocateFeatureWithAngleDistance:
+            [self addFeatureAtTarget:feature];
+            break;
+        default:
+            AKRLog(@"Location method (%u) specified is not valid",locationMethod);
+    }
+}
+
+- (void)addFeatureAtGps:(ProtocolFeature *)feature
+{
+    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
+    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+    [self drawObservation:observation atPoint:mapPoint];
+    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:mapPoint];
+}
+
+- (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
+{
+    self.currentProtocolFeature = feature;
+    //FIXME: This seque doesn't exist anymore  (it was a popover (ipad) or push (iphone) seque from the AngleDistance button (gone) to the AngleDistance VC)
+    [self performSegueWithIdentifier:@"Select AngleDistance" sender:self];
+}
+
+- (void)addFeatureAtTarget:(ProtocolFeature *)feature
+{
+    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    //ignore the gpsPoint if it is more than two seconds old (adhoc location will get current device time)
+    if ([gpsPoint.timestamp timeIntervalSinceNow] < -2.0)
+        gpsPoint = nil;
+    Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
+    [self drawObservation:observation atPoint:self.mapView.mapAnchor];
+    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:self.mapView.mapAnchor];
+}
 
 - (Observation *)createObservation:(ProtocolFeature *)feature
 {
@@ -1678,6 +1723,8 @@
 
 - (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity defaults:(NSManagedObject *)template atPoint:mappoint
 {
+    //TODO:can we support observations that have no attributes (no dialog)
+
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
     if (template) {
