@@ -14,7 +14,4 @@
 // To assist AppDelegate in opening urls from mail/web
 - (BOOL)openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation;
 
-// To assist AppDelegate in saving/closing the survey data
-- (void)closeSurvey;
-
 @end

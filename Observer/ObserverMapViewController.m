@@ -421,11 +421,6 @@
     return success;
 }
 
-- (void)closeSurvey
-{
-    [self closeSurvey:self.survey withConcurrentOpen:NO];
-}
-
 
 
 
