@@ -86,7 +86,7 @@
 @property (strong, nonatomic) MissionProperty *currentMissionProperty;
 @property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
 
-//FIXME: remove this property, it is a hack to make things compile while testing
+//Used to save state for delegate callbacks (action sheet and segue)
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
 
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
@@ -134,6 +134,7 @@
             return NO;
         }
     }
+    //TODO: this segue no longer exists
     if ([identifier isEqualToString:@"Select AngleDistance"])
     {
         if (self.angleDistancePopoverController) {
@@ -163,6 +164,7 @@
         vc1 = [nav.viewControllers firstObject];
     }
 
+    //TODO: this segue no longer exists
     if ([[segue identifier] isEqualToString:@"Select AngleDistance"])
     {
         AngleDistanceViewController *vc = (AngleDistanceViewController*)vc1;
@@ -364,7 +366,7 @@
         AKRLog(@"Oh No!  I didn't find the button the belongs to the long press");
     }
     ProtocolFeature *feature = button.feature;
-    self.currentProtocolFeature = feature;
+    self.currentProtocolFeature = feature;  //Save the feature for the action sheet delegate callback
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Locate By" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     //FIXME: get the allowed names from the ProtocolFeature, need to be indexed
     //TODO: choices allowed is dependent on map
@@ -1409,7 +1411,7 @@
     Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self drawObservation:observation atPoint:mapPoint];
-    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:mapPoint];
+    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint];
 }
 
 - (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
@@ -1427,7 +1429,7 @@
         gpsPoint = nil;
     Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
-    [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:self.mapView.mapAnchor];
+    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:self.mapView.mapAnchor];
 }
 
 - (Observation *)createObservation:(ProtocolFeature *)feature
@@ -1511,7 +1513,7 @@
     AGSPoint *point;
     if (observation.angleDistanceLocation) {
         LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:observation.angleDistanceLocation.direction
-                                                                           protocolFeature:self.currentProtocolFeature
+                                                                           protocolFeature:nil //A protocol is not required to reconsistute an angle/distance
                                                                              absoluteAngle:observation.angleDistanceLocation.angle
                                                                                   distance:observation.angleDistanceLocation.distance];
         //The point must be in a projected coordinate system to apply an angle and distance
