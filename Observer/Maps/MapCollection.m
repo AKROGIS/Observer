@@ -230,7 +230,7 @@ static MapCollection *_sharedCollection = nil;
 
 - (BOOL)openURL:(NSURL *)url
 {
-    //FIXME: SProtocol returns the protocol, Survey returns BOOL, which should I use?
+    //TODO: SProtocol returns the protocol, Survey returns BOOL, which should I use?
     return ![self openURL:url saveCache:YES];
 }
 

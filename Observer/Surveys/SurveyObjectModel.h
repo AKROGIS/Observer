@@ -12,11 +12,6 @@
 
 @interface SurveyObjectModel : NSObject
 
-
-// FIXME: implement contract described below
-// Each feature in the protocol is a new entity in the MOM as a subclass of the 'kObservationEntityName' entity
-// The attributes of the mission in the protocol add attributes to the 'kMissionPropertyEntityName' entity
-
 + (NSManagedObjectModel *) objectModelWithProtocol:(SProtocol *)protocol;
 
 @end

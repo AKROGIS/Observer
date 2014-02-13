@@ -242,9 +242,8 @@
 
 - (void) addButton
 {
-    //FIXME: add button to view heiracrcy
-    //FIXME: add constraints??
-    //FIXME: resize view
+    //TODO: Implement - add button to view heirarchy (add constraints?, resize view?)
+    //Currently, We never present the VC with a protocol, and then change the model such that we would re-add the button
 }
 
 - (void) removeButton
@@ -276,8 +275,8 @@
     BOOL canBeDone = self.location.isValid && inputIsComplete;
     self.navigationItem.rightBarButtonItem.enabled = canBeDone;
     textField.returnKeyType = canBeDone ? UIReturnKeyDone : UIReturnKeyNext;
-    //FIXME: keyboard view does not update until focus changes to new view
-    //FIXME: other textfields should also be updated to UIReturnKeyDone without requiring a text changed event
+    //TODO: keyboard view does not update until focus changes to new view
+    //TODO: other textfields should also be updated to UIReturnKeyDone without requiring a text changed event
 }
 
 - (void) resizeView

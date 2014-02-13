@@ -368,7 +368,7 @@
     ProtocolFeature *feature = button.feature;
     self.currentProtocolFeature = feature;  //Save the feature for the action sheet delegate callback
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Locate By" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    //FIXME: get the allowed names from the ProtocolFeature, need to be indexed
+    //FIXME: get the allowed names from the ProtocolFeature, need to be indexed to WaysToLocateFeature for use in action sheet callback
     //TODO: choices allowed is dependent on map
     //      if map is nil, then maptarget is not allowed
     //      if map is not projected then angleDistance is not allowed
@@ -383,6 +383,7 @@
 
 #pragma mark - public methods
 
+//TODO: move this method back to the App delegate
 - (BOOL)openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
     BOOL success = NO;
@@ -652,7 +653,7 @@
                     return;
                 }
             }
-            //FIXME: not refreshing tableview in survey VC is protocol VC is displayed
+            //TODO: The survey VC's tableview is not refreshed if the protocol VC is displayed
             NSUInteger indexOfNewSurvey = [self.surveys newSurveyWithProtocol:self.protocolForSurveyCreation];
             if (indexOfNewSurvey != NSNotFound) {
                 [self closeSurvey:self.survey withConcurrentOpen:YES];
@@ -804,7 +805,6 @@
 
 - (void)configureObservationButtons
 {
-    //FIXME: use the private property
     NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
     //Remove any existing Add Feature buttons
     [toolbarButtons removeObjectsInArray:self.addFeatureBarButtonItems];
@@ -838,8 +838,8 @@
     //Hack to hookup gesture recognizer to a bar button item.
     //BarButtonItems do not have a view until they have been added to a toolbar
     //A BarButtonItems view will change everytime the toolbar items array is changed.
+    //We are using a public method to access a private variable (http://stackoverflow.com/a/9371184/542911)
     for (AddFeatureBarButtonItem *barButton in self.addFeatureBarButtonItems) {
-        //DODGY: we are using a public method to access a private variable (http://stackoverflow.com/a/9371184/542911)
         [[barButton valueForKey:@"view"] addGestureRecognizer:barButton.longPress];
     }
 }
@@ -1088,7 +1088,7 @@
         return YES;
     if (fabs(location.coordinate.longitude - self.lastGpsPointSaved.longitude) > 0.0001)
         return YES;
-    //FIXME: is 10 seconds a good default?  do I want a user setting? this gets called a lot, so I don't want to slow down with a lookup
+    //TODO: is 10 seconds a good default?  do I want a user setting? this gets called a lot, so I don't want to slow down with a lookup
     if ([location.timestamp timeIntervalSinceDate:self.lastGpsPointSaved.timestamp] > 10.0)
         return YES;
     return NO;
@@ -1355,7 +1355,7 @@
     gpsPoint.latitude = gpsData.coordinate.latitude;
     gpsPoint.longitude = gpsData.coordinate.longitude;
     gpsPoint.speed = gpsData.speed;
-    gpsPoint.timestamp = gpsData.timestamp ? gpsData.timestamp : [NSDate date]; //FIXME: added for testing on simulator, remove for production
+    gpsPoint.timestamp = gpsData.timestamp ? gpsData.timestamp : [NSDate date]; //TODO: added for testing on simulator, remove for production
     gpsPoint.verticalAccuracy = gpsData.verticalAccuracy;
     self.lastGpsPointSaved = gpsPoint;
     return gpsPoint;
@@ -1648,8 +1648,8 @@
 
     AKRLog(@"Presenting feature for layer %@ with timestamp %@", layerName, timestamp);
 
-    //Note: entityNamed:atTimestamp: only works with layers that have a gpspoint or an adhoc, so missionProperties and Observations
-    //Note: gpsPoints do not have a QuickDialog definition; tracklogs would need to use the related missionProperty
+    //NOTE: entityNamed:atTimestamp: only works with layers that have a gpspoint or an adhoc, so missionProperties and Observations
+    //NOTE: gpsPoints do not have a QuickDialog definition; tracklogs would need to use the related missionProperty
     //TODO: expand to work on gpsPoints and tracklog segments
     for (NSString *badName in @[kGpsPointsLayer,
                                 [NSString stringWithFormat:@"%@_On", kMissionPropertyEntityName],
@@ -1711,7 +1711,6 @@
 - (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity defaults:(NSManagedObject *)template atPoint:mappoint
 {
     //TODO:can we support observations that have no attributes (no dialog)
-
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
     if (template) {
@@ -1731,6 +1730,7 @@
     dialog.toolbarItems = @[doneButton];
     self.modalAttributeCollector.toolbarHidden = NO;
     self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
+    //FIXME: the modal view control does not respond to done button on keyboard or move up for keyboard
     [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
 }
 
@@ -1792,7 +1792,7 @@
 //    AKRLog(@"dict-graphic: DateIn: %@ (%f) dateOut: %@ (%f) equal:%u",t1,[t1 timeIntervalSince1970],t2, [t2 timeIntervalSince1970], [t1 isEqualToDate:t2]);
 
 
-//FIXME: Rob some of the following code for deleting an individual observation
+//TODO: Rob some of the following code for deleting an individual observation
 //- (void)clearData
 //{
 //    if (!self.context) {

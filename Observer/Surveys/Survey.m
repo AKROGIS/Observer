@@ -199,7 +199,7 @@
 #pragma mark - public methods
 
 //TODO: figure out error handling.
-//FIXME: this public method isn't used - justify the API or remove
+//TODO: this public method isn't used - justify the API or remove
 - (void)readPropertiesWithCompletionHandler:(void (^)(NSError*))handler
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{

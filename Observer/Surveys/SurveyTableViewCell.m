@@ -31,7 +31,7 @@
     [super setEditing:editing animated:animated];
     UITextField *titleTextField = self.titleTextField;
     [UIView animateWithDuration:0.1 animations:^{
-        //FIXME: does not turn off in all cases
+        //TODO: does not turn off in all cases
         if (editing && !self.showingDeleteConfirmation) {
             titleTextField.enabled = YES;
             titleTextField.borderStyle = UITextBorderStyleRoundedRect;
