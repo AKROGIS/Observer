@@ -31,6 +31,7 @@
                             </activityIndicatorView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3Af-C7-mib">
                                 <rect key="frame" x="0.0" y="980" width="768" height="44"/>
+                                <gestureRecognizers/>
                                 <items>
                                     <barButtonItem title="Maps" id="gJK-vn-5w7">
                                         <connections>
@@ -86,6 +87,9 @@
                                         </connections>
                                     </barButtonItem>
                                 </items>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="RWc-te-AS2" appends="YES" id="WPQ-1b-GJd"/>
+                                </connections>
                             </toolbar>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fOP-b6-5IU">
                                 <rect key="frame" x="718" y="28" width="30" height="30"/>
@@ -159,6 +163,11 @@
                         <action selector="panMap:" destination="TiC-11-YSU" id="UK5-dV-80W"/>
                     </connections>
                 </panGestureRecognizer>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="RWc-te-AS2">
+                    <connections>
+                        <action selector="selectFeatureLocationMethod:" destination="TiC-11-YSU" id="dC1-dy-rf1"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="580" y="-1203"/>
         </scene>

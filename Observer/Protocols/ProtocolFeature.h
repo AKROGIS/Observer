@@ -34,4 +34,7 @@
 // JSON description (in QuickDialog format) for the attribute input/edting form
 @property (strong, nonatomic, readonly) NSDictionary *dialogJSON;
 
+// The user selected location method
+@property (nonatomic) WaysToLocateFeature preferredLocationMethod;
+
 @end

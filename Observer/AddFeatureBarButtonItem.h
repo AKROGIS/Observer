@@ -13,7 +13,6 @@
 
 @interface AddFeatureBarButtonItem : UIBarButtonItem
 
-@property (nonatomic) WaysToLocateFeature preferredLocationMethod;
 @property (strong, nonatomic) ProtocolFeature *feature;
 
 @end

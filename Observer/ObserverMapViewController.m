@@ -67,7 +67,7 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopObservingBarButtonItem;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addAdObservationBarButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *addGpsObservationBarButton;
+@property (weak, nonatomic) IBOutlet AddFeatureBarButtonItem *addGpsObservationBarButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addObservationBarButton;
 
 //Support
@@ -349,30 +349,37 @@
     ProtocolFeature *feature = sender.feature;
     WaysToLocateFeature locationMethod = feature.allowedLocations.defaultNonTouchChoice;
     if (!locationMethod) {
-        locationMethod = sender.preferredLocationMethod;
+        locationMethod = feature.preferredLocationMethod;
     }
     [self addFeature:feature withLocationMethod:locationMethod];
 }
 
 - (IBAction)selectFeatureLocationMethod:(UILongPressGestureRecognizer *)sender {
-    AddFeatureBarButtonItem * button = (AddFeatureBarButtonItem *)sender.view;
+    AddFeatureBarButtonItem * button = self.addGpsObservationBarButton;
+    //TODO: get the bar button that did the long press (note: this is tricky)
+    //AddFeatureBarButtonItem *)sender.view;
     ProtocolFeature *feature = button.feature;
     self.currentProtocolFeature = feature;
-    //TODO: present an action sheet at the button with all allowed touch locations for feature
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Locate By" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    //TODO: get the allowed names from the ProtocolFeature
+    for (NSString *title in @[@"GPS", @"Target", @"Angle Distance"]) {
+        [sheet addButtonWithTitle:title];
+    }
+    [sheet showFromBarButtonItem:button animated:YES];
 }
 
-- (void)actionSheetdelegate:(WaysToLocateFeature) locateMethod sender:(AddFeatureBarButtonItem *)sender
+ - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    ProtocolFeature *feature = sender.feature;
-    WaysToLocateFeature locationMethod = sender.preferredLocationMethod;
-    sender.preferredLocationMethod = 1;//TODO: set the selected location method on feature of the long press button to the method selected
+    ProtocolFeature *feature = self.currentProtocolFeature;
+    WaysToLocateFeature locationMethod = 1<<buttonIndex; //TODO: set the selected location method on feature of the long press button to the method selected
+    feature.preferredLocationMethod = locationMethod;
     [self addFeature:feature withLocationMethod:locationMethod];
 }
 
 //When configuring the barbutton type
 // only build the barbutton if feature.allowedLocations.CountOfNonTouchChoices > 0
 // if (feature.allowedLocations.CountOfNonTouchChoices > 1) then add a UILongPressGestureRecognizer
-// sender.preferedLocationMethod = feature.allowedLocations.initialNonTouchChoice
+// feature.preferedLocationMethod = feature.allowedLocations.initialNonTouchChoice
 
 - (void)addFeature:(ProtocolFeature *)feature withLocationMethod:(WaysToLocateFeature)locationMethod
 {
@@ -811,6 +818,12 @@
         }
     }
 }
+
+
+
+
+#pragma mark - Delegate Methods: UIActionSheetDelegate
+
 
 
 #pragma mark - Private Properties
