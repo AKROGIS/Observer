@@ -51,9 +51,8 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    AKRLog(@"Terminating App.  Synchronizing User Defaults and saving coredata");
+    AKRLog(@"Terminating App.  Synchronizing User Defaults");
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [self.observerMapViewController closeSurvey];
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
