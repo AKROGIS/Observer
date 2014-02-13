@@ -581,103 +581,6 @@
     }
 }
 
-
-
-
-#pragma mark - move these 4 methods
-
-- (void)presentProtocolFeatureSelector:(NSArray *)features atPoint:(CGPoint)screenpoint mapPoint:(AGSPoint *)mappoint
-{
-    //FIXME: implement
-    //present popover at screenpoint with table view controller (1 section, rows = feature.names),
-    //send selected feature to     [self addFeature:feature atMapPoint:mappoint];
-    [features enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSString *name = ((ProtocolFeature *)obj).name;
-        AKRLog(@"Found features %@", name);
-    }];
-    [self addFeature:[features lastObject] atMapPoint:mappoint];
-}
-
-- (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mappoint
-{
-    Observation *observation = [self createObservation:feature atGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
-    [self drawObservation:observation atPoint:mappoint];
-    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mappoint];
-}
-
-- (void)presentAGSFeatureSelector:(NSDictionary *)features atPoint:(CGPoint)screen
-{
-    //FIXME: implement
-    //present popover with table view controller (layernames = sections, features = rows),
-    //send selected feature to
-    //[self presentFeature:feature[layerName] fromLayer:layerName];
-    __block NSString *layerName;
-    __block id<AGSFeature> graphic;
-    [features enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        layerName = (NSString *)key;
-        NSArray *graphics = (NSArray *)obj;
-        graphic = [graphics lastObject];
-        AKRLog(@"Found %u features in %@",[graphics count], layerName);
-    }];
-    [self presentFeature:graphic fromLayer:layerName atPoint:screen];
-}
-
-- (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atPoint:(CGPoint)screen
-{
-    NSDate *timestamp = (NSDate *)[agsFeature safeAttributeForKey:@"timestamp"];
-
-    AKRLog(@"Presenting feature for layer %@ with timestamp %@", layerName, timestamp);
-
-    //Note: entityNamed:atTimestamp: only works with layers that have a gpspoint or an adhoc, so missionProperties and Observations
-    //Note: gpsPoints do not have a QuickDialog definition; tracklogs would need to use the related missionProperty
-    //TODO: expand to work on gpsPoints and tracklog segments
-    for (NSString *badName in @[kGpsPointsLayer,
-                                [NSString stringWithFormat:@"%@_On", kMissionPropertyEntityName],
-                                [NSString stringWithFormat:@"%@_Off", kMissionPropertyEntityName]]) {
-        if ([layerName isEqualToString:badName]) {
-            AKRLog(@"  Bailing. layer type is not supported");
-            return;
-        }
-    }
-
-    //get the feature type from the layername
-    ProtocolFeature * feature = nil;
-    if ([layerName isEqualToString:self.survey.protocol.missionFeature.name]) {
-        feature =  self.survey.protocol.missionFeature;
-    } else {
-        for (ProtocolFeature *f in self.survey.protocol.features) {
-            if ([f.name isEqualToString:layerName]) {
-                feature = f;
-                break;
-            }
-        }
-    }
-
-    //get entity using the timestamp on the layername and the timestamp on the AGS Feature
-    NSManagedObject *entity = [self entityNamed:layerName atTimestamp:timestamp];
-
-    if (!feature || !entity) {
-        AKRLog(@"  Bailing. Could not find the dialog configuration, and/or the feature");
-        return;
-    }
-
-    //get data from entity attributes (unobscure the key names)
-    [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:nil];
-
-    //FIXME: if this is an angle distance location, provide button for angle distance editor
-    //FIXME: if the feature was changed, save the changes.  (non-editable features i.e. gps points should have a special non-editable dialog)
-    //FIXME: can I support a readonly survey, and just look at the attributes with editing disabled??
-    //FIXME: if feature is deletable, provide a delete button.
-}
-
-
-
-
-
-
-
-
-
 - (void)mapView:(AGSMapView *)mapView didTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
 {
     //Tells the delegate that a point on the map was tapped and held at specified location.
@@ -1706,7 +1609,96 @@
 
 
 
-#pragma mark - Private Methods - support for data model - mission properties
+#pragma mark - Private Methods to Support Feature Selection/Presentation
+
+- (void)presentProtocolFeatureSelector:(NSArray *)features atPoint:(CGPoint)screenpoint mapPoint:(AGSPoint *)mappoint
+{
+    //FIXME: implement
+    //present popover at screenpoint with table view controller (1 section, rows = feature.names),
+    //send selected feature to     [self addFeature:feature atMapPoint:mappoint];
+    [features enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSString *name = ((ProtocolFeature *)obj).name;
+        AKRLog(@"Found features %@", name);
+    }];
+    [self addFeature:[features lastObject] atMapPoint:mappoint];
+}
+
+- (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mappoint
+{
+    Observation *observation = [self createObservation:feature atGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
+    [self drawObservation:observation atPoint:mappoint];
+    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mappoint];
+}
+
+- (void)presentAGSFeatureSelector:(NSDictionary *)features atPoint:(CGPoint)screen
+{
+    //FIXME: implement
+    //present popover with table view controller (layernames = sections, features = rows),
+    //send selected feature to
+    //[self presentFeature:feature[layerName] fromLayer:layerName];
+    __block NSString *layerName;
+    __block id<AGSFeature> graphic;
+    [features enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        layerName = (NSString *)key;
+        NSArray *graphics = (NSArray *)obj;
+        graphic = [graphics lastObject];
+        AKRLog(@"Found %u features in %@",[graphics count], layerName);
+    }];
+    [self presentFeature:graphic fromLayer:layerName atPoint:screen];
+}
+
+- (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atPoint:(CGPoint)screen
+{
+    NSDate *timestamp = (NSDate *)[agsFeature safeAttributeForKey:@"timestamp"];
+
+    AKRLog(@"Presenting feature for layer %@ with timestamp %@", layerName, timestamp);
+
+    //Note: entityNamed:atTimestamp: only works with layers that have a gpspoint or an adhoc, so missionProperties and Observations
+    //Note: gpsPoints do not have a QuickDialog definition; tracklogs would need to use the related missionProperty
+    //TODO: expand to work on gpsPoints and tracklog segments
+    for (NSString *badName in @[kGpsPointsLayer,
+                                [NSString stringWithFormat:@"%@_On", kMissionPropertyEntityName],
+                                [NSString stringWithFormat:@"%@_Off", kMissionPropertyEntityName]]) {
+        if ([layerName isEqualToString:badName]) {
+            AKRLog(@"  Bailing. layer type is not supported");
+            return;
+        }
+    }
+
+    //get the feature type from the layername
+    ProtocolFeature * feature = nil;
+    if ([layerName isEqualToString:self.survey.protocol.missionFeature.name]) {
+        feature =  self.survey.protocol.missionFeature;
+    } else {
+        for (ProtocolFeature *f in self.survey.protocol.features) {
+            if ([f.name isEqualToString:layerName]) {
+                feature = f;
+                break;
+            }
+        }
+    }
+
+    //get entity using the timestamp on the layername and the timestamp on the AGS Feature
+    NSManagedObject *entity = [self entityNamed:layerName atTimestamp:timestamp];
+
+    if (!feature || !entity) {
+        AKRLog(@"  Bailing. Could not find the dialog configuration, and/or the feature");
+        return;
+    }
+
+    //get data from entity attributes (unobscure the key names)
+    [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:nil];
+
+    //FIXME: if this is an angle distance location, provide button for angle distance editor
+    //FIXME: if the feature was changed, save the changes.  (non-editable features i.e. gps points should have a special non-editable dialog)
+    //FIXME: can I support a readonly survey, and just look at the attributes with editing disabled??
+    //FIXME: if feature is deletable, provide a delete button.
+}
+
+
+
+
+#pragma mark - Private Methods - misc support for data model
 
 - (void)drawTrackObserving:(BOOL)observing From:(GpsPoint *)fromPoint to:(GpsPoint *)toPoint
 {
@@ -1764,8 +1756,6 @@
     [self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;
 }
-
-
 
 
 
