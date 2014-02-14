@@ -1443,7 +1443,6 @@
 {
     self.currentProtocolFeature = feature;
     //TODO: attach the seque to the barbutton item with the feature
-    //FIXME: The runtime is unable to find the seque in the storyboard (it exists!). might be a caching problem
     [self performSegueWithIdentifier:@"Select AngleDistance" sender:self];
 }
 
