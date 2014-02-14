@@ -85,7 +85,7 @@
     //gpsLocation
     for (id item in json) {
         if ([self dictionary:item hasValues:@[@"gps", @"gpslocation", @"gps-location"] forKey:@"type"] &&
-            [self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+            ![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
             _gpsLocation = (NSDictionary *)item;
             break;
         }
@@ -94,7 +94,7 @@
     //angleDistanceLocation
     for (id item in json) {
         if ([self dictionary:item hasValues:@[@"ad", @"angledistance", @"angle-distance"] forKey:@"type"] &&
-            [self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+            ![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
             _angleDistanceLocation = (NSDictionary *)item;
             break;
         }
@@ -103,7 +103,7 @@
     //mapTouch
     for (id item in json) {
         if ([self dictionary:item hasValues:@[@"touch", @"maptouch", @"map-touch", @"adhoctouch", @"adhoc-touch"] forKey:@"type"] &&
-            [self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+            ![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
             _mapTouch = (NSDictionary *)item;
             break;
         }
