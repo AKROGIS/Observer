@@ -1442,8 +1442,25 @@
 - (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
 {
     self.currentProtocolFeature = feature;
-    //TODO: attach the seque to the barbutton item with the feature
-    [self performSegueWithIdentifier:@"Select AngleDistance" sender:self];
+    //Find the barbutton item with the feature to attach the seque.
+    AddFeatureBarButtonItem *button = nil;
+    for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
+        if (item.feature == feature) {
+            button = item;
+            break;
+        }
+    }
+    if (button) {
+        //FIXME: need to create a "dummy" anchor for the segue in the storyboard.  the sender is not used as the anchor
+        // doesn't seem to be a way to set the anchor in code (see http://stackoverflow.com/questions/7787119/creating-button-for-popover-view-anchor-at-run-time)
+        //
+        // OR skip the segue, and programatically create and display the popover here.
+        //
+        [self performSegueWithIdentifier:@"Select AngleDistance" sender:self.toolbar.items[6]]; //Well know UIBarButtonItem
+        //[self performSegueWithIdentifier:@"Select AngleDistance" sender:button]; //button inherits from UIBarButtonItem
+    } else {
+        AKRLog(@"Oh No! I couldn't find the calling button for the segue");
+    }
 }
 
 - (void)addFeatureAtTarget:(ProtocolFeature *)feature
