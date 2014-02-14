@@ -14,7 +14,7 @@
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
 #define kUrlKey           @"url"
-#define kTitleKey         @"title"
+#define kPTitleKey         @"title"
 #define kVersionKey       @"version"
 #define kDateKey          @"date"
 #define kJsonDateFormat   @""
@@ -64,7 +64,7 @@
     switch (version) {
         case 1:
             return [self initWithURL:[aDecoder decodeObjectForKey:kUrlKey]
-                               title:[aDecoder decodeObjectForKey:kTitleKey]
+                               title:[aDecoder decodeObjectForKey:kPTitleKey]
                              version:[aDecoder decodeObjectForKey:kVersionKey]
                                 date:[aDecoder decodeObjectForKey:kDateKey]];
         default:
@@ -76,7 +76,7 @@
 {
     [aCoder encodeInt:kCodingVersion forKey:kCodingVersionKey];
     [aCoder encodeObject:_url forKey:kUrlKey];
-    [aCoder encodeObject:_title forKey:kTitleKey];
+    [aCoder encodeObject:_title forKey:kPTitleKey];
     [aCoder encodeObject:_version forKey:kVersionKey];
     [aCoder encodeObject:_date forKey:kDateKey];
 }

@@ -14,7 +14,7 @@
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
 #define kUrlKey           @"url"
-#define kTitleKey         @"title"
+#define kSTitleKey        @"title"
 #define kStateKey         @"state"
 #define kDateKey          @"date"
 
@@ -282,7 +282,7 @@
     NSInteger version = [plist[kCodingVersionKey] integerValue];
     switch (version) {
         case 1:
-            _title = plist[kTitleKey];
+            _title = plist[kSTitleKey];
             _state = [plist[kStateKey] unsignedIntegerValue];
             _date = plist[kDateKey];
             return YES;
@@ -326,7 +326,7 @@
         return NO;
     }
     NSDictionary *plist = @{kCodingVersionKey:@kCodingVersion,
-                            kTitleKey:self.title,
+                            kSTitleKey:self.title,
                             kStateKey:@(self.state),
                             kDateKey:self.date};
     return [plist writeToURL:self.propertiesUrl atomically:YES];
