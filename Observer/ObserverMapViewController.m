@@ -373,10 +373,13 @@
     ProtocolFeature *feature = button.feature;
     self.currentProtocolFeature = feature;  //Save the feature for the action sheet delegate callback
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    //TODO: the last horizontal line is missing.  See http://stackoverflow.com/questions/18790868/uiactionsheet-is-not-showing-separator-on-the-last-item-on-ios-7-gm
     for (NSString *title in [ProtocolFeatureAllowedLocations stringsForLocations:feature.allowedLocations.nonTouchChoices]) {
         [sheet addButtonWithTitle:title];
     }
+    // Fix for iOS bug.  See https://devforums.apple.com/message/857939#857939
+    [sheet addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel button text")];
+    sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
+    
     [sheet showFromBarButtonItem:button animated:NO];
 }
 
