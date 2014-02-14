@@ -134,7 +134,6 @@
             return NO;
         }
     }
-    //TODO: this segue no longer exists
     if ([identifier isEqualToString:@"Select AngleDistance"])
     {
         if (self.angleDistancePopoverController) {
@@ -164,7 +163,6 @@
         vc1 = [nav.viewControllers firstObject];
     }
 
-    //TODO: this segue no longer exists
     if ([[segue identifier] isEqualToString:@"Select AngleDistance"])
     {
         AngleDistanceViewController *vc = (AngleDistanceViewController*)vc1;
@@ -1444,7 +1442,6 @@
 - (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
 {
     self.currentProtocolFeature = feature;
-    //FIXME: This seque doesn't exist anymore  (it was a popover (ipad) or push (iphone) seque from the AngleDistance button (gone) to the AngleDistance VC)
     [self performSegueWithIdentifier:@"Select AngleDistance" sender:self];
 }
 

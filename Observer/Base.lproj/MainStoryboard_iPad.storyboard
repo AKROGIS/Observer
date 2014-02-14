@@ -127,6 +127,9 @@
                         <outlet property="startStopObservingBarButtonItem" destination="faa-Nc-OBV" id="qgk-KR-oAf"/>
                         <outlet property="startStopRecordingBarButtonItem" destination="fCO-tO-IRq" id="nGf-oH-pi4"/>
                         <outlet property="toolbar" destination="3Af-C7-mib" id="YHr-yM-Amg"/>
+                        <segue destination="x7W-Nj-vNE" kind="popover" identifier="Select AngleDistance" id="yY5-er-9kr">
+                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                        </segue>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dpZ-sC-Ovn" userLabel="First Responder" sceneMemberID="firstResponder"/>
