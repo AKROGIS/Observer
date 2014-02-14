@@ -10,7 +10,7 @@
 
 @interface ProtocolFeatureAllowedLocations()
 
-@property (strong, nonatomic, readonly) NSDictionary *angleDistanceLocation;
+@property (strong, nonatomic, readonly) NSDictionary *angleDistance;
 @property (strong, nonatomic, readonly) NSDictionary *mapTouch;
 @property (strong, nonatomic, readonly) NSDictionary *mapTarget;
 @property (strong, nonatomic, readonly) NSDictionary *gpsLocation;
@@ -82,86 +82,83 @@
 // so I just load it all up once when initialized
 - (void)defineReadonlyProperties:(NSArray *)json
 {
-    //gpsLocation
     for (id item in json) {
-        if ([self dictionary:item hasValues:@[@"gps", @"gpslocation", @"gps-location"] forKey:@"type"] &&
-            ![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
-            _gpsLocation = (NSDictionary *)item;
-            break;
+        //gpsLocation
+        if ([self dictionary:item hasValues:@[@"gps", @"gpslocation", @"gps-location"] forKey:@"type"]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+                _gpsLocation = (NSDictionary *)item;
+            }
+            continue;
+        }
+        //angleDistanceLocation
+        if ([self dictionary:item hasValues:@[@"ad", @"angledistance", @"angle-distance"] forKey:@"type"]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+                _angleDistance = (NSDictionary *)item;
+            }
+            continue;
+        }
+        //mapTouch
+        if ([self dictionary:item hasValues:@[@"touch", @"maptouch", @"map-touch", @"adhoctouch", @"adhoc-touch"] forKey:@"type"]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+                _mapTouch = (NSDictionary *)item;
+            }
+            continue;
+        }
+        //mapTarget
+        if ([self dictionary:item hasValues:@[@"target", @"maptarget", @"map-target", @"adhoctarget", @"adhoc-target"] forKey:@"type"]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+                _mapTarget = (NSDictionary *)item;
+            }
+            continue;
         }
     }
     
-    //angleDistanceLocation
-    for (id item in json) {
-        if ([self dictionary:item hasValues:@[@"ad", @"angledistance", @"angle-distance"] forKey:@"type"] &&
-            ![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
-            _angleDistanceLocation = (NSDictionary *)item;
-            break;
-        }
-    }
-    
-    //mapTouch
-    for (id item in json) {
-        if ([self dictionary:item hasValues:@[@"touch", @"maptouch", @"map-touch", @"adhoctouch", @"adhoc-touch"] forKey:@"type"] &&
-            ![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
-            _mapTouch = (NSDictionary *)item;
-            break;
-        }
-    }
-    
-    //mapTarget
-    for (id item in json) {
-        if ([self dictionary:item hasValues:@[@"target", @"maptarget", @"map-target", @"adhoctarget", @"adhoc-target"] forKey:@"type"] &&
-            ![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
-            _mapTarget = (NSDictionary *)item;
-            break;
-        }
-    }
+    if (_angleDistance) {
+        //default Angle/Distance parameters
+        _distanceUnits = AGSSRUnitMeter;
+        _angleBaseline = 0.0;
+        _angleDirection = AngleDirectionClockwise;
 
-    //default Angle/Distance parameters
-    _distanceUnits = AGSSRUnitMeter;
-    _angleBaseline = 0.0;
-    _angleDirection = AngleDirectionClockwise;
-
-    //distanceUnits
-    NSString *key = [self keyForDictionary:_angleDistanceLocation possibleKeys:@[@"units", @"distanceunits", @"distance-units"]];
-    if (key) {
-        id value = _angleDistanceLocation[key];
-        if ([value isKindOfClass:[NSString class]]) {
-            NSString *units = (NSString *)value;
-            if ([@[@"feet", @"foot"] containsObject:[units lowercaseString]]) {
-                _distanceUnits = AGSSRUnitFoot;
-                _definesAngleDistance = YES;
-            }
-            if ([@[@"yard", @"yards"] containsObject:[units lowercaseString]]) {
-                _distanceUnits = AGSSRUnitFoot;
-                _definesAngleDistance = YES;
-            }
-            if ([@[@"meter", @"metre", @"metres", @"meters"] containsObject:[units lowercaseString]]) {
-                _distanceUnits = AGSSRUnitMeter;
-                _definesAngleDistance = YES;
+        //distanceUnits
+        NSString *key = [self keyForDictionary:_angleDistance possibleKeys:@[@"units", @"distanceunits", @"distance-units"]];
+        if (key) {
+            id value = _angleDistance[key];
+            if ([value isKindOfClass:[NSString class]]) {
+                NSString *units = (NSString *)value;
+                if ([@[@"feet", @"foot"] containsObject:[units lowercaseString]]) {
+                    _distanceUnits = AGSSRUnitFoot;
+                    _definesAngleDistance = YES;
+                }
+                if ([@[@"yard", @"yards"] containsObject:[units lowercaseString]]) {
+                    _distanceUnits = AGSSRUnitFoot;
+                    _definesAngleDistance = YES;
+                }
+                if ([@[@"meter", @"metre", @"metres", @"meters"] containsObject:[units lowercaseString]]) {
+                    _distanceUnits = AGSSRUnitMeter;
+                    _definesAngleDistance = YES;
+                }
             }
         }
-    }
-    //angleBaseline
-    key = [self keyForDictionary:_angleDistanceLocation possibleKeys:@[@"deadAhead", @"baseline", @"anglebaseline", @"angle-baseline", @"baselineangle", @"baseline-angle"]];
-    if (key) {
-        id value = _angleDistanceLocation[key];
-        if ([value isKindOfClass:[NSNumber class]]) {
-            _definesAngleDistance = YES;
-            _angleBaseline = [(NSNumber *)value  doubleValue];
-        }
-    }
-    //angleDirection
-    key = [self keyForDictionary:_angleDistanceLocation possibleKeys:@[@"direction", @"angledirection", @"angle-direction"]];
-    if (key) {
-        if ([self dictionary:_angleDistanceLocation hasValues:@[@"cw", @"clockwise"] forKey:key]) {
-            _definesAngleDistance = YES;
-            _angleDirection = AngleDirectionClockwise;
-        } else {
-            if ([self dictionary:_angleDistanceLocation hasValues:@[@"ccw", @"counterclockwise", @"counter-clockwise"] forKey:key]) {
+        //angleBaseline
+        key = [self keyForDictionary:_angleDistance possibleKeys:@[@"deadAhead", @"baseline", @"anglebaseline", @"angle-baseline", @"baselineangle", @"baseline-angle"]];
+        if (key) {
+            id value = _angleDistance[key];
+            if ([value isKindOfClass:[NSNumber class]]) {
                 _definesAngleDistance = YES;
-                _angleDirection = AngleDirectionCounterClockwise;
+                _angleBaseline = [(NSNumber *)value  doubleValue];
+            }
+        }
+        //angleDirection
+        key = [self keyForDictionary:_angleDistance possibleKeys:@[@"direction", @"angledirection", @"angle-direction"]];
+        if (key) {
+            if ([self dictionary:_angleDistance hasValues:@[@"cw", @"clockwise"] forKey:key]) {
+                _definesAngleDistance = YES;
+                _angleDirection = AngleDirectionClockwise;
+            } else {
+                if ([self dictionary:_angleDistance hasValues:@[@"ccw", @"counterclockwise", @"counter-clockwise"] forKey:key]) {
+                    _definesAngleDistance = YES;
+                    _angleDirection = AngleDirectionCounterClockwise;
+                }
             }
         }
     }
@@ -177,7 +174,7 @@
     NSUInteger counter = 0;
     if (_gpsLocation && self.hasGPS) counter++;
     if (_mapTarget && self.hasMap) counter++;
-    if (_angleDistanceLocation  && self.hasGPS && self.mapIsProjected) counter++;
+    if (_angleDistance  && self.hasGPS && self.mapIsProjected) counter++;
     return counter;
 }
 
@@ -193,7 +190,7 @@
     WaysToLocateFeature bitmask = 0;
     if (_gpsLocation && self.hasGPS) bitmask |= LocateFeatureWithGPS;
     if (_mapTarget && self.hasMap) bitmask |= LocateFeatureWithMapTarget;
-    if (_angleDistanceLocation  && self.hasGPS && self.mapIsProjected) bitmask |= LocateFeatureWithAngleDistance;
+    if (_angleDistance  && self.hasGPS && self.mapIsProjected) bitmask |= LocateFeatureWithAngleDistance;
     return bitmask;
 }
 
@@ -212,7 +209,7 @@
     if (self.hasMap && [self dictionary:_mapTarget hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
         return LocateFeatureWithMapTarget;
     }
-    if (self.hasGPS && self.mapIsProjected && [self dictionary:_angleDistanceLocation hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
+    if (self.hasGPS && self.mapIsProjected && [self dictionary:_angleDistance hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
         return LocateFeatureWithAngleDistance;
     }
     return 0;
@@ -226,7 +223,7 @@
     if (_mapTarget && self.hasMap) {
         return LocateFeatureWithMapTarget;
     }
-    if (_angleDistanceLocation && self.hasGPS && self.mapIsProjected) {
+    if (_angleDistance && self.hasGPS && self.mapIsProjected) {
         return LocateFeatureWithAngleDistance;
     }
     return 0;
