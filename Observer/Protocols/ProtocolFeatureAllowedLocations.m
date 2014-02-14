@@ -14,15 +14,52 @@
 @property (strong, nonatomic, readonly) NSDictionary *mapTouch;
 @property (strong, nonatomic, readonly) NSDictionary *mapTarget;
 @property (strong, nonatomic, readonly) NSDictionary *gpsLocation;
-//@property (strong, nonatomic, readonly) NSDictionary *defaultLocation;
-@property (nonatomic, readonly) BOOL includesGps;
-@property (nonatomic, readonly) BOOL includesAngleDistance;
-@property (nonatomic, readonly) BOOL includesmapTouch;
-@property (nonatomic, readonly) BOOL includesmapTarget;
 
 @end
 
 @implementation ProtocolFeatureAllowedLocations
+
+#pragma mark - Class Methods
+
++ (NSArray *)stringsForLocations:(WaysToLocateFeature)locationMethods
+{
+    NSMutableArray *strings = [NSMutableArray new];
+    if (locationMethods & LocateFeatureWithGPS) {
+        [strings addObject:NSLocalizedString(@"At GPS Location", @"Locations are at the current GPS position")];
+    }
+    if (locationMethods & LocateFeatureWithMapTarget) {
+        [strings addObject:NSLocalizedString(@"At Target Location", @"Locations are at the target on the map")];
+    }
+    if (locationMethods & LocateFeatureWithAngleDistance) {
+        [strings addObject:NSLocalizedString(@"Angle & Distance", @"Locations are based on an Angle and Distance from the current location")];
+    }
+    if (locationMethods & LocateFeatureWithMapTouch) {
+        [strings addObject:NSLocalizedString(@"At Touch Location", @"Locations are at the touch on the map")];
+    }
+    return [strings copy];
+}
+
++ (WaysToLocateFeature)locationMethodForName:(NSString *)name
+{
+    if ([name isEqualToString:NSLocalizedString(@"At GPS Location", @"Locations are at the current GPS position")]) {
+        return LocateFeatureWithGPS;
+    }
+    if ([name isEqualToString:NSLocalizedString(@"At Target Location", @"Locations are at the target on the map")]) {
+        return LocateFeatureWithMapTarget;
+    }
+    if ([name isEqualToString:NSLocalizedString(@"Angle & Distance", @"Locations are based on an Angle and Distance from the current location")]) {
+        return LocateFeatureWithAngleDistance;
+    }
+    if ([name isEqualToString:NSLocalizedString(@"At Touch Location", @"Locations are at the touch on the map")]) {
+        return LocateFeatureWithMapTouch;
+    }
+    return 0;
+}
+
+
+
+
+#pragma mark - Initialization
 
 - (id)initWithLocationsJSON:(id)json version:(NSInteger) version
 {
@@ -48,8 +85,7 @@
     //gpsLocation
     for (id item in json) {
         if ([self dictionary:item hasValues:@[@"gps", @"gpslocation", @"gps-location"] forKey:@"type"] &&
-            [self dictionary:item is:@"allow"]) {
-            _includesGps = YES;
+            [self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
             _gpsLocation = (NSDictionary *)item;
             break;
         }
@@ -58,8 +94,7 @@
     //angleDistanceLocation
     for (id item in json) {
         if ([self dictionary:item hasValues:@[@"ad", @"angledistance", @"angle-distance"] forKey:@"type"] &&
-            [self dictionary:item is:@"allow"]) {
-            _includesAngleDistance = YES;
+            [self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
             _angleDistanceLocation = (NSDictionary *)item;
             break;
         }
@@ -68,8 +103,7 @@
     //mapTouch
     for (id item in json) {
         if ([self dictionary:item hasValues:@[@"touch", @"maptouch", @"map-touch", @"adhoctouch", @"adhoc-touch"] forKey:@"type"] &&
-            [self dictionary:item is:@"allow"]) {
-            _includesmapTouch = YES;
+            [self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
             _mapTouch = (NSDictionary *)item;
             break;
         }
@@ -78,8 +112,7 @@
     //mapTarget
     for (id item in json) {
         if ([self dictionary:item hasValues:@[@"target", @"maptarget", @"map-target", @"adhoctarget", @"adhoc-target"] forKey:@"type"] &&
-            [self dictionary:item is:@"allow"]) {
-            _includesmapTarget = YES;
+            ![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
             _mapTarget = (NSDictionary *)item;
             break;
         }
@@ -129,39 +162,97 @@
             }
         }
     }
-    
-    //Count of choices
+}
+
+
+
+
+#pragma mark - Calculated Properties
+
+- (NSUInteger)countOfCountOfNonTouchChoices
+{
     NSUInteger counter = 0;
-    if (_includesGps) counter++;
-    if (_includesAngleDistance) counter++;
-    if (_includesmapTarget) counter++;
-    _countOfNonTouchChoices =  counter;
+    if (_gpsLocation && self.hasGPS) counter++;
+    if (_mapTarget && self.hasMap) counter++;
+    if (_angleDistanceLocation  && self.hasGPS && self.mapIsProjected) counter++;
+    return counter;
+}
 
-    counter = 0;
-    if (_includesmapTouch) counter++;
-    _countOfTouchChoices =  counter;
+- (NSUInteger)countOfCountOfTouchChoices
+{
+    NSUInteger counter = 0;
+    if (_mapTouch && self.hasMap) counter++;
+    return counter;
+}
 
-    //Default Non-Touch Choice
-    if ([self dictionary:_angleDistanceLocation is:@"default"]) {
-        _defaultNonTouchChoice = LocateFeatureWithAngleDistance;
-    }
-    if ([self dictionary:_mapTarget is:@"default"]) {
-        _defaultNonTouchChoice = LocateFeatureWithMapTarget;
-    }
-    if ([self dictionary:_gpsLocation is:@"default"]) {
-        _defaultNonTouchChoice = LocateFeatureWithGPS;
-    }
+- (WaysToLocateFeature)nonTouchChoices
+{
+    WaysToLocateFeature bitmask = 0;
+    if (_gpsLocation && self.hasGPS) bitmask |= LocateFeatureWithGPS;
+    if (_mapTarget && self.hasMap) bitmask |= LocateFeatureWithMapTarget;
+    if (_angleDistanceLocation  && self.hasGPS && self.mapIsProjected) bitmask |= LocateFeatureWithAngleDistance;
+    return bitmask;
+}
 
-    //Initial Non-Touch Choice
-    if (_includesAngleDistance) {
-        _initialNonTouchChoice = LocateFeatureWithAngleDistance;
+- (WaysToLocateFeature)touchChoices
+{
+    WaysToLocateFeature bitmask = 0;
+    if (_mapTouch && self.hasMap) bitmask |= LocateFeatureWithMapTouch;
+    return bitmask;
+}
+
+- (WaysToLocateFeature)defaultNonTouchChoice
+{
+    if (self.hasGPS && [self dictionary:_gpsLocation hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
+        return LocateFeatureWithGPS;
     }
-    if (_includesmapTarget) {
-        _initialNonTouchChoice = LocateFeatureWithMapTarget;
+    if (self.hasMap && [self dictionary:_mapTarget hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
+        return LocateFeatureWithMapTarget;
     }
-    if (_includesGps) {
-        _initialNonTouchChoice = LocateFeatureWithGPS;
+    if (self.hasGPS && self.mapIsProjected && [self dictionary:_angleDistanceLocation hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
+        return LocateFeatureWithAngleDistance;
     }
+    return 0;
+}
+
+- (WaysToLocateFeature)initialNonTouchChoice
+{
+    if (_gpsLocation && self.hasGPS) {
+        return LocateFeatureWithGPS;
+    }
+    if (_mapTarget && self.hasMap) {
+        return LocateFeatureWithMapTarget;
+    }
+    if (_angleDistanceLocation && self.hasGPS && self.mapIsProjected) {
+        return LocateFeatureWithAngleDistance;
+    }
+    return 0;
+}
+
+
+
+
+#pragma mark - Helper methods
+
+- (BOOL)hasGPS
+{
+    //default is YES, if there is no location presenter, or it doesn't implement the optional method
+    BOOL noResponse = !self.locationPresenter || ![self.locationPresenter respondsToSelector:@selector(hasGPS)];
+    return (noResponse || self.locationPresenter.hasGPS);
+}
+
+- (BOOL)hasMap
+{
+    //default is YES if there is no location presenter, or it doesn't implement the optional method
+    BOOL noResponse = !self.locationPresenter || ![self.locationPresenter respondsToSelector:@selector(hasMap)];
+    return (noResponse || self.locationPresenter.hasMap);
+}
+
+- (BOOL)mapIsProjected
+{
+    //default is YES, if there is no location presenter, or it doesn't implement the optional method
+    BOOL noResponse = !self.locationPresenter || ![self.locationPresenter respondsToSelector:@selector(mapIsProjected)];
+    return (noResponse || self.locationPresenter.mapIsProjected);
 }
 
 
@@ -198,16 +289,14 @@
     return NO;
 }
 
-             - (BOOL) dictionary:(id)possibleDict is:(NSString *)key
-             {
-                 if ([possibleDict isKindOfClass:[NSDictionary class]]) {
-                     NSDictionary *dict = (NSDictionary *)possibleDict;
-                     id value = dict[key];
-                 if ([value isKindOfClass:[NSNumber class]]) {
-                     return [(NSNumber *)value boolValue];
-                 }
-                 }
-                     return NO;
-             }
+//Returns YES if the possibleDict is a NSDictionary with the key and the key has the given value
+- (BOOL) dictionary:(id)possibleDict hasKey:(NSString *)key withValue:(id)value
+{
+    if ([possibleDict isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *dict = (NSDictionary *)possibleDict;
+        return [value isEqual:dict[key]];
+    }
+    return NO;
+}
 
 @end
