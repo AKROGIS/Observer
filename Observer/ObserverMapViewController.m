@@ -348,11 +348,16 @@
     if (!locationMethod) {
         locationMethod = feature.preferredLocationMethod;
     }
-    [self addFeature:feature withLocationMethod:locationMethod];
+    [self addFeature:feature withNonTouchLocationMethod:locationMethod];
 }
 
 - (void)selectFeatureLocationMethod:(UILongPressGestureRecognizer *)sender
 {
+    // UILongPressGestureRecognizer is a continuous gesture, I only want to be called once.
+    if ( sender.state != UIGestureRecognizerStateBegan ) {
+        return;
+    }
+
     //Find the bar button the initiated the long press;
     //Normally I would use the view property of the Gesture, but bar buttons are not UIViews
     AddFeatureBarButtonItem * button = nil;
@@ -368,6 +373,7 @@
     ProtocolFeature *feature = button.feature;
     self.currentProtocolFeature = feature;  //Save the feature for the action sheet delegate callback
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    //TODO: the last horizontal line is missing.  See http://stackoverflow.com/questions/18790868/uiactionsheet-is-not-showing-separator-on-the-last-item-on-ios-7-gm
     for (NSString *title in [ProtocolFeatureAllowedLocations stringsForLocations:feature.allowedLocations.nonTouchChoices]) {
         [sheet addButtonWithTitle:title];
     }
@@ -667,14 +673,9 @@
 
 #pragma mark - Delegate Methods: UIActionSheetDelegate
 
-//- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-//{
-//    AKRLog(@"ActionSheet Button %d was clicked", buttonIndex);
-//}
-
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    AKRLog(@"ActionSheet was dismissed with Button %d click", buttonIndex);
+    //AKRLog(@"ActionSheet was dismissed with Button %d click", buttonIndex);
     if (buttonIndex < 0) {
         return;
     }
@@ -682,7 +683,7 @@
     NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
     WaysToLocateFeature locationMethod = [ProtocolFeatureAllowedLocations locationMethodForName:buttonTitle];
     feature.preferredLocationMethod = locationMethod;
-    [self addFeature:feature withLocationMethod:locationMethod];
+    [self addFeature:feature withNonTouchLocationMethod:locationMethod];
 }
 
 
@@ -1411,7 +1412,7 @@
 
 #pragma mark - Private Methods - support for data model - observations
 
-- (void)addFeature:(ProtocolFeature *)feature withLocationMethod:(WaysToLocateFeature)locationMethod
+- (void)addFeature:(ProtocolFeature *)feature withNonTouchLocationMethod:(WaysToLocateFeature)locationMethod
 {
     switch (locationMethod) {
         case LocateFeatureWithGPS:
@@ -1421,7 +1422,7 @@
             [self addFeatureAtTarget:feature];
             break;
         case LocateFeatureWithAngleDistance:
-            [self addFeatureAtTarget:feature];
+            [self addFeatureAtAngleDistance:feature];
             break;
         default:
             AKRLog(@"Location method (%u) specified is not valid",locationMethod);
