@@ -367,11 +367,11 @@
     }
     ProtocolFeature *feature = button.feature;
     self.currentProtocolFeature = feature;  //Save the feature for the action sheet delegate callback
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Locate By" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     for (NSString *title in [ProtocolFeatureAllowedLocations stringsForLocations:feature.allowedLocations.nonTouchChoices]) {
         [sheet addButtonWithTitle:title];
     }
-    [sheet showFromBarButtonItem:button animated:YES];
+    [sheet showFromBarButtonItem:button animated:NO];
 }
 
 
@@ -667,8 +667,17 @@
 
 #pragma mark - Delegate Methods: UIActionSheetDelegate
 
+//- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+//{
+//    AKRLog(@"ActionSheet Button %d was clicked", buttonIndex);
+//}
+
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
+    AKRLog(@"ActionSheet was dismissed with Button %d click", buttonIndex);
+    if (buttonIndex < 0) {
+        return;
+    }
     ProtocolFeature *feature = self.currentProtocolFeature;
     NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
     WaysToLocateFeature locationMethod = [ProtocolFeatureAllowedLocations locationMethodForName:buttonTitle];
