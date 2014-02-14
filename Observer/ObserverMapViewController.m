@@ -368,11 +368,7 @@
     ProtocolFeature *feature = button.feature;
     self.currentProtocolFeature = feature;  //Save the feature for the action sheet delegate callback
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Locate By" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    //FIXME: get the allowed names from the ProtocolFeature, need to be indexed to WaysToLocateFeature for use in action sheet callback
-    //TODO: choices allowed is dependent on map
-    //      if map is nil, then maptarget is not allowed
-    //      if map is not projected then angleDistance is not allowed
-    for (NSString *title in @[@"GPS", @"Target", @"Angle Distance"]) {
+    for (NSString *title in [ProtocolFeatureAllowedLocations stringsForLocations:feature.allowedLocations.nonTouchChoices]) {
         [sheet addButtonWithTitle:title];
     }
     [sheet showFromBarButtonItem:button animated:YES];
@@ -674,10 +670,30 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     ProtocolFeature *feature = self.currentProtocolFeature;
-    //FIXME: set the selected location method on feature of the long press button to the method selected
-    WaysToLocateFeature locationMethod = 1<<buttonIndex;
+    NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
+    WaysToLocateFeature locationMethod = [ProtocolFeatureAllowedLocations locationMethodForName:buttonTitle];
     feature.preferredLocationMethod = locationMethod;
     [self addFeature:feature withLocationMethod:locationMethod];
+}
+
+
+
+
+#pragma mark = Delegate Methods - Location Presenter
+
+- (BOOL)hasGPS
+{
+    return YES;  //TODO: calculate this value dynamically
+}
+
+- (BOOL)hasMap
+{
+    return YES;  //TODO: calculate this value dynamically
+}
+
+- (BOOL)mapIsProjected
+{
+    return NO;  //TODO: calculate this value dynamically
 }
 
 
@@ -812,9 +828,7 @@
     [self.addFeatureBarButtonItems removeAllObjects];
     if (self.survey) {
         for (ProtocolFeature *feature in self.survey.protocol.features) {
-            //TODO: count of non-touch choices is dependent on map
-            //      if map is nil, then maptarget is not allowed
-            //      if map is not projected then angleDistance is not allowed
+            feature.allowedLocations.locationPresenter = self;
             if (feature.allowedLocations.countOfNonTouchChoices > 0) {
                 //TODO: feature names are too long for buttons, use a short name, or an icon
                 AddFeatureBarButtonItem *addFeatureButton = [[AddFeatureBarButtonItem alloc] initWithTitle:feature.name style:UIBarButtonItemStylePlain target:self action:@selector(pleaseAddFeature:)];
