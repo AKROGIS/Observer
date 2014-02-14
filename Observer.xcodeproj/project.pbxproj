@@ -12,6 +12,7 @@
 		39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4D18AC25B100620A3A /* AddFeatureBarButtonItem.m */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
+		39449F1418ADABCF00A1F8FE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39449F1618ADABCF00A1F8FE /* Localizable.strings */; };
 		394CC2381858E05F00FA859C /* libQuickDialog.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 394CC2351858DFFA00FA859C /* libQuickDialog.a */; };
 		394CC23E1858EF5800FA859C /* ObserverModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 394CC23C1858EF5800FA859C /* ObserverModel.xcdatamodeld */; };
 		394CC2411858F11700FA859C /* MapReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC2401858F11700FA859C /* MapReference.m */; };
@@ -101,7 +102,6 @@
 		39D1D95B17BC21E00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
 		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
 		59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FEE1863FDBF00470791 /* AKRFormatter.m */; };
-		59C60FF31864206500470791 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 59C60FF51864206500470791 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -146,6 +146,10 @@
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
 		393E8AFD17A30012009AD0AC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		393E8AFF17A318F5009AD0AC /* Enumerations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Enumerations.h; path = Model/Enumerations.h; sourceTree = "<group>"; };
+		39449F1718ADAC8C00A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		39449F1818ADAC8C00A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		39449F1918AE8A1800A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		39449F1A18AE8AFB00A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = QuickDialog.xcodeproj; path = QuickDialog/QuickDialog.xcodeproj; sourceTree = "<group>"; };
 		394CC23D1858EF5800FA859C /* ObserverModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ObserverModel.xcdatamodel; sourceTree = "<group>"; };
 		394CC23F1858F11700FA859C /* MapReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapReference.h; path = Model/MapReference.h; sourceTree = "<group>"; };
@@ -232,13 +236,10 @@
 		39955E4C178334BF00D225D7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		39955E4E178334BF00D225D7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		39955E52178334C000D225D7 /* Observer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Observer-Info.plist"; sourceTree = "<group>"; };
-		39955E54178334C000D225D7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		39955E56178334C000D225D7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		39955E58178334C000D225D7 /* Observer-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Observer-Prefix.pch"; sourceTree = "<group>"; };
 		39955E59178334C000D225D7 /* ObserverAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObserverAppDelegate.h; sourceTree = "<group>"; };
 		39955E5A178334C000D225D7 /* ObserverAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObserverAppDelegate.m; sourceTree = "<group>"; };
-		39955E63178334C000D225D7 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
-		39955E66178334C000D225D7 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		39955E7B178334C000D225D7 /* ObserverTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObserverTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		39955E7C178334C000D225D7 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		39955E84178334C000D225D7 /* ObserverTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ObserverTests-Info.plist"; sourceTree = "<group>"; };
@@ -281,7 +282,6 @@
 		59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDirectionIndicatorView.m; sourceTree = "<group>"; };
 		59C60FED1863FDBF00470791 /* AKRFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRFormatter.h; sourceTree = "<group>"; };
 		59C60FEE1863FDBF00470791 /* AKRFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRFormatter.m; sourceTree = "<group>"; };
-		59C60FF41864206500470791 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -534,8 +534,8 @@
 				39955E58178334C000D225D7 /* Observer-Prefix.pch */,
 				393E8AFD17A30012009AD0AC /* Settings.bundle */,
 				3929196617BEB6A8008B0FFC /* Todo.rtf */,
-				59C60FF51864206500470791 /* Localizable.strings */,
 				39336F4A18AC23DC00620A3A /* Protocol Specification.rtf */,
+				39449F1618ADABCF00A1F8FE /* Localizable.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -701,6 +701,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				39955E55178334C000D225D7 /* InfoPlist.strings in Resources */,
+				39449F1418ADABCF00A1F8FE /* Localizable.strings in Resources */,
 				39890DA31858C99E007B3F67 /* Images.xcassets in Resources */,
 				39C53E6B1885D98400C0CECE /* SurveyDocumentIcon.png in Resources */,
 				39336F4B18AC23DC00620A3A /* Protocol Specification.rtf in Resources */,
@@ -709,7 +710,6 @@
 				396E1E8C18984EFF00B735EF /* Warnings.xcconfig in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
 				39C53E701885DAB000C0CECE /* TilePackageDocumentIcon.png in Resources */,
-				59C60FF31864206500470791 /* Localizable.strings in Resources */,
 				393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */,
 				398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */,
 			);
@@ -826,10 +826,18 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		39449F1618ADABCF00A1F8FE /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				39449F1918AE8A1800A1F8FE /* Base */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		39955E53178334C000D225D7 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				39955E54178334C000D225D7 /* en */,
+				39449F1A18AE8AFB00A1F8FE /* Base */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -837,7 +845,7 @@
 		39955E62178334C000D225D7 /* MainStoryboard_iPhone.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				39955E63178334C000D225D7 /* en */,
+				39449F1718ADAC8C00A1F8FE /* Base */,
 			);
 			name = MainStoryboard_iPhone.storyboard;
 			sourceTree = "<group>";
@@ -845,7 +853,7 @@
 		39955E65178334C000D225D7 /* MainStoryboard_iPad.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				39955E66178334C000D225D7 /* en */,
+				39449F1818ADAC8C00A1F8FE /* Base */,
 			);
 			name = MainStoryboard_iPad.storyboard;
 			sourceTree = "<group>";
@@ -856,14 +864,6 @@
 				39955E86178334C000D225D7 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		59C60FF51864206500470791 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				59C60FF41864206500470791 /* en */,
-			);
-			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
