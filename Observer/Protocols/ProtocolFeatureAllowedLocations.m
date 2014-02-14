@@ -131,12 +131,15 @@
             NSString *units = (NSString *)value;
             if ([@[@"feet", @"foot"] containsObject:[units lowercaseString]]) {
                 _distanceUnits = AGSSRUnitFoot;
+                _definesAngleDistance = YES;
             }
             if ([@[@"yard", @"yards"] containsObject:[units lowercaseString]]) {
                 _distanceUnits = AGSSRUnitFoot;
+                _definesAngleDistance = YES;
             }
             if ([@[@"meter", @"metre", @"metres", @"meters"] containsObject:[units lowercaseString]]) {
                 _distanceUnits = AGSSRUnitMeter;
+                _definesAngleDistance = YES;
             }
         }
     }
@@ -169,7 +172,7 @@
 
 #pragma mark - Calculated Properties
 
-- (NSUInteger)countOfCountOfNonTouchChoices
+- (NSUInteger)countOfNonTouchChoices
 {
     NSUInteger counter = 0;
     if (_gpsLocation && self.hasGPS) counter++;
@@ -178,7 +181,7 @@
     return counter;
 }
 
-- (NSUInteger)countOfCountOfTouchChoices
+- (NSUInteger)countOfTouchChoices
 {
     NSUInteger counter = 0;
     if (_mapTouch && self.hasMap) counter++;

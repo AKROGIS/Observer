@@ -683,17 +683,17 @@
 
 - (BOOL)hasGPS
 {
-    return YES;  //TODO: calculate this value dynamically
+    return self.locationServicesAvailable;
 }
 
 - (BOOL)hasMap
 {
-    return YES;  //TODO: calculate this value dynamically
+    return self.maps.selectedLocalMap != nil;
 }
 
 - (BOOL)mapIsProjected
 {
-    return NO;  //TODO: calculate this value dynamically
+    return YES;  //TODO: calculate this value dynamically
 }
 
 
@@ -854,7 +854,9 @@
     //A BarButtonItems view will change everytime the toolbar items array is changed.
     //We are using a public method to access a private variable (http://stackoverflow.com/a/9371184/542911)
     for (AddFeatureBarButtonItem *barButton in self.addFeatureBarButtonItems) {
-        [[barButton valueForKey:@"view"] addGestureRecognizer:barButton.longPress];
+        if (barButton.longPress) {
+            [[barButton valueForKey:@"view"] addGestureRecognizer:barButton.longPress];
+        }
     }
 }
 
