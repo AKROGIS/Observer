@@ -95,7 +95,7 @@
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 @property (strong, nonatomic) UIPopoverController *surveysPopoverController;
-@property (strong, nonatomic) UIPopoverController *quickDialogPopoverController;
+@property (strong, nonatomic) UIPopoverController *attributePopoverController;
 @property (strong, nonatomic) UINavigationController *modalAttributeCollector;
 
 @end
@@ -255,23 +255,25 @@
 
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
-    AKRLog(@"Add Mission Property");
-    //FIXME: populate form with prior values or defaults
-    //FIXME: if gps, then add at GPS else add adhoc at current location
-    //launch pop up to enter attributes, use existing as defaults
-
-    if (self.quickDialogPopoverController) {
-        return;
+    MissionProperty *mission;
+    AGSPoint *mapPoint;
+    GpsPoint *gpsPoint;
+    if (self.locationServicesAvailable) {
+        gpsPoint = [self createGpsPoint:self.locationManager.location];
     }
-    //create VC from QDialog json in protocol, add newController to popover, display popover
-    NSDictionary *dialog = self.survey.protocol.missionFeature.dialogJSON;
-    QRootElement *root = [[QRootElement alloc] initWithJSON:dialog andData:nil];
-    QuickDialogController *viewController = [QuickDialogController controllerForRoot:root];
-    //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-    self.quickDialogPopoverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
-    self.quickDialogPopoverController.delegate = self;
-    //self.popover.popoverContentSize = CGSizeMake(644, 425);
-    [self.quickDialogPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    if (gpsPoint) {
+        mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+        mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
+    } else {
+        mapPoint = self.mapView.mapAnchor;
+        mission = [self createMissionPropertyAtMapLocation:mapPoint];
+    }
+    if (!mission) {
+        AKRLog(@"Oh No!, Unable to create a new Mission Property");
+    }
+    mission.observing = YES;
+    [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:mission defaults:self.currentMissionProperty atPoint:mapPoint];
+    [self drawMissionProperty:mission atPoint:mapPoint];
 }
 
 
@@ -321,7 +323,11 @@
     [sheet showFromBarButtonItem:button animated:NO];
 }
 
-
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    //FIXME: re-present popovers that were anchored to a mpa location.
+    //[aPopover presentPopoverFromRect:targetRect.frame inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+}
 
 
 #pragma mark - public methods
@@ -570,8 +576,9 @@
     if (popoverController == self.mapsPopoverController) {
         self.mapsPopoverController = nil;
     }
-    if (popoverController == self.quickDialogPopoverController) {
-        [self dismissQuickDialogPopover:popoverController];
+    if (popoverController == self.attributePopoverController) {
+        [self saveAttributes:nil];
+        self.attributePopoverController = nil;
     }
 }
 
@@ -1402,11 +1409,7 @@
 
 - (void)addFeatureAtTarget:(ProtocolFeature *)feature
 {
-    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    //ignore the gpsPoint if it is more than two seconds old (adhoc location will get current device time)
-    if ([gpsPoint.timestamp timeIntervalSinceNow] < -2.0)
-        gpsPoint = nil;
-    Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint withAdhocLocation:self.mapView.mapAnchor];
+    Observation *observation = [self createObservation:feature AtMapLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
     [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:self.mapView.mapAnchor];
 }
@@ -1437,7 +1440,7 @@
     return observation;
 }
 
-- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint withAdhocLocation:(AGSPoint *)mapPoint
+- (Observation *)createObservation:(ProtocolFeature *)feature AtMapLocation:(AGSPoint *)mapPoint
 {
     if (!mapPoint) {
         AKRLog(@"Can't save Observation at Adhoc Location without a Map Point");
@@ -1445,22 +1448,10 @@
     }
     Observation *observation = [self createObservation:feature];
     if (!observation) {
+        AKRLog(@"Unable to create an observation");
         return nil;
     }
-    AKRLog(@"Adding Adhoc Location to Observation");
-    AdhocLocation *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:kAdhocLocationEntityName
-                                                                 inManagedObjectContext:self.context];
-    //mapPoint is in the map coordinates, convert to WGS84
-    AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:self.wgs84];
-    adhocLocation.latitude = wgs84Point.y;
-    adhocLocation.longitude = wgs84Point.x;
-    if (gpsPoint) {
-        observation.gpsPoint = gpsPoint; //optional
-    } else {
-        adhocLocation.timestamp = [NSDate date];
-    }
-    adhocLocation.map = self.currentMapEntity;
-    observation.adhocLocation = adhocLocation;
+    observation.adhocLocation = [self createAdhocLocationWithMapPoint:mapPoint];
     return observation;
 }
 
@@ -1533,17 +1524,31 @@
 }
 
 
+- (AdhocLocation *)createAdhocLocationWithMapPoint:(AGSPoint *)mapPoint
+{
+    AKRLog(@"Adding Adhoc Location to Core Data at Map Point %@", mapPoint);
+    AdhocLocation *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:kAdhocLocationEntityName
+                                                                 inManagedObjectContext:self.context];
+    //mapPoint is in the map coordinates, convert to WGS84
+    AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:self.wgs84];
+    adhocLocation.latitude = wgs84Point.y;
+    adhocLocation.longitude = wgs84Point.x;
+    adhocLocation.timestamp = [NSDate date];
+    adhocLocation.map = self.currentMapEntity;
+    return adhocLocation;
+}
+
 
 
 #pragma mark - Private Methods - support for data model - mission properties
 
 - (MissionProperty *)createMissionProperty
 {
+    AKRLog(@"Creating MissionProperty managed object");
     if (!self.context) {
         AKRLog(@"Can't create MissionProperty, there is no data context (file)");
         return nil;
     }
-    AKRLog(@"Creating MissionProperty managed object");
     MissionProperty *missionProperty = [NSEntityDescription insertNewObjectForEntityForName:kMissionPropertyEntityName inManagedObjectContext:self.context];
     missionProperty.mission = self.mission;
     return missionProperty;
@@ -1551,13 +1556,30 @@
 
 - (MissionProperty *)createMissionPropertyAtGpsPoint:(GpsPoint *)gpsPoint
 {
+    AKRLog(@"Creating MissionProperty at GPS point");
     if (!gpsPoint) {
         AKRLog(@"Can't save MissionProperty at GPS point without a GPS Point");
         return nil;
     }
-    AKRLog(@"Creating MissionProperty at GPS point");
     MissionProperty *missionProperty = [self createMissionProperty];
     missionProperty.gpsPoint = gpsPoint;
+    return missionProperty;
+}
+
+- (MissionProperty *)createMissionPropertyAtMapLocation:(AGSPoint *)mapPoint
+{
+    AKRLog(@"Creating MissionProperty at Map point");
+
+    if (!mapPoint) {
+        AKRLog(@"Can't save MissionProperty at Map point without a Map Point");
+        return nil;
+    }
+    MissionProperty *missionProperty = [self createMissionProperty];
+    if (!missionProperty) {
+        AKRLog(@"Unable to create an Mission Property");
+        return nil;
+    }
+    missionProperty.adhocLocation = [self createAdhocLocationWithMapPoint:mapPoint];
     return missionProperty;
 }
 
@@ -1601,7 +1623,7 @@
 
 - (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mappoint
 {
-    Observation *observation = [self createObservation:feature atGpsPoint:self.lastGpsPointSaved withAdhocLocation:mappoint];
+    Observation *observation = [self createObservation:feature AtMapLocation:mappoint];
     [self drawObservation:observation atPoint:mappoint];
     [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mappoint];
 }
@@ -1663,6 +1685,7 @@
     }
 
     //get data from entity attributes (unobscure the key names)
+    //FIXME: replace nil with map location of feature
     [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:nil];
 
     //FIXME: if this is an angle distance location, provide button for angle distance editor
@@ -1689,9 +1712,9 @@
     [self.graphicsLayers[name] addGraphic:graphic];
 }
 
-- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity defaults:(NSManagedObject *)template atPoint:mappoint
+- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mappoint
 {
-    //TODO:can we support observations that have no attributes (no dialog)
+    //TODO: can we support observations that have no attributes (no dialog)?
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
     if (template) {
@@ -1706,19 +1729,31 @@
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
-    self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
-    dialog.toolbarItems = @[doneButton];
-    self.modalAttributeCollector.toolbarHidden = NO;
-    self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
-    //FIXME: the modal view control does not respond to done button on keyboard or move up for keyboard
-    [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
+//        UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismiss:)];
+//        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
+//        dialog.navigationController.navigationBar.items = @[cancelButton,self.navigationItem ,doneButton];
+//        dialog.modalInPopover = YES;
+        self.attributePopoverController = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
+        CGPoint screenPoint = [self.mapView toScreenPoint:mappoint];
+        CGRect rect = CGRectMake(screenPoint.x-5, screenPoint.y-5, 10, 10);
+        [self.attributePopoverController presentPopoverFromRect:rect inView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    } else {
+        self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
+        dialog.toolbarItems = @[doneButton];
+        self.modalAttributeCollector.toolbarHidden = NO;
+        self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
+        //FIXME: the modal view control does not respond to done button on keyboard or move up for keyboard
+        [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
+    }
 }
 
 // Called by done button on attribute dialogs
 - (void)saveAttributes:(UIBarButtonItem *)sender
 {
-    AKRLog(@"saving attributes");
+    AKRLog(@"Saving attributes from the recently dismissed modalAttributeCollector VC");
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     AttributeViewController *dialog = [self.modalAttributeCollector.viewControllers firstObject];
     [dialog.root fetchValueUsingBindingsIntoObject:dict];
@@ -1729,7 +1764,8 @@
         //AKRLog(@"Saving Attributes from Dialog key:%@ (%@) Value:%@", aKey, obscuredKey, [dict valueForKey:aKey]);
         [obj setValue:[dict valueForKey:aKey] forKey:obscuredKey];
     }
-    [self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
+    //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;
 }
 
@@ -1863,46 +1899,6 @@
 //    }
 //    self.lastGpsPointSaved = nil;
 //}
-
-
-//TODO: this is the dictionary of atttributes attached to the AGSGraphic.  not used at this point
-- (NSDictionary *)createAttributesFromObservation:(Observation *)observation
-{
-    NSDate *date = self.locationManager.location.timestamp;
-    NSDictionary *attributes = @{ @"date":(date ? date : [NSNull null]) };
-    return attributes;
-}
-
-// not called when popover is dismissed programatically - use callbacks instead
-- (void)dismissQuickDialogPopover:(UIPopoverController *)popoverController
-{
-    UIViewController * vc = popoverController.contentViewController;
-    QuickDialogController *qd;
-    //[self updateTitle];
-    self.quickDialogPopoverController = nil;
-    if ([vc isKindOfClass:[QuickDialogController class]]) {
-        qd = (QuickDialogController *)vc;
-    }
-    if ([vc isKindOfClass:[UINavigationController class]]) {
-        UINavigationController *nav = (UINavigationController *)vc;
-        if ([[nav.viewControllers firstObject] isKindOfClass:[QuickDialogController class]]) {
-            qd = [nav.viewControllers firstObject];
-        }
-    }
-    if (!qd) {
-        return;
-    }
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    [qd.root fetchValueUsingBindingsIntoObject:dict];
-
-    NSString *msg = @"Form Values:";
-    for (NSString *aKey in dict){
-        msg = [msg stringByAppendingFormat:@"\n %@ = %@", aKey, [dict valueForKey:aKey]];
-    }
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Testing Info"
-                                                    message:msg delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alert show];
-}
 
 - (void)logStats
 {
