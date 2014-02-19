@@ -134,25 +134,6 @@
             return NO;
         }
     }
-    if ([identifier isEqualToString:@"Select AngleDistance"])
-    {
-        if (self.angleDistancePopoverController) {
-            [self.angleDistancePopoverController dismissPopoverAnimated:YES];
-            self.angleDistancePopoverController = nil;
-            return NO;
-        }
-        if (!self.mapView.locationDisplay.mapLocation) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Location Unknown" message:@"Unable to calculate a location with a current location for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-            [alert show];
-            return NO;
-        }
-
-        if (self.mapView.locationDisplay.location.course < 0 && self.locationManager.heading.trueHeading < 0) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Heading Unknown" message:@"Unable to calculate a location with a current heading for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-            [alert show];
-            return NO;
-        }
-    }
     return YES;
 }
 
@@ -162,47 +143,6 @@
         UINavigationController *nav = [segue destinationViewController];
         vc1 = [nav.viewControllers firstObject];
     }
-
-    if ([[segue identifier] isEqualToString:@"Select AngleDistance"])
-    {
-        AngleDistanceViewController *vc = (AngleDistanceViewController*)vc1;
-
-        //create/save current GpsPoint, because it may take a while for the user to enter an angle/distance
-        GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-        AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-        double currentCourse = gpsPoint.course;
-
-        LocationAngleDistance *location;
-        if (0 <= currentCourse) {
-            location = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocolFeature:self.currentProtocolFeature];
-        }
-        else {
-            double currentHeading = self.locationManager.heading.trueHeading;
-            if (0 <= currentHeading) {
-                location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocolFeature:self.currentProtocolFeature];
-            }
-            else {
-                location = [[LocationAngleDistance alloc] initWithDeadAhead:0.0 protocolFeature:self.currentProtocolFeature];
-            }
-        }
-        vc.location = location;
-
-        if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
-            self.angleDistancePopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
-            vc.popover = self.angleDistancePopoverController;
-            vc.popover.delegate = self;
-        }
-        vc.completionBlock = ^(AngleDistanceViewController *controller) {
-            self.angleDistancePopoverController = nil;
-            Observation *observation = [self createObservation:self.currentProtocolFeature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
-            [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
-            [self setAttributesForFeatureType:self.currentProtocolFeature entity:observation defaults:nil atPoint:mapPoint];
-        };
-        vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
-            self.angleDistancePopoverController = nil;
-        };
-    }
-
     if ([segue.identifier isEqualToString:@"Select Survey"]){
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
@@ -1451,13 +1391,10 @@
         }
     }
     if (button) {
-        //FIXME: need to create a "dummy" anchor for the segue in the storyboard.  the sender is not used as the anchor
-        // doesn't seem to be a way to set the anchor in code (see http://stackoverflow.com/questions/7787119/creating-button-for-popover-view-anchor-at-run-time)
-        //
-        // OR skip the segue, and programatically create and display the popover here.
-        //
-        [self performSegueWithIdentifier:@"Select AngleDistance" sender:self.toolbar.items[6]]; //Well know UIBarButtonItem
-        //[self performSegueWithIdentifier:@"Select AngleDistance" sender:button]; //button inherits from UIBarButtonItem
+        // It is not possible (AFIK) to set the anchor for a manual popover seque, hence I must do the "segue" with code
+        if ([self  shouldPerformAngleDistanceSequeWithFeature:feature button:button]) {
+            [self performAngleDistanceSequeWithFeature:feature button:button];
+        }
     } else {
         AKRLog(@"Oh No! I couldn't find the calling button for the segue");
     }
@@ -1823,6 +1760,72 @@
     NSArray *results = [self.context executeFetchRequest:request error:nil];
     return (NSManagedObject *)[results lastObject]; // will return nil if there was an error, or no results
 }
+
+- (BOOL) shouldPerformAngleDistanceSequeWithFeature:(ProtocolFeature *)feature button:(UIBarButtonItem *)button
+{
+    if (self.angleDistancePopoverController) {
+        [self.angleDistancePopoverController dismissPopoverAnimated:YES];
+        self.angleDistancePopoverController = nil;
+        return NO;
+    }
+    if (!self.mapView.locationDisplay.mapLocation) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Location Unknown" message:@"Unable to calculate a location with a current location for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+        [alert show];
+        return NO;
+    }
+
+    if (self.mapView.locationDisplay.location.course < 0 && self.locationManager.heading.trueHeading < 0) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Heading Unknown" message:@"Unable to calculate a location with a current heading for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+        [alert show];
+        return NO;
+    }
+    return YES;
+}
+
+- (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature button:(UIBarButtonItem *)button
+{
+    AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
+
+    //create/save current GpsPoint, because it may take a while for the user to enter an angle/distance
+    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+    double currentCourse = gpsPoint.course;
+
+    LocationAngleDistance *location;
+    if (0 <= currentCourse) {
+        location = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocolFeature:feature];
+    }
+    else {
+        double currentHeading = self.locationManager.heading.trueHeading;
+        if (0 <= currentHeading) {
+            location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocolFeature:feature];
+        }
+        else {
+            location = [[LocationAngleDistance alloc] initWithDeadAhead:0.0 protocolFeature:feature];
+        }
+    }
+    vc.location = location;
+    vc.completionBlock = ^(AngleDistanceViewController *controller) {
+        self.angleDistancePopoverController = nil;
+        Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
+        [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
+        [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint];
+    };
+    vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
+        self.angleDistancePopoverController = nil;
+    };
+
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        self.angleDistancePopoverController = [[UIPopoverController alloc] initWithContentViewController:nav];
+        vc.popover = self.angleDistancePopoverController;
+        vc.popover.delegate = self;
+        [self.angleDistancePopoverController presentPopoverFromBarButtonItem:button permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    } else {
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+}
+
 
 
 

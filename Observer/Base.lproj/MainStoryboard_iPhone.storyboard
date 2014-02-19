@@ -83,8 +83,7 @@
                             <imageView opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="center" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" image="Crosshairs" translatesAutoresizingMaskIntoConstraints="NO" id="eZM-53-iaF">
                                 <rect key="frame" x="128" y="284" width="64" height="64"/>
                             </imageView>
-                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="No background map selected. 
-Click the Maps button to select one." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="278" translatesAutoresizingMaskIntoConstraints="NO" id="2NQ-e1-aj5">
+                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="No background map selected.  Click the Maps button to select one." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="278" translatesAutoresizingMaskIntoConstraints="NO" id="2NQ-e1-aj5">
                                 <rect key="frame" x="21" y="351" width="278" height="41"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
@@ -123,7 +122,6 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                         <outlet property="startStopObservingBarButtonItem" destination="Bne-cM-yph" id="GNx-2H-ecz"/>
                         <outlet property="startStopRecordingBarButtonItem" destination="c4V-pT-y07" id="EH1-Pu-HbE"/>
                         <outlet property="toolbar" destination="6en-Gk-VVi" id="dT2-th-skq"/>
-                        <segue destination="mtM-Zu-F9c" kind="push" identifier="Select AngleDistance" id="5u2-zd-3t3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hLo-e6-Mjk" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -143,7 +141,7 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
         <!--Angle Distance View Controller - Angle/Distance-->
         <scene sceneID="JZP-EE-iVl">
             <objects>
-                <viewController modalPresentationStyle="currentContext" id="mtM-Zu-F9c" customClass="AngleDistanceViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AngleDistanceViewController" modalPresentationStyle="currentContext" id="mtM-Zu-F9c" customClass="AngleDistanceViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="yrI-ba-zKk"/>
                         <viewControllerLayoutGuide type="bottom" id="8mZ-D1-upV"/>
@@ -152,19 +150,19 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Angle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i9W-tJ-Xrq">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="Angle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i9W-tJ-Xrq">
                                 <rect key="frame" x="20" y="31" width="45" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="500" text="Distance" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a87-5I-WVe">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="500" misplaced="YES" text="Distance" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a87-5I-WVe">
                                 <rect key="frame" x="20" y="69" width="70" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="tPx-ZW-n9I">
+                            <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="tPx-ZW-n9I">
                                 <rect key="frame" x="98" y="28" width="202" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
@@ -173,7 +171,7 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                                     <outlet property="delegate" destination="mtM-Zu-F9c" id="z2r-0Z-baG"/>
                                 </connections>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" horizontalHuggingPriority="100" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="BrQ-xW-Qbq">
+                            <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" horizontalHuggingPriority="100" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="BrQ-xW-Qbq">
                                 <rect key="frame" x="98" y="66" width="202" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
@@ -182,13 +180,13 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                                     <outlet property="delegate" destination="mtM-Zu-F9c" id="TcV-PZ-V0F"/>
                                 </connections>
                             </textField>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="750" text="Angle increases counter-clockwise with dead ahead equal to 180 degrees. Distance is in meters." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="YM5-OT-6QT">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="750" misplaced="YES" text="Angle increases counter-clockwise with dead ahead equal to 180 degrees. Distance is in meters." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="YM5-OT-6QT">
                                 <rect key="frame" x="20" y="104" width="280" height="45"/>
                                 <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="13"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="btX-tx-8Ck">
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="btX-tx-8Ck">
                                 <rect key="frame" x="20" y="157" width="280" height="30"/>
                                 <state key="normal" title="Change Basis of Measurements ">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -255,7 +253,7 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                             <tableViewSection headerTitle="Angles Increase" id="XaT-Sz-fB6">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="16Q-NH-aOa" style="IBUITableViewCellStyleDefault" id="OcG-Ck-2Is" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="119" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="55" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="OcG-Ck-2Is" id="ZGE-bH-zBA">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -271,7 +269,7 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="NI4-04-U5a" style="IBUITableViewCellStyleDefault" id="Rya-vw-OYR" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="163" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="99" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Rya-vw-OYR" id="RyV-C3-qux">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -290,7 +288,7 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                             <tableViewSection headerTitle="Dead Ahead" id="wg8-oF-Qmr">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="WLT-be-x2j" style="IBUITableViewCellStyleDefault" id="WB1-QM-EaH" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="255" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="191" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WB1-QM-EaH" id="TfA-Ff-dOv">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -307,7 +305,7 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="NiS-uZ-bTo" style="IBUITableViewCellStyleDefault" id="mpA-mM-Lgm" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="299" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="235" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mpA-mM-Lgm" id="Fpy-qO-rKs">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -324,7 +322,7 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="mb1-a1-xUP" style="IBUITableViewCellStyleDefault" id="meS-Zt-xwc" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="343" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="279" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="meS-Zt-xwc" id="6fc-br-epp">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -345,7 +343,7 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                             <tableViewSection headerTitle="Distance Units" id="BkD-Pi-Id6">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="mnD-ZS-Acs" style="IBUITableViewCellStyleDefault" id="izY-qk-7LH" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="435" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="371" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="izY-qk-7LH" id="SsR-e2-iUj">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -361,7 +359,7 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="0EM-xw-oXx" style="IBUITableViewCellStyleDefault" id="tyA-gO-YKr" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="479" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="415" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tyA-gO-YKr" id="2QU-O0-SYw">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -377,7 +375,7 @@ Click the Maps button to select one." textAlignment="center" lineBreakMode="tail
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="wxt-U1-o1w" style="IBUITableViewCellStyleDefault" id="FdT-Dz-ggM" customClass="RadioStyleTableViewCell">
-                                        <rect key="frame" x="0.0" y="523" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="459" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="FdT-Dz-ggM" id="Ler-Kt-7cF">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
