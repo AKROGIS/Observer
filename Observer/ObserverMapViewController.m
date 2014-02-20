@@ -255,26 +255,7 @@
 
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
-    MissionProperty *missionProperty;
-    AGSPoint *mapPoint;
-    GpsPoint *gpsPoint;
-    if (self.locationServicesAvailable) {
-        gpsPoint = [self createGpsPoint:self.locationManager.location];
-    }
-    if (gpsPoint) {
-        mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-        missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
-    } else {
-        mapPoint = self.mapView.mapAnchor;
-        missionProperty = [self createMissionPropertyAtMapLocation:mapPoint];
-    }
-    if (!missionProperty) {
-        AKRLog(@"Oh No!, Unable to create a new Mission Property");
-    }
-    missionProperty.observing = self.isObserving;
-    [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:self.currentMissionProperty atPoint:mapPoint];
-    self.currentMissionProperty = missionProperty;
-    [self drawMissionProperty:missionProperty atPoint:mapPoint];
+    [self saveNewMissionPropertyEditAttributes:YES];
 }
 
 
@@ -993,13 +974,7 @@
     AKRLog(@"start observing");
     self.isObserving = YES;
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:NO];
-    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    MissionProperty *missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
-    missionProperty.observing = YES;
-    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:self.currentMissionProperty atPoint:mapPoint];
-    self.currentMissionProperty = missionProperty;
-    [self drawMissionProperty:missionProperty atPoint:mapPoint];
+    [self saveNewMissionPropertyEditAttributes:YES];
     [self enableControls];
 }
 
@@ -1008,11 +983,7 @@
     AKRLog(@"stop observing");
     self.isObserving = NO;
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:YES];
-    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
-    mission.observing = NO;
-    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    [self drawMissionProperty:mission atPoint:mapPoint];
+    [self saveNewMissionPropertyEditAttributes:NO];
     [self enableControls];
 }
 
@@ -1581,6 +1552,34 @@
     [self.graphicsLayers[kMissionPropertyEntityName] addGraphic:graphic];
 }
 
+- (void)saveNewMissionPropertyEditAttributes:(BOOL)edit
+{
+    MissionProperty *missionProperty;
+    AGSPoint *mapPoint;
+    GpsPoint *gpsPoint;
+    if (self.locationServicesAvailable) {
+        gpsPoint = [self createGpsPoint:self.locationManager.location];
+    }
+    if (gpsPoint) {
+        mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+        missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
+    } else {
+        mapPoint = self.mapView.mapAnchor;
+        missionProperty = [self createMissionPropertyAtMapLocation:mapPoint];
+    }
+    if (!missionProperty) {
+        AKRLog(@"Oh No!, Unable to create a new Mission Property");
+    }
+    missionProperty.observing = self.isObserving;
+    if (edit) {
+        [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:self.currentMissionProperty atPoint:mapPoint];
+    } else {
+        [self copyAttributesForFeature:self.survey.protocol.missionFeature fromEntity:self.currentMissionProperty toEntity:missionProperty];
+    }
+    self.currentMissionProperty = missionProperty;
+    [self drawMissionProperty:missionProperty atPoint:mapPoint];
+}
+
 
 
 
@@ -1750,6 +1749,15 @@
     self.modalAttributeCollector = nil;
 }
 
+- (void) copyAttributesForFeature:(ProtocolFeature *)feature fromEntity:(NSManagedObject *)fromEntity toEntity:(NSManagedObject *)toEntity
+{
+    for (NSAttributeDescription *attribute in feature.attributes) {
+        id value = [fromEntity valueForKey:attribute.name];
+        if (value) {
+            [toEntity setValue:value forKey:attribute.name];
+        }
+    }
+}
 
 
 
