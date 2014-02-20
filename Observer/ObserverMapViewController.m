@@ -1719,7 +1719,7 @@
         self.attributePopoverController = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
         self.attributePopoverController.delegate = self;
         CGPoint screenPoint = [self.mapView toScreenPoint:mappoint];
-        CGRect rect = CGRectMake(screenPoint.x, screenPoint.y, 0, 0);
+        CGRect rect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
         [self.attributePopoverController presentPopoverFromRect:rect inView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     } else {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
