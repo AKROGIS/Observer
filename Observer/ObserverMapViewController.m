@@ -255,7 +255,7 @@
 
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
-    MissionProperty *mission;
+    MissionProperty *missionProperty;
     AGSPoint *mapPoint;
     GpsPoint *gpsPoint;
     if (self.locationServicesAvailable) {
@@ -263,17 +263,18 @@
     }
     if (gpsPoint) {
         mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-        mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
+        missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
     } else {
         mapPoint = self.mapView.mapAnchor;
-        mission = [self createMissionPropertyAtMapLocation:mapPoint];
+        missionProperty = [self createMissionPropertyAtMapLocation:mapPoint];
     }
-    if (!mission) {
+    if (!missionProperty) {
         AKRLog(@"Oh No!, Unable to create a new Mission Property");
     }
-    mission.observing = YES;
-    [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:mission defaults:self.currentMissionProperty atPoint:mapPoint];
-    [self drawMissionProperty:mission atPoint:mapPoint];
+    missionProperty.observing = self.isObserving;
+    [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:self.currentMissionProperty atPoint:mapPoint];
+    self.currentMissionProperty = missionProperty;
+    [self drawMissionProperty:missionProperty atPoint:mapPoint];
 }
 
 
@@ -971,11 +972,12 @@
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:NO];
     //TDOO: populate the mission property dialog with the last/default dataset
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    MissionProperty *mission = [self createMissionPropertyAtGpsPoint:gpsPoint];
-    mission.observing = YES;
+    MissionProperty *missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
+    missionProperty.observing = YES;
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:mission defaults:self.currentMissionProperty atPoint:mapPoint];
-    [self drawMissionProperty:mission atPoint:mapPoint];
+    [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:self.currentMissionProperty atPoint:mapPoint];
+    self.currentMissionProperty = missionProperty;
+    [self drawMissionProperty:missionProperty atPoint:mapPoint];
     [self enableControls];
 }
 
