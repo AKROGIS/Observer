@@ -96,6 +96,7 @@
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 @property (strong, nonatomic) UIPopoverController *surveysPopoverController;
 @property (strong, nonatomic) UIPopoverController *attributePopoverController;
+@property (strong, nonatomic) AGSPoint *popoverMapPoint;
 @property (strong, nonatomic) UINavigationController *modalAttributeCollector;
 
 @end
@@ -186,7 +187,20 @@
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     self.mapView.locationDisplay.interfaceOrientation = toInterfaceOrientation;
+    if (self.attributePopoverController) {
+        [self.attributePopoverController dismissPopoverAnimated:NO];
+    }
 }
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    if (self.attributePopoverController) {
+        CGPoint screenPoint = [self.mapView toScreenPoint:self.popoverMapPoint];
+        CGRect rect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
+        [self.attributePopoverController presentPopoverFromRect:rect inView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    }
+}
+
 
 
 
@@ -305,11 +319,7 @@
     [sheet showFromBarButtonItem:button animated:NO];
 }
 
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    //FIXME: re-present popovers that were anchored to a mpa location.
-    //[aPopover presentPopoverFromRect:targetRect.frame inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-}
+
 
 
 #pragma mark - public methods
@@ -1718,6 +1728,7 @@
 //        dialog.modalInPopover = YES;
         self.attributePopoverController = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
         self.attributePopoverController.delegate = self;
+        self.popoverMapPoint = mappoint;
         CGPoint screenPoint = [self.mapView toScreenPoint:mappoint];
         CGRect rect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
         [self.attributePopoverController presentPopoverFromRect:rect inView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
