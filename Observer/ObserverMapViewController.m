@@ -418,7 +418,7 @@
         return;
 
     if (self.isRecording) {
-        if (![self isNewLocation:location]) {
+        if ([self isNewLocation:location]) {
             GpsPoint *gpsPoint = [self createGpsPoint:location];
             //this requires a reprojection of the gpsPoint to the map's coordinate system.
             [self drawGpsPoint:gpsPoint];
