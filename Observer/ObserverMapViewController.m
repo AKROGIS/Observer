@@ -1717,6 +1717,10 @@
         //AKRLog(@"default data attributes %@", data);
     }
     NSDictionary *config = feature.dialogJSON;
+    //TODO: do not send data which might null out the radio buttons (some controls require a non-null default
+    if (data.count == 0) {
+        data = nil;
+    }
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
