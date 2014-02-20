@@ -12,6 +12,8 @@
 
 -(AGSPoint *)pointWithAngle:(double)angle distance:(double)distance units:(AGSSRUnit)units
 {
+    //FIXME: if point is geographic temporatily project it to do angle distance, then project back
+    
     //distance will be nan if units and spatialreference.units are not similar (i.e. both linear, or both angular)
     //that is, you cannot use meters with geographic points, or degrees with projected points.
     distance = [self.spatialReference convertValue:distance fromUnit:units];

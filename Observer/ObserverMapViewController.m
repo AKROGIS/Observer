@@ -1243,6 +1243,23 @@
     return point;
 }
 
+- (AGSPoint *)mapPointFromAdhocLocation:(AdhocLocation *)adhocLocation
+{
+    AGSPoint *point = [AGSPoint pointWithX:adhocLocation.longitude y:adhocLocation.latitude spatialReference:self.wgs84];
+    point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:point toSpatialReference:self.mapView.spatialReference];
+    return point;
+}
+
+- (AGSPoint *)mapPointFromAngleDistance:(AngleDistanceLocation *)angleDistance gpsPoint:(GpsPoint *)gpsPoint
+{
+    LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:angleDistance.direction
+                                                                       protocolFeature:nil //A protocol is not required to reconsistute an angle/distance
+                                                                         absoluteAngle:angleDistance.angle
+                                                                              distance:angleDistance.distance];
+    AGSPoint *point = [location pointFromPoint:[self mapPointFromGpsPoint:gpsPoint]];
+    return point;
+}
+
 
 
 
@@ -1312,20 +1329,22 @@
 
 - (GpsPoint *)createGpsPoint:(CLLocation *)gpsData
 {
-    if (!self.context) {
-        AKRLog(@"Can't create GPS point, there is no data context (file)");
-        return nil;
-    }
+    //AKRLog(@"Creating GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
     if (self.lastGpsPointSaved && [self.lastGpsPointSaved.timestamp timeIntervalSinceDate:gpsData.timestamp] == 0) {
         return self.lastGpsPointSaved;
     }
-    AKRLog(@"Saving GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
+    if (!gpsData.timestamp) {
+        AKRLog(@"Can't save a GPS Point without a timestamp!");
+        //return nil; //TODO: added for testing on simulator, remove for production
+    }
     GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:kGpsPointEntityName
                                                        inManagedObjectContext:self.context];
+    NSAssert(gpsPoint, @"Could not create a Gps Point in Core Data");
     gpsPoint.mission = self.mission;
     gpsPoint.altitude = gpsData.altitude;
     gpsPoint.course = gpsData.course;
     gpsPoint.horizontalAccuracy = gpsData.horizontalAccuracy;
+    //FIXME: CLLocation only guarantees that lat/long are double.  Our Coredata constraint may fail.
     gpsPoint.latitude = gpsData.coordinate.latitude;
     gpsPoint.longitude = gpsData.coordinate.longitude;
     gpsPoint.speed = gpsData.speed;
@@ -1337,19 +1356,11 @@
 
 - (void)drawGpsPoint:(GpsPoint *)gpsPoint
 {
-    if (!gpsPoint)
-        return;
-
-    AGSPoint *point = [self mapPointFromGpsPoint:gpsPoint];
-    [self drawGpsPointAtMapPoint:point];
+    [self drawGpsPointAtMapPoint:[self mapPointFromGpsPoint:gpsPoint]];
 }
 
 - (void)drawGpsPointAtMapPoint:(AGSPoint *)mapPoint
 {
-    if (!mapPoint) {
-        AKRLog(@"Cannot draw gpsPoint at mapPoint (%@)", mapPoint);
-        return;
-    }
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:nil];
     [self.graphicsLayers[kGpsPointEntityName] addGraphic:graphic];
     //TODO: Add segment to polyline
@@ -1389,7 +1400,7 @@
 - (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
 {
     self.currentProtocolFeature = feature;
-    //Find the barbutton item with the feature to attach the seque.
+    //Find the barbutton item with the feature to attach the popover.
     AddFeatureBarButtonItem *button = nil;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
         if (item.feature == feature) {
@@ -1416,25 +1427,17 @@
 
 - (Observation *)createObservation:(ProtocolFeature *)feature
 {
-    if (!self.context) {
-        AKRLog(@"Can't create Observation, there is no data context (file)");
-        return nil;
-    }
-    AKRLog(@"Creating Observation managed object");
+    //AKRLog(@"Creating Observation managed object");
     NSString *entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,feature.name];
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:entityName
                                                              inManagedObjectContext:self.context];
+    NSAssert(observation, @"Could not create an Observation in Core Data");
     observation.mission = self.mission;
     return observation;
 }
 
 - (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint
 {
-    if (!gpsPoint) {
-        AKRLog(@"Can't save Observation at GPS point without a GPS Point");
-        return nil;
-    }
-    AKRLog(@"Creating Observation at GPS point");
     Observation *observation = [self createObservation:feature];
     observation.gpsPoint = gpsPoint;
     return observation;
@@ -1442,38 +1445,15 @@
 
 - (Observation *)createObservation:(ProtocolFeature *)feature AtMapLocation:(AGSPoint *)mapPoint
 {
-    if (!mapPoint) {
-        AKRLog(@"Can't save Observation at Adhoc Location without a Map Point");
-        return nil;
-    }
     Observation *observation = [self createObservation:feature];
-    if (!observation) {
-        AKRLog(@"Unable to create an observation");
-        return nil;
-    }
     observation.adhocLocation = [self createAdhocLocationWithMapPoint:mapPoint];
     return observation;
 }
 
-- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)location
+- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)angleDistance
 {
-    if (!gpsPoint) {
-        AKRLog(@"Can't save Observation at Angle/Distance without a GPS Point");
-        return nil;
-    }
     Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
-    if (!observation) {
-        return nil;
-    }
-    AKRLog(@"Adding Angle = %f, Distance = %f, Course = %f to observation",
-          location.absoluteAngle, location.distanceMeters, location.deadAhead);
-
-    AngleDistanceLocation *angleDistance = [NSEntityDescription insertNewObjectForEntityForName:kAngleDistanceLocationEntityName
-                                                                         inManagedObjectContext:self.context];
-    angleDistance.angle = location.absoluteAngle;
-    angleDistance.distance = location.distanceMeters;
-    angleDistance.direction = location.deadAhead;
-    observation.angleDistanceLocation = angleDistance;
+    observation.angleDistanceLocation = [self createAngleDistanceLocationWithAngleDistanceLocation:angleDistance];
     return observation;
 }
 
@@ -1482,16 +1462,10 @@
     //AKRLog(@"    Loading observation");
     AGSPoint *point;
     if (observation.angleDistanceLocation) {
-        LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:observation.angleDistanceLocation.direction
-                                                                           protocolFeature:nil //A protocol is not required to reconsistute an angle/distance
-                                                                             absoluteAngle:observation.angleDistanceLocation.angle
-                                                                                  distance:observation.angleDistanceLocation.distance];
-        //The point must be in a projected coordinate system to apply an angle and distance
-        point = [location pointFromPoint:[self mapPointFromGpsPoint:observation.gpsPoint]];
+        point = [self mapPointFromAngleDistance:observation.angleDistanceLocation gpsPoint:observation.gpsPoint];
     }
     else if (observation.adhocLocation) {
-        point = [AGSPoint pointWithX:observation.adhocLocation.longitude y:observation.adhocLocation.latitude spatialReference:self.wgs84];
-        point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:point toSpatialReference:self.mapView.spatialReference];
+        point = [self mapPointFromAdhocLocation:observation.adhocLocation];
     }
     else if (observation.gpsPoint) {
         point = [self mapPointFromGpsPoint:observation.gpsPoint];
@@ -1501,34 +1475,20 @@
 
 - (void)drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
 {
-    if (!observation || !mapPoint) {
-        AKRLog(@"Cannot draw observation (%@).  It has no location", observation);
-        return;
-    }
-    NSDictionary *attribs;
-    NSDate *timestamp = nil;
-    if (observation.gpsPoint) {
-        timestamp = observation.gpsPoint.timestamp;
-    } else {
-        timestamp = observation.adhocLocation.timestamp;
-    }
-    if (timestamp) {
-        attribs = @{@"timestamp":timestamp};
-    } else {
-        attribs = @{@"timestamp":[NSNull null]};
-    }
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     //AKRLog(@"    Drawing observation type %@",observation.entity.name);
+    NSDate *timestamp = observation.gpsPoint ? observation.gpsPoint.timestamp : observation.adhocLocation.timestamp;
+    NSDictionary *attribs = timestamp ? @{@"timestamp":timestamp} : @{@"timestamp":[NSNull null]};
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     NSString * name = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
     [self.graphicsLayers[name] addGraphic:graphic];
 }
 
-
 - (AdhocLocation *)createAdhocLocationWithMapPoint:(AGSPoint *)mapPoint
 {
-    AKRLog(@"Adding Adhoc Location to Core Data at Map Point %@", mapPoint);
+    //AKRLog(@"Adding Adhoc Location to Core Data at Map Point %@", mapPoint);
     AdhocLocation *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:kAdhocLocationEntityName
                                                                  inManagedObjectContext:self.context];
+    NSAssert(adhocLocation, @"Could not create an AdhocLocation in Core Data");
     //mapPoint is in the map coordinates, convert to WGS84
     AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:self.wgs84];
     adhocLocation.latitude = wgs84Point.y;
@@ -1538,29 +1498,33 @@
     return adhocLocation;
 }
 
+- (AngleDistanceLocation *)createAngleDistanceLocationWithAngleDistanceLocation:(LocationAngleDistance *)location
+{
+    //AKRLog(@"Adding Angle = %f, Distance = %f, Course = %f to CoreData", location.absoluteAngle, location.distanceMeters, location.deadAhead);
+    AngleDistanceLocation *angleDistance = [NSEntityDescription insertNewObjectForEntityForName:kAngleDistanceLocationEntityName
+                                                                         inManagedObjectContext:self.context];
+    NSAssert(angleDistance, @"Could not create an AngleDistanceLocation in Core Data");
+    angleDistance.angle = location.absoluteAngle;
+    angleDistance.distance = location.distanceMeters;
+    angleDistance.direction = location.deadAhead;
+    return angleDistance;
+}
 
 
 #pragma mark - Private Methods - support for data model - mission properties
 
 - (MissionProperty *)createMissionProperty
 {
-    AKRLog(@"Creating MissionProperty managed object");
-    if (!self.context) {
-        AKRLog(@"Can't create MissionProperty, there is no data context (file)");
-        return nil;
-    }
+    //AKRLog(@"Creating MissionProperty managed object");
     MissionProperty *missionProperty = [NSEntityDescription insertNewObjectForEntityForName:kMissionPropertyEntityName inManagedObjectContext:self.context];
+    NSAssert(missionProperty, @"Could not create a Mission Property in Core Data");
     missionProperty.mission = self.mission;
     return missionProperty;
 }
 
 - (MissionProperty *)createMissionPropertyAtGpsPoint:(GpsPoint *)gpsPoint
 {
-    AKRLog(@"Creating MissionProperty at GPS point");
-    if (!gpsPoint) {
-        AKRLog(@"Can't save MissionProperty at GPS point without a GPS Point");
-        return nil;
-    }
+    //AKRLog(@"Creating MissionProperty at GPS point");
     MissionProperty *missionProperty = [self createMissionProperty];
     missionProperty.gpsPoint = gpsPoint;
     return missionProperty;
@@ -1568,17 +1532,8 @@
 
 - (MissionProperty *)createMissionPropertyAtMapLocation:(AGSPoint *)mapPoint
 {
-    AKRLog(@"Creating MissionProperty at Map point");
-
-    if (!mapPoint) {
-        AKRLog(@"Can't save MissionProperty at Map point without a Map Point");
-        return nil;
-    }
+    //AKRLog(@"Creating MissionProperty at Map point");
     MissionProperty *missionProperty = [self createMissionProperty];
-    if (!missionProperty) {
-        AKRLog(@"Unable to create an Mission Property");
-        return nil;
-    }
     missionProperty.adhocLocation = [self createAdhocLocationWithMapPoint:mapPoint];
     return missionProperty;
 }
@@ -1589,17 +1544,16 @@
     AGSPoint *point;
     if (missionProperty.gpsPoint) {
         point = [self mapPointFromGpsPoint:missionProperty.gpsPoint];
+    } else {
+        point = [self mapPointFromAdhocLocation:missionProperty.adhocLocation];
     }
     [self drawMissionProperty:missionProperty atPoint:point];
 }
 
 - (void)drawMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
 {
-    if (!missionProperty || !mapPoint) {
-        AKRLog(@"Cannot draw missionProperty (%@).  It has no location", missionProperty);
-        return;
-    }
-    NSDictionary *attribs = @{@"timestamp":missionProperty.gpsPoint.timestamp};
+    NSDate *timestamp = missionProperty.gpsPoint ? missionProperty.gpsPoint.timestamp : missionProperty.adhocLocation.timestamp;
+    NSDictionary *attribs = timestamp ? @{@"timestamp":timestamp} : @{@"timestamp":[NSNull null]};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     [self.graphicsLayers[kMissionPropertyEntityName] addGraphic:graphic];
 }
@@ -1800,6 +1754,7 @@
 - (BOOL) shouldPerformAngleDistanceSequeWithFeature:(ProtocolFeature *)feature button:(UIBarButtonItem *)button
 {
     if (self.angleDistancePopoverController) {
+        //TODO: is this code path possible?
         [self.angleDistancePopoverController dismissPopoverAnimated:YES];
         self.angleDistancePopoverController = nil;
         return NO;
