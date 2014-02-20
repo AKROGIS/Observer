@@ -1599,7 +1599,7 @@
     [self presentFeature:graphic fromLayer:layerName atPoint:screen];
 }
 
-- (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atPoint:(CGPoint)screen
+- (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atPoint:(CGPoint)screenPoint
 {
     NSDate *timestamp = (NSDate *)[agsFeature safeAttributeForKey:@"timestamp"];
 
@@ -1639,8 +1639,8 @@
     }
 
     //get data from entity attributes (unobscure the key names)
-    //FIXME: replace nil with map location of feature
-    [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:nil];
+    AGSPoint *mappoint = [self.mapView toMapPoint:screenPoint];
+    [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:mappoint];
 
     //FIXME: if this is an angle distance location, provide button for angle distance editor
     //FIXME: if the feature was changed, save the changes.  (non-editable features i.e. gps points should have a special non-editable dialog)
@@ -1691,7 +1691,7 @@
 //        dialog.modalInPopover = YES;
         self.attributePopoverController = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
         CGPoint screenPoint = [self.mapView toScreenPoint:mappoint];
-        CGRect rect = CGRectMake(screenPoint.x-5, screenPoint.y-5, 10, 10);
+        CGRect rect = CGRectMake(screenPoint.x, screenPoint.y, 0, 0);
         [self.attributePopoverController presentPopoverFromRect:rect inView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     } else {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
