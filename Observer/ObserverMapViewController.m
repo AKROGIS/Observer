@@ -1338,7 +1338,7 @@
     gpsPoint.altitude = gpsData.altitude;
     gpsPoint.course = gpsData.course;
     gpsPoint.horizontalAccuracy = gpsData.horizontalAccuracy;
-    //FIXME: CLLocation only guarantees that lat/long are double.  Our Coredata constraint may fail.
+    //TODO: CLLocation only guarantees that lat/long are double.  Our Coredata constraint may fail.
     gpsPoint.latitude = gpsData.coordinate.latitude;
     gpsPoint.longitude = gpsData.coordinate.longitude;
     gpsPoint.speed = gpsData.speed;
@@ -1727,7 +1727,7 @@
         dialog.toolbarItems = @[doneButton];
         self.modalAttributeCollector.toolbarHidden = NO;
         self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
-        //FIXME: the modal view control does not respond to done button on keyboard or move up for keyboard
+        //TODO: the modal view control does not respond to done button on keyboard or move up for keyboard
         [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
     }
 }
