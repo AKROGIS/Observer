@@ -207,6 +207,9 @@ static ProtocolCollection *_sharedCollection = nil;
             self.delegate = nil;
             [self loadCache];
             BOOL success = [self refreshLocalProtocols];
+            if (self.remoteItems.count == 0) {
+                [self refreshRemoteProtocols];
+            }
             [self saveCache];
             self.delegate = savedDelegate;
             self.isLoaded = YES;

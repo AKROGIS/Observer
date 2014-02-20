@@ -219,6 +219,9 @@ static MapCollection *_sharedCollection = nil;
         self.isLoading = YES;
         dispatch_async(dispatch_queue_create("gov.nps.akr.observer.mapcollection.open", DISPATCH_QUEUE_SERIAL), ^{
             [self loadAndCorrectListOfMaps];
+            if (self.remoteItems.count == 0) {
+                [self refreshRemoteMaps];
+            }
             self.isLoaded = YES;
             self.isLoading = NO;
             if (completionHandler) {
