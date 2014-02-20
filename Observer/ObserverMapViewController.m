@@ -751,6 +751,29 @@
     return self.surveys.selectedSurvey.document.managedObjectContext;
 }
 
+- (MissionProperty *)currentMissionProperty
+{
+    if (!_currentMissionProperty) {
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
+        request.fetchLimit = 1;
+        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"adhocLocation.timestamp" ascending:NO]];
+        request.predicate = [NSPredicate predicateWithFormat:@"adhocLocation != NULL"];
+        NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+        MissionProperty *withMap = [results firstObject];
+        if (withMap) {
+            request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"gpsPoint.timestamp" ascending:NO]];
+            request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint != NULL AND gpsPoint.timestamp > %@", withMap.adhocLocation.timestamp];
+        } else {
+            request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"gpsPoint.timestamp" ascending:NO]];
+            request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint != NULL"];
+        }
+        results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
+        MissionProperty *withGPS = [results firstObject];
+        _currentMissionProperty = withGPS ? withGPS : withMap;
+    }
+    return _currentMissionProperty;
+}
+
 - (NSMutableArray *)addFeatureBarButtonItems
 {
     if (!_addFeatureBarButtonItems) {
@@ -970,7 +993,6 @@
     AKRLog(@"start observing");
     self.isObserving = YES;
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:NO];
-    //TDOO: populate the mission property dialog with the last/default dataset
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     MissionProperty *missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
     missionProperty.observing = YES;
@@ -1283,7 +1305,6 @@
                     [self configureObservationButtons];
                 } else {
                     [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
-
                 }
                 [self updateTitleBar];
                 [self decrementBusy];
