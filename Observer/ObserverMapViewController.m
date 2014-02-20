@@ -1557,6 +1557,8 @@
     MissionProperty *missionProperty;
     AGSPoint *mapPoint;
     GpsPoint *gpsPoint;
+    //do not create a mission property, until I have checked the database (if necessary) for the last mission property
+    MissionProperty * template = self.currentMissionProperty;
     if (self.locationServicesAvailable) {
         gpsPoint = [self createGpsPoint:self.locationManager.location];
     }
@@ -1572,9 +1574,9 @@
     }
     missionProperty.observing = self.isObserving;
     if (edit) {
-        [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:self.currentMissionProperty atPoint:mapPoint];
+        [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:template atPoint:mapPoint];
     } else {
-        [self copyAttributesForFeature:self.survey.protocol.missionFeature fromEntity:self.currentMissionProperty toEntity:missionProperty];
+        [self copyAttributesForFeature:self.survey.protocol.missionFeature fromEntity:template toEntity:missionProperty];
     }
     self.currentMissionProperty = missionProperty;
     [self drawMissionProperty:missionProperty atPoint:mapPoint];
