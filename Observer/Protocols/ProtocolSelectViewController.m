@@ -190,7 +190,6 @@
         }
     }
 
-    [self.items setSelectedLocalProtocol:indexPath.urow];
     if (self.popover) {
         [self.popover dismissPopoverAnimated:YES];
     } else {

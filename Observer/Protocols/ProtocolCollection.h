@@ -59,8 +59,6 @@
 - (void) removeLocalProtocolAtIndex:(NSUInteger)index;
 - (void) moveLocalProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 - (void) moveRemoteProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
-- (void) setSelectedLocalProtocol:(NSUInteger)index;
-- (SProtocol *)selectedLocalProtocol;
 
 // Download a Protocol from the server
 - (void)prepareToDownloadProtocolAtIndex:(NSUInteger)index;

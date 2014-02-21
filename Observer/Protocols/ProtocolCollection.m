@@ -36,7 +36,6 @@
 @interface ProtocolCollection()
 @property (nonatomic, strong) NSMutableArray *localItems;  // of SProtocol
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of SProtocol
-@property (nonatomic) NSUInteger selectedLocalIndex;  //NSNotFound -> NO item is selected
 @property (nonatomic, strong) NSURL *documentsDirectory;
 @property (nonatomic, strong) NSURL *cacheFile;
 @property (nonatomic) BOOL isLoaded;
@@ -112,9 +111,6 @@
     [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
     [self.localItems removeObjectAtIndex:index];
     [self saveCache];
-    if (index < self.selectedLocalIndex && self.selectedLocalIndex != NSNotFound) {
-        self.selectedLocalIndex--;
-    }
 }
 
 -(void)moveLocalProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
@@ -123,22 +119,6 @@
     if (fromIndex == toIndex)
         return;
 
-    //adjust the selected Index
-    if (self.selectedLocalIndex != NSNotFound) {
-        if (self.selectedLocalIndex == fromIndex) {
-            self.selectedLocalIndex = toIndex;
-        } else {
-            if (fromIndex < self.selectedLocalIndex && self.selectedLocalIndex <= toIndex) {
-                self.selectedLocalIndex--;
-            } else {
-                if (toIndex <= self.selectedLocalIndex && self.selectedLocalIndex < fromIndex) {
-                    self.selectedLocalIndex++;
-                }
-            }
-        }
-    }
-
-    //move the item
     id temp = self.localItems[fromIndex];
     [self.localItems removeObjectAtIndex:fromIndex];
     [self.localItems insertObject:temp atIndex:toIndex];
@@ -154,21 +134,6 @@
     [self.remoteItems removeObjectAtIndex:fromIndex];
     [self.remoteItems insertObject:temp atIndex:toIndex];
     [self saveCache];
-}
-
-- (void)setSelectedLocalProtocol:(NSUInteger)index
-{
-    if (index < self.localItems.count || index == NSNotFound) {
-        self.selectedLocalIndex = index;
-    }
-}
-
-- (SProtocol *)selectedLocalProtocol
-{
-    if (self.selectedLocalIndex == NSNotFound || self.localItems.count == 0 || self.localItems.count <= self.selectedLocalIndex) {
-        return nil;
-    }
-    return self.localItems[self.selectedLocalIndex];
 }
 
 
@@ -271,18 +236,12 @@ static ProtocolCollection *_sharedCollection = nil;
                     [self.remoteItems removeObjectAtIndex:index];
                     [delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
                     [self.localItems insertObject:protocol atIndex:0];
-                    if (self.selectedLocalIndex != NSNotFound) {
-                        self.selectedLocalIndex++;
-                    }
                     [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
                     [self saveCache];
                 });
             } else {
                 [self.remoteItems removeObjectAtIndex:index];
                 [self.localItems insertObject:protocol atIndex:0];
-                if (self.selectedLocalIndex != NSNotFound) {
-                    self.selectedLocalIndex++;
-                }
                 [self saveCache];
             }
         }
@@ -481,12 +440,10 @@ static ProtocolCollection *_sharedCollection = nil;
                 [self.localItems addObjectsFromArray:protocolsToAdd];
                 [delegate collection:self addedLocalItemsAtIndexes:indexes];
             }
-            [self checkAndFixSelectedIndex];
         });
     } else {
         [self.localItems removeObjectsAtIndexes:itemsToRemove];
         [self.localItems addObjectsFromArray:protocolsToAdd];
-        [self checkAndFixSelectedIndex];
     }
 }
 
@@ -611,16 +568,6 @@ static ProtocolCollection *_sharedCollection = nil;
         [self.remoteItems addObjectsFromArray:protocolsToAdd];
     }
     return modelChanged;
-}
-
-- (void) checkAndFixSelectedIndex
-{
-    //TODO: this is broken; solution is to archive select item, not index.
-    // for example if we had 3 items, with selected index = 0 and all 3
-    // went missing, but a new one was found, the selected index should be cleared
-    if (self.localItems.count <= self.selectedLocalIndex) {
-        self.selectedLocalIndex = NSNotFound;
-    }
 }
 
 
