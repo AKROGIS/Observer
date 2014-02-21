@@ -487,7 +487,7 @@
     //features: id<AGSFeature> objects from all hit-testable layers in the map that intersect or contain the location.
     //The dictionary contains layer name (key) : Array of id<AGSFeature> (value)
 
-    AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mappoint, features);
+    //AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mappoint, features);
 
     switch (features.count) {  //Number of layers with selected features
         case 0:
@@ -522,32 +522,41 @@
 
 - (void)mapView:(AGSMapView *)mapView didTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
 {
-    //Tells the delegate that a point on the map was tapped and held at specified location.
-    //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
-    AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, features);
+    //AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, features);
+
     if (0 < [features count]) {
         AKRLog(@"Try to move selected graphic - if allowed");
+        //FIXME: implement move selected graphic
         //if feature is an adhoc location (no need to check if adhoc is allowed, as it must be since the user created one)
         //   then just move it
         //if feature is an angle distance feature
         //   then flash the gps observation point and open the angle distance dialog on that point (try not to hide observation)
         //   move the feature when the dialog is dismissed.
         //ignore GPS locations
+        //Allow mission properties
+        //archive feature being moved, for use in didEndTapAndHold
     }
 }
 
 - (void)mapView:(AGSMapView *)mapView didMoveTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
 {
-    //Tells the delegate that the user moved his finger while tapping and holding on the map.
-    //Sent continuously to allow tracking of the movement
-    //The dictionary contains NSArrays of intersecting AGSGraphics keyed on the layer name
-    AKRLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, features);
+    //AKRLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, features);
+
+    //FIXME: if this is a mission point, then snap to gps points
     AGSGraphic *graphic = [features[kObservationLayer] lastObject];
     if (graphic) {
         [graphic setGeometry:mappoint];
     }
 }
 
+- (void) mapView:(AGSMapView *)mapView didEndTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
+{
+    //AKRLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, features);
+
+    //FIXME: need to save new adhoc map point for dragged graphic.
+    //Should I check if we have actually moved??
+    //If it is a mission property then use then snap to the closest gps Point
+}
 
 
 
