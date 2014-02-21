@@ -291,7 +291,6 @@
     for (ProtocolFeature *feature in features) {
         if (feature.allowedLocations.countOfTouchChoices > 0) {
             [newArray addObject:feature];
-            break;
         }
     }
     return [newArray copy];
