@@ -26,11 +26,11 @@
 #define DEFAULTS_KEY_SORTED_SURVEY_LIST @"sorted_survey_list"
 #define DEFAULTS_DEFAULT_SORTED_SURVEY_LIST nil
 
-#define DEFAULTS_KEY_SHOW_REMOTE_MAPS @"show_remote_maps"
-#define DEFAULTS_DEFAULT_SHOW_REMOTE_MAPS NO
+#define DEFAULTS_KEY_HIDE_REMOTE_MAPS @"hide_remote_maps"
+#define DEFAULTS_DEFAULT_HIDE_REMOTE_MAPS NO
 
-#define DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS @"show_remote_protocols"
-#define DEFAULTS_DEFAULT_SHOW_REMOTE_PROTOCOLS NO
+#define DEFAULTS_KEY_HIDE_REMOTE_PROTOCOLS @"hide_remote_protocols"
+#define DEFAULTS_DEFAULT_HIDE_REMOTE_PROTOCOLS NO
 
 #define DEFAULTS_KEY_URL_FOR_MAPS @"url_for_maps"
 #define DEFAULTS_DEFAULT_URL_FOR_MAPS nil
@@ -163,38 +163,38 @@
 
 
 
-@synthesize showRemoteMaps = _showRemoteMaps;
+@synthesize hideRemoteMaps = _hideRemoteMaps;
 
-- (BOOL) showRemoteMaps
+- (BOOL) hideRemoteMaps
 {
-    BOOL value = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_SHOW_REMOTE_MAPS];
-    return value ? value: DEFAULTS_DEFAULT_SHOW_REMOTE_MAPS;
+    BOOL value = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_HIDE_REMOTE_MAPS];
+    return value ? value: DEFAULTS_DEFAULT_HIDE_REMOTE_MAPS;
 }
 
-- (void) setShowRemoteMaps:(BOOL)showRemoteMaps
+- (void) setShowRemoteMaps:(BOOL)hideRemoteMaps
 {
-    if (showRemoteMaps == DEFAULTS_DEFAULT_SHOW_REMOTE_MAPS)
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SHOW_REMOTE_MAPS];
+    if (hideRemoteMaps == DEFAULTS_DEFAULT_HIDE_REMOTE_MAPS)
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_HIDE_REMOTE_MAPS];
     else
-        [[NSUserDefaults standardUserDefaults] setBool:showRemoteMaps forKey:DEFAULTS_KEY_SHOW_REMOTE_MAPS];
+        [[NSUserDefaults standardUserDefaults] setBool:hideRemoteMaps forKey:DEFAULTS_KEY_HIDE_REMOTE_MAPS];
 }
 
 
 
-@synthesize showRemoteProtocols = _showRemoteProtocols;
+@synthesize hideRemoteProtocols = _hideRemoteProtocols;
 
-- (BOOL) showRemoteProtocols
+- (BOOL) hideRemoteProtocols
 {
-    bool value = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS];
-    return value ? value : DEFAULTS_DEFAULT_SHOW_REMOTE_PROTOCOLS;
+    bool value = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_HIDE_REMOTE_PROTOCOLS];
+    return value ? value : DEFAULTS_DEFAULT_HIDE_REMOTE_PROTOCOLS;
 }
 
-- (void) setShowRemoteProtocols:(BOOL)showRemoteProtocols
+- (void) setShowRemoteProtocols:(BOOL)hideRemoteProtocols
 {
-    if (showRemoteProtocols == DEFAULTS_DEFAULT_SHOW_REMOTE_PROTOCOLS)
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS];
+    if (hideRemoteProtocols == DEFAULTS_DEFAULT_HIDE_REMOTE_PROTOCOLS)
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_HIDE_REMOTE_PROTOCOLS];
     else
-        [[NSUserDefaults standardUserDefaults] setBool:showRemoteProtocols forKey:DEFAULTS_KEY_SHOW_REMOTE_PROTOCOLS];
+        [[NSUserDefaults standardUserDefaults] setBool:hideRemoteProtocols forKey:DEFAULTS_KEY_HIDE_REMOTE_PROTOCOLS];
 }
 
 

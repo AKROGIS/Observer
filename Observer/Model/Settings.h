@@ -31,8 +31,8 @@
 @property (nonatomic) NSUInteger indexOfCurrentSurvey;
 @property (nonatomic, strong) NSArray *surveys; //of NSURL
 
-@property (nonatomic) BOOL showRemoteMaps;
-@property (nonatomic) BOOL showRemoteProtocols;
+@property (nonatomic) BOOL hideRemoteMaps;
+@property (nonatomic) BOOL hideRemoteProtocols;
 
 @property (nonatomic) NSURL *urlForMaps;
 @property (nonatomic) NSURL *urlForProtocols;

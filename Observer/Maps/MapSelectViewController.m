@@ -38,7 +38,7 @@
 {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    self.showRemoteMaps = [Settings manager].showRemoteMaps;
+    self.showRemoteMaps = ![Settings manager].hideRemoteMaps;
     self.refreshControl = [UIRefreshControl new];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
     if (self.items.refreshDate) {
@@ -53,7 +53,7 @@
 -(void)viewWillDisappear:(BOOL)animated
 {
     [self.navigationController setToolbarHidden:YES animated:NO];
-    [Settings manager].showRemoteMaps = self.showRemoteMaps;
+    [Settings manager].hideRemoteMaps = !self.showRemoteMaps;
 }
 
 - (void)didReceiveMemoryWarning

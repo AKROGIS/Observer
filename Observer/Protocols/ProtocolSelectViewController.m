@@ -35,7 +35,7 @@
 {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    self.showRemoteProtocols = [Settings manager].showRemoteProtocols;
+    self.showRemoteProtocols = ![Settings manager].hideRemoteProtocols;
     self.refreshControl = [UIRefreshControl new];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
     if (self.items.refreshDate) {
@@ -50,7 +50,7 @@
 -(void)viewWillDisappear:(BOOL)animated
 {
     [self.navigationController setToolbarHidden:YES animated:NO];
-    [Settings manager].showRemoteProtocols = self.showRemoteProtocols;
+    [Settings manager].hideRemoteProtocols = !self.showRemoteProtocols;
 }
 
 - (void)didReceiveMemoryWarning
