@@ -171,7 +171,7 @@
     return value ? value: DEFAULTS_DEFAULT_HIDE_REMOTE_MAPS;
 }
 
-- (void) setShowRemoteMaps:(BOOL)hideRemoteMaps
+- (void) setHideRemoteMaps:(BOOL)hideRemoteMaps
 {
     if (hideRemoteMaps == DEFAULTS_DEFAULT_HIDE_REMOTE_MAPS)
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_HIDE_REMOTE_MAPS];
@@ -189,7 +189,7 @@
     return value ? value : DEFAULTS_DEFAULT_HIDE_REMOTE_PROTOCOLS;
 }
 
-- (void) setShowRemoteProtocols:(BOOL)hideRemoteProtocols
+- (void) setHideRemoteProtocols:(BOOL)hideRemoteProtocols
 {
     if (hideRemoteProtocols == DEFAULTS_DEFAULT_HIDE_REMOTE_PROTOCOLS)
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_HIDE_REMOTE_PROTOCOLS];
