@@ -46,6 +46,8 @@
 #define kActionSheetSelectFeature  2
 
 #define kTimestampKey              @"timestamp"
+#define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
+#define kCancelButtonText          NSLocalizedString(@"Cancel", @"Cancel button text")
 
 @interface ObserverMapViewController () {
     CGFloat _initialRotationOfViewAtGestureStart;
@@ -319,7 +321,7 @@
         [sheet addButtonWithTitle:title];
     }
     // Fix for iOS bug.  See https://devforums.apple.com/message/857939#857939
-    [sheet addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel button text")];
+    [sheet addButtonWithTitle:kCancelButtonText];
     sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
     
     [sheet showFromBarButtonItem:button animated:NO];
@@ -337,7 +339,7 @@
     if ([SurveyCollection collectsURL:url]) {
         success = [self.surveys openURL:url];
         if (!success) {
-            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
         } else {
             //FIXME: update UI for new survey)
             [[[UIAlertView alloc] initWithTitle:@"Thanks" message:@"I should do something now." delegate:nil cancelButtonTitle:@"Do it later" otherButtonTitles:nil] show];
@@ -346,7 +348,7 @@
     if ([MapCollection collectsURL:url]) {
         success = ![self.maps openURL:url];
         if (!success) {
-            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
         } else {
             //FIXME: update UI for new map)
             [[[UIAlertView alloc] initWithTitle:@"Thanks" message:@"I should do something now." delegate:nil cancelButtonTitle:@"Do it later" otherButtonTitles:nil] show];
@@ -362,7 +364,7 @@
                     [[[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to open a new survey file with this protocol?" delegate:self cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil] show];
                     // handle response in UIAlertView delegate method
                 } else {
-                    [[[UIAlertView alloc] initWithTitle:@"Protocol Problem" message:@"Can't open/read the protocol file" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                    [[[UIAlertView alloc] initWithTitle:@"Protocol Problem" message:@"Can't open/read the protocol file" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
                 }
             });
         }];
@@ -437,7 +439,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    [[[UIAlertView alloc] initWithTitle:@"Location Failure" message:error.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+    [[[UIAlertView alloc] initWithTitle:@"Location Failure" message:error.localizedDescription delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
 }
 
 
@@ -450,7 +452,7 @@
     [self decrementBusy];
     self.noMapLabel.hidden = NO;
     NSString *errorMessage = [NSString stringWithFormat:@"Layer %@ failed to load with error: %@",layer.name, error.localizedDescription];
-    [[[UIAlertView alloc] initWithTitle:@"Layer Load Failure" message:errorMessage delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+    [[[UIAlertView alloc] initWithTitle:@"Layer Load Failure" message:errorMessage delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
 }
 
 
@@ -608,7 +610,7 @@
                 [self.surveys setSelectedSurvey:indexOfNewSurvey];
                 [self openSurvey];
             } else {
-                [[[UIAlertView alloc] initWithTitle:@"Survey Problem" message:@"Can't create a survey with this protocol" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                [[[UIAlertView alloc] initWithTitle:@"Survey Problem" message:@"Can't create a survey with this protocol" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
             }
         }
     }
@@ -1315,7 +1317,7 @@
                     [self reloadGraphics];
                     [self configureObservationButtons];
                 } else {
-                    [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
+                    [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
                 }
                 [self updateTitleBar];
                 [self decrementBusy];
@@ -1345,13 +1347,13 @@
                         [self updateTitleBar];
                     } //else similar actions will be performed when the concurrent open finishes
                 } else {
-                    [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to close the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
+                    [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to close the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
                 }
             }];
         } else if (self.survey.document.documentState != UIDocumentStateClosed) {
             AKRLog(@"Survey (%@) is in an abnormal state: %d", survey.title, survey.document.documentState);
             [self decrementBusy];
-            [[[UIAlertView alloc] initWithTitle:@"Oh No!" message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
+            [[[UIAlertView alloc] initWithTitle:@"Oh No!" message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         }
     }
 }
@@ -1638,7 +1640,7 @@
         [sheet addButtonWithTitle:name];
     }];
     // Fix for iOS bug.  See https://devforums.apple.com/message/857939#857939
-    [sheet addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel button text")];
+    [sheet addButtonWithTitle:kCancelButtonText];
     sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
 
     CGRect rect = CGRectMake(screenpoint.x, screenpoint.y, 1, 1);
@@ -1848,13 +1850,13 @@
         return NO;
     }
     if (!self.mapView.locationDisplay.mapLocation) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Location Unknown" message:@"Unable to calculate a location with a current location for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Location Unknown" message:@"Unable to calculate a location with a current location for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil];
         [alert show];
         return NO;
     }
 
     if (self.mapView.locationDisplay.location.course < 0 && self.locationManager.heading.trueHeading < 0) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Heading Unknown" message:@"Unable to calculate a location with a current heading for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Heading Unknown" message:@"Unable to calculate a location with a current heading for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil];
         [alert show];
         return NO;
     }
