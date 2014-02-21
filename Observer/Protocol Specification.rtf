@@ -13,7 +13,51 @@
 \ls1\ilvl0
 \b0\fs24 \cf0 \ulnone {\listtext	\'95	}Features\
 \pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
-\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}Locations\
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}
+\f1\fs22 \CocoaLigature0 name
+\f0\fs24 \CocoaLigature1 \
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}Each feature must have a unique name.\
+{\listtext	\uc0\u8259 	}The name can be any sequence of characters, and must be enclosed in quotes\
+{\listtext	\uc0\u8259 	}The name is used in the interface to let the user choose among different feature types\
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}It should be short and descriptive.\
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}
+\f1\fs22 \CocoaLigature0 attributes\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2
+\f0\fs24 \cf0 \CocoaLigature1 {\listtext	\uc0\u8259 	}A feature type can have an optional list of attributes to be collected for each feature\
+{\listtext	\uc0\u8259 	}A feature with no attributes, only collects a location (and the type of the feature)\
+{\listtext	\uc0\u8259 	}Each attribute must have a "
+\f1\fs22 \CocoaLigature0 name
+\f0\fs24 \CocoaLigature1 " element\
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}The name element must be unique\
+{\listtext	\uc0\u8259 	}It will be used as a database column name, so it should be a simple ASCII name without spaces or special characters\
+\pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}It will be prefixed internally to avoid clashes with reserved words\
+\pard\tx1660\tx2160\tx2240\tx2800\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}Each attribute must have a "
+\f1\fs22 \CocoaLigature0 type
+\f0\fs24 \CocoaLigature1 " element\
+\pard\tx2380\tx2880\tx3360\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}The type is an integer code with the following definitions (from NSAttributeType)\
+\pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}100 -> 16bit integer\
+{\listtext	\uc0\u8259 	}200 -> 32bit integer\
+{\listtext	\uc0\u8259 	}300 -> 64bit integer\
+{\listtext	\uc0\u8259 	}400 -> NSDecimal (currently not supported by ESRI)\
+{\listtext	\uc0\u8259 	}500 -> double precision floating point number\
+{\listtext	\uc0\u8259 	}600 -> single precision floating point number\
+{\listtext	\uc0\u8259 	}700 -> string\
+{\listtext	\uc0\u8259 	}800 -> boolean (converts to an ESRI integer 0 = NO, 1 = YES)\
+{\listtext	\uc0\u8259 	}900 -> datetime\
+{\listtext	\uc0\u8259 	}1000 -> binary blob (? no UI support, check on ESRI support)\
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}
+\f1\fs22 \CocoaLigature0 locations
+\f0\fs24 \CocoaLigature1 \
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
 \ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}Each feature must have a 
 \f1\fs22 \CocoaLigature0 "locations" 
@@ -157,6 +201,33 @@
 \ls1\ilvl5\cf0 {\listtext	\uc0\u8259 	}A feature is added using the selected location method\
 \pard\tx3820\tx4320\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li4320\fi-4320\pardirnatural
 \ls1\ilvl5\cf0 {\listtext	\uc0\u8259 	}Set the feature's preferred location method to the selected location method\
+\pard\tx940\tx1440\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}
+\f1\fs22 \CocoaLigature0 dialog
+\f0\fs24 \CocoaLigature1 \
+\pard\tx1660\tx2160\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}Provides the look and feel of the attribute input form presented to the user\
+{\listtext	\uc0\u8259 	}Only  required if the feature has attributes\
+{\listtext	\uc0\u8259 	}See the QuickDialog documentation for details\
+\pard\tx940\tx1440\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}
+\f1\fs22 \CocoaLigature0 symbology
+\f0\fs24 \CocoaLigature1 \
+\pard\tx1660\tx2160\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}Defines how the feature will be displayed on the map\
+{\listtext	\uc0\u8259 	}The symbology may have an optional "color" element\
+\pard\tx2380\tx2880\tx3360\tx3920\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}The color element is a string in the form "#FFFFFF"\
+\pard\tx3100\tx3600\tx3920\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}where F is a hexadecimal digit\
+{\listtext	\uc0\u8259 	}The Hex pairs represent the Red, Green, and Blue respectively.\
+\pard\tx2380\tx2880\tx3360\tx3920\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}The default if not provided, or malformed is "#000000" (black)\
+\pard\tx1660\tx2160\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}The symbology may have an optional "size" element\
+\pard\tx2380\tx2880\tx3360\tx3920\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}The size is an integer number for the size in points of the simple circle marker symbol\
+{\listtext	\uc0\u8259 	}The default is 12 if not provided.\
 \pard\tx220\tx720\tx1120\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural
 \ls2\ilvl0\cf0 {\listtext	\'95	}Missions\
 }
