@@ -152,7 +152,9 @@
     if (newSurvey.protocol) {
         NSUInteger index = 0;     //insert at top of list
         [self.items insertObject:newSurvey atIndex:index];
-        self.selectedIndex++;
+        if (self.selectedIndex != NSNotFound) {
+            self.selectedIndex++;
+        }
         [self saveCache];
         return YES;
     } else {
@@ -165,7 +167,9 @@
     if (newSurvey) {
         NSUInteger index = 0;     //insert at top of list
         [self.items insertObject:newSurvey atIndex:index];
-        self.selectedIndex++;
+        if (self.selectedIndex != NSNotFound) {
+            self.selectedIndex++;
+        }
         [self saveCache];
         return index;
     } else {
@@ -234,17 +238,12 @@
 
 - (void)setSelectedSurvey:(NSUInteger)index
 {
-    if (index < self.items.count) {
-        self.selectedIndex = index;
-    }
+    self.selectedIndex = index;
 }
 
 - (Survey *)selectedSurvey
 {
-    if (self.selectedIndex == NSNotFound || self.items.count <= self.selectedIndex) {
-        return nil;
-    }
-    if (self.items.count == 0) {
+    if (self.selectedIndex == NSNotFound || self.items.count == 0 || self.items.count <= self.selectedIndex) {
         return nil;
     }
     return self.items[self.selectedIndex];

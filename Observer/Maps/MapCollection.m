@@ -187,18 +187,15 @@ static MapCollection *_sharedCollection = nil;
 
 - (void)setSelectedLocalMap:(NSUInteger)index
 {
-    if (index < self.localItems.count) {
-        self.selectedLocalIndex = index;
-    }
+    self.selectedLocalIndex = index;
 }
 
 - (Map *)selectedLocalMap
 {
-    if (self.localItems.count) {
-        return self.localItems[self.selectedLocalIndex];
-    } else {
+    if (self.selectedLocalIndex == NSNotFound || self.localItems.count == 0 || self.localItems.count <= self.selectedLocalIndex) {
         return nil;
     }
+    return self.localItems[self.selectedLocalIndex];
 }
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
@@ -319,9 +316,11 @@ static MapCollection *_sharedCollection = nil;
     [delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex]];
     [self.localItems insertObject:map atIndex:toIndex];
     [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:toIndex]];
-    //Update the selectedIndex, unless this the list was empty (self.selectedIndex was already 0), 
-    if (toIndex <= self.selectedLocalIndex && 1 < self.localItems.count ) {
-        self.selectedLocalIndex++;
+    //Update the selectedIndex, unless the list was empty (self.selectedIndex was already 0), 
+    if (self.selectedLocalIndex != NSNotFound) {
+        if (toIndex <= self.selectedLocalIndex) {
+            self.selectedLocalIndex++;
+        }
     }
     [self saveCache];
 }

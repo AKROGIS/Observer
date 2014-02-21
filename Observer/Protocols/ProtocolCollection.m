@@ -158,18 +158,17 @@
 
 - (void)setSelectedLocalProtocol:(NSUInteger)index
 {
-    if (index < self.localItems.count) {
+    if (index < self.localItems.count || index == NSNotFound) {
         self.selectedLocalIndex = index;
     }
 }
 
 - (SProtocol *)selectedLocalProtocol
 {
-    if (self.localItems.count) {
-        return self.localItems[self.selectedLocalIndex];
-    } else {
+    if (self.selectedLocalIndex == NSNotFound || self.localItems.count == 0 || self.localItems.count <= self.selectedLocalIndex) {
         return nil;
     }
+    return self.localItems[self.selectedLocalIndex];
 }
 
 
@@ -272,12 +271,18 @@ static ProtocolCollection *_sharedCollection = nil;
                     [self.remoteItems removeObjectAtIndex:index];
                     [delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
                     [self.localItems insertObject:protocol atIndex:0];
+                    if (self.selectedLocalIndex != NSNotFound) {
+                        self.selectedLocalIndex++;
+                    }
                     [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
                     [self saveCache];
                 });
             } else {
                 [self.remoteItems removeObjectAtIndex:index];
                 [self.localItems insertObject:protocol atIndex:0];
+                if (self.selectedLocalIndex != NSNotFound) {
+                    self.selectedLocalIndex++;
+                }
                 [self saveCache];
             }
         }
