@@ -1,10 +1,10 @@
 {
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":1,
-	"name":"KIMU Protocol",
-	"version":4.0,
-	"date":"2014-01-30",
-	"description":"This survey protocol is for the Kitlitz Murrelet survey program in Glacier Bay NPP.  Contact regan_sarwas@nps.gov (907)-644-3548 for more details.",
+	"name":"Test Protocol",
+	"version":1.0,
+	"date":"2014-02-21",
+	"description":"This survey protocol is for for testing various features of the protocol specification",
     "mission":{
 		"attributes":[
 			{"name":"Transect",   "type":700, "optional":false},
@@ -49,7 +49,7 @@
 	},
     "features":[
 		{
-    		"name":"BirdGroups",
+    		"name":"Birds",
     		"attributes":[
 				{"name":"countWaterPending",  "type":100},
 				{"name":"countWaterMarbled",  "type":100},
@@ -91,8 +91,66 @@
 				]
 			},
 			"symbology":{
-				"color":"#00FF00",
+				"color":"#CC00CC",
 				"size":13
+			}
+		},
+		{
+    		"name":"Nests",
+    		"attributes":[
+				{"name":"nestid",   "type":700},
+				{"name":"occupied", "type":800},
+				{"name":"chicks",   "type":100}
+ 			],
+			"locations":[
+				{"type":"gps",           "default":false, "allow":true},
+				{"type":"mapTarget",   "default":false, "allow":true},
+				{"type":"mapTouch",    "default":false, "allow":true}
+			],
+			"dialog":{
+				"title":"Eagle Nest",
+				"grouped":true,
+				"sections":[
+					{
+					    "elements":[
+						    {"type":"QEntryElement",   "key":"i1", "bind":"textValue:nestid",   "title":"Nest Id", "placeholder":"Unique Id"},
+							{"type":"QBooleanElement", "key":"o1", "bind":"boolValue:occupied", "title":"Occupied"},
+							{"type":"QDecimalElement", "key":"s1", "bind":"numberValue:chicks", "title":"Chick Count"}
+					  	]
+					}
+				]
+			},
+			"symbology":{
+				"color":"#BBBB00",
+				"size":12
+			}
+		},
+		{
+    		"name":"Cabins",
+    		"attributes":[
+				{"name":"name", "type":700},
+				{"name":"roof", "type":800}
+ 			],
+			"locations":[
+				{"type":"gps",           "default":false, "allow":true},
+				{"type":"mapTarget",   "default":false, "allow":true},
+				{"type":"mapTouch",    "default":false, "allow":true}
+			],
+			"dialog":{
+				"title":"Cabin",
+				"grouped":true,
+				"sections":[
+					{
+					    "elements":[
+						    {"type":"QEntryElement",   "key":"n1", "bind":"textValue:name",   "title":"Name", "placeholder":"Optional"},
+							{"type":"QBooleanElement", "key":"r1", "bind":"boolValue:roof", "title":"Has A Roof"}
+					  	]
+					}
+				]
+			},
+			"symbology":{
+				"color":"#00BBBB",
+				"size":12
 			}
 		}
  	]
