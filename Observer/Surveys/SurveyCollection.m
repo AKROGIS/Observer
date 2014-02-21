@@ -15,8 +15,7 @@
 @property (nonatomic, strong) NSMutableArray *items;
 @property (nonatomic) BOOL isLoading;
 @property (nonatomic) BOOL isLoaded;
-//selectedIndex == NSNotFound  meaning that no item is selected
-@property (nonatomic) NSUInteger selectedIndex;
+@property (nonatomic) NSUInteger selectedIndex;  //NSNotFound -> NO item is selected
 @property (nonatomic, strong) NSURL *documentsDirectory;
 
 @end
@@ -198,10 +197,10 @@
     [self.items removeObjectAtIndex:index];
     [self saveCache];
     if (index == self.selectedIndex) {
-        self.selectedIndex = -1;
+        self.selectedIndex = NSNotFound;
     }
-    if (index < self.selectedIndex) {
-        self.selectedIndex = self.selectedIndex - 1;
+    if (index < self.selectedIndex  && self.selectedIndex != NSNotFound) {
+        self.selectedIndex--;
     }
 }
 
@@ -212,18 +211,20 @@
         return;
 
     //adjust the selected Index
-    if (self.selectedIndex == fromIndex) {
-        self.selectedIndex = toIndex;
-    } else {
-        if (fromIndex < self.selectedIndex && self.selectedIndex <= toIndex) {
-            self.selectedIndex = self.selectedIndex - 1;
+    if (self.selectedIndex != NSNotFound) {
+        if (self.selectedIndex == fromIndex) {
+            self.selectedIndex = toIndex;
         } else {
-            if (toIndex <= self.selectedIndex && self.selectedIndex < fromIndex) {
-                self.selectedIndex = self.selectedIndex + 1;
+            if (fromIndex < self.selectedIndex && self.selectedIndex <= toIndex) {
+                self.selectedIndex--;
+            } else {
+                if (toIndex <= self.selectedIndex && self.selectedIndex < fromIndex) {
+                    self.selectedIndex++;
+                }
             }
         }
     }
-    
+
     //move the item
     id temp = self.items[fromIndex];
     [self.items removeObjectAtIndex:fromIndex];
@@ -287,13 +288,9 @@
             NSUInteger index = [self.items indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
                 return [url isEqual:((Survey *)obj).url];
             }];
-            if (index == NSNotFound) {
-                self.selectedIndex = -1;
-            } else {
-                self.selectedIndex = index;
-            }
+            self.selectedIndex = index;
         } else {
-            self.selectedIndex = -1;
+            self.selectedIndex = NSNotFound;
         }
     }
 }

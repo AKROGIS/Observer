@@ -36,7 +36,7 @@
 @interface ProtocolCollection()
 @property (nonatomic, strong) NSMutableArray *localItems;  // of SProtocol
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of SProtocol
-@property (nonatomic) NSUInteger selectedLocalIndex;
+@property (nonatomic) NSUInteger selectedLocalIndex;  //NSNotFound -> NO item is selected
 @property (nonatomic, strong) NSURL *documentsDirectory;
 @property (nonatomic, strong) NSURL *cacheFile;
 @property (nonatomic) BOOL isLoaded;
@@ -112,8 +112,8 @@
     [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
     [self.localItems removeObjectAtIndex:index];
     [self saveCache];
-    if (index < self.selectedLocalIndex) {
-        self.selectedLocalIndex = self.selectedLocalIndex - 1;
+    if (index < self.selectedLocalIndex && self.selectedLocalIndex != NSNotFound) {
+        self.selectedLocalIndex--;
     }
 }
 
@@ -124,18 +124,20 @@
         return;
 
     //adjust the selected Index
-    if (self.selectedLocalIndex == fromIndex) {
-        self.selectedLocalIndex = toIndex;
-    } else {
-        if (fromIndex < self.selectedLocalIndex && self.selectedLocalIndex <= toIndex) {
-            self.selectedLocalIndex = self.selectedLocalIndex - 1;
+    if (self.selectedLocalIndex != NSNotFound) {
+        if (self.selectedLocalIndex == fromIndex) {
+            self.selectedLocalIndex = toIndex;
         } else {
-            if (toIndex <= self.selectedLocalIndex && self.selectedLocalIndex < fromIndex) {
-                self.selectedLocalIndex = self.selectedLocalIndex + 1;
+            if (fromIndex < self.selectedLocalIndex && self.selectedLocalIndex <= toIndex) {
+                self.selectedLocalIndex--;
+            } else {
+                if (toIndex <= self.selectedLocalIndex && self.selectedLocalIndex < fromIndex) {
+                    self.selectedLocalIndex++;
+                }
             }
         }
     }
-    
+
     //move the item
     id temp = self.localItems[fromIndex];
     [self.localItems removeObjectAtIndex:fromIndex];
@@ -608,8 +610,11 @@ static ProtocolCollection *_sharedCollection = nil;
 
 - (void) checkAndFixSelectedIndex
 {
+    //TODO: this is broken; solution is to archive select item, not index.
+    // for example if we had 3 items, with selected index = 0 and all 3
+    // went missing, but a new one was found, the selected index should be cleared
     if (self.localItems.count <= self.selectedLocalIndex) {
-        self.selectedLocalIndex = (self.localItems.count == 0) ? 0 : self.localItems.count - 1;
+        self.selectedLocalIndex = NSNotFound;
     }
 }
 
