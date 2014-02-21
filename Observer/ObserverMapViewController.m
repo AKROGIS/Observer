@@ -409,26 +409,20 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     //AKRLog(@"locationManager: didUpdateLocations:%@",locations);
-
-    //TODO: check how many locations might be returned (are we missing any?)
-    CLLocation *location = [locations lastObject];
-    //TODO: simulator returns -1 for speed, so ignore it for testing.  remove from production code.
-    //if (!location || location.speed < 0)
-    if (!location)
-        return;
-
     if (self.isRecording) {
-        if ([self isNewLocation:location]) {
-            GpsPoint *gpsPoint = [self createGpsPoint:location];
-            //this requires a reprojection of the gpsPoint to the map's coordinate system.
-            [self drawGpsPoint:gpsPoint];
-            //I could use the following, however i'm not sure mapLocation and CLlocation will be in sync.
-            //[self drawGpsPointAtMapPoint:self.mapView.locationDisplay.mapLocation];
+        for (CLLocation *location in locations) {
+            if ([self isNewLocation:location]) {
+                GpsPoint *gpsPoint = [self createGpsPoint:location];
+                [self drawGpsPoint:gpsPoint];
+            }
         }
     }
 
-    //use the speed to update the autorotation behavior
-    [self.autoPanController speedUpdate:location.speed];
+    //use the speed of the last location to update the autorotation behavior
+    CLLocation *location = [locations lastObject];
+    if (0 <= location.speed) {
+        [self.autoPanController speedUpdate:location.speed];
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
