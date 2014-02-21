@@ -42,6 +42,9 @@
 #define kObservingTracksLayer      @"observingTracksLayer"
 #define kNotObservingTracksLayer   @"notObservingTracksLayer"
 
+#define kActionSheetSelectLocation 1
+#define kActionSheetSelectFeature  2
+
 
 @interface ObserverMapViewController () {
     CGFloat _initialRotationOfViewAtGestureStart;
@@ -88,6 +91,7 @@
 //Used to save state for delegate callbacks (alertview, actionsheet and segue)
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
 @property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
+@property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;
 
 @property (strong, nonatomic) AGSSpatialReference *wgs84;
 @property (strong, nonatomic) NSMutableDictionary *graphicsLayers; // of AGSGraphicsLayer
@@ -309,6 +313,7 @@
     ProtocolFeature *feature = button.feature;
     self.currentProtocolFeature = feature;  //Save the feature for the action sheet delegate callback
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    sheet.tag = kActionSheetSelectLocation;
     for (NSString *title in [ProtocolFeatureAllowedLocations stringsForLocations:feature.allowedLocations.nonTouchChoices]) {
         [sheet addButtonWithTitle:title];
     }
@@ -615,15 +620,39 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    //AKRLog(@"ActionSheet was dismissed with Button %d click", buttonIndex);
+    AKRLog(@"ActionSheet %d was dismissed with Button %d click", actionSheet.tag, buttonIndex);
     if (buttonIndex < 0) {
         return;
     }
-    ProtocolFeature *feature = self.currentProtocolFeature;
-    NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
-    WaysToLocateFeature locationMethod = [ProtocolFeatureAllowedLocations locationMethodForName:buttonTitle];
-    feature.preferredLocationMethod = locationMethod;
-    [self addFeature:feature withNonTouchLocationMethod:locationMethod];
+    switch (actionSheet.tag) {
+        case kActionSheetSelectLocation: {
+            ProtocolFeature *feature = self.currentProtocolFeature;
+            NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
+            WaysToLocateFeature locationMethod = [ProtocolFeatureAllowedLocations locationMethodForName:buttonTitle];
+            feature.preferredLocationMethod = locationMethod;
+            [self addFeature:feature withNonTouchLocationMethod:locationMethod];
+            break;
+        }
+        case kActionSheetSelectFeature: {
+            NSString *featureName = [actionSheet buttonTitleAtIndex:buttonIndex];
+            __block ProtocolFeature *feature = nil;
+            [self.survey.protocol.featuresWithLocateByTouch enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                if ([featureName isEqualToString:((ProtocolFeature *)obj).name]) {
+                    *stop = YES;
+                    feature = obj;
+                }
+            }];
+            if (feature) {
+                [self addFeature:feature atMapPoint:self.mapPointAtAddSelectedFeature];
+            } else {
+                AKRLog(@"Oh No!, Selected feature not found in survey protocol");
+            }
+            break;
+        }
+        default:
+            AKRLog(@"Oh No!, Action sheet delegate called for an unknown action sheet (tag = %d",actionSheet.tag);
+            break;
+    }
 }
 
 
@@ -1599,14 +1628,20 @@
 
 - (void)presentProtocolFeatureSelector:(NSArray *)features atPoint:(CGPoint)screenpoint mapPoint:(AGSPoint *)mappoint
 {
-    //FIXME: implement
-    //present popover at screenpoint with table view controller (1 section, rows = feature.names),
-    //send selected feature to     [self addFeature:feature atMapPoint:mappoint];
+    self.mapPointAtAddSelectedFeature = mappoint;
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    sheet.tag = kActionSheetSelectFeature;
+
     [features enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSString *name = ((ProtocolFeature *)obj).name;
-        AKRLog(@"Found features %@", name);
+        [sheet addButtonWithTitle:name];
     }];
-    [self addFeature:[features lastObject] atMapPoint:mappoint];
+    // Fix for iOS bug.  See https://devforums.apple.com/message/857939#857939
+    [sheet addButtonWithTitle:NSLocalizedString(@"Cancel", @"Cancel button text")];
+    sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
+
+    CGRect rect = CGRectMake(screenpoint.x, screenpoint.y, 1, 1);
+    [sheet showFromRect:rect inView:self.mapView animated:NO];
 }
 
 - (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mappoint
