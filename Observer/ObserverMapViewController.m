@@ -42,6 +42,8 @@
 #define kObservingTracksLayer      @"observingTracksLayer"
 #define kNotObservingTracksLayer   @"notObservingTracksLayer"
 
+#define kAlertViewNewProtocol      1
+
 #define kActionSheetSelectLocation 1
 #define kActionSheetSelectFeature  2
 
@@ -361,7 +363,9 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (openSuccess && protocol.isValid) {
                     self.protocolForSurveyCreation = protocol;
-                    [[[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to open a new survey file with this protocol?" delegate:self cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil] show];
+                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to open a new survey file with this protocol?" delegate:self cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil];
+                    alertView.tag = kAlertViewNewProtocol;
+                    [alertView show];
                     // handle response in UIAlertView delegate method
                 } else {
                     [[[UIAlertView alloc] initWithTitle:@"Protocol Problem" message:@"Can't open/read the protocol file" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
@@ -592,30 +596,36 @@
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if ([alertView.title isEqualToString:@"New Protocol"]) {
-        if (buttonIndex == 1) {  //Yes to create/open a new survey
-            if (self.surveysPopoverController) {
-                UIViewController *vc = self.surveysPopoverController.contentViewController;
-                if ([vc isKindOfClass:[UINavigationController class]]) {
-                    vc = ((UINavigationController *)vc).visibleViewController;
+    switch (alertView.tag) {
+        case kAlertViewNewProtocol: {
+            if (buttonIndex == 1) {  //Yes to create/open a new survey
+                if (self.surveysPopoverController) {
+                    UIViewController *vc = self.surveysPopoverController.contentViewController;
+                    if ([vc isKindOfClass:[UINavigationController class]]) {
+                        vc = ((UINavigationController *)vc).visibleViewController;
+                    }
+                    if ([vc isKindOfClass:[SurveySelectViewController class]]) {
+                        //This method will put up its own alert if it cannot create the survey
+                        [(SurveySelectViewController *)vc newSurveyWithProtocol:self.protocolForSurveyCreation];
+                        //since the survey select view is up, let the user decide which survey they want to select
+                        return;
+                    }
                 }
-                if ([vc isKindOfClass:[SurveySelectViewController class]]) {
-                    //This method will put up its own alert if it cannot create the survey
-                    [(SurveySelectViewController *)vc newSurveyWithProtocol:self.protocolForSurveyCreation];
-                    //since the survey select view is up, let the user decide which survey they want to select
-                    return;
+                //TODO: The survey VC's tableview is not refreshed if the protocol VC is displayed
+                NSUInteger indexOfNewSurvey = [self.surveys newSurveyWithProtocol:self.protocolForSurveyCreation];
+                if (indexOfNewSurvey != NSNotFound) {
+                    [self closeSurvey:self.survey withConcurrentOpen:YES];
+                    [self.surveys setSelectedSurvey:indexOfNewSurvey];
+                    [self openSurvey];
+                } else {
+                    [[[UIAlertView alloc] initWithTitle:@"Survey Problem" message:@"Can't create a survey with this protocol" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
                 }
             }
-            //TODO: The survey VC's tableview is not refreshed if the protocol VC is displayed
-            NSUInteger indexOfNewSurvey = [self.surveys newSurveyWithProtocol:self.protocolForSurveyCreation];
-            if (indexOfNewSurvey != NSNotFound) {
-                [self closeSurvey:self.survey withConcurrentOpen:YES];
-                [self.surveys setSelectedSurvey:indexOfNewSurvey];
-                [self openSurvey];
-            } else {
-                [[[UIAlertView alloc] initWithTitle:@"Survey Problem" message:@"Can't create a survey with this protocol" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
-            }
+            break;
         }
+        default:
+            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %d",alertView.tag);
+            break;
     }
 }
 
