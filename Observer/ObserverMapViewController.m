@@ -45,6 +45,7 @@
 #define kActionSheetSelectLocation 1
 #define kActionSheetSelectFeature  2
 
+#define kTimestampKey              @"timestamp"
 
 @interface ObserverMapViewController () {
     CGFloat _initialRotationOfViewAtGestureStart;
@@ -1215,7 +1216,7 @@
     [self clearGraphics];
     AKRLog(@"  Fetching gpsPoints");
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
-    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:YES]];
+    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:kTimestampKey ascending:YES]];
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.context executeFetchRequest:request error:&error];
     AKRLog(@"  Drawing %d gpsPoints", results.count);
@@ -1510,7 +1511,7 @@
 {
     //AKRLog(@"    Drawing observation type %@",observation.entity.name);
     NSDate *timestamp = observation.gpsPoint ? observation.gpsPoint.timestamp : observation.adhocLocation.timestamp;
-    NSDictionary *attribs = timestamp ? @{@"timestamp":timestamp} : @{@"timestamp":[NSNull null]};
+    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     NSString * name = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
     [self.graphicsLayers[name] addGraphic:graphic];
@@ -1586,7 +1587,7 @@
 - (void)drawMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
 {
     NSDate *timestamp = missionProperty.gpsPoint ? missionProperty.gpsPoint.timestamp : missionProperty.adhocLocation.timestamp;
-    NSDictionary *attribs = timestamp ? @{@"timestamp":timestamp} : @{@"timestamp":[NSNull null]};
+    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     [self.graphicsLayers[kMissionPropertyEntityName] addGraphic:graphic];
 }
@@ -1670,7 +1671,7 @@
 
 - (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atPoint:(CGPoint)screenPoint
 {
-    NSDate *timestamp = (NSDate *)[agsFeature safeAttributeForKey:@"timestamp"];
+    NSDate *timestamp = (NSDate *)[agsFeature safeAttributeForKey:kTimestampKey];
 
     AKRLog(@"Presenting feature for layer %@ with timestamp %@", layerName, timestamp);
 
@@ -1912,8 +1913,8 @@
 //TODO: not used - use or remove
 
 //ESRI BUG - date returned from graphic is not the same as the date that is provided
-//    NSDate *t1 = (NSDate *)attribs[@"timestamp"];
-//    NSDate *t2 = [graphic attributeAsDateForKey:@"timestamp"];
+//    NSDate *t1 = (NSDate *)attribs[kTimestampKey];
+//    NSDate *t2 = [graphic attributeAsDateForKey:kTimestampKey];
 //    AKRLog(@"dict-graphic: DateIn: %@ (%f) dateOut: %@ (%f) equal:%u",t1,[t1 timeIntervalSince1970],t2, [t2 timeIntervalSince1970], [t1 isEqualToDate:t2]);
 
 
