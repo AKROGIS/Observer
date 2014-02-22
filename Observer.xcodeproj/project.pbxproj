@@ -91,6 +91,7 @@
 		39A836CB185FDAB8008BF4E3 /* AttributeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A836CA185FDAB8008BF4E3 /* AttributeViewController.m */; };
 		39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */; };
 		39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */; };
+		39C3B84B18B816020041FF36 /* FeatureSelectorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C3B84A18B816020041FF36 /* FeatureSelectorTableViewController.m */; };
 		39C53E61187F411B00C0CECE /* AutoPanStateMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */; };
 		39C53E65187F4B5E00C0CECE /* AutoPanButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C53E64187F4B5E00C0CECE /* AutoPanButton.m */; };
 		39C53E6B1885D98400C0CECE /* SurveyDocumentIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 39C53E681885D98400C0CECE /* SurveyDocumentIcon.png */; };
@@ -148,7 +149,7 @@
 		393E8AFF17A318F5009AD0AC /* Enumerations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Enumerations.h; path = Model/Enumerations.h; sourceTree = "<group>"; };
 		39449F1718ADAC8C00A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		39449F1818ADAC8C00A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
-		39449F1918AE8A1800A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		39449F1918AE8A1800A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		39449F1A18AE8AFB00A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = QuickDialog.xcodeproj; path = QuickDialog/QuickDialog.xcodeproj; sourceTree = "<group>"; };
 		394CC23D1858EF5800FA859C /* ObserverModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ObserverModel.xcdatamodel; sourceTree = "<group>"; };
@@ -265,6 +266,8 @@
 		39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AngleDistanceSettingsTableViewController.m; sourceTree = "<group>"; };
 		39B92FD117A869B500C62145 /* RadioStyleTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadioStyleTableViewCell.h; sourceTree = "<group>"; };
 		39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RadioStyleTableViewCell.m; sourceTree = "<group>"; };
+		39C3B84918B816020041FF36 /* FeatureSelectorTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureSelectorTableViewController.h; sourceTree = "<group>"; };
+		39C3B84A18B816020041FF36 /* FeatureSelectorTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeatureSelectorTableViewController.m; sourceTree = "<group>"; };
 		39C53E5F187F411B00C0CECE /* AutoPanStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AutoPanStateMachine.h; path = Model/AutoPanStateMachine.h; sourceTree = "<group>"; };
 		39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AutoPanStateMachine.m; path = Model/AutoPanStateMachine.m; sourceTree = "<group>"; };
 		39C53E63187F4B5E00C0CECE /* AutoPanButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoPanButton.h; sourceTree = "<group>"; };
@@ -358,6 +361,8 @@
 				39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */,
 				39A836C9185FDAB8008BF4E3 /* AttributeViewController.h */,
 				39A836CA185FDAB8008BF4E3 /* AttributeViewController.m */,
+				39C3B84918B816020041FF36 /* FeatureSelectorTableViewController.h */,
+				39C3B84A18B816020041FF36 /* FeatureSelectorTableViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -793,6 +798,7 @@
 				398908511857ED00007B3F67 /* SurveySelectViewController.m in Sources */,
 				396E1E90189864AE00B735EF /* NSIndexPath+unsignedAccessors.m in Sources */,
 				3989084E1857ED00007B3F67 /* SurveyCollection.m in Sources */,
+				39C3B84B18B816020041FF36 /* FeatureSelectorTableViewController.m in Sources */,
 				398908241857EB2F007B3F67 /* MapDetailViewController.m in Sources */,
 				398908261857EB2F007B3F67 /* MapTableViewCell.m in Sources */,
 				3989083C1857EBF6007B3F67 /* ProtocolDetailViewController.m in Sources */,

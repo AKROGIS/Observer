@@ -34,6 +34,7 @@
 #import "AutoPanStateMachine.h"
 #import "AutoPanButton.h"
 #import "AddFeatureBarButtonItem.h"
+#import "FeatureSelectorTableViewController.h"
 
 
 #define kGpsPointsLayer            @"gpsPointsLayer"
@@ -107,6 +108,7 @@
 @property (strong, nonatomic) UIPopoverController *attributePopoverController;
 @property (strong, nonatomic) AGSPoint *popoverMapPoint;
 @property (strong, nonatomic) UINavigationController *modalAttributeCollector;
+@property (strong, nonatomic) UIPopoverController *featureSelectorPopoverController;
 
 @end
 
@@ -1669,19 +1671,16 @@
 
 - (void)presentAGSFeatureSelector:(NSDictionary *)features atPoint:(CGPoint)screen
 {
-    //FIXME: implement
-    //present popover with table view controller (layernames = sections, features = rows),
-    //send selected feature to
-    //[self presentFeature:feature[layerName] fromLayer:layerName];
-    __block NSString *layerName;
-    __block id<AGSFeature> graphic;
-    [features enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        layerName = (NSString *)key;
-        NSArray *graphics = (NSArray *)obj;
-        graphic = [graphics lastObject];
-        AKRLog(@"Found %u features in %@",[graphics count], layerName);
-    }];
-    [self presentFeature:graphic fromLayer:layerName atPoint:screen];
+    FeatureSelectorTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"FeatureSelectorTableViewController"];
+    vc.features = features;
+    vc.featureSelectedCallback = ^(NSString *layerName, id<AGSFeature> graphic) {
+        [self presentFeature:graphic fromLayer:layerName atPoint:screen];
+        //dismiss popover?
+    };
+    CGRect rect = CGRectMake(screen.x, screen.y, 1, 1);
+    //TODO: reduce popover size
+    self.featureSelectorPopoverController = [[UIPopoverController alloc] initWithContentViewController:vc];
+    [self.featureSelectorPopoverController presentPopoverFromRect:rect inView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
 
 - (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atPoint:(CGPoint)screenPoint
