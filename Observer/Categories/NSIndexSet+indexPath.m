@@ -12,8 +12,8 @@
 
 - (NSArray *)indexPathsWithSection:(NSUInteger)section
 {
-    NSAssert(section < NSIntegerMax, @"section is greater then NSIntegerMax");
-    NSAssert(self.count < NSIntegerMax, @"array index is greater then NSIntegerMax");
+    NSAssert1(section < NSIntegerMax, @"%@", @"section is greater then NSIntegerMax");
+    NSAssert(self.count < NSIntegerMax, @"%@", @"array index is greater then NSIntegerMax");
     NSMutableArray *paths = [NSMutableArray new];
     [self enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         [paths addObject:[NSIndexPath indexPathForRow:(NSInteger)idx inSection:(NSInteger)section]];

@@ -1390,7 +1390,7 @@
     }
     GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:kGpsPointEntityName
                                                        inManagedObjectContext:self.context];
-    NSAssert(gpsPoint, @"Could not create a Gps Point in Core Data");
+    NSAssert(gpsPoint, @"%@", @"Could not create a Gps Point in Core Data");
     gpsPoint.mission = self.mission;
     gpsPoint.altitude = gpsData.altitude;
     gpsPoint.course = gpsData.course;
@@ -1482,7 +1482,7 @@
     NSString *entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,feature.name];
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:entityName
                                                              inManagedObjectContext:self.context];
-    NSAssert(observation, @"Could not create an Observation in Core Data");
+    NSAssert(observation, @"%@", @"Could not create an Observation in Core Data");
     observation.mission = self.mission;
     return observation;
 }
@@ -1539,7 +1539,7 @@
     //AKRLog(@"Adding Adhoc Location to Core Data at Map Point %@", mapPoint);
     AdhocLocation *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:kAdhocLocationEntityName
                                                                  inManagedObjectContext:self.context];
-    NSAssert(adhocLocation, @"Could not create an AdhocLocation in Core Data");
+    NSAssert(adhocLocation, @"%@", @"Could not create an AdhocLocation in Core Data");
     //mapPoint is in the map coordinates, convert to WGS84
     AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:self.wgs84];
     adhocLocation.latitude = wgs84Point.y;
@@ -1554,7 +1554,7 @@
     //AKRLog(@"Adding Angle = %f, Distance = %f, Course = %f to CoreData", location.absoluteAngle, location.distanceMeters, location.deadAhead);
     AngleDistanceLocation *angleDistance = [NSEntityDescription insertNewObjectForEntityForName:kAngleDistanceLocationEntityName
                                                                          inManagedObjectContext:self.context];
-    NSAssert(angleDistance, @"Could not create an AngleDistanceLocation in Core Data");
+    NSAssert(angleDistance, @"%@", @"Could not create an AngleDistanceLocation in Core Data");
     angleDistance.angle = location.absoluteAngle;
     angleDistance.distance = location.distanceMeters;
     angleDistance.direction = location.deadAhead;
@@ -1568,7 +1568,7 @@
 {
     //AKRLog(@"Creating MissionProperty managed object");
     MissionProperty *missionProperty = [NSEntityDescription insertNewObjectForEntityForName:kMissionPropertyEntityName inManagedObjectContext:self.context];
-    NSAssert(missionProperty, @"Could not create a Mission Property in Core Data");
+    NSAssert(missionProperty, @"%@", @"Could not create a Mission Property in Core Data");
     missionProperty.mission = self.mission;
     return missionProperty;
 }
@@ -1727,7 +1727,6 @@
     [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:mappoint];
 
     //FIXME: if this is an angle distance location, provide button for angle distance editor
-    //FIXME: if the feature was changed, save the changes.  (non-editable features i.e. gps points should have a special non-editable dialog)
     //FIXME: can I support a readonly survey, and just look at the attributes with editing disabled??
     //FIXME: if feature is deletable, provide a delete button.
 }
@@ -1959,6 +1958,7 @@
 
 - (void)logStats
 {
+#ifdef AKR_DEBUG
     AKRLog(@"Survey document is open. It contains:");
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
     NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
@@ -1975,6 +1975,7 @@
     request = [NSFetchRequest fetchRequestWithEntityName:kMapEntityName];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
     AKRLog(@"  %d Maps", results.count);
+#endif
 }
 
 @end

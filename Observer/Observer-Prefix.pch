@@ -7,7 +7,7 @@
 #ifdef AKR_DEBUG
 #define AKRLog( ... ) NSLog( @"<%@:(%d)> %@", [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:__VA_ARGS__] )
 #else
-#define AKRLog( s, ... )
+#define AKRLog( ... )
 #endif
 
 #ifndef __IPHONE_5_0

@@ -13,7 +13,7 @@
 
 + (NSManagedObjectModel *)objectModelWithProtocol:(SProtocol *)protocol
 {
-    NSAssert(protocol.isValid,@"protocol is not valid");
+    NSAssert(protocol.isValid,@"%@", @"protocol is not valid");
     NSManagedObjectModel *mom = [NSManagedObjectModel mergedModelFromBundles:nil];
     if (mom) {
         //AKRLog(@"Merging MOM, starting with %@",mom);

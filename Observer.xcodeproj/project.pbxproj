@@ -210,7 +210,7 @@
 		398908471857ED00007B3F67 /* SurveyCoreDataDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyCoreDataDocument.h; path = Surveys/SurveyCoreDataDocument.h; sourceTree = "<group>"; };
 		398908481857ED00007B3F67 /* SurveyCoreDataDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyCoreDataDocument.m; path = Surveys/SurveyCoreDataDocument.m; sourceTree = "<group>"; };
 		398908491857ED00007B3F67 /* SurveyObjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyObjectModel.h; path = Surveys/SurveyObjectModel.h; sourceTree = "<group>"; };
-		3989084A1857ED00007B3F67 /* SurveyObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyObjectModel.m; path = Surveys/SurveyObjectModel.m; sourceTree = "<group>"; };
+		3989084A1857ED00007B3F67 /* SurveyObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = SurveyObjectModel.m; path = Surveys/SurveyObjectModel.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		3989084B1857ED00007B3F67 /* SurveySelectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveySelectViewController.h; path = Surveys/SurveySelectViewController.h; sourceTree = "<group>"; };
 		3989084C1857ED00007B3F67 /* SurveySelectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveySelectViewController.m; path = Surveys/SurveySelectViewController.m; sourceTree = "<group>"; };
 		398908531857EDE1007B3F67 /* AGSPoint+AKRAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AGSPoint+AKRAdditions.h"; path = "Categories/AGSPoint+AKRAdditions.h"; sourceTree = "<group>"; };
@@ -220,7 +220,7 @@
 		398908571857EDE1007B3F67 /* NSDate+Formatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDate+Formatting.h"; path = "Categories/NSDate+Formatting.h"; sourceTree = "<group>"; };
 		398908581857EDE1007B3F67 /* NSDate+Formatting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDate+Formatting.m"; path = "Categories/NSDate+Formatting.m"; sourceTree = "<group>"; };
 		398908591857EDE1007B3F67 /* NSIndexSet+indexPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSIndexSet+indexPath.h"; path = "Categories/NSIndexSet+indexPath.h"; sourceTree = "<group>"; };
-		3989085A1857EDE1007B3F67 /* NSIndexSet+indexPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSIndexSet+indexPath.m"; path = "Categories/NSIndexSet+indexPath.m"; sourceTree = "<group>"; };
+		3989085A1857EDE1007B3F67 /* NSIndexSet+indexPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = "NSIndexSet+indexPath.m"; path = "Categories/NSIndexSet+indexPath.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		3989085B1857EDE1007B3F67 /* NSURL+unique.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURL+unique.h"; path = "Categories/NSURL+unique.h"; sourceTree = "<group>"; };
 		3989085C1857EDE1007B3F67 /* NSURL+unique.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURL+unique.m"; path = "Categories/NSURL+unique.m"; sourceTree = "<group>"; };
 		398908621857EFF3007B3F67 /* AKRTableViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRTableViewItem.h; sourceTree = "<group>"; };
@@ -257,7 +257,7 @@
 		39955EA11783382200D225D7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		39955EA31783388600D225D7 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		39955ED0178733B900D225D7 /* ObserverMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverMapViewController.h; sourceTree = "<group>"; };
-		39955ED1178733B900D225D7 /* ObserverMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObserverMapViewController.m; sourceTree = "<group>"; };
+		39955ED1178733B900D225D7 /* ObserverMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ObserverMapViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		39A836C2185A668D008BF4E3 /* AKRAngleDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRAngleDistance.h; sourceTree = "<group>"; };
 		39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRAngleDistance.m; sourceTree = "<group>"; };
 		39A836C9185FDAB8008BF4E3 /* AttributeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeViewController.h; sourceTree = "<group>"; };
@@ -657,6 +657,11 @@
 				CLASSPREFIX = Observer;
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "GIS Team";
+				TargetAttributes = {
+					39955E46178334BF00D225D7 = {
+						DevelopmentTeam = F3CMMML9FD;
+					};
+				};
 			};
 			buildConfigurationList = 39955E42178334BF00D225D7 /* Build configuration list for PBXProject "Observer" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -947,8 +952,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -958,8 +966,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
