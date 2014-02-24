@@ -134,11 +134,12 @@
 			<key>UTTypeSize320IconFile</key>
 			<string>TilePackageIcon</string>
 			<key>UTTypeTagSpecification</key>
-			<string></string>
-			<key>public.filename-extension</key>
-			<string>tpk</string>
-			<key>public.mime-type</key>
-			<string>application/octet-stream</string>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>tpk</string>
+				<key>public.mime-type</key>
+				<string>application/octet-stream</string>
+			</dict>
 		</dict>
 		<dict>
 			<key>UTTypeConformsTo</key>
@@ -152,11 +153,12 @@
 			<key>UTTypeSize320IconFile</key>
 			<string>SurveyDocumentIcon</string>
 			<key>UTTypeTagSpecification</key>
-			<string></string>
-			<key>public.filename-extension</key>
-			<string>obssurv</string>
-			<key>public.mime-type</key>
-			<string>application/octet-stream</string>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>obssurv</string>
+				<key>public.mime-type</key>
+				<string>application/octet-stream</string>
+			</dict>
 		</dict>
 	</array>
 </dict>
