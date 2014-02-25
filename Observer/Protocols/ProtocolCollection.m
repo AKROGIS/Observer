@@ -373,10 +373,10 @@ static ProtocolCollection *_sharedCollection = nil;
     return YES;
 }
 
-- (NSMutableArray *)potentialProtocolDocuments
+- (NSMutableArray *)protocolNamesInDocumentsFolder
 {
     NSError *error = nil;
-    NSMutableArray *protocols = [[NSMutableArray alloc] init];
+    NSMutableArray *protocolNames = [[NSMutableArray alloc] init];
     NSArray *allFiles = [[NSFileManager defaultManager]
                          contentsOfDirectoryAtURL:self.documentsDirectory
                          includingPropertiesForKeys:nil
@@ -387,43 +387,43 @@ static ProtocolCollection *_sharedCollection = nil;
     } else {
         for (NSURL *fileUrl in allFiles) {
             if ([fileUrl.pathExtension isEqualToString:PROTOCOL_EXT]) {
-                [protocols addObject:fileUrl];
+                [protocolNames addObject:[fileUrl lastPathComponent]];
             }
         }
     }
-    return protocols;
+    return protocolNames;
 }
 
 //done on background thread
 - (void)syncWithFileSystem
 {
-    //local protocol urls
-    NSMutableArray *localProtocolUrls = [self potentialProtocolDocuments];
+    NSMutableArray *localProtocols = [self protocolNamesInDocumentsFolder];
 
     //remove cache items not in filesystem
     NSMutableIndexSet *itemsToRemove = [NSMutableIndexSet new];
     for (uint i = 0; i < self.localItems.count; i++) {
         SProtocol *p = self.localItems[i];
         if (p.isLocal) {
-            NSUInteger index = [localProtocolUrls indexOfObject:p.url];
+            NSUInteger index = [localProtocols indexOfObject:[p.url lastPathComponent]];
             if (index == NSNotFound || !p.isValid) {
                 [itemsToRemove addIndex:i];
             } else {
-                [localProtocolUrls removeObjectAtIndex:index];
+                [localProtocols removeObjectAtIndex:index];
             }
         }
     }
 
-    //add filesystem urls not in cache that are valid protocols
+    //add valid protocols in the filesystem that are not in cache
     NSMutableArray *protocolsToAdd = [NSMutableArray new];
-    for (NSURL *url in localProtocolUrls) {
+    for (NSString *localProtocol in localProtocols) {
         //add the URL only if we can create and validate (read/parse) a protocol with it.
-        SProtocol *protocol = [[SProtocol alloc] initWithURL:url];
+        NSURL *protocolUrl = [self.documentsDirectory URLByAppendingPathComponent:localProtocol];
+        SProtocol *protocol = [[SProtocol alloc] initWithURL:protocolUrl];
         if (protocol.isValid) {
             [protocolsToAdd addObject:protocol];
         } else {
-            AKRLog(@"Data in %@ was not a valid protocol object. It is being deleted.",[url lastPathComponent]);
-            [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+            AKRLog(@"Data in %@ was not a valid protocol object. It is being deleted.",localProtocol);
+            [[NSFileManager defaultManager] removeItemAtURL:protocolUrl error:nil];
         }
     }
 
