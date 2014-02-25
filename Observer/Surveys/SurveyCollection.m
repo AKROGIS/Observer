@@ -16,7 +16,6 @@
 @property (nonatomic) BOOL isLoading;
 @property (nonatomic) BOOL isLoaded;
 @property (nonatomic) NSUInteger selectedIndex;  //NSNotFound -> NO item is selected
-@property (nonatomic, strong) NSURL *documentsDirectory;
 
 @end
 
@@ -73,8 +72,10 @@
     [Settings manager].indexOfCurrentSurvey = selectedIndex;
 }
 
-- (NSURL *)documentsDirectory
++ (NSURL *)documentsDirectory
 {
+
+    static NSURL *_documentsDirectory = nil;
     if (!_documentsDirectory) {
         _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
     }
@@ -138,7 +139,7 @@
     if ([self surveyForURL:url]) {
         return YES;
     }
-    NSURL *newUrl = [self.documentsDirectory URLByAppendingPathComponent:[url lastPathComponent]];
+    NSURL *newUrl = [[SurveyCollection documentsDirectory] URLByAppendingPathComponent:[url lastPathComponent]];
     //If the url is already in the documents directory then do not move it
     if (![newUrl isEqual:url]) {
         if ([[NSFileManager defaultManager] fileExistsAtPath:[newUrl path]]) {
@@ -255,15 +256,17 @@
 
 - (void) loadAndCorrectListOfSurveys
 {
+    //NOTE: compare file name (without path), because iOS is inconsistent about symbolic links at root of documents path
     BOOL cacheWasOutdated = NO;
     NSArray *cachedSurveyUrls = [Settings manager].surveys;
     
-    // create (in order) surveys from urls saved in defaults IFF they are found in filesystem
-    NSMutableSet *files = [NSMutableSet setWithArray:[self surveysInDocumentsFolder]];
-    for (NSURL *url in cachedSurveyUrls) {
-        if ([files containsObject:url]) {
-            [self.items addObject:[[Survey alloc] initWithURL:url]];
-            [files removeObject:url];
+    // create (in order) surveys from cached urls IFF they are found in the Documents Folder
+    NSMutableSet *localSurveyFileNames = [SurveyCollection surveyFileNamesInDocumentsFolder];
+    for (NSURL *cachedSurveyUrl in cachedSurveyUrls) {
+        NSString *cachedSurveyFileName = [cachedSurveyUrl lastPathComponent];
+        if ([localSurveyFileNames containsObject:cachedSurveyFileName]) {
+            [self.items addObject:[[Survey alloc] initWithURL:cachedSurveyUrl]];
+            [localSurveyFileNames removeObject:cachedSurveyFileName];
         }
     }
     if (self.items.count < cachedSurveyUrls.count) {
@@ -271,8 +274,9 @@
     }
 
     //Add any other Surveys in filesystem (maybe added via iTunes) to end of list from cached list
-    for (NSURL *url in files) {
-        [self.items addObject:[[Survey alloc] initWithURL:url]];
+    for (NSString *localSurveyFileName in localSurveyFileNames) {
+        NSURL *surveyUrl = [[SurveyCollection documentsDirectory] URLByAppendingPathComponent:localSurveyFileName];
+        [self.items addObject:[[Survey alloc] initWithURL:surveyUrl]];
         cacheWasOutdated = YES;
     }
 
@@ -294,9 +298,9 @@
     }
 }
 
-- (NSArray *) /* of NSURL */ surveysInDocumentsFolder
++ (NSMutableSet *) /* of NSString */ surveyFileNamesInDocumentsFolder
 {
-    NSMutableArray *localUrls = [[NSMutableArray alloc] init];
+    NSMutableArray *localFileNames = [NSMutableArray new];
     NSArray *documents = [[NSFileManager defaultManager]
                           contentsOfDirectoryAtURL:self.documentsDirectory
                           includingPropertiesForKeys:nil
@@ -305,11 +309,11 @@
     if (documents) {
         for (NSURL *url in documents) {
             if ([SurveyCollection collectsURL:url]) {
-                [localUrls addObject:url];
+                [localFileNames addObject:[url lastPathComponent]];
             }
         }
     }
-    return localUrls;
+    return [NSMutableSet setWithArray:localFileNames];;
 }
 
 
