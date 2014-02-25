@@ -74,7 +74,6 @@
 
 + (NSURL *)documentsDirectory
 {
-
     static NSURL *_documentsDirectory = nil;
     if (!_documentsDirectory) {
         _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
@@ -300,20 +299,23 @@
 
 + (NSMutableSet *) /* of NSString */ surveyFileNamesInDocumentsFolder
 {
-    NSMutableArray *localFileNames = [NSMutableArray new];
+    NSError *error = nil;
     NSArray *documents = [[NSFileManager defaultManager]
                           contentsOfDirectoryAtURL:self.documentsDirectory
                           includingPropertiesForKeys:nil
                           options:NSDirectoryEnumerationSkipsHiddenFiles
-                          error:nil];
+                          error:&error];
     if (documents) {
+        NSMutableArray *localFileNames = [NSMutableArray new];
         for (NSURL *url in documents) {
             if ([SurveyCollection collectsURL:url]) {
                 [localFileNames addObject:[url lastPathComponent]];
             }
         }
+        return [NSMutableSet setWithArray:localFileNames];;
     }
-    return [NSMutableSet setWithArray:localFileNames];;
+    AKRLog(@"Unable to enumerate %@: %@",[self.documentsDirectory lastPathComponent], error.localizedDescription);
+    return nil;
 }
 
 

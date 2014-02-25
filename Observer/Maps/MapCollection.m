@@ -15,7 +15,6 @@
 @property (nonatomic, strong) NSMutableArray *localItems;  // of Map
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of Map
 @property (nonatomic) NSUInteger selectedLocalIndex;  //NSNotFound -> NO item is selected
-@property (nonatomic, strong) NSURL *documentsDirectory;
 @property (nonatomic, strong) NSURL *cacheFile;
 @property (nonatomic) BOOL isLoading;
 @property (nonatomic) BOOL isLoaded;
@@ -42,8 +41,9 @@
     return _remoteItems;
 }
 
-- (NSURL *)documentsDirectory
++ (NSURL *)documentsDirectory
 {
+    static NSURL *_documentsDirectory = nil;
     if (!_documentsDirectory) {
         _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
     }
@@ -400,7 +400,7 @@ static MapCollection *_sharedCollection = nil;
 //done on callers thread
 - (Map *)openURL:(NSURL *)url saveCache:(BOOL)shouldSaveCache
 {
-    NSURL *newUrl = [self.documentsDirectory URLByAppendingPathComponent:url.lastPathComponent];
+    NSURL *newUrl = [[MapCollection documentsDirectory] URLByAppendingPathComponent:url.lastPathComponent];
     newUrl = [newUrl URLByUniquingPath];
     NSError *error = nil;
     [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
@@ -471,33 +471,32 @@ static MapCollection *_sharedCollection = nil;
 //done on background thread
 - (void)syncWithFileSystem
 {
-    //urls in the maps directory
-    NSMutableArray *localMaps = [self mapNamesInDocumentsFolder];
+    //NOTE: compare file name (without path), because iOS is inconsistent about symbolic links at root of documents path
+    NSMutableArray *localMapFileNames = [MapCollection mapFileNamesInDocumentsFolder];
 
     //remove cache items not in filesystem
-    //NOTE: compare file name (without path), because iOS is inconsistent about sym links at root of documents path
     NSMutableIndexSet *itemsToRemove = [NSMutableIndexSet new];
     for (uint i = 0; i < self.localItems.count; i++) {
-        Map *p = self.localItems[i];
-        if (p.isLocal) {
-            NSUInteger index = [localMaps indexOfObject:[p.url lastPathComponent]];
+        Map *map = self.localItems[i];
+        if (map.isLocal) {
+            NSUInteger index = [localMapFileNames indexOfObject:[map.url lastPathComponent]];
             if (index == NSNotFound) {
                 [itemsToRemove addIndex:i];
                 //deleting a map with iTunes will leave the thumbnail behind
-                [[NSFileManager defaultManager] removeItemAtURL:p.thumbnailUrl error:nil];
+                [[NSFileManager defaultManager] removeItemAtURL:map.thumbnailUrl error:nil];
             } else {
-                [localMaps removeObjectAtIndex:index];
+                [localMapFileNames removeObjectAtIndex:index];
             }
         }
     }
 
     //add filesystem urls not in cache
     NSMutableArray *mapsToAdd = [NSMutableArray new];
-    for (NSString *localMap in localMaps) {
-        NSURL *mapUrl = [self.documentsDirectory URLByAppendingPathComponent:localMap];
+    for (NSString *localMapFileName in localMapFileNames) {
+        NSURL *mapUrl = [[MapCollection documentsDirectory] URLByAppendingPathComponent:localMapFileName];
         Map *map = [[Map alloc] initWithLocalTileCache:mapUrl];
         if (!map.tileCache) {
-            AKRLog(@"data at %@ was not a valid map object",localMap);
+            AKRLog(@"data at %@ was not a valid map object",localMapFileName);
             [[NSFileManager defaultManager] removeItemAtURL:mapUrl error:nil];
         }
         [mapsToAdd addObject:map];
@@ -525,23 +524,25 @@ static MapCollection *_sharedCollection = nil;
     }
 }
 
-- (NSMutableArray *) /* of NSString */ mapNamesInDocumentsFolder
++ (NSMutableArray *) /* of NSString */ mapFileNamesInDocumentsFolder
 {
-    NSMutableArray *names = [[NSMutableArray alloc] init];
-
+    NSError *error = nil;
     NSArray *documents = [[NSFileManager defaultManager]
                           contentsOfDirectoryAtURL:self.documentsDirectory
                           includingPropertiesForKeys:nil
                           options:NSDirectoryEnumerationSkipsHiddenFiles
-                          error:nil];
+                          error:&error];
     if (documents) {
+        NSMutableArray *localFileNames = [NSMutableArray new];
         for (NSURL *url in documents) {
-            if ([[url pathExtension] isEqualToString:MAP_EXT]) {
-                [names addObject:[url lastPathComponent]];
+            if ([MapCollection collectsURL:url]) {
+                [localFileNames addObject:[url lastPathComponent]];
             }
         }
+        return localFileNames;
     }
-    return names;
+    AKRLog(@"Unable to enumerate %@: %@",[self.documentsDirectory lastPathComponent], error.localizedDescription);
+    return nil;
 }
 
 
