@@ -472,31 +472,33 @@ static MapCollection *_sharedCollection = nil;
 - (void)syncWithFileSystem
 {
     //urls in the maps directory
-    NSMutableArray *mapUrlsInDocumentsFolder = [self mapURLsInFileManager];
+    NSMutableArray *localMaps = [self mapNamesInDocumentsFolder];
 
     //remove cache items not in filesystem
+    //NOTE: compare file name (without path), because iOS is inconsistent about sym links at root of documents path
     NSMutableIndexSet *itemsToRemove = [NSMutableIndexSet new];
     for (uint i = 0; i < self.localItems.count; i++) {
         Map *p = self.localItems[i];
         if (p.isLocal) {
-            NSUInteger index = [mapUrlsInDocumentsFolder indexOfObject:p.url];
+            NSUInteger index = [localMaps indexOfObject:[p.url lastPathComponent]];
             if (index == NSNotFound) {
                 [itemsToRemove addIndex:i];
                 //deleting a map with iTunes will leave the thumbnail behind
                 [[NSFileManager defaultManager] removeItemAtURL:p.thumbnailUrl error:nil];
             } else {
-                [mapUrlsInDocumentsFolder removeObjectAtIndex:index];
+                [localMaps removeObjectAtIndex:index];
             }
         }
     }
 
     //add filesystem urls not in cache
     NSMutableArray *mapsToAdd = [NSMutableArray new];
-    for (NSURL *url in mapUrlsInDocumentsFolder) {
-        Map *map = [[Map alloc] initWithLocalTileCache:url];
+    for (NSString *localMap in localMaps) {
+        NSURL *mapUrl = [self.documentsDirectory URLByAppendingPathComponent:localMap];
+        Map *map = [[Map alloc] initWithLocalTileCache:mapUrl];
         if (!map.tileCache) {
-            AKRLog(@"data at %@ was not a valid map object",url);
-            [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+            AKRLog(@"data at %@ was not a valid map object",localMap);
+            [[NSFileManager defaultManager] removeItemAtURL:mapUrl error:nil];
         }
         [mapsToAdd addObject:map];
     }
@@ -523,9 +525,9 @@ static MapCollection *_sharedCollection = nil;
     }
 }
 
-- (NSMutableArray *) /* of NSURL */ mapURLsInFileManager
+- (NSMutableArray *) /* of NSString */ mapNamesInDocumentsFolder
 {
-    NSMutableArray *localUrls = [[NSMutableArray alloc] init];
+    NSMutableArray *names = [[NSMutableArray alloc] init];
 
     NSArray *documents = [[NSFileManager defaultManager]
                           contentsOfDirectoryAtURL:self.documentsDirectory
@@ -535,11 +537,11 @@ static MapCollection *_sharedCollection = nil;
     if (documents) {
         for (NSURL *url in documents) {
             if ([[url pathExtension] isEqualToString:MAP_EXT]) {
-                [localUrls addObject:url];
+                [names addObject:[url lastPathComponent]];
             }
         }
     }
-    return localUrls;
+    return names;
 }
 
 
