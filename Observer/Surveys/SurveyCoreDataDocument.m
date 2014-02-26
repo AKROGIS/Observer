@@ -14,8 +14,6 @@
 
 - (NSManagedObjectModel *)managedObjectModel
 {
-    //assumes that the survey collecion is loaded. must be true to create/open a survey document
-    //Survey *survey = [[SurveyCollection sharedCollection] surveyForURL:[self.fileURL URLByDeletingLastPathComponent]];
     Survey *survey = [[Survey alloc]  initWithURL:[self.fileURL URLByDeletingLastPathComponent]];
     return [SurveyObjectModel objectModelWithProtocol:survey.protocol];
 }

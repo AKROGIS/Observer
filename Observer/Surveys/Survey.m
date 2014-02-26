@@ -309,6 +309,7 @@
 {
     self.protocolIsLoaded = YES;
     _protocol = [[SProtocol alloc] initWithURL:self.protocolUrl];
+    //TODO: can we delay the validity check which loads and parses the protocol file
     if (!_protocol.isValid) {
         self.state = kCorrupt;
         _protocol = nil;

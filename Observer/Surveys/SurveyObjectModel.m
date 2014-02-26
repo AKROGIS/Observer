@@ -13,7 +13,6 @@
 
 + (NSManagedObjectModel *)objectModelWithProtocol:(SProtocol *)protocol
 {
-    NSAssert(protocol.isValid,@"%@", @"protocol is not valid");
     NSManagedObjectModel *mom = [NSManagedObjectModel mergedModelFromBundles:nil];
     if (mom) {
         //AKRLog(@"Merging MOM, starting with %@",mom);
@@ -39,8 +38,6 @@
 
 + (NSManagedObjectModel *) mergeMom:(NSManagedObjectModel *)mom featureName:(NSString *)name attributes:(NSArray *)attributes
 {
-    //TODO: test proper behavior when name exists
-    //bail if the name is taken
     NSString *entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,name];
     NSEntityDescription *testEntity = [[mom entitiesByName] valueForKey:entityName];
     if (testEntity) {
