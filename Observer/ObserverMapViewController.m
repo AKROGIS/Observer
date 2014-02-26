@@ -22,28 +22,31 @@
  */
 
 
-#import "SurveyCollection.h"
-#import "MapCollection.h"
+//Sub ViewControllers
 #import "ObserverMapViewController.h"
 #import "AngleDistanceViewController.h"
-#import "ProtocolCollection.h"
 #import "SurveySelectViewController.h"
 #import "ProtocolSelectViewController.h"
 #import "MapSelectViewController.h"
 #import "AttributeViewController.h"
-#import "AutoPanStateMachine.h"
-#import "AutoPanButton.h"
-#import "AddFeatureBarButtonItem.h"
 #import "FeatureSelectorTableViewController.h"
 
+//Views
+#import "AutoPanButton.h"
+#import "AddFeatureBarButtonItem.h"
 
+//Support Model Objects
+#import "AutoPanStateMachine.h"
+#import "SurveyCollection.h"
+#import "MapCollection.h"
+#import "ProtocolCollection.h"
+
+//Constants and Magic Numbers/Strings
 #define kGpsPointsLayer            @"gpsPointsLayer"
 #define kObservationLayer          @"observationsLayer"
 #define kMissionPropertiesLayer    @"missionPropertiesLayer"
 #define kObservingTracksLayer      @"observingTracksLayer"
 #define kNotObservingTracksLayer   @"notObservingTracksLayer"
-
-#define kAlertViewNewProtocol      1
 
 #define kActionSheetSelectLocation 1
 #define kActionSheetSelectFeature  2
@@ -52,14 +55,13 @@
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 #define kCancelButtonText          NSLocalizedString(@"Cancel", @"Cancel button text")
 
+
+
 @interface ObserverMapViewController () {
     CGFloat _initialRotationOfViewAtGestureStart;
 }
 
 //Model
-@property (strong, nonatomic) SurveyCollection* surveys;
-@property (strong, nonatomic) MapCollection* maps;
-@property (weak,   nonatomic, readonly) Survey *survey; //short cut to self.surveys.selectedSurvey
 @property (weak,   nonatomic, readonly) NSManagedObjectContext *context; //shortcut to self.survey.document.managedObjectContext
 
 //Views
@@ -158,12 +160,9 @@
     if ([segue.identifier isEqualToString:@"Select Survey"]){
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
-        vc.items = self.surveys;
-        vc.selectedSurveyChanged = ^(Survey *oldSurvey, Survey *newSurvey){
-            if (oldSurvey != newSurvey) {
-                [self closeSurvey:oldSurvey withConcurrentOpen:YES];
-                [self openSurvey];
-            }
+        vc.items = [SurveyCollection sharedCollection];
+        vc.surveySelectedCallback = ^(Survey *survey){
+            self.survey = survey;
         };
         vc.popoverDismissed = ^{
             self.surveysPopoverController = nil;
@@ -182,9 +181,9 @@
     if ([segue.identifier isEqualToString:@"Select Map"]) {
         MapSelectViewController *vc = (MapSelectViewController *)vc1;
         vc.title = segue.identifier;
-        vc.items = self.maps;
-        vc.rowSelectedCallback = ^(NSIndexPath*indexPath){
-            [self resetBasemap];
+        vc.items = [MapCollection sharedCollection];
+        vc.mapSelectedCallback = ^(Map *map){
+            self.map = map;
             self.mapsPopoverController = nil;
         };
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
@@ -334,52 +333,96 @@
 
 
 
-#pragma mark - public methods
+#pragma mark - public properties
 
-//TODO: move this method back to the App delegate
-- (BOOL)openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+- (void)setSurvey:(Survey *)survey
 {
-    BOOL success = NO;
-    if ([SurveyCollection collectsURL:url]) {
-        success = [self.surveys openURL:url];
-        if (!success) {
-            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
-        } else {
-            //FIXME: update UI for new survey)
-            [[[UIAlertView alloc] initWithTitle:@"Thanks" message:@"I should do something now." delegate:nil cancelButtonTitle:@"Do it later" otherButtonTitles:nil] show];
-        }
+    if (!survey && !_survey) {  //covers case where survey is nil
+        return;
     }
-    if ([MapCollection collectsURL:url]) {
-        success = ![self.maps openURL:url];
-        if (!success) {
-            [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't open file" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
-        } else {
-            //FIXME: update UI for new map)
-            [[[UIAlertView alloc] initWithTitle:@"Thanks" message:@"I should do something now." delegate:nil cancelButtonTitle:@"Do it later" otherButtonTitles:nil] show];
-        }
+    if ([survey isEqualToSurvey:_survey]) {
+        return;
     }
-    if ([ProtocolCollection collectsURL:url]) {
-        ProtocolCollection *protocols = [ProtocolCollection sharedCollection];
-        [protocols openWithCompletionHandler:^(BOOL openSuccess) {
-            SProtocol *protocol = [protocols openURL:url];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (openSuccess && protocol.isValid) {
-                    self.protocolForSurveyCreation = protocol;
-                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to open a new survey file with this protocol?" delegate:self cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil];
-                    alertView.tag = kAlertViewNewProtocol;
-                    [alertView show];
-                    // handle response in UIAlertView delegate method
-                } else {
-                    [[[UIAlertView alloc] initWithTitle:@"Protocol Problem" message:@"Can't open/read the protocol file" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
-                }
-            });
-        }];
+    //FIXME: verify open and close are be async, this method should return immediately
+    if (_survey) {
+        [self closeSurvey:_survey withConcurrentOpen:(survey != nil)];
     }
-
-    return success;
+    _survey = survey;
+    [Settings manager].selectedSurvey = survey.url;
+    if (survey) {
+        [self openSurvey:survey];
+        [self updateSelectSurveyViewControllerWithNewSurvey:survey];
+    }
 }
 
+- (void)setMap:(Map *)map
+{
+    if (map == _map) {  //covers case where map is nil
+        return;
+    }
+    if ([map isEqualToMap:_map]) {
+        return;
+    }
+    if (_map) {
+        self.currentMapEntity = nil;
+        [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
+        self.noMapLabel.hidden = NO;
+    }
+    _map = map;
+    [Settings manager].selectedMap = map.url;
+    if (map) {
+        //FIXME: verify that displayMap is async, this method should return immediately
+        [self displayMap:map];
+        [self updateSelectMapViewControllerWithNewMap:map];
+    }
+}
 
+- (void)updateSelectSurveyViewControllerWithNewSurvey:(Survey *)survey
+{
+    //FIXME: if the protocol vc is on the top, then the survey is underneath, fix it before it is popped
+    SurveySelectViewController *vc = nil;
+    UINavigationController *nav = nil;
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
+    } else {
+        nav = self.navigationController;
+    }
+    if ([nav.topViewController isKindOfClass:[SurveySelectViewController class]]) {
+        vc = (SurveySelectViewController *)nav.topViewController;
+    }
+    [vc addSurvey:survey];
+}
+
+- (void)updateSelectMapViewControllerWithNewMap:(Map *)map
+{
+    MapSelectViewController *vc = nil;
+    UINavigationController *nav = nil;
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        nav = (UINavigationController *)self.mapsPopoverController.contentViewController;
+    } else {
+        nav = self.navigationController;
+    }
+    if ([nav.topViewController isKindOfClass:[MapSelectViewController class]]) {
+        vc = (MapSelectViewController *)nav.topViewController;
+    }
+    [vc addMap:map];
+}
+
+- (void)updateSelectProtocolViewControllerWithNewProtocol:(SProtocol *)protocol
+{
+    ProtocolSelectViewController *vc = nil;
+    UINavigationController *nav = nil;
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
+    } else {
+        nav = self.navigationController;
+    }
+    if ([nav.topViewController isKindOfClass:[ProtocolSelectViewController class]]) {
+        vc = (ProtocolSelectViewController *)nav.topViewController;
+    }
+    [vc addProtocol:protocol];
+    //FIXME: Create/Open Survey for new protocol
+}
 
 
 #pragma mark - Delegate Methods: CLLocationManagerDelegate
@@ -578,6 +621,11 @@
 {
     if (popoverController == self.surveysPopoverController) {
         self.surveysPopoverController = nil;
+        //the user may have deleted the currently loaded survey;
+        SurveySelectViewController *vc = (SurveySelectViewController *)popoverController.contentViewController;
+        if (!vc.items.selectedSurvey) {
+            self.survey = nil;
+        }
     }
     if (popoverController == self.angleDistancePopoverController) {
         self.angleDistancePopoverController = nil;
@@ -599,32 +647,6 @@
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
-        case kAlertViewNewProtocol: {
-            if (buttonIndex == 1) {  //Yes to create/open a new survey
-                if (self.surveysPopoverController) {
-                    UIViewController *vc = self.surveysPopoverController.contentViewController;
-                    if ([vc isKindOfClass:[UINavigationController class]]) {
-                        vc = ((UINavigationController *)vc).visibleViewController;
-                    }
-                    if ([vc isKindOfClass:[SurveySelectViewController class]]) {
-                        //This method will put up its own alert if it cannot create the survey
-                        [(SurveySelectViewController *)vc newSurveyWithProtocol:self.protocolForSurveyCreation];
-                        //since the survey select view is up, let the user decide which survey they want to select
-                        return;
-                    }
-                }
-                //TODO: The survey VC's tableview is not refreshed if the protocol VC is displayed
-                NSUInteger indexOfNewSurvey = [self.surveys newSurveyWithProtocol:self.protocolForSurveyCreation];
-                if (indexOfNewSurvey != NSNotFound) {
-                    [self closeSurvey:self.survey withConcurrentOpen:YES];
-                    [self.surveys setSelectedSurvey:indexOfNewSurvey];
-                    [self openSurvey];
-                } else {
-                    [[[UIAlertView alloc] initWithTitle:@"Survey Problem" message:@"Can't create a survey with this protocol" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
-                }
-            }
-            break;
-        }
         default:
             AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %d",alertView.tag);
             break;
@@ -685,7 +707,7 @@
 
 - (BOOL)hasMap
 {
-    return self.maps.selectedLocalMap != nil;
+    return self.map != nil;
 }
 
 - (BOOL)mapIsProjected
@@ -757,36 +779,29 @@
 {
     if (!_currentMapEntity) {
         // try to fetch it, otherwise create it.
-        AKRLog(@"Looking for %@ in coredata",self.maps.selectedLocalMap);
+        AKRLog(@"Looking for %@ in coredata",self.map);
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMapEntityName];
 
         request.predicate = [NSPredicate predicateWithFormat:@"name == %@ AND author == %@ AND date == %@",
-                             self.maps.selectedLocalMap.title, self.maps.selectedLocalMap.author, self.maps.selectedLocalMap.date];
+                             self.map.title, self.map.author, self.map.date];
         NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
         _currentMapEntity = [results firstObject];
         if(!_currentMapEntity) {
             AKRLog(@"  Map not found, creating new CoreData Entity");
             _currentMapEntity = [NSEntityDescription insertNewObjectForEntityForName:kMapEntityName inManagedObjectContext:self.context];
-            _currentMapEntity.name = self.maps.selectedLocalMap.title;
-            _currentMapEntity.author = self.maps.selectedLocalMap.author;
-            _currentMapEntity.date = self.maps.selectedLocalMap.date;
+            _currentMapEntity.name = self.map.title;
+            _currentMapEntity.author = self.map.author;
+            _currentMapEntity.date = self.map.date;
         }
     }
     return _currentMapEntity;
-}
-
-@synthesize survey = _survey;
-
-- (Survey *)survey
-{
-    return self.surveys.selectedSurvey;
 }
 
 @synthesize context = _context;
 
 - (NSManagedObjectContext *)context
 {
-    return self.surveys.selectedSurvey.document.managedObjectContext;
+    return self.survey.document.managedObjectContext;
 }
 
 - (MissionProperty *)currentMissionProperty
@@ -882,25 +897,29 @@
 
 - (void)initializeData
 {
-    [self incrementBusy];
-    self.surveys = [SurveyCollection sharedCollection];
-    [self.surveys openWithCompletionHandler:^(BOOL success) {
-        //do any other background work;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self openSurvey];
-            [self decrementBusy];
-        });
-    }];
+    //FIXME: this should be done only when necessary
+    [[SurveyCollection sharedCollection] openWithCompletionHandler:nil];
+    [[MapCollection sharedCollection] openWithCompletionHandler:nil];
 
-    [self incrementBusy];
-    self.maps = [MapCollection sharedCollection];
-    [self.maps openWithCompletionHandler:^(BOOL success) {
-        //do any other background work;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self loadBaseMap];
-            [self decrementBusy];
-        });
-    }];
+//    [self incrementBusy];
+//    self.surveys = [SurveyCollection sharedCollection];
+//    [self.surveys openWithCompletionHandler:^(BOOL success) {
+//        //do any other background work;
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self openSurvey];
+//            [self decrementBusy];
+//        });
+//    }];
+//
+//    [self incrementBusy];
+//    self.maps = [MapCollection sharedCollection];
+//    [self.maps openWithCompletionHandler:^(BOOL success) {
+//        //do any other background work;
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self loadBaseMap];
+//            [self decrementBusy];
+//        });
+//    }];
 }
 
 -(void)updateTitleBar
@@ -925,8 +944,8 @@
 
 -(void)enableControls
 {
-    self.selectMapButton.enabled = self.maps != nil;
-    self.selectSurveyButton.enabled = self.surveys != nil;
+    self.selectMapButton.enabled = YES;
+    self.selectSurveyButton.enabled = YES;
 
     self.panButton.enabled = self.mapView.loaded;
 
@@ -1125,46 +1144,22 @@
 
 #pragma mark - Private Methods - support for map delegate
 
-- (void)loadBaseMap
+- (void)displayMap:(Map *)map
 {
-    AKRLog(@"Loading the basemap");
+    AKRLog(@"Loading the basemap %@", map);
     [self incrementBusy];
-    if (!self.maps.selectedLocalMap.tileCache)
+    if (!map.tileCache)
     {
         self.noMapLabel.hidden = NO;
         [self decrementBusy];
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the map." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
     }
     else
     {
-        self.maps.selectedLocalMap.tileCache.delegate = self;
-        [self.mapView addMapLayer:self.maps.selectedLocalMap.tileCache withName:@"tilecache basemap"];
-        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
-    }
-}
-
-- (void)resetBasemap
-{
-    //This is only called when the self.maps.currentMap has changed (usually by a user selection in a different view controller)
-    //It is not called when the self.maps.currentMap is initialized.
-
-    //A "loaded" mapview has an immutable SR and maxExtents based on the first layer loaded (not on the first layer in the mapView)
-    //removing all layers from the mapview does not "unload" the mapview.
-    //to reset the mapView extents/SR, we need to call reset, then re-add the layers.
-    //first we need to get the layers, so we can re-add them after setting the new basemap
-    AKRLog(@"Changing the basemap");
-    [self incrementBusy];
-    self.currentMapEntity = nil;
-    if (!self.maps.selectedLocalMap.tileCache)
-    {
-        self.noMapLabel.hidden = NO;
-        [self decrementBusy];
-    }
-    else
-    {
-        [self.mapView reset]; //remove all layers, clear SR, envelope, etc.
-        self.maps.selectedLocalMap.tileCache.delegate = self;
-        [self.mapView addMapLayer:self.maps.selectedLocalMap.tileCache withName:@"tilecache basemap"];
-        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad
+        self.noMapLabel.hidden = YES;
+        map.tileCache.delegate = self;
+        [self.mapView addMapLayer:map.tileCache withName:@"tilecache basemap"];
+        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
     }
 }
 
@@ -1317,13 +1312,13 @@
 
 #pragma mark - Private Methods - support for data model - Surveys
 
-- (void)openSurvey
+- (void)openSurvey:(Survey *)survey
 {
-    if (self.survey) {
-        AKRLog(@"Opening survey document (%@)", self.survey.title);
+    if (survey) {
+        AKRLog(@"Opening survey document (%@)", survey.title);
         self.selectSurveyButton.title = @"Loading survey...";
         [self incrementBusy];
-        [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
+        [survey openDocumentWithCompletionHandler:^(BOOL success) {
             //do any other background work;
             dispatch_async(dispatch_get_main_queue(), ^{
                 //AKRLog(@"Start OpenSurvey completion handler");
@@ -1332,7 +1327,7 @@
                     [self reloadGraphics];
                     [self configureObservationButtons];
                 } else {
-                    [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
                 }
                 [self updateTitleBar];
                 [self decrementBusy];

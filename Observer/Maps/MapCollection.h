@@ -43,7 +43,7 @@
 // Will return an existing Map if it already exists in the local collection.
 // If the Map exists in the remote list, it will be added to the local list and removed from the remote list.
 // Will send messages to the delegate when/if the changes to the model occur.
-- (BOOL)openURL:(NSURL *)url;
+- (Map *)openURL:(NSURL *)url;
 
 // UITableView DataSource Support
 - (NSUInteger) numberOfLocalMaps;

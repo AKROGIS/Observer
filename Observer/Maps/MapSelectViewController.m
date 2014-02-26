@@ -78,6 +78,11 @@
     items.delegate = self;
 }
 
+- (void) addMap:(Map *)map
+{
+    //FIXME: implement; may not be necessary, since items has already been updated
+}
+
 #pragma mark - CollectionChanged
 
 //These delegates will be called on the main queue whenever the datamodel has changed
@@ -211,8 +216,8 @@
     } else {
         [self.navigationController popViewControllerAnimated:YES];
     }
-    if (self.rowSelectedCallback) {
-        self.rowSelectedCallback(indexPath);
+    if (self.mapSelectedCallback) {
+        self.mapSelectedCallback(self.items.selectedLocalMap);
     }
 }
 

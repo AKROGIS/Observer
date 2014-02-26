@@ -33,7 +33,7 @@
 
 //YES if two protocols are the same (same title, version and date)
 //    do not compare urls, because the same protocol will have either a local, or a server url
-- (BOOL)isEqualtoProtocol:(Protocol *)protocol;
+- (BOOL)isEqualToProtocol:(Protocol *)protocol;
 
 //designated initializer
 - (id)initWithURL:(NSURL *)url title:(id)title version:(id)version date:(id)date;

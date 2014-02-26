@@ -97,6 +97,11 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void) addSurvey:(Survey *)survey
+{
+    //FIXME: implement; may not be necessary, since items has already been updated
+}
+
 - (void)insertNewObject:(id)sender
 {
     if (!self.items) {
@@ -137,15 +142,14 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    Survey *oldSurvey = self.items.selectedSurvey;
     [self.items setSelectedSurvey:indexPath.urow];
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         [self.popover dismissPopoverAnimated:YES];
         if (self.popoverDismissed) {
             self.popoverDismissed();
         }
-        if (self.selectedSurveyChanged) {
-            self.selectedSurveyChanged(oldSurvey, self.items.selectedSurvey);
+        if (self.surveySelectedCallback) {
+            self.surveySelectedCallback(self.items.selectedSurvey);
         }
     } else {
         [self.navigationController popViewControllerAnimated:YES];
@@ -248,14 +252,11 @@
 - (void)deleteSurvey
 {
     if(self.indexPathToDelete) {
-        Survey *oldSelectedSurvey = self.items.selectedSurvey;
         [self.items removeSurveyAtIndex:self.indexPathToDelete.urow];
         [self.tableView deleteRowsAtIndexPaths:@[self.indexPathToDelete] withRowAnimation:UITableViewRowAnimationFade];
         self.indexPathToDelete = nil;
-        //Deleting a survey may change the selected survey
-        if (self.selectedSurveyChanged && oldSelectedSurvey != self.items.selectedSurvey) {
-            self.selectedSurveyChanged(oldSelectedSurvey, self.items.selectedSurvey);
-        }
+        //Deleting a current survey will change the selected survey to nil.  Presumably the user will select a new survey.
+        //The presenter should check for this when the view controller is dismissed.
     }
 }
 

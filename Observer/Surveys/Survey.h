@@ -47,6 +47,12 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 //This involve doing IO (to find and create the unused url), it should be called on a background thread
 - (id)initWithProtocol:(SProtocol *)protocol;
 
+//YES if two Surveys are the same (same url)
+- (BOOL)isEqualToSurvey:(Survey *)survey;
+
+//YES if the survey is valid
+- (BOOL) isValid;
+
 //other actions
 //load all properties
 - (void)readPropertiesWithCompletionHandler:(void (^)(NSError*))handler;

@@ -11,7 +11,11 @@
 
 @interface ObserverMapViewController : UIViewController <CLLocationManagerDelegate, AGSLayerDelegate, AGSMapViewLayerDelegate, AGSMapViewTouchDelegate, AGSCalloutDelegate, UIPopoverControllerDelegate, UIAlertViewDelegate, UIActionSheetDelegate, LocationPresenter>
 
-// To assist AppDelegate in opening urls from mail/web
-- (BOOL)openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation;
+//Model
+@property (strong, nonatomic) Survey *survey;
+@property (strong, nonatomic) Map *map;
+
+// Call this if there is a new protocol available
+- (void)updateSelectProtocolViewControllerWithNewProtocol:(SProtocol *)protocol;
 
 @end

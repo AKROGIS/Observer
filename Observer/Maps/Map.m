@@ -222,7 +222,7 @@
 
 #pragma mark - public methods
 
-- (BOOL)isEqualtoMap:(Map *)other
+- (BOOL)isEqualToMap:(Map *)other
 {
     // need to be careful with null properties.
     // without the == check, two null properties will be not equal
@@ -230,6 +230,11 @@
     (self.byteCount == other.byteCount) &&
     ((self.author == other.author) || [self.author isEqual:other.author]) &&
     ((self.date == other.date) || [self.date isEqual:other.date]);
+}
+
+- (BOOL) isValid
+{
+    return !self.isLocal || self.tileCache != nil;
 }
 
 - (BOOL)isLocal

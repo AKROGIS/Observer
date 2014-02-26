@@ -9,18 +9,24 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+//CoreData entities
 #import "AdhocLocation.h"
-#import "AGSPoint+AKRAdditions.h"
 #import "AngleDistanceLocation.h"
-#import "Enumerations.h"
 #import "GpsPoint.h"
 #import "LocationAngleDistance.h"
-#import "NSArray+map.h"
 #import "Observation.h"
 #import "MissionProperty.h"
 #import "MapReference.h"
+
+#import "AGSPoint+AKRAdditions.h"
+#import "NSArray+map.h"
+
+#import "Enumerations.h"
 #import "Settings.h"
 
+#import "Survey.h"
+#import "Map.h"
+#import "SProtocol.h"
 
 #define kAttributePrefix                 @"A_"
 #define kObservationPrefix               @"O_"

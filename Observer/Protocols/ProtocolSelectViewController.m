@@ -75,6 +75,14 @@
     items.delegate = self;
 }
 
+
+#pragma mark - Public Methods
+
+- (void) addProtocol:(SProtocol *)protocol
+{
+    //FIXME: implement; currently not be necessary, since items has already been updated
+}
+
 #pragma mark - CollectionChanged
 
 //These delegates will be called on the main queue whenever the datamodel has changed

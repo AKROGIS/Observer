@@ -119,7 +119,7 @@
 // I do not override isEqual to use this method, because title,version and date could change
 // when the values are accessed.  This would cause the hash value to change which can cause
 // all kinds of problems if the object is used in a dictionary or set.
-- (BOOL)isEqualtoProtocol:(SProtocol *)other
+- (BOOL)isEqualToProtocol:(SProtocol *)other
 {
     // need to be careful with null properties.
     // without the == check, two null properties will be not equal

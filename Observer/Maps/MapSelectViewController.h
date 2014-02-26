@@ -15,6 +15,9 @@
 @property (strong, nonatomic) MapDetailViewController *detailViewController;
 @property (strong, nonatomic) MapCollection *items;
 @property (strong, nonatomic) UIPopoverController *popover;
-@property (copy, nonatomic) void (^rowSelectedCallback)(NSIndexPath *indexPath);
+@property (copy, nonatomic) void (^mapSelectedCallback)(Map *map);
+
+//Add the map to the table view if it isn't there already
+- (void) addMap:(Map *)map;
 
 @end

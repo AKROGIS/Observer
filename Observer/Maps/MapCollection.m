@@ -229,12 +229,10 @@ static MapCollection *_sharedCollection = nil;
     }
 }
 
-- (BOOL)openURL:(NSURL *)url
+- (Map *)openURL:(NSURL *)url
 {
-    //TODO: SProtocol returns the protocol, Survey returns BOOL, which should I use?
-    return ![self openURL:url saveCache:YES];
+    return [self openURL:url saveCache:YES];
 }
-
 
 - (void)refreshWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
@@ -417,7 +415,7 @@ static MapCollection *_sharedCollection = nil;
     }
     //Check if the map is already in our local list
     NSUInteger localIndex = [self.localItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [map isEqualtoMap:obj];
+        return [map isEqualToMap:obj];
     }];
     if (localIndex != NSNotFound)
     {
@@ -430,7 +428,7 @@ static MapCollection *_sharedCollection = nil;
 
     //Adding a new local map, might need to remove the same remote map
     NSUInteger remoteIndex = [self.remoteItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [map isEqualtoMap:obj];
+        return [map isEqualToMap:obj];
     }];
 
     id<CollectionChanged> delegate = self.delegate;
@@ -604,7 +602,7 @@ static MapCollection *_sharedCollection = nil;
         Map *p = self.remoteItems[i];
         if (!p.isLocal) {
             NSUInteger index = [serverMaps  indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-                return [p isEqualtoMap:obj];
+                return [p isEqualToMap:obj];
             }];
             if (index == NSNotFound) {
                 [itemsToRemove addIndex:i];
@@ -625,10 +623,10 @@ static MapCollection *_sharedCollection = nil;
     for (Map *map in serverMaps) {
         //
         NSUInteger localIndex = [self.localItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [map isEqualtoMap:obj];
+            return [map isEqualToMap:obj];
         }];
         NSUInteger remoteIndex = [self.remoteItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [map isEqualtoMap:obj];
+            return [map isEqualToMap:obj];
         }];
         if (localIndex == NSNotFound && remoteIndex == NSNotFound) {
             [mapsToAdd addObject:map];

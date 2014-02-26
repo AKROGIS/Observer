@@ -8,6 +8,12 @@
 
 #import "ObserverAppDelegate.h"
 #import "ObserverMapViewController.h"
+#import "Settings.h"
+#import "SurveyCollection.h"
+#import "MapCollection.h"
+#import "ProtocolCollection.h"
+
+#define kAlertViewNewProtocol      1
 
 
 @interface ObserverAppDelegate()
@@ -21,6 +27,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    self.observerMapViewController.map = [[Map alloc] initWithURL:[[Settings manager] selectedMap]];
+    self.observerMapViewController.survey = [[Survey alloc] initWithURL:[[Settings manager] selectedSurvey]];
     return YES;
 }
 							
@@ -57,8 +65,26 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
+    // Called when this app is asked to open a resourse (at url) by a different app
+    // The user will expect a short delay to open the file
     AKRLog(@"%@ asked me to open %@", sourceApplication, url);
-    return [self.observerMapViewController openURL:url sourceApplication:sourceApplication annotation:annotation];
+    if ([SurveyCollection collectsURL:url]) {
+        Survey *newSurvey = [[SurveyCollection sharedCollection] openURL:url];
+        self.observerMapViewController.survey = newSurvey;
+        return YES;
+    }
+    if ([MapCollection collectsURL:url]) {
+        //FIXME: this URL may contain a map we already have, what should we do?
+        Map *newMap = [[MapCollection sharedCollection] openURL:url];
+        self.observerMapViewController.map = newMap;
+        return YES;
+    }
+    if ([ProtocolCollection collectsURL:url]) {
+        SProtocol *newProtocol = [[ProtocolCollection sharedCollection] openURL:url];
+        [self.observerMapViewController updateSelectProtocolViewControllerWithNewProtocol:newProtocol];
+        return YES;
+    }
+    return NO;
 }
 
 - (ObserverMapViewController *)observerMapViewController
@@ -75,5 +101,62 @@
     }
     return nil;
 }
+
+
+//#pragma mark - Delegate Methods: UIAlertViewDelegate
+//
+//- (void)AddSurvey
+//{
+//    ProtocolCollection *protocols = [ProtocolCollection sharedCollection];
+//    [protocols openWithCompletionHandler:^(BOOL openSuccess) {
+//        SProtocol *protocol = [protocols openURL:url];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            if (openSuccess && protocol.isValid) {
+//                self.protocolForSurveyCreation = protocol;
+//                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to open a new survey file with this protocol?" delegate:self cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil];
+//                alertView.tag = kAlertViewNewProtocol;
+//                [alertView show];
+//                // handle response in UIAlertView delegate method
+//            } else {
+//                [[[UIAlertView alloc] initWithTitle:@"Protocol Problem" message:@"Can't open/read the protocol file" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+//            }
+//        });
+//    }];
+//}
+//
+//- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+//{
+//    switch (alertView.tag) {
+//        case kAlertViewNewProtocol: {
+//            if (buttonIndex == 1) {  //Yes to create/open a new survey
+//                if (self.surveysPopoverController) {
+//                    UIViewController *vc = self.surveysPopoverController.contentViewController;
+//                    if ([vc isKindOfClass:[UINavigationController class]]) {
+//                        vc = ((UINavigationController *)vc).visibleViewController;
+//                    }
+//                    if ([vc isKindOfClass:[SurveySelectViewController class]]) {
+//                        //This method will put up its own alert if it cannot create the survey
+//                        [(SurveySelectViewController *)vc newSurveyWithProtocol:self.protocolForSurveyCreation];
+//                        //since the survey select view is up, let the user decide which survey they want to select
+//                        return;
+//                    }
+//                }
+//                //TODO: The survey VC's tableview is not refreshed if the protocol VC is displayed
+//                NSUInteger indexOfNewSurvey = [self.surveys newSurveyWithProtocol:self.protocolForSurveyCreation];
+//                if (indexOfNewSurvey != NSNotFound) {
+//                    [self closeSurvey:self.survey withConcurrentOpen:YES];
+//                    [self.surveys setSelectedSurvey:indexOfNewSurvey];
+//                    [self openSurvey];
+//                } else {
+//                    [[[UIAlertView alloc] initWithTitle:@"Survey Problem" message:@"Can't create a survey with this protocol" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+//                }
+//            }
+//            break;
+//        }
+//        default:
+//            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %d",alertView.tag);
+//            break;
+//    }
+//}
 
 @end

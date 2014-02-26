@@ -198,6 +198,20 @@
 
 #pragma mark - public methods
 
+- (BOOL)isEqualToSurvey:(Survey *)survey
+{
+    //Comparing URLs is tricky, I am trying to be efficient, and permissive
+    return ([self.url isEqual:survey.url] ||
+            [self.url.absoluteURL isEqual:survey.url.absoluteURL] ||
+            [self.url.fileReferenceURL isEqual:survey.url.fileReferenceURL]);
+}
+
+- (BOOL) isValid
+{
+    //TODO: improve this method
+    return self.protocol != nil;
+}
+
 //TODO: figure out error handling.
 //TODO: this public method isn't used - justify the API or remove
 - (void)readPropertiesWithCompletionHandler:(void (^)(NSError*))handler

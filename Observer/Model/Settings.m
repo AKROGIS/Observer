@@ -17,6 +17,12 @@
  * a zero value, as it will always be replaced with your default
  */
 
+#define DEFAULTS_KEY_URL_FOR_SELECTED_MAP @"url_for_selected_map"
+#define DEFAULTS_DEFAULT_URL_FOR_SELECTED_MAP nil
+
+#define DEFAULTS_KEY_URL_FOR_SELECTED_SURVEY @"url_for_selected_survey"
+#define DEFAULTS_DEFAULT_URL_FOR_SELECTED_SURVEY nil
+
 #define DEFAULTS_KEY_INDEX_OF_CURRENT_MAP @"index_of_current_map"
 #define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP 0
 
@@ -89,6 +95,52 @@
 - (id)copyWithZone:(NSZone *)zone
 {
     return self;
+}
+
+
+
+@synthesize selectedMap = _selectedMap;
+
+- (NSURL *)selectedMap
+{
+    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_SELECTED_MAP];
+    if ([value isKindOfClass:[NSString class]]) {
+        value = [NSURL URLWithString:value];
+    }
+    return value ? value : DEFAULTS_DEFAULT_URL_FOR_SELECTED_MAP;
+}
+
+- (void)setSelectedMap:(NSURL *)selectedMap
+{
+    NSString *string = selectedMap.absoluteString;
+    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_SELECTED_MAP]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_SELECTED_MAP];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_SELECTED_MAP];
+    }
+}
+
+
+
+@synthesize selectedSurvey = _selectedSurvey;
+
+- (NSURL *)selectedSurvey
+{
+    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_SELECTED_SURVEY];
+    if ([value isKindOfClass:[NSString class]]) {
+        value = [NSURL URLWithString:value];
+    }
+    return value ? value : DEFAULTS_DEFAULT_URL_FOR_SELECTED_SURVEY;
+}
+
+- (void)setSelectedSurvey:(NSURL *)selectedSurvey
+{
+    NSString *string = selectedSurvey.absoluteString;
+    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_SELECTED_SURVEY]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_SELECTED_SURVEY];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_SELECTED_SURVEY];
+    }
 }
 
 

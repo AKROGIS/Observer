@@ -17,4 +17,7 @@
 @property (strong, nonatomic) UIPopoverController *popover;
 @property (copy, nonatomic) void (^rowSelectedCallback)(NSIndexPath *indexPath);
 
+//Add the protocol to the table view if it isn't there already
+- (void) addProtocol:(SProtocol *)protocol;
+
 @end

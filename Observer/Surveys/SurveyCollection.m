@@ -129,14 +129,16 @@
 }
 
 //TODO: test opening a Survey document
-- (BOOL)openURL:(NSURL *)url
+- (Survey *)openURL:(NSURL *)url
 {
     //The only known use of this is by the app delegate to give us a file in the inbox
     //however, I will make it as generic as possible
     
-    //If we already have the url, then do nothing.
-    if ([self surveyForURL:url]) {
-        return YES;
+    //If we already have a survey at that url, then do nothing.
+    Survey *newSurvey = [self surveyForURL:url];
+
+    if (newSurvey) {
+        return newSurvey;
     }
     NSURL *newUrl = [[SurveyCollection documentsDirectory] URLByAppendingPathComponent:[url lastPathComponent]];
     //If the url is already in the documents directory then do not move it
@@ -145,20 +147,21 @@
             newUrl = [newUrl URLByUniquingPath];
         }
         if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:newUrl error:nil]) {
-            return NO;
+            return nil;
         }
     }
-    Survey *newSurvey = [[Survey alloc] initWithURL:newUrl];
-    if (newSurvey.protocol) {
+    newSurvey = [[Survey alloc] initWithURL:newUrl];
+    if ([newSurvey isValid]) {
         NSUInteger index = 0;     //insert at top of list
         [self.items insertObject:newSurvey atIndex:index];
         if (self.selectedIndex != NSNotFound) {
             self.selectedIndex++;
         }
         [self saveCache];
-        return YES;
+        return newSurvey;
     } else {
-        return NO;
+        [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
+        return nil;
     }
 }
 

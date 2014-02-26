@@ -322,7 +322,7 @@ static ProtocolCollection *_sharedCollection = nil;
     }
     //Check if the protocol is already in our local list
     NSUInteger localIndex = [self.localItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [protocol isEqualtoProtocol:obj];
+        return [protocol isEqualToProtocol:obj];
     }];
     if (localIndex != NSNotFound)
     {
@@ -335,7 +335,7 @@ static ProtocolCollection *_sharedCollection = nil;
 
     //Adding a new local protocol, might need to remove the same remote protocol
     NSUInteger remoteIndex = [self.remoteItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [protocol isEqualtoProtocol:obj];
+        return [protocol isEqualToProtocol:obj];
     }];
 
     id<CollectionChanged> delegate = self.delegate;
@@ -512,7 +512,7 @@ static ProtocolCollection *_sharedCollection = nil;
         SProtocol *p = self.remoteItems[i];
         if (!p.isLocal) {
             NSUInteger index = [serverProtocols  indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-                return [p isEqualtoProtocol:obj];
+                return [p isEqualToProtocol:obj];
             }];
             if (index == NSNotFound) {
                 [itemsToRemove addIndex:i];
@@ -533,10 +533,10 @@ static ProtocolCollection *_sharedCollection = nil;
     for (SProtocol *protocol in serverProtocols) {
         //
         NSUInteger localIndex = [self.localItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [protocol isEqualtoProtocol:obj];
+            return [protocol isEqualToProtocol:obj];
         }];
         NSUInteger remoteIndex = [self.remoteItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [protocol isEqualtoProtocol:obj];
+            return [protocol isEqualToProtocol:obj];
         }];
         if (localIndex == NSNotFound && remoteIndex == NSNotFound) {
             [protocolsToAdd addObject:protocol];
