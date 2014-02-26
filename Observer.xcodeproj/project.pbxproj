@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */; };
-		39336F4B18AC23DC00620A3A /* Protocol Specification.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 39336F4A18AC23DC00620A3A /* Protocol Specification.rtf */; };
 		39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4D18AC25B100620A3A /* AddFeatureBarButtonItem.m */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
@@ -22,9 +21,7 @@
 		394CC24D1858F11800FA859C /* Mission.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC24C1858F11800FA859C /* Mission.m */; };
 		394CC2501858F11800FA859C /* AngleDistanceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC24F1858F11800FA859C /* AngleDistanceLocation.m */; };
 		394CC2531858F11800FA859C /* Observation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC2521858F11800FA859C /* Observation.m */; };
-		396775A817A0911E009ECD34 /* AGSPointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775A717A0911E009ECD34 /* AGSPointTests.m */; };
 		396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */; };
-		396E1E8C18984EFF00B735EF /* Warnings.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */; };
 		396E1E90189864AE00B735EF /* NSIndexPath+unsignedAccessors.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E8F189864AE00B735EF /* NSIndexPath+unsignedAccessors.m */; };
 		396E1E961899AD2900B735EF /* ProtocolFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E951899AD2900B735EF /* ProtocolFeature.m */; };
 		396E1E991899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E981899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m */; };
@@ -62,11 +59,6 @@
 		39955E5B178334C000D225D7 /* ObserverAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955E5A178334C000D225D7 /* ObserverAppDelegate.m */; };
 		39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39955E62178334C000D225D7 /* MainStoryboard_iPhone.storyboard */; };
 		39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39955E65178334C000D225D7 /* MainStoryboard_iPad.storyboard */; };
-		39955E7D178334C000D225D7 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E7C178334C000D225D7 /* SenTestingKit.framework */; };
-		39955E7E178334C000D225D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
-		39955E7F178334C000D225D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4C178334BF00D225D7 /* Foundation.framework */; };
-		39955E87178334C000D225D7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39955E85178334C000D225D7 /* InfoPlist.strings */; };
-		39955E8A178334C000D225D7 /* ObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955E89178334C000D225D7 /* ObserverTests.m */; };
 		39955E941783377E00D225D7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E931783377E00D225D7 /* CoreLocation.framework */; };
 		39955E961783379400D225D7 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E951783379400D225D7 /* CoreText.framework */; };
 		39955E98178337BF00D225D7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E97178337BF00D225D7 /* QuartzCore.framework */; };
@@ -76,16 +68,6 @@
 		39955EA0178337F700D225D7 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9F178337F700D225D7 /* libc++.dylib */; };
 		39955EA21783382200D225D7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA11783382200D225D7 /* libz.dylib */; };
 		39955EA41783388600D225D7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA31783388600D225D7 /* OpenGLES.framework */; };
-		39955EA817833CE900D225D7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4E178334BF00D225D7 /* CoreGraphics.framework */; };
-		39955EA917833CFD00D225D7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E931783377E00D225D7 /* CoreLocation.framework */; };
-		39955EAA17833D0E00D225D7 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E951783379400D225D7 /* CoreText.framework */; };
-		39955EAB17833D1800D225D7 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E99178337D900D225D7 /* MediaPlayer.framework */; };
-		39955EAC17833D1F00D225D7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA31783388600D225D7 /* OpenGLES.framework */; };
-		39955EAD17833D2600D225D7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E97178337BF00D225D7 /* QuartzCore.framework */; };
-		39955EAE17833D2E00D225D7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9B178337E000D225D7 /* MobileCoreServices.framework */; };
-		39955EAF17833D3500D225D7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9D178337E800D225D7 /* Security.framework */; };
-		39955EB017833D3F00D225D7 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9F178337F700D225D7 /* libc++.dylib */; };
-		39955EB117833D4600D225D7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA11783382200D225D7 /* libz.dylib */; };
 		39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ED1178733B900D225D7 /* ObserverMapViewController.m */; };
 		39A836C4185A668D008BF4E3 /* AKRAngleDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */; };
 		39A836CB185FDAB8008BF4E3 /* AttributeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A836CA185FDAB8008BF4E3 /* AttributeViewController.m */; };
@@ -98,9 +80,14 @@
 		39C53E6E1885D9DF00C0CECE /* ProtocolDocumentIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 39C53E6D1885D9DF00C0CECE /* ProtocolDocumentIcon.png */; };
 		39C53E701885DAB000C0CECE /* TilePackageDocumentIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 39C53E6F1885DAB000C0CECE /* TilePackageDocumentIcon.png */; };
 		39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94B17B464B40014C68F /* LocationAngleDistance.m */; };
-		39D1D94F17B9A8280014C68F /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */; };
 		39D1D95A17BC21D00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
-		39D1D95B17BC21E00014C68F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1D95917BC21D00014C68F /* CoreData.framework */; };
+		39D9479A18BEA79E0069DB31 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39C3B86A18BE8D770041FF36 /* XCTest.framework */; };
+		39D9479B18BEA79E0069DB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4C178334BF00D225D7 /* Foundation.framework */; };
+		39D9479C18BEA79E0069DB31 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
+		39D947A218BEA79E0069DB31 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39D947A018BEA79E0069DB31 /* InfoPlist.strings */; };
+		39D947A418BEA79E0069DB31 /* ObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947A318BEA79E0069DB31 /* ObserverTests.m */; };
+		39D947AD18BEA7DF0069DB31 /* AGSPointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947AB18BEA7DF0069DB31 /* AGSPointTests.m */; };
+		39D947AE18BEA7DF0069DB31 /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947AC18BEA7DF0069DB31 /* LocationAngleDistanceTests.m */; };
 		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
 		59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FEE1863FDBF00470791 /* AKRFormatter.m */; };
 /* End PBXBuildFile section */
@@ -127,12 +114,12 @@
 			remoteGlobalIDString = D80B0E3313E052DF00FA85CA;
 			remoteInfo = QuickDialogExample;
 		};
-		39955E80178334C000D225D7 /* PBXContainerItemProxy */ = {
+		39D947A618BEA79E0069DB31 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 39955E3F178334BF00D225D7 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 39955E46178334BF00D225D7;
-			remoteInfo = Observer;
+			remoteInfo = "Park Observer";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -167,9 +154,6 @@
 		394CC24F1858F11800FA859C /* AngleDistanceLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AngleDistanceLocation.m; path = Model/AngleDistanceLocation.m; sourceTree = "<group>"; };
 		394CC2511858F11800FA859C /* Observation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Observation.h; path = Model/Observation.h; sourceTree = "<group>"; };
 		394CC2521858F11800FA859C /* Observation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Observation.m; path = Model/Observation.m; sourceTree = "<group>"; };
-		396775A617A0911E009ECD34 /* AGSPointTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGSPointTests.h; sourceTree = "<group>"; };
-		396775A717A0911E009ECD34 /* AGSPointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGSPointTests.m; sourceTree = "<group>"; };
-		396775C517A09B4D009ECD34 /* ObserverTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ObserverTests copy-Info.plist"; path = "/Users/regan_sarwas/Documents/Developer/ArcGIS iOS/Observer/ObserverTests copy-Info.plist"; sourceTree = "<absolute>"; };
 		396775C617A1C7B5009ECD34 /* AngleDistanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AngleDistanceViewController.h; sourceTree = "<group>"; };
 		396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AngleDistanceViewController.m; sourceTree = "<group>"; };
 		396E1E8B18984EFF00B735EF /* Warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -241,12 +225,6 @@
 		39955E58178334C000D225D7 /* Observer-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Observer-Prefix.pch"; sourceTree = "<group>"; };
 		39955E59178334C000D225D7 /* ObserverAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObserverAppDelegate.h; sourceTree = "<group>"; };
 		39955E5A178334C000D225D7 /* ObserverAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObserverAppDelegate.m; sourceTree = "<group>"; };
-		39955E7B178334C000D225D7 /* ObserverTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObserverTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		39955E7C178334C000D225D7 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		39955E84178334C000D225D7 /* ObserverTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ObserverTests-Info.plist"; sourceTree = "<group>"; };
-		39955E86178334C000D225D7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		39955E88178334C000D225D7 /* ObserverTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObserverTests.h; sourceTree = "<group>"; };
-		39955E89178334C000D225D7 /* ObserverTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObserverTests.m; sourceTree = "<group>"; };
 		39955E931783377E00D225D7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		39955E951783379400D225D7 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		39955E97178337BF00D225D7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -268,6 +246,7 @@
 		39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RadioStyleTableViewCell.m; sourceTree = "<group>"; };
 		39C3B84918B816020041FF36 /* FeatureSelectorTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureSelectorTableViewController.h; sourceTree = "<group>"; };
 		39C3B84A18B816020041FF36 /* FeatureSelectorTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeatureSelectorTableViewController.m; sourceTree = "<group>"; };
+		39C3B86A18BE8D770041FF36 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		39C53E5F187F411B00C0CECE /* AutoPanStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AutoPanStateMachine.h; path = Model/AutoPanStateMachine.h; sourceTree = "<group>"; };
 		39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AutoPanStateMachine.m; path = Model/AutoPanStateMachine.m; sourceTree = "<group>"; };
 		39C53E63187F4B5E00C0CECE /* AutoPanButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoPanButton.h; sourceTree = "<group>"; };
@@ -277,10 +256,15 @@
 		39C53E6F1885DAB000C0CECE /* TilePackageDocumentIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TilePackageDocumentIcon.png; path = Images/TilePackageDocumentIcon.png; sourceTree = "<group>"; };
 		39D1D94A17B464B40014C68F /* LocationAngleDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocationAngleDistance.h; path = Model/LocationAngleDistance.h; sourceTree = "<group>"; };
 		39D1D94B17B464B40014C68F /* LocationAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LocationAngleDistance.m; path = Model/LocationAngleDistance.m; sourceTree = "<group>"; };
-		39D1D94D17B9A8280014C68F /* LocationAngleDistanceTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationAngleDistanceTests.h; sourceTree = "<group>"; };
-		39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationAngleDistanceTests.m; sourceTree = "<group>"; };
 		39D1D95917BC21D00014C68F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		39D1D97B17BC51630014C68F /* ObserverModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObserverModel.h; path = Model/ObserverModel.h; sourceTree = "<group>"; };
+		39D9479918BEA79E0069DB31 /* ObserverTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObserverTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		39D9479F18BEA79E0069DB31 /* ObserverTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ObserverTests-Info.plist"; sourceTree = "<group>"; };
+		39D947A118BEA79E0069DB31 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		39D947A318BEA79E0069DB31 /* ObserverTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObserverTests.m; sourceTree = "<group>"; };
+		39D947A518BEA79E0069DB31 /* ObserverTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ObserverTests-Prefix.pch"; sourceTree = "<group>"; };
+		39D947AB18BEA7DF0069DB31 /* AGSPointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGSPointTests.m; sourceTree = "<group>"; };
+		39D947AC18BEA7DF0069DB31 /* LocationAngleDistanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationAngleDistanceTests.m; sourceTree = "<group>"; };
 		59C60FE6185ABF9400470791 /* AKRDirectionIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDirectionIndicatorView.h; sourceTree = "<group>"; };
 		59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDirectionIndicatorView.m; sourceTree = "<group>"; };
 		59C60FED1863FDBF00470791 /* AKRFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRFormatter.h; sourceTree = "<group>"; };
@@ -309,24 +293,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		39955E77178334C000D225D7 /* Frameworks */ = {
+		39D9479618BEA79E0069DB31 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39D1D95B17BC21E00014C68F /* CoreData.framework in Frameworks */,
-				39955EB117833D4600D225D7 /* libz.dylib in Frameworks */,
-				39955EB017833D3F00D225D7 /* libc++.dylib in Frameworks */,
-				39955EAF17833D3500D225D7 /* Security.framework in Frameworks */,
-				39955EAE17833D2E00D225D7 /* MobileCoreServices.framework in Frameworks */,
-				39955EAD17833D2600D225D7 /* QuartzCore.framework in Frameworks */,
-				39955EAC17833D1F00D225D7 /* OpenGLES.framework in Frameworks */,
-				39955EAB17833D1800D225D7 /* MediaPlayer.framework in Frameworks */,
-				39955EAA17833D0E00D225D7 /* CoreText.framework in Frameworks */,
-				39955EA917833CFD00D225D7 /* CoreLocation.framework in Frameworks */,
-				39955EA817833CE900D225D7 /* CoreGraphics.framework in Frameworks */,
-				39955E7D178334C000D225D7 /* SenTestingKit.framework in Frameworks */,
-				39955E7E178334C000D225D7 /* UIKit.framework in Frameworks */,
-				39955E7F178334C000D225D7 /* Foundation.framework in Frameworks */,
+				39D9479A18BEA79E0069DB31 /* XCTest.framework in Frameworks */,
+				39D9479C18BEA79E0069DB31 /* UIKit.framework in Frameworks */,
+				39D9479B18BEA79E0069DB31 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,10 +437,9 @@
 			isa = PBXGroup;
 			children = (
 				39955E50178334BF00D225D7 /* Observer */,
-				39955E82178334C000D225D7 /* ObserverTests */,
+				39D9479D18BEA79E0069DB31 /* ObserverTests */,
 				39955E49178334BF00D225D7 /* Frameworks */,
 				39955E48178334BF00D225D7 /* Products */,
-				396775C517A09B4D009ECD34 /* ObserverTests copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -475,7 +447,7 @@
 			isa = PBXGroup;
 			children = (
 				39955E47178334BF00D225D7 /* Park Observer.app */,
-				39955E7B178334C000D225D7 /* ObserverTests.octest */,
+				39D9479918BEA79E0069DB31 /* ObserverTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -483,6 +455,7 @@
 		39955E49178334BF00D225D7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				39C3B86A18BE8D770041FF36 /* XCTest.framework */,
 				394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */,
 				39D1D95917BC21D00014C68F /* CoreData.framework */,
 				39955EA31783388600D225D7 /* OpenGLES.framework */,
@@ -497,7 +470,6 @@
 				39955E4A178334BF00D225D7 /* UIKit.framework */,
 				39955E4C178334BF00D225D7 /* Foundation.framework */,
 				39955E4E178334BF00D225D7 /* CoreGraphics.framework */,
-				39955E7C178334C000D225D7 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -545,29 +517,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		39955E82178334C000D225D7 /* ObserverTests */ = {
-			isa = PBXGroup;
-			children = (
-				39955E88178334C000D225D7 /* ObserverTests.h */,
-				39955E89178334C000D225D7 /* ObserverTests.m */,
-				39955E83178334C000D225D7 /* Supporting Files */,
-				396775A617A0911E009ECD34 /* AGSPointTests.h */,
-				396775A717A0911E009ECD34 /* AGSPointTests.m */,
-				39D1D94D17B9A8280014C68F /* LocationAngleDistanceTests.h */,
-				39D1D94E17B9A8280014C68F /* LocationAngleDistanceTests.m */,
-			);
-			path = ObserverTests;
-			sourceTree = "<group>";
-		};
-		39955E83178334C000D225D7 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				39955E84178334C000D225D7 /* ObserverTests-Info.plist */,
-				39955E85178334C000D225D7 /* InfoPlist.strings */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		39955EC6178732B500D225D7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -608,6 +557,27 @@
 			name = Images;
 			sourceTree = "<group>";
 		};
+		39D9479D18BEA79E0069DB31 /* ObserverTests */ = {
+			isa = PBXGroup;
+			children = (
+				39D947AB18BEA7DF0069DB31 /* AGSPointTests.m */,
+				39D947AC18BEA7DF0069DB31 /* LocationAngleDistanceTests.m */,
+				39D947A318BEA79E0069DB31 /* ObserverTests.m */,
+				39D9479E18BEA79E0069DB31 /* Supporting Files */,
+			);
+			path = ObserverTests;
+			sourceTree = "<group>";
+		};
+		39D9479E18BEA79E0069DB31 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				39D9479F18BEA79E0069DB31 /* ObserverTests-Info.plist */,
+				39D947A018BEA79E0069DB31 /* InfoPlist.strings */,
+				39D947A518BEA79E0069DB31 /* ObserverTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -629,24 +599,23 @@
 			productReference = 39955E47178334BF00D225D7 /* Park Observer.app */;
 			productType = "com.apple.product-type.application";
 		};
-		39955E7A178334C000D225D7 /* ObserverTests */ = {
+		39D9479818BEA79E0069DB31 /* ObserverTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 39955E90178334C000D225D7 /* Build configuration list for PBXNativeTarget "ObserverTests" */;
+			buildConfigurationList = 39D947A818BEA79E0069DB31 /* Build configuration list for PBXNativeTarget "ObserverTests" */;
 			buildPhases = (
-				39955E76178334C000D225D7 /* Sources */,
-				39955E77178334C000D225D7 /* Frameworks */,
-				39955E78178334C000D225D7 /* Resources */,
-				39955E79178334C000D225D7 /* ShellScript */,
+				39D9479518BEA79E0069DB31 /* Sources */,
+				39D9479618BEA79E0069DB31 /* Frameworks */,
+				39D9479718BEA79E0069DB31 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				39955E81178334C000D225D7 /* PBXTargetDependency */,
+				39D947A718BEA79E0069DB31 /* PBXTargetDependency */,
 			);
 			name = ObserverTests;
 			productName = ObserverTests;
-			productReference = 39955E7B178334C000D225D7 /* ObserverTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = 39D9479918BEA79E0069DB31 /* ObserverTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -660,6 +629,9 @@
 				TargetAttributes = {
 					39955E46178334BF00D225D7 = {
 						DevelopmentTeam = F3CMMML9FD;
+					};
+					39D9479818BEA79E0069DB31 = {
+						TestTargetID = 39955E46178334BF00D225D7;
 					};
 				};
 			};
@@ -683,7 +655,7 @@
 			projectRoot = "";
 			targets = (
 				39955E46178334BF00D225D7 /* Park Observer */,
-				39955E7A178334C000D225D7 /* ObserverTests */,
+				39D9479818BEA79E0069DB31 /* ObserverTests */,
 			);
 		};
 /* End PBXProject section */
@@ -714,10 +686,8 @@
 				39449F1418ADABCF00A1F8FE /* Localizable.strings in Resources */,
 				39890DA31858C99E007B3F67 /* Images.xcassets in Resources */,
 				39C53E6B1885D98400C0CECE /* SurveyDocumentIcon.png in Resources */,
-				39336F4B18AC23DC00620A3A /* Protocol Specification.rtf in Resources */,
 				39C53E6E1885D9DF00C0CECE /* ProtocolDocumentIcon.png in Resources */,
 				39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */,
-				396E1E8C18984EFF00B735EF /* Warnings.xcconfig in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
 				39C53E701885DAB000C0CECE /* TilePackageDocumentIcon.png in Resources */,
 				393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */,
@@ -725,31 +695,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		39955E78178334C000D225D7 /* Resources */ = {
+		39D9479718BEA79E0069DB31 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39955E87178334C000D225D7 /* InfoPlist.strings in Resources */,
+				39D947A218BEA79E0069DB31 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		39955E79178334C000D225D7 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		39955E43178334BF00D225D7 /* Sources */ = {
@@ -811,13 +765,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		39955E76178334C000D225D7 /* Sources */ = {
+		39D9479518BEA79E0069DB31 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39955E8A178334C000D225D7 /* ObserverTests.m in Sources */,
-				396775A817A0911E009ECD34 /* AGSPointTests.m in Sources */,
-				39D1D94F17B9A8280014C68F /* LocationAngleDistanceTests.m in Sources */,
+				39D947AD18BEA7DF0069DB31 /* AGSPointTests.m in Sources */,
+				39D947AE18BEA7DF0069DB31 /* LocationAngleDistanceTests.m in Sources */,
+				39D947A418BEA79E0069DB31 /* ObserverTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -829,10 +783,10 @@
 			name = QuickDialog;
 			targetProxy = 394CC2361858E05000FA859C /* PBXContainerItemProxy */;
 		};
-		39955E81178334C000D225D7 /* PBXTargetDependency */ = {
+		39D947A718BEA79E0069DB31 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 39955E46178334BF00D225D7 /* Park Observer */;
-			targetProxy = 39955E80178334C000D225D7 /* PBXContainerItemProxy */;
+			targetProxy = 39D947A618BEA79E0069DB31 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -869,10 +823,10 @@
 			name = MainStoryboard_iPad.storyboard;
 			sourceTree = "<group>";
 		};
-		39955E85178334C000D225D7 /* InfoPlist.strings */ = {
+		39D947A018BEA79E0069DB31 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				39955E86178334C000D225D7 /* en */,
+				39D947A118BEA79E0069DB31 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -954,6 +908,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -968,6 +923,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -975,37 +931,82 @@
 			};
 			name = Release;
 		};
-		39955E91178334C000D225D7 /* Debug */ = {
+		39D947A918BEA79E0069DB31 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Observer.app/Observer";
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Park Observer.app/Park Observer";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(HOME)/Library/SDKs/ArcGIS/iOS/**",
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ObserverTests/ObserverTests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "ObserverTests/ObserverTests-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
 		};
-		39955E92178334C000D225D7 /* Release */ = {
+		39D947AA18BEA79E0069DB31 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Observer.app/Observer";
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Park Observer.app/Park Observer";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(HOME)/Library/SDKs/ArcGIS/iOS/**",
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ObserverTests/ObserverTests-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "ObserverTests/ObserverTests-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
 		};
@@ -1030,11 +1031,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		39955E90178334C000D225D7 /* Build configuration list for PBXNativeTarget "ObserverTests" */ = {
+		39D947A818BEA79E0069DB31 /* Build configuration list for PBXNativeTarget "ObserverTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				39955E91178334C000D225D7 /* Debug */,
-				39955E92178334C000D225D7 /* Release */,
+				39D947A918BEA79E0069DB31 /* Debug */,
+				39D947AA18BEA79E0069DB31 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
