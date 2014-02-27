@@ -47,6 +47,9 @@
 
 - (id)initWithURL:(NSURL *)url title:(NSString *)title state:(SurveyState)state date:(NSDate *)date
 {
+    if (!url) {
+        return nil;
+    }
     if (self = [super init]) {
         _url = url;
         _state = state;
