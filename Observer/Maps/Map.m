@@ -226,10 +226,13 @@
 {
     // need to be careful with null properties.
     // without the == check, two null properties will be not equal
+    if (!other) {
+        return NO;
+    }
     return
-    (self.byteCount == other.byteCount) &&
-    ((self.author == other.author) || [self.author isEqual:other.author]) &&
-    ((self.date == other.date) || [self.date isEqual:other.date]);
+        (self.byteCount == other.byteCount) &&
+        ((self.author == other.author) || [self.author isEqual:other.author]) &&
+        ((self.date == other.date) || [self.date isEqual:other.date]);
 }
 
 - (BOOL) isValid

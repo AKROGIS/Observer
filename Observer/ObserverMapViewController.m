@@ -844,6 +844,10 @@
     self.mapView.touchDelegate = self;
     self.mapView.callout.delegate = self;
     self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
+    if (self.map.tileCache) {
+        [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
+        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
+    }
 }
 
 - (void)configureGpsButton
@@ -1158,8 +1162,10 @@
     {
         self.noMapLabel.hidden = YES;
         map.tileCache.delegate = self;
-        [self.mapView addMapLayer:map.tileCache withName:@"tilecache basemap"];
-        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
+        if (self.mapView) {
+            [self.mapView addMapLayer:map.tileCache withName:@"tilecache basemap"];
+            //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
+        }
     }
 }
 
