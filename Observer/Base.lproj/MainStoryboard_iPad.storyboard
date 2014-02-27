@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13B42" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="TiC-11-YSU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13C64" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="TiC-11-YSU">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
@@ -26,7 +26,7 @@
                                     <outletCollection property="gestureRecognizers" destination="Gmo-Ux-MzB" appends="YES" id="Y3W-Rh-ytq"/>
                                 </connections>
                             </view>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="zJv-q7-y2x">
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="zJv-q7-y2x">
                                 <rect key="frame" x="366" y="504" width="37" height="37"/>
                             </activityIndicatorView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3Af-C7-mib">
@@ -40,7 +40,7 @@
                                             </segue>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem image="GpsOff" id="jXA-Ll-IBJ" customClass="AutoPanButton">
+                                    <barButtonItem enabled="NO" image="GpsOff" id="jXA-Ll-IBJ" customClass="AutoPanButton">
                                         <connections>
                                             <action selector="togglePanMode:" destination="TiC-11-YSU" id="wsV-bl-ssf"/>
                                         </connections>
@@ -54,17 +54,17 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="pyp-S6-0zm"/>
-                                    <barButtonItem style="plain" systemItem="play" id="fCO-tO-IRq">
+                                    <barButtonItem enabled="NO" style="plain" systemItem="play" id="fCO-tO-IRq">
                                         <connections>
                                             <action selector="startStopRecording:" destination="TiC-11-YSU" id="2Oq-NH-554"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="play" id="faa-Nc-OBV">
+                                    <barButtonItem enabled="NO" style="plain" systemItem="play" id="faa-Nc-OBV">
                                         <connections>
                                             <action selector="startStopObserving:" destination="TiC-11-YSU" id="1Ay-IQ-Qfc"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="+MP" id="Fdi-yp-sWi">
+                                    <barButtonItem enabled="NO" title="+MP" id="Fdi-yp-sWi">
                                         <connections>
                                             <action selector="changeEnvironment:" destination="TiC-11-YSU" id="ICq-DA-pR3"/>
                                         </connections>
@@ -88,7 +88,7 @@
                             <imageView opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="center" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" image="Crosshairs" translatesAutoresizingMaskIntoConstraints="NO" id="fpV-JS-knH">
                                 <rect key="frame" x="352" y="490" width="64" height="64"/>
                             </imageView>
-                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="No background map selected. Click the Maps button to select one." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="009-3q-8gq">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="No background map selected. Click the Maps button to select one." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="009-3q-8gq">
                                 <rect key="frame" x="127" y="557" width="515" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>

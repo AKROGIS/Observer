@@ -128,6 +128,8 @@
     [self configureGpsButton];
     [self configureObservationButtons];
     [self initializeData];
+    [self openMap];
+    [self openSurvey];
 }
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
@@ -343,16 +345,11 @@
     if ([survey isEqualToSurvey:_survey]) {
         return;
     }
-    //FIXME: verify open and close are be async, this method should return immediately
-    if (_survey) {
-        [self closeSurvey:_survey withConcurrentOpen:(survey != nil)];
-    }
+    [self closeSurveyWithConcurrentOpen:(survey != nil)];
     _survey = survey;
     [Settings manager].selectedSurvey = survey.url;
-    if (survey) {
-        [self openSurvey:survey];
-        [self updateSelectSurveyViewControllerWithNewSurvey:survey];
-    }
+    [self openSurvey];
+    [self updateSelectSurveyViewControllerWithNewSurvey:survey];
 }
 
 - (void)setMap:(Map *)map
@@ -363,18 +360,11 @@
     if ([map isEqualToMap:_map]) {
         return;
     }
-    if (_map) {
-        self.currentMapEntity = nil;
-        [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
-        self.noMapLabel.hidden = NO;
-    }
+    [self closeMap];
     _map = map;
     [Settings manager].selectedMap = map.url;
-    if (map) {
-        //FIXME: verify that displayMap is async, this method should return immediately
-        [self displayMap:map];
-        [self updateSelectMapViewControllerWithNewMap:map];
-    }
+    [self openMap];
+    [self updateSelectMapViewControllerWithNewMap:map];
 }
 
 - (void)updateSelectSurveyViewControllerWithNewSurvey:(Survey *)survey
@@ -960,7 +950,6 @@
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
         item.enabled = self.isObserving;
     }
-
 }
 
 - (void)incrementBusy
@@ -1148,23 +1137,28 @@
 
 #pragma mark - Private Methods - support for map delegate
 
-- (void)displayMap:(Map *)map
+- (void)closeMap
 {
-    AKRLog(@"Loading the basemap %@", map);
-    [self incrementBusy];
-    if (!map.tileCache)
-    {
-        self.noMapLabel.hidden = NO;
-        [self decrementBusy];
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the map." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-    }
-    else
-    {
-        self.noMapLabel.hidden = YES;
-        map.tileCache.delegate = self;
-        if (self.mapView) {
-            [self.mapView addMapLayer:map.tileCache withName:@"tilecache basemap"];
+    [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
+    self.currentMapEntity = nil;
+    self.noMapLabel.hidden = NO;
+    self.panButton.enabled = NO;
+}
+
+- (void)openMap
+{
+    if (self.map && self.isViewLoaded) {
+        if (self.map.tileCache)
+        {
+            [self incrementBusy];
+            self.noMapLabel.hidden = YES;
+            self.panButton.enabled = YES;
+            self.map.tileCache.delegate = self;
+            AKRLog(@"Loading the basemap %@", self.map);
+            [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
             //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
+        } else {
+            [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the map." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         }
     }
 }
@@ -1318,13 +1312,13 @@
 
 #pragma mark - Private Methods - support for data model - Surveys
 
-- (void)openSurvey:(Survey *)survey
+- (void)openSurvey
 {
-    if (survey) {
-        AKRLog(@"Opening survey document (%@)", survey.title);
-        self.selectSurveyButton.title = @"Loading survey...";
+    if (self.survey && self.isViewLoaded) {
+        AKRLog(@"Opening survey document (%@)", self.survey.title);
         [self incrementBusy];
-        [survey openDocumentWithCompletionHandler:^(BOOL success) {
+        self.selectSurveyButton.title = @"Loading survey...";
+        [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
             //do any other background work;
             dispatch_async(dispatch_get_main_queue(), ^{
                 //AKRLog(@"Start OpenSurvey completion handler");
@@ -1342,15 +1336,16 @@
     }
 }
 
-- (void)closeSurvey:(Survey *)survey withConcurrentOpen:(BOOL)concurrentOpen
+- (void)closeSurveyWithConcurrentOpen:(BOOL)concurrentOpen
 {
-    //TODO: this works, but logs background errors when called after a active document is deleted.
-    if (survey) {
-        AKRLog(@"Closing survey document (%@)", survey.title);
-        [self incrementBusy];  //loading the survey document may block
+    //TODO: this works, but logs background errors when called after an active document is deleted.
+    if (self.survey && self.isViewLoaded) {
+        Survey *survey = self.survey;  //make a copy, since self.survey may be changed before I finish.
         if (survey.document.documentState == UIDocumentStateNormal) {
+            AKRLog(@"Closing survey document (%@)", survey.title);
+            [self incrementBusy];  //closing the survey document may block
             self.selectSurveyButton.title = @"Closing survey...";
-            self.currentMapEntity = nil;
+            self.currentMapEntity = nil; //The map didn't change, but the coredata entity will.
             if (self.isRecording) {
                 [self stopRecording];
             }
@@ -1363,13 +1358,12 @@
                         [self updateTitleBar];
                     } //else similar actions will be performed when the concurrent open finishes
                 } else {
-                    [[[UIAlertView alloc] initWithTitle:@"Fail" message:@"Unable to close the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to close the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
                 }
             }];
-        } else if (self.survey.document.documentState != UIDocumentStateClosed) {
+        } else if (survey.document.documentState != UIDocumentStateClosed) {
             AKRLog(@"Survey (%@) is in an abnormal state: %d", survey.title, survey.document.documentState);
-            [self decrementBusy];
-            [[[UIAlertView alloc] initWithTitle:@"Oh No!" message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            [[[UIAlertView alloc] initWithTitle:nil message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         }
     }
 }
