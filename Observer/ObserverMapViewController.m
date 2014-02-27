@@ -1345,10 +1345,10 @@
             AKRLog(@"Closing survey document (%@)", survey.title);
             [self incrementBusy];  //closing the survey document may block
             self.selectSurveyButton.title = @"Closing survey...";
-            self.currentMapEntity = nil; //The map didn't change, but the coredata entity will.
             if (self.isRecording) {
                 [self stopRecording];
             }
+            [self clearCachedEntities];
             [survey closeDocumentWithCompletionHandler:^(BOOL success) {
                 //this completion handler runs on the main queue;
                 //AKRLog(@"Start CloseSurvey completion handler");
@@ -1366,6 +1366,15 @@
             [[[UIAlertView alloc] initWithTitle:nil message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         }
     }
+}
+
+- (void)clearCachedEntities
+{
+    //If I switch coredata stores, I need to forget the entities that point to the current coredata store
+    self.currentMapEntity = nil;
+    self.lastGpsPointSaved = nil;
+    self.mission = nil;
+    self.currentMissionProperty = nil;
 }
 
 
