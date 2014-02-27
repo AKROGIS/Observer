@@ -11,8 +11,11 @@
 @interface AGSPoint (AKRAdditions)
 
 /**  Creates a new immutable point based on the offset from the reciever.
- the SR of the reciever and the units must be compatible (i.e. both linear or both angular)
- an identical point will be returned if the point has no SR, or SR and units do not match.
+ If the point has no or an unsupported SR, then nil will be returned
+ If the distance is in angular units, then nil will be returned
+ If the point is in a geographic point, then the point is projected to Web Mercator
+ to apply the angle/Distance offset, before being converted back.  This will yield an
+ approximate solution. No testing has been done to determine the accuracy.
  @param angle the angle (in clockwise degrees with North = 0) to the new point from the receiver.
  @param distance the distance the new point is located from the reciver
  @param units the units of the distance measurement.

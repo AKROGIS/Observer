@@ -12,17 +12,35 @@
 
 -(AGSPoint *)pointWithAngle:(double)angle distance:(double)distance units:(AGSSRUnit)units
 {
-    //FIXME: if point is geographic temporatily project it to do angle distance, then project back
-    
-    //distance will be nan if units and spatialreference.units are not similar (i.e. both linear, or both angular)
-    //that is, you cannot use meters with geographic points, or degrees with projected points.
-    distance = [self.spatialReference convertValue:distance fromUnit:units];
+    if (!self.spatialReference.isSupported) {
+        return nil;
+    }
+    if (9100 < units && units < 9200) {
+        //These are the angular units, which we do not support
+        return nil;
+    }
+
+    AGSPoint *point;
+    if (self.spatialReference.inLinearUnits) {
+        point = self;
+    } else {
+        AGSSpatialReference *webMercator = [[AGSSpatialReference alloc] initWithWKID:3857]; //Web Mercator
+        point =  (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:self toSpatialReference:webMercator];
+    }
+
+    double myDistance = [point.spatialReference convertValue:distance fromUnit:units];
     //angle is clockwise from North, convert to math angle: counterclockwise from East = 0
     angle = 90.0 - angle;
     angle = angle * M_PI / 180.0; //make it radians
-    double deltaX = isnan(distance) ? 0 : distance * cos(angle);
-    double deltaY = isnan(distance) ? 0 : distance * sin(angle);
-    return [AGSPoint pointWithX:self.x + deltaX y:self.y + deltaY spatialReference:self.spatialReference];
+    double deltaX = isnan(myDistance) ? 0 : myDistance * cos(angle);
+    double deltaY = isnan(myDistance) ? 0 : myDistance * sin(angle);
+    AGSPoint *newPoint = [AGSPoint pointWithX:point.x + deltaX y:point.y + deltaY spatialReference:point.spatialReference];
+
+    if (self.spatialReference.inLinearUnits) {
+        return newPoint;
+    } else {
+        return (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:newPoint toSpatialReference:self.spatialReference];
+    }
 }
 
 @end
