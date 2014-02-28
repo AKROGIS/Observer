@@ -294,6 +294,9 @@
     ProtocolFeature *feature = sender.feature;
     WaysToLocateFeature locationMethod = feature.allowedLocations.defaultNonTouchChoice;
     if (!locationMethod) {
+        if (!feature.preferredLocationMethod) {
+            feature.preferredLocationMethod = feature.allowedLocations.initialNonTouchChoice;
+        }
         locationMethod = feature.preferredLocationMethod;
     }
     [self addFeature:feature withNonTouchLocationMethod:locationMethod];
@@ -482,10 +485,10 @@
 
 - (void)layer:(AGSLayer *)layer didFailToLoadWithError:(NSError *)error
 {
+    self.map = nil;
+    [self configureObservationButtons];
     [self decrementBusy];
-    self.noMapLabel.hidden = NO;
-    NSString *errorMessage = [NSString stringWithFormat:@"Layer %@ failed to load with error: %@",layer.name, error.localizedDescription];
-    [[[UIAlertView alloc] initWithTitle:@"Layer Load Failure" message:errorMessage delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    [[[UIAlertView alloc] initWithTitle:@"Unable to load map" message:error.localizedDescription delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
 }
 
 
@@ -501,6 +504,7 @@
     [self initializeGraphicsLayer];
     [self reloadGraphics];
     [self setupGPS];
+    [self configureObservationButtons];
     [self decrementBusy];
 }
 
@@ -697,12 +701,12 @@
 
 - (BOOL)hasMap
 {
-    return self.map != nil;
+    return self.mapView.loaded;
 }
 
 - (BOOL)mapIsProjected
 {
-    return YES;  //TODO: calculate this value dynamically
+    return self.hasMap && self.mapView.spatialReference.inLinearUnits;
 }
 
 
@@ -943,10 +947,10 @@
 
     self.panButton.enabled = self.mapView.loaded;
 
-    self.startStopRecordingBarButtonItem.enabled = self.survey != nil;
-    self.startStopObservingBarButtonItem.enabled = self.isRecording && self.survey;
+    self.startStopRecordingBarButtonItem.enabled = self.context != nil;
+    self.startStopObservingBarButtonItem.enabled = self.isRecording && self.context;
     //TODO: if there are no mission properties, we should remove this button.
-    self.editEnvironmentBarButton.enabled = self.isRecording && self.survey && self.survey.protocol.missionFeature.attributes.count > 0;
+    self.editEnvironmentBarButton.enabled = self.isRecording && self.context && self.survey.protocol.missionFeature.attributes.count > 0;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
         item.enabled = self.isObserving;
     }
