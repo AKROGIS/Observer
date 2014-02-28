@@ -275,18 +275,23 @@
 
 -(void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    if (editing == self.isEditing) {
-        return;
-    }
     [super setEditing:editing animated:animated];
     [self.tableView setEditing:editing animated:animated];
     if (self.isEditing) {
-        [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:2]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        if ([self.tableView numberOfRowsInSection:2] == 1) {
+            [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:2]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
     } else {
-        [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:2]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        if ([self.tableView numberOfRowsInSection:2] == 0) {
+            [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:2]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
     }
 }
 
+-(void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [self setEditing:NO animated:YES];
+}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
