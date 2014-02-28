@@ -275,6 +275,9 @@
 
 -(void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
+    if (editing == self.isEditing) {
+        return;
+    }
     [super setEditing:editing animated:animated];
     [self.tableView setEditing:editing animated:animated];
     if (self.isEditing) {
