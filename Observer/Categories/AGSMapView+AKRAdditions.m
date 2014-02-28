@@ -10,22 +10,21 @@
 
 @implementation AGSMapView (AKRAdditions)
 
-- (void)zoomOutUntilVisible:(AGSPoint *)point animated:(BOOL)animated
+- (CGPoint)nearestScreenPoint :(AGSPoint *)point
 {
     if (!self.visibleArea.spatialReference || !point.spatialReference) {
-        return;
+        return CGPointZero;
     }
     if (![self.spatialReference isEqualToSpatialReference:point.spatialReference]) {
-        return;
+        return CGPointZero;
     }
     if ([self.visibleArea containsPoint:point]) {
-        return;
+        return [self toScreenPoint:point];
     }
     AGSGeometryEngine *ge = [AGSGeometryEngine defaultGeometryEngine];
-    AGSGeometry *buffer = [ge bufferGeometry:point byDistance:0.1]; //TODO: pick a better buffer (needs to work with geographic)
-    AGSGeometry *newExtent = [ge unionGeometries:@[self.visibleArea, buffer]];
-    [self zoomToGeometry:newExtent withPadding:40 animated:animated];
-    [self centerAtPoint:point animated:animated];
+    AGSProximityResult *proximity = [ge nearestCoordinateInGeometry:self.visibleArea toPoint:point];
+    return [self toScreenPoint:proximity.point];
 }
+
 
 @end

@@ -10,6 +10,6 @@
 
 @interface AGSMapView (AKRAdditions)
 
-- (void)zoomOutUntilVisible:(AGSPoint *)point animated:(BOOL)animated;
+- (CGPoint)nearestScreenPoint :(AGSPoint *)point;
 
 @end

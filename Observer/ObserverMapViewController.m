@@ -1454,8 +1454,6 @@
     Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self drawObservation:observation atPoint:mapPoint];
-    //[self.mapView zoomToGeometry:mapPoint withPadding:15 animated:YES];
-    [self.mapView zoomOutUntilVisible:mapPoint animated:NO];
     [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint];
 }
 
@@ -1642,8 +1640,6 @@
     }
     missionProperty.observing = self.isObserving;
     if (edit) {
-        //[self.mapView zoomToGeometry:mapPoint withPadding:15 animated:YES];
-        [self.mapView zoomOutUntilVisible:mapPoint animated:NO];
         [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:template atPoint:mapPoint];
     } else {
         [self copyAttributesForFeature:self.survey.protocol.missionFeature fromEntity:template toEntity:missionProperty];
@@ -1795,7 +1791,7 @@
         self.attributePopoverController = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
         self.attributePopoverController.delegate = self;
         self.popoverMapPoint = mappoint;
-        CGPoint screenPoint = [self.mapView toScreenPoint:mappoint];
+        CGPoint screenPoint = [self.mapView nearestScreenPoint:mappoint];
         CGRect rect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
         [self.attributePopoverController presentPopoverFromRect:rect inView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     } else {
