@@ -30,6 +30,7 @@
 #import "MapSelectViewController.h"
 #import "AttributeViewController.h"
 #import "FeatureSelectorTableViewController.h"
+#import "AGSMapView+AKRAdditions.h"
 
 //Views
 #import "AutoPanButton.h"
@@ -1453,6 +1454,8 @@
     Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self drawObservation:observation atPoint:mapPoint];
+    //[self.mapView zoomToGeometry:mapPoint withPadding:15 animated:YES];
+    [self.mapView zoomOutUntilVisible:mapPoint animated:NO];
     [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint];
 }
 
@@ -1639,6 +1642,8 @@
     }
     missionProperty.observing = self.isObserving;
     if (edit) {
+        //[self.mapView zoomToGeometry:mapPoint withPadding:15 animated:YES];
+        [self.mapView zoomOutUntilVisible:mapPoint animated:NO];
         [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:template atPoint:mapPoint];
     } else {
         [self copyAttributesForFeature:self.survey.protocol.missionFeature fromEntity:template toEntity:missionProperty];

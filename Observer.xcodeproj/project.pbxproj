@@ -26,6 +26,7 @@
 		396E1E961899AD2900B735EF /* ProtocolFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E951899AD2900B735EF /* ProtocolFeature.m */; };
 		396E1E991899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E981899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m */; };
 		396E1E9D189ADE8F00B735EF /* ProtocolFeatureSymbology.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E9C189ADE8F00B735EF /* ProtocolFeatureSymbology.m */; };
+		3982F6CA18C00D040081C3F9 /* AGSMapView+AKRAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3982F6C918C00D040081C3F9 /* AGSMapView+AKRAdditions.m */; };
 		398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 398908041857DDFD007B3F67 /* ArcGIS.bundle */; };
 		398908221857EB2F007B3F67 /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908191857EB2F007B3F67 /* Map.m */; };
 		398908231857EB2F007B3F67 /* MapCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989081B1857EB2F007B3F67 /* MapCollection.m */; };
@@ -166,6 +167,8 @@
 		396E1E9A189AD87000B735EF /* Sample Protocol.obsprot */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Sample Protocol.obsprot"; sourceTree = "<group>"; };
 		396E1E9B189ADE8F00B735EF /* ProtocolFeatureSymbology.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolFeatureSymbology.h; path = Protocols/ProtocolFeatureSymbology.h; sourceTree = "<group>"; };
 		396E1E9C189ADE8F00B735EF /* ProtocolFeatureSymbology.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolFeatureSymbology.m; path = Protocols/ProtocolFeatureSymbology.m; sourceTree = "<group>"; };
+		3982F6C818C00D040081C3F9 /* AGSMapView+AKRAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AGSMapView+AKRAdditions.h"; path = "Categories/AGSMapView+AKRAdditions.h"; sourceTree = "<group>"; };
+		3982F6C918C00D040081C3F9 /* AGSMapView+AKRAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "AGSMapView+AKRAdditions.m"; path = "Categories/AGSMapView+AKRAdditions.m"; sourceTree = "<group>"; };
 		398908041857DDFD007B3F67 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
 		398908181857EB2F007B3F67 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
 		398908191857EB2F007B3F67 /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Map.m; sourceTree = "<group>"; };
@@ -419,6 +422,8 @@
 			children = (
 				398908531857EDE1007B3F67 /* AGSPoint+AKRAdditions.h */,
 				398908541857EDE1007B3F67 /* AGSPoint+AKRAdditions.m */,
+				3982F6C818C00D040081C3F9 /* AGSMapView+AKRAdditions.h */,
+				3982F6C918C00D040081C3F9 /* AGSMapView+AKRAdditions.m */,
 				398908551857EDE1007B3F67 /* NSArray+map.h */,
 				398908561857EDE1007B3F67 /* NSArray+map.m */,
 				398908571857EDE1007B3F67 /* NSDate+Formatting.h */,
@@ -727,6 +732,7 @@
 				3989084F1857ED00007B3F67 /* SurveyCoreDataDocument.m in Sources */,
 				59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */,
 				39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */,
+				3982F6CA18C00D040081C3F9 /* AGSMapView+AKRAdditions.m in Sources */,
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
 				398908601857EDE1007B3F67 /* NSIndexSet+indexPath.m in Sources */,
