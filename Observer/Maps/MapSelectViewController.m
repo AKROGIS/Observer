@@ -290,7 +290,10 @@
 
 -(void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self setEditing:NO animated:YES];
+    //This is called _during_ the swipe to delete, and is ignored unless we dispatch it for later
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self setEditing:NO animated:YES];
+    });
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
