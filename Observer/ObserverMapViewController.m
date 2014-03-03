@@ -498,7 +498,7 @@
     self.map = nil;
     [self configureObservationButtons];
     [self decrementBusy];
-    [[[UIAlertView alloc] initWithTitle:@"Unable to load map" message:error.localizedDescription delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to load map" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
 }
 
 

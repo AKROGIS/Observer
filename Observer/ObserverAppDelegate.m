@@ -26,9 +26,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
-    self.observerMapViewController.map = [[Map alloc] initWithURL:[[Settings manager] selectedMap]];
-    self.observerMapViewController.survey = [[Survey alloc] initWithURL:[[Settings manager] selectedSurvey]];
+    Map *savedMap = [[Map alloc] initWithURL:[[Settings manager] selectedMap]];
+    if (savedMap.isValid) {
+        self.observerMapViewController.map = savedMap;
+    }
+    Survey *savedSurvey = [[Survey alloc] initWithURL:[[Settings manager] selectedSurvey]];
+    if (savedSurvey.isValid) {
+        self.observerMapViewController.survey = savedSurvey;
+    }
     return YES;
 }
 							
