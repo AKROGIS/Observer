@@ -173,6 +173,11 @@
         vc.selectedSurveyChangedName = ^{
             [self updateTitleBar];
         };
+        vc.surveyDeleted = ^(Survey *survey){
+            if ([self.survey isEqualToSurvey:survey]) {
+                self.survey = nil;
+            };
+        };
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
             self.surveysPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
             vc.popover = self.surveysPopoverController;
@@ -605,12 +610,6 @@
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
 {
     if (popoverController == self.surveysPopoverController) {
-        //the user may have deleted the currently loaded survey, and dismissed the popover.
-        //  In this case, we should change the active survey to nil, but we will not get a survey changed event, so..
-        SurveySelectViewController *vc = [self surveySelectViewController];
-        if (!vc.items.selectedSurvey) {
-            self.survey = nil;
-        }
         self.surveysPopoverController = nil;
     }
     if (popoverController == self.angleDistancePopoverController) {
