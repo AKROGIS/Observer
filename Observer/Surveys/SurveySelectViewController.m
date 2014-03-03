@@ -253,7 +253,7 @@
 {
     if(self.indexPathToDelete) {
         [self.items removeSurveyAtIndex:self.indexPathToDelete.urow];
-        [self.tableView deleteRowsAtIndexPaths:@[self.indexPathToDelete] withRowAnimation:UITableViewRowAnimationFade];
+        [self.tableView deleteRowsAtIndexPaths:@[self.indexPathToDelete] withRowAnimation:UITableViewRowAnimationAutomatic];
         self.indexPathToDelete = nil;
         //Deleting a current survey will change the selected survey to nil.  Presumably the user will select a new survey.
         //The presenter should check for this when the view controller is dismissed.

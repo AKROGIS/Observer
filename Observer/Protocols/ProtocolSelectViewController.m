@@ -89,42 +89,42 @@
 - (void) collection:(id)collection addedLocalItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:0];
-    [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:YES];
+    [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (void) collection:(id)collection addedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
     if (self.showRemoteProtocols) {
-        [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:YES];
+        [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
 
 - (void) collection:(id)collection removedLocalItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:0];
-    [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:YES];
+    [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (void) collection:(id)collection removedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
     if (self.showRemoteProtocols) {
-        [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:YES];
+        [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
 
 - (void) collection:(id)collection changedLocalItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:0];
-    [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:YES];
+    [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (void) collection:(id)collection changedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
     if (self.showRemoteProtocols) {
-        [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:YES];
+        [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
 
@@ -183,7 +183,7 @@
     
     if (indexPath.section == 2) {
         self.showRemoteProtocols = ! self.showRemoteProtocols;
-        [tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:YES];
+        [tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:UITableViewRowAnimationAutomatic];
         return;
     }
 
@@ -256,7 +256,7 @@
     }
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         [self.items removeLocalProtocolAtIndex:indexPath.urow];
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
 
@@ -301,7 +301,7 @@
             if (success) {
                 if (!self.showRemoteProtocols) {
                     self.showRemoteProtocols = YES;
-                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:YES];
+                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:UITableViewRowAnimationAutomatic];
                 }
             } else {
                 [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't connect to server" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
@@ -315,13 +315,13 @@
 {
     [self.items prepareToDownloadProtocolAtIndex:indexPath.urow];
     UITableView *tableView = self.tableView;
-    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     [self.items downloadProtocolAtIndex:indexPath.urow WithCompletionHandler:^(BOOL success) {
         //on background thread
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!success) {
                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't download protocol" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:YES];
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
             } else {
                 // updates are done by delegate calls
             }
