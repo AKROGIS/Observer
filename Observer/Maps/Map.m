@@ -31,7 +31,6 @@
 @property (nonatomic, strong, readwrite) UIImage *thumbnail;
 @property (nonatomic, strong, readwrite) AGSLocalTiledLayer *tileCache;
 @property (nonatomic) BOOL thumbnailIsLoaded;
-@property (nonatomic) BOOL tileCacheIsLoaded;
 
 @property (nonatomic) BOOL downloading;
 //TODO: move to NSOperation
@@ -193,16 +192,6 @@
     });
 }
 
-- (void)openTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler
-{
-    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
-        AGSLocalTiledLayer *tileCache = self.tileCache;
-        if (completionHandler) {
-            completionHandler(tileCache != nil);
-        }
-    });
-}
-
 - (UIImage *)thumbnail
 {
     if (!_thumbnail && !self.thumbnailIsLoaded) {
@@ -213,8 +202,9 @@
 
 - (AGSLocalTiledLayer *)tileCache
 {
-    if (!_tileCache && !self.tileCacheIsLoaded) {
-        [self loadTileCache];
+    if (!_tileCache) {
+        //with ArcGIS 10.2 tilecache is always valid, but may fail to loaded into mapView
+        _tileCache = [[AGSLocalTiledLayer alloc] initWithPath:[self.url path]];
     }
     return _tileCache;
 }
@@ -237,7 +227,7 @@
 
 - (BOOL) isValid
 {
-    return !self.isLocal || self.tileCache != nil;
+    return !self.isLocal || [[NSFileManager defaultManager] fileExistsAtPath:self.url.path];
 }
 
 - (BOOL)isLocal
@@ -301,18 +291,7 @@
     return thumb;
 }
 
-- (BOOL)loadTileCache
-{
-    self.tileCacheIsLoaded = YES;
-    @try {
-        //The AGS tile cache loader uses C++ exceptions for error handling.
-        _tileCache = [[AGSLocalTiledLayer alloc] initWithPath:[self.url path]];
-    }
-    @catch (NSException *exception) {
-        _tileCache = nil;
-    }
-    return _tileCache != nil;
-}
+
 
 
 #pragma mark - download

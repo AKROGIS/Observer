@@ -43,7 +43,6 @@
 @property (nonatomic, strong, readonly) AGSLocalTiledLayer *tileCache;
 
 - (void)openThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
-- (void)openTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // Designated initializer
 // This initializer should not be called by clients, as it returns a useless map.  Instead, use the convenience initializers
