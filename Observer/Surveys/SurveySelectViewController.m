@@ -235,6 +235,8 @@
     if ([alertView.title isEqualToString:@"Unsaved Changes"]) {
         if (buttonIndex == 1) {
             [self deleteSurvey];
+        } else {
+            self.editing = NO;
         }
     } else {
         AKRLog(@"Unexpected AlertView in SurveySelectViewController");
