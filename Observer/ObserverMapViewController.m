@@ -374,17 +374,7 @@
 - (void)updateSelectSurveyViewControllerWithNewSurvey:(Survey *)survey
 {
     //FIXME: if the protocol vc is on the top, then the survey is underneath, fix it before it is popped
-    SurveySelectViewController *vc = nil;
-    UINavigationController *nav = nil;
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
-    } else {
-        nav = self.navigationController;
-    }
-    if ([nav.topViewController isKindOfClass:[SurveySelectViewController class]]) {
-        vc = (SurveySelectViewController *)nav.topViewController;
-    }
-    [vc addSurvey:survey];
+    [[self surveySelectViewController] addSurvey:survey];
 }
 
 - (void)updateSelectMapViewControllerWithNewMap:(Map *)map
@@ -615,12 +605,13 @@
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
 {
     if (popoverController == self.surveysPopoverController) {
-        self.surveysPopoverController = nil;
-        //the user may have deleted the currently loaded survey;
-        SurveySelectViewController *vc = (SurveySelectViewController *)popoverController.contentViewController;
+        //the user may have deleted the currently loaded survey, and dismissed the popover.
+        //  In this case, we should change the active survey to nil, but we will not get a survey changed event, so..
+        SurveySelectViewController *vc = [self surveySelectViewController];
         if (!vc.items.selectedSurvey) {
             self.survey = nil;
         }
+        self.surveysPopoverController = nil;
     }
     if (popoverController == self.angleDistancePopoverController) {
         self.angleDistancePopoverController = nil;
@@ -829,6 +820,23 @@
     }
     return _addFeatureBarButtonItems;
 }
+
+- (SurveySelectViewController *)surveySelectViewController
+{
+    SurveySelectViewController *vc = nil;
+    UINavigationController *nav = nil;
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
+    } else {
+        nav = self.navigationController;
+    }
+    if ([nav.topViewController isKindOfClass:[SurveySelectViewController class]]) {
+        vc = (SurveySelectViewController *)nav.topViewController;
+    }
+    return vc;
+}
+
+
 
 
 #pragma mark - Private - UI configuration
