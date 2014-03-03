@@ -268,8 +268,12 @@
         return;
     }
     if (editingStyle == UITableViewCellEditingStyleDelete) {
+        Map *map = [self.items localMapAtIndex:indexPath.urow];
         [self.items removeLocalMapAtIndex:indexPath.urow];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        if (self.mapDeleted) {
+            self.mapDeleted(map);
+        }
     }
 }
 

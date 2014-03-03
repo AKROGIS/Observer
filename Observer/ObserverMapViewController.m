@@ -194,6 +194,11 @@
             self.map = map;
             self.mapsPopoverController = nil;
         };
+        vc.mapDeleted = ^(Map *map){
+            if ([self.map isEqualToMap:map]) {
+                self.map = nil;
+            };
+        };
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
             self.mapsPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
             vc.popover = self.mapsPopoverController;
