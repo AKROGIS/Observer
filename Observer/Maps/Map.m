@@ -31,6 +31,7 @@
 @property (nonatomic, strong, readwrite) UIImage *thumbnail;
 @property (nonatomic, strong, readwrite) AGSLocalTiledLayer *tileCache;
 @property (nonatomic) BOOL thumbnailIsLoaded;
+@property (nonatomic) BOOL tileCacheIsLoaded;
 
 @property (nonatomic) BOOL downloading;
 //TODO: move to NSOperation
@@ -202,9 +203,13 @@
 
 - (AGSLocalTiledLayer *)tileCache
 {
-    if (!_tileCache) {
+    if (!_tileCache && !self.tileCacheIsLoaded) {
+        self.tileCacheIsLoaded = YES;
         //with ArcGIS 10.2 tilecache is always valid, but may fail to loaded into mapView
-        _tileCache = [[AGSLocalTiledLayer alloc] initWithPath:[self.url path]];
+        //However accessing properties like fullEnvelope will yield an EXC_BAD_ACCESS
+        if ([[NSFileManager defaultManager] fileExistsAtPath:self.url.path]) {
+            _tileCache = [[AGSLocalTiledLayer alloc] initWithPath:[self.url path]];
+        }
     }
     return _tileCache;
 }
@@ -219,10 +224,15 @@
     if (!other) {
         return NO;
     }
-    return
-        (self.byteCount == other.byteCount) &&
-        ((self.author == other.author) || [self.author isEqual:other.author]) &&
-        ((self.date == other.date) || [self.date isEqual:other.date]);
+    //Comparing URLs is tricky, I am trying to be efficient, and permissive
+    BOOL urlMatch = [self.url isEqual:other.url] ||
+                    [self.url.absoluteURL isEqual:other.url.absoluteURL] ||
+                    [self.url.fileReferenceURL isEqual:other.url.fileReferenceURL];
+
+    return urlMatch ||
+           ((self.byteCount == other.byteCount) &&
+            ((self.author == other.author) || [self.author isEqual:other.author]) &&
+            ((self.date == other.date) || [self.date isEqual:other.date]));
 }
 
 - (BOOL) isValid

@@ -67,7 +67,7 @@
 
 //Views
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
-@property (weak, nonatomic) IBOutlet UILabel *noMapLabel;
+@property (weak, nonatomic) IBOutlet UIView *noMapView;
 @property (weak, nonatomic) IBOutlet UIButton *compassRoseButton;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mapLoadingIndicator;
 
@@ -510,7 +510,7 @@
 {
     //Tells the delegate the map is loaded and ready for use. Fires when the map’s base layer loads.
     AKRLog(@"Basemap has been loaded");
-    self.noMapLabel.hidden = YES;
+    self.noMapView.hidden = YES;
     [self initializeGraphicsLayer];
     [self loadGraphics];
     [self setupGPS];
@@ -1166,8 +1166,9 @@
 - (void)closeMap
 {
     [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
+    //TODO: reset does not clear the image, so the display is confusing; need to log ESRI bug, and add Covering view in Storyboard
     self.currentMapEntity = nil;
-    self.noMapLabel.hidden = NO;
+    self.noMapView.hidden = NO;
     self.panButton.enabled = NO;
 }
 
@@ -1177,7 +1178,7 @@
         if (self.map.tileCache)
         {
             [self incrementBusy];
-            self.noMapLabel.hidden = YES;
+            self.noMapView.hidden = YES;
             self.panButton.enabled = YES;
             self.map.tileCache.delegate = self;
             AKRLog(@"Loading the basemap %@", self.map);

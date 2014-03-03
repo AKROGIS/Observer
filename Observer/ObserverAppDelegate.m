@@ -26,7 +26,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    Map *savedMap = [[Map alloc] initWithURL:[[Settings manager] selectedMap]];
+    Map *savedMap = [[Map alloc] initWithLocalTileCache:[[Settings manager] selectedMap]];
     if (savedMap.isValid) {
         self.observerMapViewController.map = savedMap;
     }

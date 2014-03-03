@@ -26,6 +26,23 @@
                                     <outletCollection property="gestureRecognizers" destination="Gmo-Ux-MzB" appends="YES" id="Y3W-Rh-ytq"/>
                                 </connections>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vWS-gC-g0n">
+                                <rect key="frame" x="0.0" y="20" width="769" height="1005"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="No background map selected. Click the Maps button to select one." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="009-3q-8gq">
+                                        <rect key="frame" x="127" y="547" width="515" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="centerX" secondItem="009-3q-8gq" secondAttribute="centerX" id="bIX-fx-SCA"/>
+                                    <constraint firstAttribute="centerY" secondItem="009-3q-8gq" secondAttribute="centerY" constant="-55" id="lND-15-QxK"/>
+                                </constraints>
+                            </view>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="zJv-q7-y2x">
                                 <rect key="frame" x="366" y="504" width="37" height="37"/>
                             </activityIndicatorView>
@@ -88,29 +105,25 @@
                             <imageView opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="center" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" image="Crosshairs" translatesAutoresizingMaskIntoConstraints="NO" id="fpV-JS-knH">
                                 <rect key="frame" x="352" y="490" width="64" height="64"/>
                             </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="No background map selected. Click the Maps button to select one." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="009-3q-8gq">
-                                <rect key="frame" x="127" y="557" width="515" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="gK6-lQ-eLV" secondAttribute="trailing" id="0tW-7C-WRV"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="centerY" secondItem="zJv-q7-y2x" secondAttribute="centerY" id="HNZ-ve-753"/>
-                            <constraint firstAttribute="centerX" secondItem="009-3q-8gq" secondAttribute="centerX" id="Iel-Up-doe"/>
-                            <constraint firstAttribute="centerY" secondItem="009-3q-8gq" secondAttribute="centerY" constant="-55" id="K9S-Ah-BOf"/>
                             <constraint firstItem="fOP-b6-5IU" firstAttribute="top" secondItem="jAV-ok-Y8z" secondAttribute="bottom" constant="20" symbolic="YES" id="bbd-yI-sVt"/>
                             <constraint firstAttribute="centerX" secondItem="zJv-q7-y2x" secondAttribute="centerX" id="c9i-GS-Uhf"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="centerX" secondItem="fpV-JS-knH" secondAttribute="centerX" id="dSl-Tq-Iwi"/>
+                            <constraint firstItem="gK6-lQ-eLV" firstAttribute="leading" secondItem="vWS-gC-g0n" secondAttribute="leading" id="fab-kJ-dql"/>
+                            <constraint firstItem="gK6-lQ-eLV" firstAttribute="top" secondItem="vWS-gC-g0n" secondAttribute="top" id="kXI-cK-JkM"/>
                             <constraint firstItem="D2B-BM-dlF" firstAttribute="top" secondItem="3Af-C7-mib" secondAttribute="bottom" constant="20" symbolic="YES" id="lPc-eG-ECb"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leading" id="msM-N1-Wbb"/>
                             <constraint firstItem="D2B-BM-dlF" firstAttribute="top" secondItem="gK6-lQ-eLV" secondAttribute="bottom" id="nTs-2E-lF7"/>
+                            <constraint firstItem="gK6-lQ-eLV" firstAttribute="width" secondItem="vWS-gC-g0n" secondAttribute="width" id="nfN-Er-1Qq"/>
                             <constraint firstAttribute="trailing" secondItem="fOP-b6-5IU" secondAttribute="trailing" constant="20" symbolic="YES" id="nsx-gg-eH3"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="trailing" secondItem="SFd-OI-tIi" secondAttribute="trailing" id="qRh-xh-UHh"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leading" id="rOa-F8-w9s"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="centerY" secondItem="fpV-JS-knH" secondAttribute="centerY" id="tbR-TV-av8"/>
+                            <constraint firstItem="gK6-lQ-eLV" firstAttribute="height" secondItem="vWS-gC-g0n" secondAttribute="height" id="x1s-Hy-Stm"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="top" secondItem="jAV-ok-Y8z" secondAttribute="bottom" id="y1r-4K-euL"/>
                         </constraints>
                     </view>
@@ -120,7 +133,7 @@
                         <outlet property="editEnvironmentBarButton" destination="Fdi-yp-sWi" id="cJv-sd-s4Y"/>
                         <outlet property="mapLoadingIndicator" destination="zJv-q7-y2x" id="hBV-WL-ipD"/>
                         <outlet property="mapView" destination="gK6-lQ-eLV" id="1kI-MU-Eog"/>
-                        <outlet property="noMapLabel" destination="009-3q-8gq" id="t2W-18-0Iw"/>
+                        <outlet property="noMapView" destination="vWS-gC-g0n" id="yAc-3k-qYT"/>
                         <outlet property="panButton" destination="jXA-Ll-IBJ" id="ANP-0w-d3Q"/>
                         <outlet property="selectMapButton" destination="gJK-vn-5w7" id="H0i-2C-naE"/>
                         <outlet property="selectSurveyButton" destination="SCL-a5-7Et" id="aeX-q0-EBn"/>
