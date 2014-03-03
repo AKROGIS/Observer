@@ -530,7 +530,6 @@
     //Tells the delegate the map is loaded and ready for use. Fires when the map’s base layer loads.
     AKRLog(@"Basemap has been loaded");
     self.noMapView.hidden = YES;
-    [self initializeGraphicsLayer];
     [self loadGraphics];
     [self setupGPS];
     [self configureObservationButtons];
@@ -1245,7 +1244,6 @@
     for (AGSLayer *layer in graphicsLayers) {
         [self.mapView removeMapLayer:layer];
     }
-    [self initializeGraphicsLayer];
 }
 
 - (void)loadGraphics
@@ -1255,6 +1253,7 @@
         AKRLog(@"Loading graphics - can't because %@.", surveyReady ? @"map isn't loaded" : (self.mapView.loaded ? @"survey isn't loaded" : @"map AND survey are null! - how did that happen?"));
         return;
     }
+    [self initializeGraphicsLayer];
     AKRLog(@"Loading graphics from coredata");
     AKRLog(@"  Fetching gpsPoints");
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
