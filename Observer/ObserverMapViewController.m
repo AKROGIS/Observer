@@ -498,7 +498,7 @@
     AKRLog(@"Basemap has been loaded");
     self.noMapLabel.hidden = YES;
     [self initializeGraphicsLayer];
-    [self reloadGraphics];
+    [self loadGraphics];
     [self setupGPS];
     [self configureObservationButtons];
     [self decrementBusy];
@@ -1229,7 +1229,7 @@
     [self initializeGraphicsLayer];
 }
 
-- (void)reloadGraphics
+- (void)loadGraphics
 {
     BOOL surveyReady = self.survey.document.documentState == UIDocumentStateNormal;
     if (!surveyReady || !self.mapView.loaded) {
@@ -1237,7 +1237,6 @@
         return;
     }
     AKRLog(@"Loading graphics from coredata");
-    [self clearGraphics];
     AKRLog(@"  Fetching gpsPoints");
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
     request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:kTimestampKey ascending:YES]];
@@ -1336,7 +1335,7 @@
                 //AKRLog(@"Start OpenSurvey completion handler");
                 if (success) {
                     [self logStats];
-                    [self reloadGraphics];
+                    [self loadGraphics];
                     [self configureObservationButtons];
                 } else {
                     [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
@@ -1360,12 +1359,13 @@
             if (self.isRecording) {
                 [self stopRecording];
             }
-            [self clearCachedEntities];
             [survey closeDocumentWithCompletionHandler:^(BOOL success) {
                 //this completion handler runs on the main queue;
                 //AKRLog(@"Start CloseSurvey completion handler");
                 [self decrementBusy];
                 if (success) {
+                    [self clearCachedEntities];
+                    [self clearGraphics];
                     if (!concurrentOpen) {
                         [self updateTitleBar];
                     } //else similar actions will be performed when the concurrent open finishes
