@@ -264,16 +264,16 @@
 {
     [super setEditing:editing animated:animated];
     [self.tableView setEditing:editing animated:animated];
-    if (self.isEditing) {
-        [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:2]] withRowAnimation:YES];
-    } else {
-        [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:2]] withRowAnimation:YES];
-    }
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:2] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
-
-
-
+-(void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    //This is called _during_ the swipe to delete CommitEditing, and is ignored unless we dispatch it for later
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self setEditing:NO animated:YES];
+    });
+}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
