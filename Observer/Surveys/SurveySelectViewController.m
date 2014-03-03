@@ -143,16 +143,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.items setSelectedSurvey:indexPath.urow];
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        [self.popover dismissPopoverAnimated:YES];
-        if (self.popoverDismissed) {
-            self.popoverDismissed();
-        }
-        if (self.surveySelectedCallback) {
-            self.surveySelectedCallback(self.items.selectedSurvey);
-        }
-    } else {
-        [self.navigationController popViewControllerAnimated:YES];
+    if (self.surveySelectedCallback) {
+        self.surveySelectedCallback(self.items.selectedSurvey);
     }
 }
 

@@ -166,9 +166,12 @@
         vc.items = [SurveyCollection sharedCollection];
         vc.surveySelectedCallback = ^(Survey *survey){
             self.survey = survey;
-        };
-        vc.popoverDismissed = ^{
-            self.surveysPopoverController = nil;
+            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+                [self.surveysPopoverController dismissPopoverAnimated:YES];
+                self.surveysPopoverController = nil;
+            } else {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
         };
         vc.selectedSurveyChangedName = ^{
             [self updateTitleBar];
@@ -192,7 +195,12 @@
         vc.items = [MapCollection sharedCollection];
         vc.mapSelectedCallback = ^(Map *map){
             self.map = map;
-            self.mapsPopoverController = nil;
+            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+                [self.mapsPopoverController dismissPopoverAnimated:YES];
+                self.mapsPopoverController = nil;
+            } else {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
         };
         vc.mapDeleted = ^(Map *map){
             if ([self.map isEqualToMap:map]) {
@@ -205,7 +213,8 @@
             vc.popover.delegate = self;
         }
         return;
-    }}
+    }
+}
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {

@@ -203,19 +203,13 @@
         if (self.isBackgroundRefreshing)
         {
             [[[UIAlertView alloc] initWithTitle:@"Try Again" message:@"Can not download while refreshing.  Please try again when refresh is complete." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-            return;
         } else {
             [self downloadItem:indexPath];
-            return;
         }
+        return;
     }
 
     [self.items setSelectedLocalMap:indexPath.urow];
-    if (self.popover) {
-        [self.popover dismissPopoverAnimated:YES];
-    } else {
-        [self.navigationController popViewControllerAnimated:YES];
-    }
     if (self.mapSelectedCallback) {
         self.mapSelectedCallback(self.items.selectedLocalMap);
     }
