@@ -392,23 +392,39 @@
 
 - (void)updateSelectSurveyViewControllerWithNewSurvey:(Survey *)survey
 {
-    //FIXME: if the protocol vc is on the top, then the survey is underneath, fix it before it is popped
-    [[self surveySelectViewController] addSurvey:survey];
+    if (survey) {
+        SurveySelectViewController *vc = nil;
+        UINavigationController *nav = nil;
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
+        } else {
+            nav = self.navigationController;
+        }
+        for (UIViewController *vc1 in nav.viewControllers) {
+            if ([vc1 isKindOfClass:[SurveySelectViewController class]]) {
+                vc = (SurveySelectViewController *)vc1;
+                break;
+            }
+        }
+        [vc addSurvey:survey];
+    }
 }
 
 - (void)updateSelectMapViewControllerWithNewMap:(Map *)map
 {
-    MapSelectViewController *vc = nil;
-    UINavigationController *nav = nil;
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        nav = (UINavigationController *)self.mapsPopoverController.contentViewController;
-    } else {
-        nav = self.navigationController;
+    if (map) {
+        MapSelectViewController *vc = nil;
+        UINavigationController *nav = nil;
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            nav = (UINavigationController *)self.mapsPopoverController.contentViewController;
+        } else {
+            nav = self.navigationController;
+        }
+        if ([nav.topViewController isKindOfClass:[MapSelectViewController class]]) {
+            vc = (MapSelectViewController *)nav.topViewController;
+        }
+        [vc addMap:map];
     }
-    if ([nav.topViewController isKindOfClass:[MapSelectViewController class]]) {
-        vc = (MapSelectViewController *)nav.topViewController;
-    }
-    [vc addMap:map];
 }
 
 - (void)updateSelectProtocolViewControllerWithNewProtocol:(SProtocol *)protocol
@@ -420,8 +436,11 @@
     } else {
         nav = self.navigationController;
     }
-    if ([nav.topViewController isKindOfClass:[ProtocolSelectViewController class]]) {
-        vc = (ProtocolSelectViewController *)nav.topViewController;
+    for (UIViewController *vc1 in nav.viewControllers) {
+        if ([vc1 isKindOfClass:[ProtocolSelectViewController class]]) {
+            vc = (ProtocolSelectViewController *)vc1;
+            break;
+        }
     }
     [vc addProtocol:protocol];
     //FIXME: Create/Open Survey for new protocol
@@ -832,21 +851,6 @@
         _addFeatureBarButtonItems = [NSMutableArray new];
     }
     return _addFeatureBarButtonItems;
-}
-
-- (SurveySelectViewController *)surveySelectViewController
-{
-    SurveySelectViewController *vc = nil;
-    UINavigationController *nav = nil;
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
-    } else {
-        nav = self.navigationController;
-    }
-    if ([nav.topViewController isKindOfClass:[SurveySelectViewController class]]) {
-        vc = (SurveySelectViewController *)nav.topViewController;
-    }
-    return vc;
 }
 
 
