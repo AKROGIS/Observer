@@ -368,11 +368,12 @@
     if ([survey isEqualToSurvey:_survey]) {
         return;
     }
-    [self closeSurveyWithConcurrentOpen:(survey != nil)];
-    _survey = survey;
-    [Settings manager].selectedSurvey = survey.url;
-    [self openSurvey];
-    [self updateSelectSurveyViewControllerWithNewSurvey:survey];
+    if ([self closeSurveyWithConcurrentOpen:(survey != nil)]) {
+        _survey = survey;
+        [Settings manager].selectedSurvey = survey.url;
+        [self openSurvey];
+        [self updateSelectSurveyViewControllerWithNewSurvey:survey];
+    }
 }
 
 - (void)setMap:(Map *)map
@@ -1365,9 +1366,8 @@
     }
 }
 
-- (void)closeSurveyWithConcurrentOpen:(BOOL)concurrentOpen
+- (BOOL)closeSurveyWithConcurrentOpen:(BOOL)concurrentOpen
 {
-    //TODO: this works, but logs background errors when called after an active document is deleted.
     if (self.survey && self.isViewLoaded) {
         Survey *survey = self.survey;  //make a copy, since self.survey may be changed before I finish.
         if (survey.document.documentState == UIDocumentStateNormal) {
@@ -1377,25 +1377,28 @@
             if (self.isRecording) {
                 [self stopRecording];
             }
+            [self clearCachedEntities];
+            [self clearGraphics];
             [survey closeDocumentWithCompletionHandler:^(BOOL success) {
                 //this completion handler runs on the main queue;
                 //AKRLog(@"Start CloseSurvey completion handler");
-                [self decrementBusy];
-                if (success) {
-                    [self clearCachedEntities];
-                    [self clearGraphics];
-                    if (!concurrentOpen) {
-                        [self updateTitleBar];
-                    } //else similar actions will be performed when the concurrent open finishes
-                } else {
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to close the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                if (!success) {
+                    //This happens if I deleted the active survey (and there are unsaved changes).  Due to the asyncronity
+                    //the delete can happen before the close can finish.  But I don't really care, because it is deleted.
+                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to close the survey. (Did you just delete it?)" delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
                 }
+                if (!concurrentOpen) {
+                    [self updateTitleBar];
+                }
+                [self decrementBusy];
             }];
         } else if (survey.document.documentState != UIDocumentStateClosed) {
             AKRLog(@"Survey (%@) is in an abnormal state: %d", survey.title, survey.document.documentState);
             [[[UIAlertView alloc] initWithTitle:nil message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            return NO;
         }
     }
+    return YES;
 }
 
 - (void)clearCachedEntities

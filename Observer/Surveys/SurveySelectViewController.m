@@ -247,11 +247,12 @@
 {
     if(self.indexPathToDelete) {
         Survey *survey = [self.items surveyAtIndex:self.indexPathToDelete.urow];
-        [self.items removeSurveyAtIndex:self.indexPathToDelete.urow];
-        [self.tableView deleteRowsAtIndexPaths:@[self.indexPathToDelete] withRowAnimation:UITableViewRowAnimationAutomatic];
+        //give the invoker notice, so they can cleanup/close before we remove the file.
         if (self.surveyDeleted) {
             self.surveyDeleted(survey);
         }
+        [self.items removeSurveyAtIndex:self.indexPathToDelete.urow];
+        [self.tableView deleteRowsAtIndexPaths:@[self.indexPathToDelete] withRowAnimation:UITableViewRowAnimationAutomatic];
         self.indexPathToDelete = nil;
     }
 }
