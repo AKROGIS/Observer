@@ -8,7 +8,6 @@
 
 #import "SurveySelectViewController.h"
 #import "SurveyCollection.h"
-#import "ProtocolCollection.h"
 #import "SurveyDetailViewController.h"
 #import "SurveyTableViewCell.h"
 #import "ProtocolSelectViewController.h"

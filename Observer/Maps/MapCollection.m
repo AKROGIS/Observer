@@ -333,7 +333,7 @@ static MapCollection *_sharedCollection = nil;
 
 - (void)loadAndCorrectListOfMaps
 {
-    //TODO: compare with similar method in SurveyCollection
+    //TODO: compare with similar method in other collections
     //temporarily remove the delegate so that updates are not sent for the bulk updates before the UI might be ready
     //  currently unnecessary, since open is only called when the delegate is nil;
     id savedDelegate = self.delegate;
