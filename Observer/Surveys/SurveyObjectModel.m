@@ -29,9 +29,6 @@
     NSEntityDescription *entity = [[mom entitiesByName] valueForKey:kMissionPropertyEntityName];
     NSMutableArray *attributeProperties = [NSMutableArray arrayWithArray:entity.properties];
     [attributeProperties addObjectsFromArray:attributes];
-    //FIXME: adding attributes causes errors and eventurally fails, if we created a similar MOM prior
-    // open a suvey, then open a different survey, then reopen the first survey -- generates error that properties already exist, although you cant see them.
-    //do this again, and the app will crash.
     [entity setProperties:attributeProperties];
     return mom;
 }
@@ -48,8 +45,6 @@
     entity.name = entityName;
     observation.subentities = [[observation subentities] arrayByAddingObject:entity];
     mom.entities = [[mom entities] arrayByAddingObject:entity];
-    //FIXME: adding attributes causes errors and eventurally fails, if we created a similar MOM prior
-    //see discussion above.
     [entity setProperties:attributes];
     return mom;
 }
