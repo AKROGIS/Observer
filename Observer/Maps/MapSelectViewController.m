@@ -8,6 +8,7 @@
 
 #import "MapSelectViewController.h"
 #import "Map.h"
+#import "MapCollection.h"
 #import "NSIndexSet+indexPath.h"
 #import "NSIndexPath+unsignedAccessors.h"
 
@@ -18,6 +19,7 @@
 
 
 @interface MapSelectViewController ()
+@property (strong, nonatomic) MapCollection *items; //Model
 @property (nonatomic) BOOL showRemoteMaps;
 @property (nonatomic) BOOL isBackgroundRefreshing;
 @property (weak, nonatomic) IBOutlet UILabel *refreshLabel;
@@ -72,10 +74,19 @@
     return _detailViewController;
 }
 
-- (void) setItems:(MapCollection *)items
+- (MapCollection *)items
 {
-    _items = items;
-    items.delegate = self;
+    if (!_items) {
+        _items = [MapCollection sharedCollection];
+        _items.delegate = self;
+        [_items openWithCompletionHandler:^(BOOL success) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
+        }];
+        //FIXME: I can't use items until load is finished
+    }
+    return _items;
 }
 
 - (void) addMap:(Map *)map

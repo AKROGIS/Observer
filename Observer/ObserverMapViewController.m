@@ -38,9 +38,6 @@
 
 //Support Model Objects
 #import "AutoPanStateMachine.h"
-#import "SurveyCollection.h"
-#import "MapCollection.h"
-#import "ProtocolCollection.h"
 
 //Constants and Magic Numbers/Strings
 #define kGpsPointsLayer            @"gpsPointsLayer"
@@ -128,7 +125,6 @@
     [self configureMapView];
     [self configureGpsButton];
     [self configureObservationButtons];
-    [self initializeData];
     [self openMap];
     [self openSurvey];
 }
@@ -163,7 +159,6 @@
     if ([segue.identifier isEqualToString:@"Select Survey"]){
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
-        vc.items = [SurveyCollection sharedCollection];
         vc.surveySelectedCallback = ^(Survey *survey){
             self.survey = survey;
             if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
@@ -192,7 +187,6 @@
     if ([segue.identifier isEqualToString:@"Select Map"]) {
         MapSelectViewController *vc = (MapSelectViewController *)vc1;
         vc.title = segue.identifier;
-        vc.items = [MapCollection sharedCollection];
         vc.mapSelectedCallback = ^(Map *map){
             self.map = map;
             if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
@@ -428,7 +422,7 @@
     }
 }
 
-- (void)updateSelectProtocolViewControllerWithNewProtocol:(SProtocol *)protocol
+- (void)newProtocolAvailable:(SProtocol *)protocol
 {
     ProtocolSelectViewController *vc = nil;
     UINavigationController *nav = nil;
@@ -917,33 +911,6 @@
             [[barButton valueForKey:@"view"] addGestureRecognizer:barButton.longPress];
         }
     }
-}
-
-- (void)initializeData
-{
-    //FIXME: this should be done only when necessary
-    [[SurveyCollection sharedCollection] openWithCompletionHandler:nil];
-    [[MapCollection sharedCollection] openWithCompletionHandler:nil];
-
-//    [self incrementBusy];
-//    self.surveys = [SurveyCollection sharedCollection];
-//    [self.surveys openWithCompletionHandler:^(BOOL success) {
-//        //do any other background work;
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [self openSurvey];
-//            [self decrementBusy];
-//        });
-//    }];
-//
-//    [self incrementBusy];
-//    self.maps = [MapCollection sharedCollection];
-//    [self.maps openWithCompletionHandler:^(BOOL success) {
-//        //do any other background work;
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [self loadBaseMap];
-//            [self decrementBusy];
-//        });
-//    }];
 }
 
 -(void)updateTitleBar

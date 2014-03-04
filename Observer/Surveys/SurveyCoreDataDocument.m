@@ -8,13 +8,13 @@
 
 #import "SurveyCoreDataDocument.h"
 #import "SurveyObjectModel.h"
-#import "SurveyCollection.h"
+#import "Survey.h"
 
 @implementation SurveyCoreDataDocument
 
 - (NSManagedObjectModel *)managedObjectModel
 {
-    Survey *survey = [[Survey alloc]  initWithURL:[self.fileURL URLByDeletingLastPathComponent]];
+    Survey *survey = [[Survey alloc] initWithURL:[self.fileURL URLByDeletingLastPathComponent]];
     return [SurveyObjectModel objectModelWithProtocol:survey.protocol];
 }
 

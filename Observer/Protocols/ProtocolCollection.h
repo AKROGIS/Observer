@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
-@class ProtocolCollection;
-
 //Note that the data model will be changed on the background thread, as changes are made to the collections
 //that are referenced by the table view, I must do the insert/delete/change on the mainthread with the call
 //to update the UI, otherwise, I will get an internal inconsistency error

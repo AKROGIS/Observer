@@ -7,6 +7,7 @@
 //
 
 #import "SurveySelectViewController.h"
+#import "SurveyCollection.h"
 #import "ProtocolCollection.h"
 #import "SurveyDetailViewController.h"
 #import "SurveyTableViewCell.h"
@@ -16,8 +17,10 @@
 #import "NSIndexPath+unsignedAccessors.h"
 
 @interface SurveySelectViewController ()
+// The list of items to present in the table view
+// TODO: should I make the collection the datasource delegate?
+@property (nonatomic, strong) SurveyCollection *items; //Model
 @property (strong, nonatomic) UIBarButtonItem *addButton;
-@property (strong, nonatomic) ProtocolCollection* protocols;
 @property (strong, nonatomic) NSIndexPath *indexPathToDelete;
 @end
 
@@ -44,13 +47,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self configureControlsEnableAddButton:NO];
-    self.protocols = [ProtocolCollection sharedCollection];
-    [self.protocols openWithCompletionHandler:^(BOOL success) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self configureControlsEnableAddButton:YES];
-        });
-    }];
+    //TODO: simplify, we are always enabled now.
+    [self configureControlsEnableAddButton:YES];
 }
 
 - (void)configureControlsEnableAddButton:(BOOL)enableAdd
@@ -86,15 +84,29 @@
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         [self.navigationController setToolbarHidden:YES animated:NO];
     }
-    //Cannot release shared collection when view disappears because app was put in the background
-    //we may wake up with a new protocol, and we need to get the delegate from the shared instance to update the table view.
-    //[ProtocolCollection releaseSharedCollection];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+
+- (SurveyCollection *)items
+{
+    if (!_items) {
+        _items = [SurveyCollection sharedCollection];
+        //TODO: should I implement a delegate on Survey Collection like maps and protocols?
+        //_items.delegate = self;
+        [_items openWithCompletionHandler:^(BOOL success) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
+        }];
+        //FIXME: I can't use items until load is finished 
+    }
+    return _items;
 }
 
 - (void) addSurvey:(Survey *)survey
@@ -200,15 +212,13 @@
     if ([[segue identifier] isEqualToString:@"Select Protocol"]) {
         ProtocolSelectViewController *vc = (ProtocolSelectViewController *)segue.destinationViewController;
         vc.title = segue.identifier;
-        vc.items = self.protocols;
-        vc.rowSelectedCallback = ^(NSIndexPath *indexPath){
-            [self newSurveyWithProtocol:[self.protocols localProtocolAtIndex:indexPath.urow]];
+        vc.protocolSelectedCallback = ^(SProtocol *protocol){
+            [self newSurveyWithProtocol:protocol];
         };
         //if we are in a popover, we want the new vc to stay the same size.
         [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
     }
 }
-
 
 - (void) newSurveyWithProtocol:(SProtocol *)protocol
 {

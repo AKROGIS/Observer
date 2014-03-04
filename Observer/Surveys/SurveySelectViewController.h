@@ -7,14 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SurveyCollection.h"
 #import "SurveyDetailViewController.h"
 
 @interface SurveySelectViewController : UITableViewController <UIAlertViewDelegate, UITextFieldDelegate>
-
-// The list of items to present in the table view
-// TODO: should I make the collection the datasource delegate?
-@property (nonatomic, strong) SurveyCollection *items;
 
 // The popover (maybe nil) that this view controller is presented in
 @property (nonatomic, strong) UIPopoverController *popover;

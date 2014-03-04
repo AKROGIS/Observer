@@ -16,10 +16,10 @@
 // initializer in UIManagedDocument, so there is no way to set a property in the subclass
 // that can be used in managedObjectModel to control this creation.
 
-// Since this UIManagedDocument is a sub-document of the survey (and will always be in a sub-
-// folder of the survey), I can use url (provided in the initializer) to get the relevant
-// survey from the singleton SurveyCollection.  I can then use the survey's protocol to
-// create the object model.
+// Since this UIManagedDocument is a sub-document of a survey document (and will always be
+// in a sub-folder of the survey document), I can use url (provided in the initializer) to
+// get the url necessary to create the parent survey, which will yield the protocol needed
+// to create the object model.
 
 
 #import <UIKit/UIKit.h>

@@ -9,12 +9,14 @@
 #import "ProtocolSelectViewController.h"
 #import "ProtocolTableViewCell.h"
 #import "SProtocol.h"
+#import "ProtocolCollection.h"
 #import "NSIndexSet+indexPath.h"
 #import "NSDate+Formatting.h"
 #import "Settings.h"
 #import "NSIndexPath+unsignedAccessors.h"
 
 @interface ProtocolSelectViewController ()
+@property (strong, nonatomic) ProtocolCollection *items; //Model
 @property (nonatomic) BOOL showRemoteProtocols;
 @property (nonatomic) BOOL isBackgroundRefreshing;
 @property (weak, nonatomic) IBOutlet UILabel *refreshLabel;
@@ -69,11 +71,21 @@
     return _detailViewController;
 }
 
-- (void) setItems:(ProtocolCollection *)items
+- (ProtocolCollection *)items
 {
-    _items = items;
-    items.delegate = self;
+    if (!_items) {
+        _items = [ProtocolCollection sharedCollection];
+        _items.delegate = self;
+        [_items openWithCompletionHandler:^(BOOL success) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
+        }];
+        //FIXME: I can't use items until load is finished
+    }
+    return _items;
 }
+
 
 
 #pragma mark - Public Methods
@@ -191,23 +203,24 @@
         if (self.isBackgroundRefreshing)
         {
             [[[UIAlertView alloc] initWithTitle:@"Try Again" message:@"Can not download while refreshing.  Please try again when refresh is complete." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-            return;
         } else {
             [self downloadItem:indexPath];
-            return;
+        }
+        return;
+    }
+
+    if (indexPath.section == 0) {
+        //TODO: dismiss in presenting controller; when callback is received
+        if (self.popover) {
+            [self.popover dismissPopoverAnimated:YES];
+        } else {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+        if (self.protocolSelectedCallback) {
+            self.protocolSelectedCallback([self.items localProtocolAtIndex:indexPath.urow]);
         }
     }
-
-    if (self.popover) {
-        [self.popover dismissPopoverAnimated:YES];
-    } else {
-        [self.navigationController popViewControllerAnimated:YES];
-    }
-    if (self.rowSelectedCallback) {
-        self.rowSelectedCallback(indexPath);
-    }
 }
-
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {

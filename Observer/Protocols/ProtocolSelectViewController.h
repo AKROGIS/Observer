@@ -8,14 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "ProtocolDetailViewController.h"
-#import "ProtocolCollection.h"
+#import "AKRCollectionChanged.h"
+#import "SProtocol.h"
 
 @interface ProtocolSelectViewController : UITableViewController <CollectionChanged>
 
 @property (strong, nonatomic) ProtocolDetailViewController *detailViewController;
-@property (strong, nonatomic) ProtocolCollection *items;
 @property (strong, nonatomic) UIPopoverController *popover;
-@property (copy, nonatomic) void (^rowSelectedCallback)(NSIndexPath *indexPath);
+@property (copy, nonatomic) void (^protocolSelectedCallback)(SProtocol *protocol);
 
 //Add the protocol to the table view if it isn't there already
 - (void) addProtocol:(SProtocol *)protocol;

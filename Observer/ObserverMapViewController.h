@@ -16,6 +16,6 @@
 @property (strong, nonatomic) Map *map;
 
 // Call this if there is a new protocol available
-- (void)updateSelectProtocolViewControllerWithNewProtocol:(SProtocol *)protocol;
+- (void)newProtocolAvailable:(SProtocol *)protocol;
 
 @end

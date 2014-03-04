@@ -9,6 +9,7 @@
 #import "ObserverAppDelegate.h"
 #import "ObserverMapViewController.h"
 #import "Settings.h"
+#import "NSURL+unique.h"
 #import "SurveyCollection.h"
 #import "MapCollection.h"
 #import "ProtocolCollection.h"
@@ -34,6 +35,12 @@
     if (savedSurvey.isValid) {
         self.observerMapViewController.survey = savedSurvey;
     }
+    //Start the loading of the map/survey lists in the background
+    //Collections are not needed here, they are only loadded as a time optimazation
+    //FIXME: This costs space.  Is it helpful to preload (in the background) the collection models?
+    [[MapCollection sharedCollection] openWithCompletionHandler:nil];
+    [[SurveyCollection sharedCollection] openWithCompletionHandler:nil];
+    [[ProtocolCollection sharedCollection] openWithCompletionHandler:nil];
     return YES;
 }
 							
@@ -70,25 +77,58 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    // Called when this app is asked to open a resourse (at url) by a different app
+    // Called when this app is asked to open a resource (url) by a different app
+    // The url is a local file resource (typically in Documents/Inbox), and can only
+    //   be a file type that I have registered interest in (app configuration plist)
     // The user will expect a short delay to open the file
     AKRLog(@"%@ asked me to open %@", sourceApplication, url);
-    if ([SurveyCollection collectsURL:url]) {
-        Survey *newSurvey = [[SurveyCollection sharedCollection] openURL:url];
-        self.observerMapViewController.survey = newSurvey;
-        return YES;
+
+    //The url may contain a resource (e.g. a tile package) that we already have in the documents directory.
+    //  This is unlikely, and while we could try to determine equality and return the existing resource if
+    //  the new resource is a duplicate, there is a chance for false positives, which would frustrate the user.
+    //  It is better to just do what the user asked - They can then determine equality and remove the duplicate.
+
+    NSURL *documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+    NSURL *newUrl = [documentsDirectory URLByAppendingPathComponent:url.lastPathComponent];
+    newUrl = [newUrl URLByUniquingPath];
+    NSError *error = nil;
+    [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
+    if (error) {
+        [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Unable to open file." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        return NO;
+    }
+
+    if ([SurveyCollection collectsURL:newUrl]) {
+        Survey *newSurvey = [[Survey alloc] initWithURL:newUrl];
+        if ([newSurvey isValid]) {
+            self.observerMapViewController.survey = newSurvey;
+            return YES;
+        } else {
+            [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Not a Valid Survey." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            return NO;
+        }
     }
     if ([MapCollection collectsURL:url]) {
-        //FIXME: this URL may contain a map we already have, what should we do?
-        Map *newMap = [[MapCollection sharedCollection] openURL:url];
-        self.observerMapViewController.map = newMap;
-        return YES;
+        Map *newMap = [[Map alloc] initWithLocalTileCache:newUrl];
+        if ([newMap isValid]) {
+            self.observerMapViewController.map = newMap;
+            return YES;
+        } else {
+            [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Not a Valid Map." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            return NO;
+        }
     }
     if ([ProtocolCollection collectsURL:url]) {
-        SProtocol *newProtocol = [[ProtocolCollection sharedCollection] openURL:url];
-        [self.observerMapViewController updateSelectProtocolViewControllerWithNewProtocol:newProtocol];
-        return YES;
+        SProtocol *newProtocol = [[SProtocol alloc] initWithURL:newUrl];
+        if ([newProtocol isValid]) {
+            [self.observerMapViewController newProtocolAvailable:newProtocol];
+            return YES;
+        } else {
+            [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Not a Valid Survey Protocol" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            return NO;
+        }
     }
+    AKRLog(@"Oh No!, Unhandled file type %@", url.lastPathComponent);
     return NO;
 }
 

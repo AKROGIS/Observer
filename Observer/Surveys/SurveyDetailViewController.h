@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SurveyCollection.h"
+#import "Survey.h"
 
 @interface SurveyDetailViewController : UIViewController <UISplitViewControllerDelegate>
 
-@property (strong, nonatomic) id<AKRTableViewItem> detailItem;
+@property (strong, nonatomic) Survey *detailItem;
 
 @end
