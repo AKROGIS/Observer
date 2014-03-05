@@ -170,12 +170,12 @@
             self.survey = survey;
         };
         vc.surveyUpdatedAction = ^(Survey *survey){
-            if (survey == self.survey) {
+            if ([survey isEqualToSurvey:self.survey]) {
                 [self updateTitleBar];
             }
         };
         vc.surveyDeletedAction = ^(Survey *survey){
-            if (self.survey == survey) {
+            if ([survey isEqualToSurvey:self.survey]) {
                 self.survey = nil;
             };
         };
@@ -200,7 +200,7 @@
             self.map = map;
         };
         vc.mapDeletedAction = ^(Map *map){
-            if (self.map == map) {
+            if ([map isEqualToMap:map]) {
                 self.map = nil;
             };
         };
