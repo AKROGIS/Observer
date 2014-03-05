@@ -13,8 +13,6 @@
 
 @interface SurveyCollection()
 @property (nonatomic, strong) NSMutableArray *items;
-@property (nonatomic) BOOL isLoading;
-@property (nonatomic) BOOL isLoaded;
 @property (nonatomic) NSUInteger selectedIndex;  //NSNotFound -> NO item is selected
 
 @end
@@ -93,13 +91,15 @@
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
+    static BOOL isLoaded = NO;
+    static BOOL isLoading = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
         //Check and set self.isLoading on the main thread to guarantee there is no race condition.
-        if (self.isLoaded) {
+        if (isLoaded) {
             if (completionHandler)
                 completionHandler(self.items != nil);
         } else {
-            if (self.isLoading) {
+            if (isLoading) {
                 //wait until loading is completed, then return;
                 dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
                     //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
@@ -108,11 +108,11 @@
                     }
                 });
             } else {
-                self.isLoading = YES;
+                isLoading = YES;
                 dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
                     [self loadAndCorrectListOfSurveys];
-                    self.isLoaded = YES;
-                    self.isLoading = NO;
+                    isLoaded = YES;
+                    isLoading = NO;
                     if (completionHandler) {
                         completionHandler(self.items != nil);
                     }

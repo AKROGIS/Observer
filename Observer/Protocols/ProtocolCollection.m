@@ -37,8 +37,6 @@
 @property (nonatomic, strong) NSMutableArray *localItems;  // of SProtocol
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of SProtocol
 @property (nonatomic, strong) NSURL *cacheFile;
-@property (nonatomic) BOOL isLoading;
-@property (nonatomic) BOOL isLoaded;
 @end
 
 @implementation ProtocolCollection
@@ -171,13 +169,15 @@ static ProtocolCollection *_sharedCollection = nil;
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
+    static BOOL isLoaded = NO;
+    static BOOL isLoading = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
         //Check and set self.isLoading on the main thread to guarantee there is no race condition.
-        if (self.isLoaded) {
+        if (isLoaded) {
             if (completionHandler)
                 completionHandler(self.localItems != nil  & self.remoteItems != nil);
         } else {
-            if (self.isLoading) {
+            if (isLoading) {
                 //wait until loading is completed, then return;
                 dispatch_async(dispatch_queue_create("gov.nps.akr.observer.protocolcollection.open", DISPATCH_QUEUE_SERIAL), ^{
                     //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
@@ -186,7 +186,7 @@ static ProtocolCollection *_sharedCollection = nil;
                     }
                 });
             } else {
-                self.isLoading = YES;
+                isLoading = YES;
                 dispatch_async(dispatch_queue_create("gov.nps.akr.observer.protocolcollection.open", DISPATCH_QUEUE_SERIAL), ^{
                     [self loadCache];
                     [self refreshLocalProtocols];
@@ -194,8 +194,8 @@ static ProtocolCollection *_sharedCollection = nil;
                         [self refreshRemoteProtocols];
                     }
                     [self saveCache];
-                    self.isLoaded = YES;
-                    self.isLoading = NO;
+                    isLoaded = YES;
+                    isLoading = NO;
                     if (completionHandler) {
                         completionHandler(self.localItems != nil  & self.remoteItems != nil);
                     }
