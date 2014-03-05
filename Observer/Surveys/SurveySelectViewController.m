@@ -154,8 +154,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.items setSelectedSurvey:indexPath.urow];
-    if (self.surveySelectedCallback) {
-        self.surveySelectedCallback(self.items.selectedSurvey);
+    if (self.surveySelectedAction) {
+        self.surveySelectedAction(self.items.selectedSurvey);
     }
 }
 
@@ -211,8 +211,9 @@
     if ([[segue identifier] isEqualToString:@"Select Protocol"]) {
         ProtocolSelectViewController *vc = (ProtocolSelectViewController *)segue.destinationViewController;
         vc.title = segue.identifier;
-        vc.protocolSelectedCallback = ^(SProtocol *protocol){
+        vc.protocolSelectedAction = ^(SProtocol *protocol){
             [self newSurveyWithProtocol:protocol];
+            [self.navigationController popViewControllerAnimated:YES];
         };
         //if we are in a popover, we want the new vc to stay the same size.
         [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
@@ -257,8 +258,8 @@
     if(self.indexPathToDelete) {
         Survey *survey = [self.items surveyAtIndex:self.indexPathToDelete.urow];
         //give the invoker notice, so they can cleanup/close before we remove the file.
-        if (self.surveyDeleted) {
-            self.surveyDeleted(survey);
+        if (self.surveyDeletedAction) {
+            self.surveyDeletedAction(survey);
         }
         [self.items removeSurveyAtIndex:self.indexPathToDelete.urow];
         [self.tableView deleteRowsAtIndexPaths:@[self.indexPathToDelete] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -290,8 +291,8 @@
     Survey *survey = [self.items surveyAtIndex:indexPath.urow];
     AKRLog(@"Going to rename %@ to %@", survey.title, textField.text);
     survey.title = textField.text;
-    if (survey == self.items.selectedSurvey && self.selectedSurveyChangedName) {
-        self.selectedSurveyChangedName();
+    if (self.surveyUpdatedAction) {
+        self.surveyUpdatedAction(survey);
     }
 }
 

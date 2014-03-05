@@ -7,30 +7,24 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SurveyDetailViewController.h"
+#import "Survey.h"
 
 @interface SurveySelectViewController : UITableViewController <UIAlertViewDelegate, UITextFieldDelegate>
 
-// The popover (maybe nil) that this view controller is presented in
-@property (nonatomic, strong) UIPopoverController *popover;
+// A block to execute when a survey is selected.
+// This will be called even if the user re-selects the current survey
+// This will NOT be called if the user deletes the current survey.
+@property (nonatomic, copy) void (^surveySelectedAction)(Survey *newSurvey);
 
-// A method to call when the user selects a survey
-// this will be called even if the user re-selects the currently selected survey
-// This sill NOT be called if the user changes the currenly selected survey to nil by deleting the current survey.
-// The presenter should check for this case when the view controller is dismissed.
-@property (nonatomic, copy) void (^surveySelectedCallback)(Survey *newSurvey);
+// A block to execute when a survey property (i.e. name) is changed
+@property (nonatomic, copy) void (^surveyUpdatedAction)(Survey *survey);
 
-// A method to call when the name of the selected survey changes
-@property (nonatomic, copy) void (^selectedSurveyChangedName)(void);
+// A block to execute when a survey is deleted
+@property (nonatomic, copy) void (^surveyDeletedAction)(Survey *survey);
 
-// A method to call when a survey is deleted
-@property (nonatomic, copy) void (^surveyDeleted)(Survey *survey);
-
-// Create a new survey and add it to the tableview.
-// presents an alert view if the survey cannot be created
-- (void) newSurveyWithProtocol:(SProtocol *)protocol;
-
-//Add the survey to the table view if it isn't there already
+// Add the survey to the TableView
+// Used when a survey was obtained external to the VC
+// Also ensures that the collection and the caller are refering to the same object
 - (void) addSurvey:(Survey *)survey;
 
 @end

@@ -23,6 +23,7 @@
 @property (nonatomic) BOOL showRemoteMaps;
 @property (nonatomic) BOOL isBackgroundRefreshing;
 @property (weak, nonatomic) IBOutlet UILabel *refreshLabel;
+@property (strong, nonatomic) MapDetailViewController *detailViewController;
 @end
 
 @implementation MapSelectViewController
@@ -221,8 +222,8 @@
     }
 
     [self.items setSelectedLocalMap:indexPath.urow];
-    if (self.mapSelectedCallback) {
-        self.mapSelectedCallback(self.items.selectedLocalMap);
+    if (self.mapSelectedAction) {
+        self.mapSelectedAction(self.items.selectedLocalMap);
     }
 }
 
@@ -276,8 +277,8 @@
         Map *map = [self.items localMapAtIndex:indexPath.urow];
         [self.items removeLocalMapAtIndex:indexPath.urow];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-        if (self.mapDeleted) {
-            self.mapDeleted(map);
+        if (self.mapDeletedAction) {
+            self.mapDeletedAction(map);
         }
     }
 }

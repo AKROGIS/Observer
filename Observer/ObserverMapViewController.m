@@ -159,27 +159,29 @@
     if ([segue.identifier isEqualToString:@"Select Survey"]){
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
-        vc.surveySelectedCallback = ^(Survey *survey){
-            self.survey = survey;
+        [vc addSurvey:self.survey]; //Ensures referential identity
+        vc.surveySelectedAction = ^(Survey *survey){
             if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
                 [self.surveysPopoverController dismissPopoverAnimated:YES];
                 self.surveysPopoverController = nil;
             } else {
                 [self.navigationController popViewControllerAnimated:YES];
             }
+            self.survey = survey;
         };
-        vc.selectedSurveyChangedName = ^{
-            [self updateTitleBar];
+        vc.surveyUpdatedAction = ^(Survey *survey){
+            if (survey == self.survey) {
+                [self updateTitleBar];
+            }
         };
-        vc.surveyDeleted = ^(Survey *survey){
-            if ([self.survey isEqualToSurvey:survey]) {
+        vc.surveyDeletedAction = ^(Survey *survey){
+            if (self.survey == survey) {
                 self.survey = nil;
             };
         };
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
             self.surveysPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
-            vc.popover = self.surveysPopoverController;
-            vc.popover.delegate = self;
+            self.surveysPopoverController.delegate = self;
         }
         return;
     }
@@ -187,24 +189,24 @@
     if ([segue.identifier isEqualToString:@"Select Map"]) {
         MapSelectViewController *vc = (MapSelectViewController *)vc1;
         vc.title = segue.identifier;
-        vc.mapSelectedCallback = ^(Map *map){
-            self.map = map;
+        [vc addMap:self.map]; //Ensures referential identity
+        vc.mapSelectedAction = ^(Map *map){
             if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
                 [self.mapsPopoverController dismissPopoverAnimated:YES];
                 self.mapsPopoverController = nil;
             } else {
                 [self.navigationController popViewControllerAnimated:YES];
             }
+            self.map = map;
         };
-        vc.mapDeleted = ^(Map *map){
-            if ([self.map isEqualToMap:map]) {
+        vc.mapDeletedAction = ^(Map *map){
+            if (self.map == map) {
                 self.map = nil;
             };
         };
         if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
             self.mapsPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
-            vc.popover = self.mapsPopoverController;
-            vc.popover.delegate = self;
+            self.mapsPopoverController.delegate = self;
         }
         return;
     }
@@ -424,21 +426,23 @@
 
 - (void)newProtocolAvailable:(SProtocol *)protocol
 {
-    ProtocolSelectViewController *vc = nil;
-    UINavigationController *nav = nil;
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
-    } else {
-        nav = self.navigationController;
-    }
-    for (UIViewController *vc1 in nav.viewControllers) {
-        if ([vc1 isKindOfClass:[ProtocolSelectViewController class]]) {
-            vc = (ProtocolSelectViewController *)vc1;
-            break;
+    if (protocol) {
+        ProtocolSelectViewController *vc = nil;
+        UINavigationController *nav = nil;
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
+        } else {
+            nav = self.navigationController;
         }
+        for (UIViewController *vc1 in nav.viewControllers) {
+            if ([vc1 isKindOfClass:[ProtocolSelectViewController class]]) {
+                vc = (ProtocolSelectViewController *)vc1;
+                break;
+            }
+        }
+        [vc addProtocol:protocol];
+        //FIXME: Create/Open Survey for new protocol
     }
-    [vc addProtocol:protocol];
-    //FIXME: Create/Open Survey for new protocol
 }
 
 

@@ -10,6 +10,7 @@
 #import "ProtocolTableViewCell.h"
 #import "SProtocol.h"
 #import "ProtocolCollection.h"
+#import "ProtocolDetailViewController.h"
 #import "NSIndexSet+indexPath.h"
 #import "NSDate+Formatting.h"
 #import "Settings.h"
@@ -20,6 +21,7 @@
 @property (nonatomic) BOOL showRemoteProtocols;
 @property (nonatomic) BOOL isBackgroundRefreshing;
 @property (weak, nonatomic) IBOutlet UILabel *refreshLabel;
+@property (strong, nonatomic) ProtocolDetailViewController *detailViewController;
 @end
 
 @implementation ProtocolSelectViewController
@@ -210,14 +212,8 @@
     }
 
     if (indexPath.section == 0) {
-        //TODO: dismiss in presenting controller; when callback is received
-        if (self.popover) {
-            [self.popover dismissPopoverAnimated:YES];
-        } else {
-            [self.navigationController popViewControllerAnimated:YES];
-        }
-        if (self.protocolSelectedCallback) {
-            self.protocolSelectedCallback([self.items localProtocolAtIndex:indexPath.urow]);
+        if (self.protocolSelectedAction) {
+            self.protocolSelectedAction([self.items localProtocolAtIndex:indexPath.urow]);
         }
     }
 }

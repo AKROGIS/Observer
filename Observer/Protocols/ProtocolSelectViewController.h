@@ -7,17 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ProtocolDetailViewController.h"
-#import "AKRCollectionChanged.h"
 #import "SProtocol.h"
+#import "AKRCollectionChanged.h"
 
 @interface ProtocolSelectViewController : UITableViewController <CollectionChanged>
 
-@property (strong, nonatomic) ProtocolDetailViewController *detailViewController;
-@property (strong, nonatomic) UIPopoverController *popover;
-@property (copy, nonatomic) void (^protocolSelectedCallback)(SProtocol *protocol);
+// A block to execute when a protocol is selected.
+@property (copy, nonatomic) void (^protocolSelectedAction)(SProtocol *protocol);
 
-//Add the protocol to the table view if it isn't there already
+// Add the protocol to the TableView
+// Used when a protocol was obtained external to the VC
+// Also ensures that the collection and the caller are refering to the same object
 - (void) addProtocol:(SProtocol *)protocol;
 
 @end
