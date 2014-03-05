@@ -41,10 +41,6 @@
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.showRemoteProtocols = ![Settings manager].hideRemoteProtocols;
     self.refreshControl = [UIRefreshControl new];
-    [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
-    if (self.items.refreshDate) {
-        [self setFooterText];
-    }
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -78,12 +74,15 @@
     if (!_items) {
         _items = [ProtocolCollection sharedCollection];
         _items.delegate = self;
-        [_items openWithCompletionHandler:^(BOOL success) {
+        ProtocolCollection *protocols = [ProtocolCollection sharedCollection];
+        [protocols openWithCompletionHandler:^(BOOL success) {
             dispatch_async(dispatch_get_main_queue(), ^{
+                self.items = protocols;
                 [self.tableView reloadData];
+                [self setFooterText];
+                [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
             });
         }];
-        //FIXME: I can't use items until load is finished
     }
     return _items;
 }
@@ -306,8 +305,9 @@
     self.refreshLabel.text = @"Looking for new protocols...";
     [self.refreshControl beginRefreshing];
     self.isBackgroundRefreshing = YES;
+    self.items.delegate = self;
     [self.items refreshWithCompletionHandler:^(BOOL success) {
-        //on abackground thread
+        //on background thread
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.refreshControl endRefreshing];
             self.isBackgroundRefreshing = NO;
@@ -320,6 +320,7 @@
                 [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't connect to server" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
             }
             [self setFooterText];
+            self.items.delegate = nil;
         });
     }];
 }
@@ -329,6 +330,7 @@
     [self.items prepareToDownloadProtocolAtIndex:indexPath.urow];
     UITableView *tableView = self.tableView;
     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    self.items.delegate = self;
     [self.items downloadProtocolAtIndex:indexPath.urow WithCompletionHandler:^(BOOL success) {
         //on background thread
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -338,16 +340,19 @@
             } else {
                 // updates are done by delegate calls
             }
+            self.items.delegate = nil;
         });
     }];
 }
 
 - (void)setFooterText
 {
-    if ([self.items.refreshDate isToday]) {
-        self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumTimeFormat]];
-    } else {
-        self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumDateFormat]];
+    if (self.items.refreshDate) {
+        if ([self.items.refreshDate isToday]) {
+            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumTimeFormat]];
+        } else {
+            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumDateFormat]];
+        }
     }
 }
 

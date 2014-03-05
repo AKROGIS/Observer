@@ -160,7 +160,7 @@
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
         vc.surveySelectedAction = ^(Survey *survey){
-            //Dismiss the VC before assigning to self.maps, to avoid re-adding the map to the VC
+            //Dismiss the VC before assigning to self.survey, to avoid re-adding the survey to the VC
             if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
                 [self.surveysPopoverController dismissPopoverAnimated:YES];
                 self.surveysPopoverController = nil;
@@ -190,7 +190,7 @@
         MapSelectViewController *vc = (MapSelectViewController *)vc1;
         vc.title = segue.identifier;
         vc.mapSelectedAction = ^(Map *map){
-            //Dismiss the VC before assigning to self.maps, to avoid re-adding the map to the VC
+            //Dismiss the VC before assigning to self.map, to avoid re-adding the map to the VC
             if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
                 [self.mapsPopoverController dismissPopoverAnimated:YES];
                 self.mapsPopoverController = nil;

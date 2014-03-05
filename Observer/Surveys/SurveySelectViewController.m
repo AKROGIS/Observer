@@ -95,15 +95,13 @@
 - (SurveyCollection *)items
 {
     if (!_items) {
-        _items = [SurveyCollection sharedCollection];
-        //TODO: should I implement a delegate on Survey Collection like maps and protocols?
-        //_items.delegate = self;
-        [_items openWithCompletionHandler:^(BOOL success) {
+        SurveyCollection *surveys = [SurveyCollection sharedCollection];
+        [surveys openWithCompletionHandler:^(BOOL success) {
             dispatch_async(dispatch_get_main_queue(), ^{
+                self.items = surveys;
                 [self.tableView reloadData];
             });
         }];
-        //FIXME: I can't use items until load is finished 
     }
     return _items;
 }

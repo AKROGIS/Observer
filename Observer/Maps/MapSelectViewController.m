@@ -43,10 +43,6 @@
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.showRemoteMaps = ![Settings manager].hideRemoteMaps;
     self.refreshControl = [UIRefreshControl new];
-    [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
-    if (self.items.refreshDate) {
-        [self setFooterText];
-    }
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -78,14 +74,15 @@
 - (MapCollection *)items
 {
     if (!_items) {
-        _items = [MapCollection sharedCollection];
-        _items.delegate = self;
-        [_items openWithCompletionHandler:^(BOOL success) {
+        MapCollection *maps = [MapCollection sharedCollection];
+        [maps openWithCompletionHandler:^(BOOL success) {
             dispatch_async(dispatch_get_main_queue(), ^{
+                self.items = maps;
                 [self.tableView reloadData];
+                [self setFooterText];
+                [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
             });
         }];
-        //FIXME: I can't use items until load is finished
     }
     return _items;
 }
@@ -324,6 +321,7 @@
     [self.refreshControl beginRefreshing];
     self.refreshLabel.text = @"Looking for new maps...";
     self.isBackgroundRefreshing = YES;
+    self.items.delegate = self;
     [self.items refreshWithCompletionHandler:^(BOOL success) {
         //on background thread
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -338,6 +336,7 @@
                 [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't get the map list from the server" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
             }
             [self setFooterText];
+            self.items.delegate = nil;
         });
     }];
 }
@@ -364,7 +363,9 @@
             //on background thread
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
+                    self.items.delegate = self;
                     [self.items moveRemoteMapAtIndex:indexPath.urow toLocalMapAtIndex:0];
+                    self.items.delegate = nil;
                 } else {
                     [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't download map" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
                     cell.downloadView.downloading = NO;
@@ -384,10 +385,12 @@
 
 - (void)setFooterText
 {
-    if ([self.items.refreshDate isToday]) {
-        self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumTimeFormat]];
-    } else {
-        self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumDateFormat]];
+    if (self.items.refreshDate) {
+        if ([self.items.refreshDate isToday]) {
+            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumTimeFormat]];
+        } else {
+            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumDateFormat]];
+        }
     }
 }
 
