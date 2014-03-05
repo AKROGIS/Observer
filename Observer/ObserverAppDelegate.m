@@ -36,12 +36,6 @@
     if (savedSurvey.isValid) {
         self.observerMapViewController.survey = savedSurvey;
     }
-    //Start the loading of the map/survey lists in the background
-    //Collections are not needed here, they are only loadded as a time optimazation
-    //FIXME: This costs space.  Is it helpful to preload (in the background) the collection models?
-//    [[MapCollection sharedCollection] openWithCompletionHandler:nil];
-//    [[SurveyCollection sharedCollection] openWithCompletionHandler:nil];
-//    [[ProtocolCollection sharedCollection] openWithCompletionHandler:nil];
     return YES;
 }
 							

@@ -225,10 +225,11 @@
         }
         return;
     }
-
-    [self.items setSelectedLocalMap:indexPath.urow];
-    if (self.mapSelectedAction) {
-        self.mapSelectedAction(self.items.selectedLocalMap);
+    
+    if (indexPath.section == 0) {
+        if (self.mapSelectedAction) {
+            self.mapSelectedAction([self.items localMapAtIndex:indexPath.urow]);
+        }
     }
 }
 

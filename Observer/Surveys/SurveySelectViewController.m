@@ -153,9 +153,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.items setSelectedSurvey:indexPath.urow];
     if (self.surveySelectedAction) {
-        self.surveySelectedAction(self.items.selectedSurvey);
+        self.surveySelectedAction([self.items surveyAtIndex:indexPath.urow]);
     }
 }
 

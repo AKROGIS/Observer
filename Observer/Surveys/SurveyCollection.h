@@ -26,7 +26,7 @@
 //when it disappears. - Not sure the best way to go here.
 
 //Does this collection manage the provided URL?
-+ (BOOL) collectsURL:(NSURL *)url;
++ (BOOL)collectsURL:(NSURL *)url;
 
 // builds/verifies the list, and current selection from the filesystem and user defaults
 // Warning this must be called from the main thread if it might be called multiple times
@@ -34,7 +34,7 @@
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // returns the first survey that has the given (local) url
-- (Survey *) surveyForURL:(NSURL *)url;
+- (Survey *)surveyForURL:(NSURL *)url;
 
 // Opens a survey file from the App delegate, and adds it to the begining of the list
 // TODO: check that it does similar checking like map/protocol
