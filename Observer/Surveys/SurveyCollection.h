@@ -47,6 +47,7 @@
 // UITableView DataSource Support
 - (NSUInteger) numberOfSurveys;
 - (Survey *) surveyAtIndex:(NSUInteger)index;
+- (void) insertSurvey:(Survey *)survey atIndex:(NSUInteger)index;
 - (void) removeSurveyAtIndex:(NSUInteger)index;
 - (void) moveSurveyAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 - (void) setSelectedSurvey:(NSUInteger)index;

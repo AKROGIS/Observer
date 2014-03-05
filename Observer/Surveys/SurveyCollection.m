@@ -195,6 +195,13 @@
     return self.items[index];
 }
 
+- (void)insertSurvey:(Survey *)survey atIndex:(NSUInteger)index
+{
+    //if (self.items.count < index) return; //safety check
+    [self.items insertObject:survey atIndex:index];
+    [self saveCache];
+}
+
 -(void)removeSurveyAtIndex:(NSUInteger)index
 {
     if (self.items.count <= index) return; //safety check

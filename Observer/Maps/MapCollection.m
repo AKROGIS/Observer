@@ -101,7 +101,7 @@
     return self.remoteItems.count;
 }
 
-- (void) insertLocalMap:(Map *)map atIndex:(NSUInteger)index
+- (void)insertLocalMap:(Map *)map atIndex:(NSUInteger)index
 {
     //if (self.localItems.count < index) return; //safety check
     [self.localItems insertObject:map atIndex:index];

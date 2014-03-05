@@ -104,7 +104,7 @@
     return self.remoteItems.count;
 }
 
-- (void) insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index
+- (void)insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index
 {
     //if (self.localItems.count < index) return; //safety check
     [self.localItems insertObject:protocol atIndex:index];

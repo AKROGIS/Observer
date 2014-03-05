@@ -108,7 +108,9 @@
 
 - (void) addSurvey:(Survey *)survey
 {
-    //FIXME: implement; may not be necessary, since items has already been updated
+    [self.items insertSurvey:survey atIndex:0];
+    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]]
+                          withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (void)insertNewObject:(id)sender
