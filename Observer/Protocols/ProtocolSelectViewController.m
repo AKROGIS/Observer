@@ -94,7 +94,7 @@
 
 - (void) addProtocol:(SProtocol *)protocol
 {
-    //FIXME: implement; currently not be necessary, since items has already been updated
+    [self.items addOrReplaceProtocol:protocol];
 }
 
 #pragma mark - CollectionChanged

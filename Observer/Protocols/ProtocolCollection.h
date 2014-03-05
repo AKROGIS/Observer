@@ -69,6 +69,8 @@
 // The completion handler is used only to signal success/failure
 - (void) refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
+- (void) addOrReplaceProtocol:(SProtocol *)protocol;
+
 @property (nonatomic, strong) NSDate *refreshDate;
 
 @end
