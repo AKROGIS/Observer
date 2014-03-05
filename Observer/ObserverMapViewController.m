@@ -441,7 +441,6 @@
             }
         }
         [vc addProtocol:protocol];
-        //FIXME: Create/Open Survey for new protocol
     }
 }
 
