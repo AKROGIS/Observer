@@ -159,8 +159,8 @@
     if ([segue.identifier isEqualToString:@"Select Survey"]){
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
-        [vc addSurvey:self.survey]; //Ensures referential identity
         vc.surveySelectedAction = ^(Survey *survey){
+            //Dismiss the VC before assigning to self.maps, to avoid re-adding the map to the VC
             if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
                 [self.surveysPopoverController dismissPopoverAnimated:YES];
                 self.surveysPopoverController = nil;
@@ -189,8 +189,8 @@
     if ([segue.identifier isEqualToString:@"Select Map"]) {
         MapSelectViewController *vc = (MapSelectViewController *)vc1;
         vc.title = segue.identifier;
-        [vc addMap:self.map]; //Ensures referential identity
         vc.mapSelectedAction = ^(Map *map){
+            //Dismiss the VC before assigning to self.maps, to avoid re-adding the map to the VC
             if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
                 [self.mapsPopoverController dismissPopoverAnimated:YES];
                 self.mapsPopoverController = nil;
