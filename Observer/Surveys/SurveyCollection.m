@@ -107,16 +107,17 @@
                         completionHandler(self.items != nil);
                     }
                 });
+            } else {
+                self.isLoading = YES;
+                dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
+                    [self loadAndCorrectListOfSurveys];
+                    self.isLoaded = YES;
+                    self.isLoading = NO;
+                    if (completionHandler) {
+                        completionHandler(self.items != nil);
+                    }
+                });
             }
-            self.isLoading = YES;
-            dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
-                [self loadAndCorrectListOfSurveys];
-                self.isLoaded = YES;
-                self.isLoading = NO;
-                if (completionHandler) {
-                    completionHandler(self.items != nil);
-                }
-            });
         }
     });
 }

@@ -185,21 +185,22 @@ static ProtocolCollection *_sharedCollection = nil;
                         completionHandler(self.localItems != nil  & self.remoteItems != nil);
                     }
                 });
+            } else {
+                self.isLoading = YES;
+                dispatch_async(dispatch_queue_create("gov.nps.akr.observer.protocolcollection.open", DISPATCH_QUEUE_SERIAL), ^{
+                    [self loadCache];
+                    [self refreshLocalProtocols];
+                    if (!self.refreshDate) {
+                        [self refreshRemoteProtocols];
+                    }
+                    [self saveCache];
+                    self.isLoaded = YES;
+                    self.isLoading = NO;
+                    if (completionHandler) {
+                        completionHandler(self.localItems != nil  & self.remoteItems != nil);
+                    }
+                });
             }
-            self.isLoading = YES;
-            dispatch_async(dispatch_queue_create("gov.nps.akr.observer.protocolcollection.open", DISPATCH_QUEUE_SERIAL), ^{
-                [self loadCache];
-                [self refreshLocalProtocols];
-                if (!self.refreshDate) {
-                    [self refreshRemoteProtocols];
-                }
-                [self saveCache];
-                self.isLoaded = YES;
-                self.isLoading = NO;
-                if (completionHandler) {
-                    completionHandler(self.localItems != nil  & self.remoteItems != nil);
-                }
-            });
         }
     });
 }
