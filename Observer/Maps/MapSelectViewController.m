@@ -90,10 +90,18 @@
     return _items;
 }
 
+
+
+#pragma mark - Public Methods
+
 - (void) addMap:(Map *)map
 {
-    //FIXME: implement; may not be necessary, since items has already been updated
+    [self.items insertLocalMap:map atIndex:0];
+    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]]
+                          withRowAnimation:UITableViewRowAnimationAutomatic];
 }
+
+
 
 #pragma mark - CollectionChanged
 

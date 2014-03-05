@@ -50,6 +50,7 @@
 - (NSUInteger) numberOfRemoteMaps;
 - (Map *) localMapAtIndex:(NSUInteger)index;
 - (Map *) remoteMapAtIndex:(NSUInteger)index;
+- (void) insertLocalMap:(Map *)map atIndex:(NSUInteger)index;
 - (void) removeLocalMapAtIndex:(NSUInteger)index;
 - (void) moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 - (void) moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
