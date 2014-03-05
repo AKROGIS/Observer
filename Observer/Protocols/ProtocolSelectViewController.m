@@ -94,8 +94,12 @@
 
 - (void) addProtocol:(SProtocol *)protocol
 {
-    [self.items addOrReplaceProtocol:protocol];
+    [self.items insertLocalProtocol:protocol atIndex:0];
+    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]]
+                          withRowAnimation:UITableViewRowAnimationAutomatic];
 }
+
+
 
 #pragma mark - CollectionChanged
 

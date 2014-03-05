@@ -104,6 +104,13 @@
     return self.remoteItems.count;
 }
 
+- (void) insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index
+{
+    //if (self.localItems.count < index) return; //safety check
+    [self.localItems insertObject:protocol atIndex:index];
+    [self saveCache];
+}
+
 -(void)removeLocalProtocolAtIndex:(NSUInteger)index
 {
     //if (self.localItems.count <= index) return; //safety check
@@ -570,33 +577,5 @@ static ProtocolCollection *_sharedCollection = nil;
     }
     return modelChanged;
 }
-
-- (void) addOrReplaceProtocol:(SProtocol *)protocol
-{
-    NSUInteger index = [self.localItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [protocol isEqualToProtocol:obj];
-    }];
-    id<CollectionChanged> delegate = self.delegate;
-    if (delegate) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSIndexSet *indexes = nil;
-           if (index != NSNotFound ) {
-                indexes = [NSIndexSet indexSetWithIndex:index];
-                [self.localItems removeObjectAtIndex:index];
-                [delegate collection:self removedLocalItemsAtIndexes:indexes];
-            } else {
-                indexes = [NSIndexSet indexSetWithIndex:0];
-            }
-            [self.localItems insertObject:protocol atIndex:index == NSNotFound ? 0 : index];
-            [delegate collection:self addedLocalItemsAtIndexes:indexes];
-        });
-    } else {
-        if (index != NSNotFound ) {
-            [self.localItems removeObjectAtIndex:index];
-        }
-        [self.localItems insertObject:protocol atIndex:index == NSNotFound ? 0 : index];
-    }
-}
-
 
 @end

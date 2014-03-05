@@ -54,6 +54,7 @@
 - (NSUInteger) numberOfRemoteProtocols;
 - (SProtocol *) localProtocolAtIndex:(NSUInteger)index;
 - (SProtocol *) remoteProtocolAtIndex:(NSUInteger)index;
+- (void) insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index;
 - (void) removeLocalProtocolAtIndex:(NSUInteger)index;
 - (void) moveLocalProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 - (void) moveRemoteProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
@@ -68,8 +69,6 @@
 // Will send message to the delegate as items are added/removed from the local/remote lists
 // The completion handler is used only to signal success/failure
 - (void) refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
-
-- (void) addOrReplaceProtocol:(SProtocol *)protocol;
 
 @property (nonatomic, strong) NSDate *refreshDate;
 
