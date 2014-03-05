@@ -37,6 +37,7 @@
 @property (nonatomic, strong) NSMutableArray *localItems;  // of SProtocol
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of SProtocol
 @property (nonatomic, strong) NSURL *cacheFile;
+@property (nonatomic) BOOL isLoading;
 @property (nonatomic) BOOL isLoaded;
 @end
 
@@ -170,27 +171,37 @@ static ProtocolCollection *_sharedCollection = nil;
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    if (self.isLoaded) {
-        if (completionHandler) completionHandler(YES);
-    } else {
-        dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
-            //temporarily remove the delegate so that updates are not sent for the bulk updates before the UI might be ready
-            //  currently unnecessary, since open is only called when the delegate is nil;
-            id savedDelegate = self.delegate;
-            self.delegate = nil;
-            [self loadCache];
-            BOOL success = [self refreshLocalProtocols];
-            if (self.remoteItems.count == 0) {
-                [self refreshRemoteProtocols];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //Check and set self.isLoading on the main thread to guarantee there is no race condition.
+        if (self.isLoaded) {
+            if (completionHandler)
+                completionHandler(self.localItems != nil  & self.remoteItems != nil);
+        } else {
+            if (self.isLoading) {
+                //wait until loading is completed, then return;
+                dispatch_async(dispatch_queue_create("gov.nps.akr.observer.protocolcollection.open", DISPATCH_QUEUE_SERIAL), ^{
+                    //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
+                    if (completionHandler) {
+                        completionHandler(self.localItems != nil  & self.remoteItems != nil);
+                    }
+                });
             }
-            [self saveCache];
-            self.delegate = savedDelegate;
-            self.isLoaded = YES;
-            if (completionHandler) {
-                completionHandler(success);
-            }
-        });
-    }
+            self.isLoading = YES;
+            dispatch_async(dispatch_queue_create("gov.nps.akr.observer.protocolcollection.open", DISPATCH_QUEUE_SERIAL), ^{
+                [self loadCache];
+                [self refreshLocalProtocols];
+                if (!self.refreshDate) {
+                    [self refreshRemoteProtocols];
+                }
+                [self saveCache];
+                self.isLoaded = YES;
+                self.isLoading = NO;
+                if (completionHandler) {
+                    completionHandler(self.localItems != nil  & self.remoteItems != nil);
+                }
+            });
+        }
+    });
 }
 
 

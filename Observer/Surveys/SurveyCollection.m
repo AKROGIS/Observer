@@ -93,31 +93,32 @@
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    //Check and set of isLoading must be done on the main thread to guarantee there is no race condition.
-    if (self.isLoaded) {
-        if (completionHandler)
-            completionHandler(self.items != nil);
-    } else {
-        if (self.isLoading) {
-            //wait until loading is completed, then return;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //Check and set self.isLoading on the main thread to guarantee there is no race condition.
+        if (self.isLoaded) {
+            if (completionHandler)
+                completionHandler(self.items != nil);
+        } else {
+            if (self.isLoading) {
+                //wait until loading is completed, then return;
+                dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
+                    //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
+                    if (completionHandler) {
+                        completionHandler(self.items != nil);
+                    }
+                });
+            }
+            self.isLoading = YES;
             dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
-                //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
+                [self loadAndCorrectListOfSurveys];
+                self.isLoaded = YES;
+                self.isLoading = NO;
                 if (completionHandler) {
                     completionHandler(self.items != nil);
                 }
             });
         }
-        self.isLoading = YES;
-        dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
-            [self loadAndCorrectListOfSurveys];
-            //TODO: consider opening all/selected survey item(s) in the background
-            self.isLoaded = YES;
-            self.isLoading = NO;
-            if (completionHandler) {
-                completionHandler(self.items != nil);
-            }
-        });
-    }
+    });
 }
 
 - (Survey *)surveyForURL:(NSURL *)url
