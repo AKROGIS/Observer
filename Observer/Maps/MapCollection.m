@@ -14,7 +14,6 @@
 @interface MapCollection()
 @property (nonatomic, strong) NSMutableArray *localItems;  // of Map
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of Map
-@property (nonatomic) NSUInteger selectedLocalIndex;  //NSNotFound -> NO item is selected
 @property (nonatomic, strong) NSURL *cacheFile;
 @end
 
@@ -56,18 +55,6 @@
     }
     return _cacheFile;
 }
-
-- (void) setSelectedLocalIndex:(NSUInteger)selectedLocalIndex
-{
-    if (_selectedLocalIndex == selectedLocalIndex)
-        return;
-    if ( self.localItems.count <= selectedLocalIndex && selectedLocalIndex != NSNotFound) {
-        return; //ignore bogus indexes
-    }
-    _selectedLocalIndex = selectedLocalIndex;
-    [Settings manager].indexOfCurrentMap = selectedLocalIndex;
-}
-
 
 #pragma mark - TableView Data Soource Support
 
@@ -117,9 +104,6 @@
     [[NSFileManager defaultManager] removeItemAtURL:item.thumbnailUrl error:nil];
     [self.localItems removeObjectAtIndex:index];
     [self saveCache];
-    if (index < self.selectedLocalIndex && self.selectedLocalIndex != NSNotFound) {
-        self.selectedLocalIndex--;
-    }
 }
 
 -(void)moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
@@ -130,21 +114,6 @@
     }
     if (fromIndex == toIndex)
         return;
-
-    //adjust the selected Index
-    if (self.selectedLocalIndex != NSNotFound) {
-        if (self.selectedLocalIndex == fromIndex) {
-            self.selectedLocalIndex = toIndex;
-        } else {
-            if (fromIndex < self.selectedLocalIndex && self.selectedLocalIndex <= toIndex) {
-                self.selectedLocalIndex--;
-            } else {
-                if (toIndex <= self.selectedLocalIndex && self.selectedLocalIndex < fromIndex) {
-                    self.selectedLocalIndex++;
-                }
-            }
-        }
-    }
 
     //move the item
     id temp = self.localItems[fromIndex];
@@ -187,20 +156,6 @@ static MapCollection *_sharedCollection = nil;
 + (BOOL) collectsURL:(NSURL *)url
 {
     return [[url pathExtension] isEqualToString:MAP_EXT];
-}
-
-
-- (void)setSelectedLocalMap:(NSUInteger)index
-{
-    self.selectedLocalIndex = index;
-}
-
-- (Map *)selectedLocalMap
-{
-    if (self.selectedLocalIndex == NSNotFound || self.localItems.count == 0 || self.localItems.count <= self.selectedLocalIndex) {
-        return nil;
-    }
-    return self.localItems[self.selectedLocalIndex];
 }
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
@@ -324,12 +279,6 @@ static MapCollection *_sharedCollection = nil;
     [delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex]];
     [self.localItems insertObject:map atIndex:toIndex];
     [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:toIndex]];
-    //Update the selectedIndex, unless the list was empty (self.selectedIndex was already 0), 
-    if (self.selectedLocalIndex != NSNotFound) {
-        if (toIndex <= self.selectedLocalIndex) {
-            self.selectedLocalIndex++;
-        }
-    }
     [self saveCache];
 }
 
@@ -351,9 +300,6 @@ static MapCollection *_sharedCollection = nil;
     [self loadCache];
     [self refreshLocalMaps];
     [self saveCache];
-    //Get the selected index (we can't do this in an accessor, because there isn't a no valid 'data not loaded' sentinal)
-    _selectedLocalIndex = [Settings manager].indexOfCurrentMap;
-    [self checkAndFixSelectedIndex];
     self.delegate = savedDelegate;
 
 }
@@ -523,12 +469,10 @@ static MapCollection *_sharedCollection = nil;
                 [self.localItems addObjectsFromArray:mapsToAdd];
                 [delegate collection:self addedLocalItemsAtIndexes:indexes];
             }
-            [self checkAndFixSelectedIndex];
         });
     } else {
         [self.localItems removeObjectsAtIndexes:itemsToRemove];
         [self.localItems addObjectsFromArray:mapsToAdd];
-        [self checkAndFixSelectedIndex];
     }
 }
 
@@ -670,16 +614,5 @@ static MapCollection *_sharedCollection = nil;
     }
     return modelChanged;
 }
-
-- (void) checkAndFixSelectedIndex
-{
-    //TODO: this is broken; solution is to archive select item, not index.
-    // for example if we had 3 items, with selected index = 0 and all 3
-    // went missing, but a new one was found, the selected index should be cleared
-    if (self.localItems.count <= self.selectedLocalIndex) {
-        self.selectedLocalIndex = NSNotFound;
-    }
-}
-
 
 @end

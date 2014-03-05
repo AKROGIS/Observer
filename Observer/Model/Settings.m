@@ -145,48 +145,6 @@
 
 
 
-@synthesize indexOfCurrentMap = _indexOfCurrentMap;
-
-- (NSUInteger) indexOfCurrentMap
-{
-    NSInteger archivedInt = [[NSUserDefaults standardUserDefaults]  integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
-    NSUInteger value = archivedInt < 0 ? NSNotFound : (NSUInteger)archivedInt;
-    return value ? value : DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP;
-}
-
-- (void)setIndexOfCurrentMap:(NSUInteger)indexOfCurrentMap
-{
-    if (indexOfCurrentMap == DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
-    } else {
-        NSInteger archiveInt = indexOfCurrentMap == NSNotFound ? -1 : (NSInteger)indexOfCurrentMap;
-        [[NSUserDefaults standardUserDefaults] setInteger:archiveInt forKey:DEFAULTS_KEY_INDEX_OF_CURRENT_MAP];
-    }
-}
-
-
-
-@synthesize indexOfCurrentSurvey = _indexOfCurrentSurvey;
-
-- (NSUInteger) indexOfCurrentSurvey
-{
-    NSInteger archivedInt = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
-    NSUInteger value = archivedInt < 0 ? NSNotFound : (NSUInteger)archivedInt;
-    return value ? value : DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY;
-}
-
-- (void)setIndexOfCurrentSurvey:(NSUInteger)indexOfCurrentSurvey
-{
-    if (indexOfCurrentSurvey == DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
-    } else {
-        NSInteger archiveInt = indexOfCurrentSurvey == NSNotFound ? -1 : (NSInteger)indexOfCurrentSurvey;
-        [[NSUserDefaults standardUserDefaults] setInteger:archiveInt forKey:DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY];
-    }
-}
-
-
-
 @synthesize surveys = _surveys;
 
 - (NSArray *) surveys

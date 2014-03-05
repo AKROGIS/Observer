@@ -30,8 +30,6 @@
 @property (nonatomic) NSURL *selectedMap;
 @property (nonatomic) NSURL *selectedSurvey;
 
-@property (nonatomic) NSUInteger indexOfCurrentMap;
-@property (nonatomic) NSUInteger indexOfCurrentSurvey;
 @property (nonatomic, strong) NSArray *surveys; //of NSURL
 
 @property (nonatomic) BOOL hideRemoteMaps;

@@ -54,8 +54,6 @@
 - (void) removeLocalMapAtIndex:(NSUInteger)index;
 - (void) moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 - (void) moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
-- (void) setSelectedLocalMap:(NSUInteger)index;
-- (Map *)selectedLocalMap;
 
 // Download a Map from the server
 - (void)prepareToDownloadMapAtIndex:(NSUInteger)index;
