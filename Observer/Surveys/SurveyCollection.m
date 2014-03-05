@@ -13,8 +13,6 @@
 
 @interface SurveyCollection()
 @property (nonatomic, strong) NSMutableArray *items;
-@property (nonatomic) NSUInteger selectedIndex;  //NSNotFound -> NO item is selected
-
 @end
 
 @implementation SurveyCollection
@@ -57,17 +55,6 @@
         _items = [NSMutableArray new];
     }
     return _items;
-}
-
-- (void) setSelectedIndex:(NSUInteger)selectedIndex
-{
-    if (_selectedIndex == selectedIndex)
-        return;
-    if (self.items.count <= selectedIndex && selectedIndex != NSNotFound) {
-        return; //ignore bogus indexes
-    }
-    _selectedIndex = selectedIndex;
-    [Settings manager].indexOfCurrentSurvey = selectedIndex;
 }
 
 + (NSURL *)documentsDirectory
@@ -156,9 +143,6 @@
     if ([newSurvey isValid]) {
         NSUInteger index = 0;     //insert at top of list
         [self.items insertObject:newSurvey atIndex:index];
-        if (self.selectedIndex != NSNotFound) {
-            self.selectedIndex++;
-        }
         [self saveCache];
         return newSurvey;
     } else {
@@ -172,9 +156,6 @@
     if (newSurvey) {
         NSUInteger index = 0;     //insert at top of list
         [self.items insertObject:newSurvey atIndex:index];
-        if (self.selectedIndex != NSNotFound) {
-            self.selectedIndex++;
-        }
         [self saveCache];
         return index;
     } else {
@@ -212,12 +193,6 @@
     [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
     [self.items removeObjectAtIndex:index];
     [self saveCache];
-    if (index == self.selectedIndex) {
-        self.selectedIndex = NSNotFound;
-    }
-    if (index < self.selectedIndex  && self.selectedIndex != NSNotFound) {
-        self.selectedIndex--;
-    }
 }
 
 -(void)moveSurveyAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
@@ -226,39 +201,11 @@
     if (fromIndex == toIndex)
         return;
 
-    //adjust the selected Index
-    if (self.selectedIndex != NSNotFound) {
-        if (self.selectedIndex == fromIndex) {
-            self.selectedIndex = toIndex;
-        } else {
-            if (fromIndex < self.selectedIndex && self.selectedIndex <= toIndex) {
-                self.selectedIndex--;
-            } else {
-                if (toIndex <= self.selectedIndex && self.selectedIndex < fromIndex) {
-                    self.selectedIndex++;
-                }
-            }
-        }
-    }
-
     //move the item
     id temp = self.items[fromIndex];
     [self.items removeObjectAtIndex:fromIndex];
     [self.items insertObject:temp atIndex:toIndex];
     [self saveCache];
-}
-
-- (void)setSelectedSurvey:(NSUInteger)index
-{
-    self.selectedIndex = index;
-}
-
-- (Survey *)selectedSurvey
-{
-    if (self.selectedIndex == NSNotFound || self.items.count == 0 || self.items.count <= self.selectedIndex) {
-        return nil;
-    }
-    return self.items[self.selectedIndex];
 }
 
 
@@ -291,21 +238,8 @@
         cacheWasOutdated = YES;
     }
 
-    //Get the selected index (we can't do this in an accessor, because there isn't a no valid 'data not loaded' sentinal)
-    _selectedIndex = [Settings manager].indexOfCurrentSurvey;
-
     if (cacheWasOutdated) {
         [self saveCache];
-        //Need to validate/fix the selected index (if files were added or deleted, it may not be valid)
-        if (self.selectedIndex != NSNotFound && self.selectedIndex < cachedSurveyUrls.count) {
-            NSURL *url = cachedSurveyUrls[self.selectedIndex];
-            NSUInteger index = [self.items indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-                return [url isEqual:((Survey *)obj).url];
-            }];
-            self.selectedIndex = index;
-        } else {
-            self.selectedIndex = NSNotFound;
-        }
     }
 }
 

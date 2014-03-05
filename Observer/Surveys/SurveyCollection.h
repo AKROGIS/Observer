@@ -50,7 +50,5 @@
 - (void) insertSurvey:(Survey *)survey atIndex:(NSUInteger)index;
 - (void) removeSurveyAtIndex:(NSUInteger)index;
 - (void) moveSurveyAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
-- (void) setSelectedSurvey:(NSUInteger)index;
-- (Survey *)selectedSurvey;
 
 @end
