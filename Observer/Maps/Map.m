@@ -33,8 +33,9 @@
 @property (nonatomic) BOOL thumbnailIsLoaded;
 @property (nonatomic) BOOL tileCacheIsLoaded;
 
-@property (nonatomic) BOOL downloading;
 //TODO: move to NSOperation
+@property (nonatomic) BOOL downloading;
+@property (nonatomic, strong) NSURLSession *session;
 @property (nonatomic, strong) NSURLSessionTask *downloadTask;
 
 @end
@@ -258,15 +259,7 @@
     return [[AGSGeometryEngine defaultGeometryEngine] shapePreservingAreaOfGeometry:self.extents inUnit:AGSAreaUnitsSquareKilometers];
 }
 
-- (void)prepareToDownload
-{
-    self.downloading = YES;
-}
 
-- (BOOL)isDownloading
-{
-    return self.downloading;
-}
 
 
 #pragma mark - loaders
@@ -336,11 +329,19 @@
     [self.downloadTask resume];
 }
 
+- (BOOL)isDownloading
+{
+    return self.downloading;
+}
+
 - (void)cancelDownload
 {
     [self.downloadTask cancel];
     self.downloading = NO;
 }
+
+
+
 
 #pragma mark - NSURLSessionDownloadDelegate
 
@@ -352,8 +353,8 @@
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
-    if (downloadTask == self.downloadTask && self.progressAction){
-        self.progressAction((double)totalBytesWritten, (double)totalBytesExpectedToWrite);
+    if (downloadTask == self.downloadTask && self.downloadProgressAction){
+        self.downloadProgressAction((double)totalBytesWritten, (double)totalBytesExpectedToWrite);
     }
 }
 
@@ -377,11 +378,14 @@
         }
     }
     BOOL success = [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];
+    Map *newMap = nil;
     if (success) {
-        self.url = self.destinationURL;
+        newMap = [[Map alloc] initWithURL:self.destinationURL];
+        if (!newMap.isValid)
+            newMap = nil;
     }
-    if (self.completionAction){
-        self.completionAction(self.url, success);
+    if (self.downloadCompletionAction){
+        self.downloadCompletionAction(newMap);
     }
 }
 

@@ -591,24 +591,42 @@
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Download" translatesAutoresizingMaskIntoConstraints="NO" id="f0B-KW-f5g">
-                                            <rect key="frame" x="462" y="7" width="27" height="26"/>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tl6-LZ-A6c" customClass="AKRDownloadView">
+                                            <rect key="frame" x="459" y="7" width="30" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        </imageView>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Download" translatesAutoresizingMaskIntoConstraints="NO" id="oXa-hZ-WgQ">
+                                                    <rect key="frame" x="2" y="2" width="27" height="26"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="27" id="008-6O-HYk"/>
+                                                        <constraint firstAttribute="height" constant="26" id="jHP-Gu-eba"/>
+                                                    </constraints>
+                                                </imageView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstAttribute="centerX" secondItem="oXa-hZ-WgQ" secondAttribute="centerX" id="3JA-1N-u40"/>
+                                                <constraint firstAttribute="width" constant="30" id="8uR-fj-ZXd"/>
+                                                <constraint firstAttribute="centerY" secondItem="oXa-hZ-WgQ" secondAttribute="centerY" id="kW6-rm-7G4"/>
+                                                <constraint firstAttribute="height" constant="30" id="zQY-PQ-GLB"/>
+                                            </constraints>
+                                        </view>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="f0B-KW-f5g" secondAttribute="trailing" constant="4" id="6Yb-hc-tlj"/>
-                                        <constraint firstItem="f0B-KW-f5g" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="HDD-kj-z00" secondAttribute="trailing" constant="8" symbolic="YES" id="LuN-BS-wYv"/>
                                         <constraint firstItem="HDD-kj-z00" firstAttribute="leading" secondItem="r5w-fS-frM" secondAttribute="leading" id="PwT-FT-MNr"/>
-                                        <constraint firstItem="f0B-KW-f5g" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="r5w-fS-frM" secondAttribute="trailing" constant="8" symbolic="YES" id="dhp-AT-9f1"/>
-                                        <constraint firstAttribute="centerY" secondItem="f0B-KW-f5g" secondAttribute="centerY" constant="1.5" id="jbe-DZ-acp"/>
+                                        <constraint firstItem="Tl6-LZ-A6c" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="HDD-kj-z00" secondAttribute="trailing" constant="8" symbolic="YES" id="a0z-vv-ca7"/>
+                                        <constraint firstAttribute="centerY" secondItem="Tl6-LZ-A6c" secondAttribute="centerY" id="bEu-BZ-FUw"/>
+                                        <constraint firstAttribute="trailing" secondItem="Tl6-LZ-A6c" secondAttribute="trailing" constant="4" id="exE-Zx-bua"/>
                                         <constraint firstItem="r5w-fS-frM" firstAttribute="top" secondItem="HDD-kj-z00" secondAttribute="bottom" id="kZO-qv-G5D"/>
                                         <constraint firstItem="HDD-kj-z00" firstAttribute="top" secondItem="KaH-cK-UAd" secondAttribute="top" constant="3" id="nQz-SO-Bz2"/>
                                         <constraint firstItem="HDD-kj-z00" firstAttribute="leading" secondItem="KaH-cK-UAd" secondAttribute="leading" constant="15" id="rnG-KO-Ewp"/>
+                                        <constraint firstItem="Tl6-LZ-A6c" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="r5w-fS-frM" secondAttribute="trailing" constant="8" symbolic="YES" id="vKs-iT-lDh"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="downloadImageView" destination="f0B-KW-f5g" id="Ani-sj-U7g"/>
+                                    <outlet property="downloadProgressView" destination="Tl6-LZ-A6c" id="3Ed-BT-MV0"/>
+                                    <outlet property="startDownloadImageView" destination="oXa-hZ-WgQ" id="0lS-cK-3v3"/>
                                     <outlet property="subtitleLabel" destination="r5w-fS-frM" id="Hi4-Gb-6S4"/>
                                     <outlet property="titleLabel" destination="HDD-kj-z00" id="hch-Ry-s8p"/>
                                     <segue destination="9U9-rX-WUq" kind="push" identifier="Protocol Details" trigger="accessoryAction" id="vKc-cb-JIv"/>
@@ -869,8 +887,8 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="downloadImageView" destination="0LY-TC-WhT" id="kvq-eH-qcW"/>
-                                    <outlet property="downloadView" destination="28u-fz-eTz" id="zun-eB-Vf1"/>
+                                    <outlet property="downloadProgressView" destination="28u-fz-eTz" id="swU-Kf-IGV"/>
+                                    <outlet property="startDownloadImageView" destination="0LY-TC-WhT" id="qFz-6s-Y27"/>
                                     <outlet property="subtitle1Label" destination="ZLB-wn-XbK" id="C94-RS-YTe"/>
                                     <outlet property="subtitle2Label" destination="noi-ou-u8a" id="P7k-2q-pSM"/>
                                     <outlet property="thumbnailImageView" destination="Ccy-sg-Eps" id="Vte-jm-BK3"/>

@@ -210,15 +210,16 @@
         NSString *identifier = (indexPath.section == 0) ? @"LocalMapCell" : @"RemoteMapCell";
         MapTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
         cell.titleLabel.text = item.title;
+        cell.subtitle1Label.text = item.subtitle;
+        cell.subtitle2Label.text = item.subtitle2;
+        //TODO: fix thumbnail get default if not loaded, then load, else use loaded thumbnail
         [item openThumbnailWithCompletionHandler:^(BOOL success) {
             //on background thread
             dispatch_async(dispatch_get_main_queue(), ^{
                 cell.thumbnailImageView.image = item.thumbnail;
             });
         }];
-        cell.subtitle1Label.text = item.subtitle;
-        cell.subtitle2Label.text = item.subtitle2;
-        cell.downloadImageView.hidden = item.isDownloading;
+        cell.downloading = item.isDownloading;
         return cell;
     }
 }
@@ -359,39 +360,34 @@
 
 - (void)downloadItem:(NSIndexPath *)indexPath
 {
-    MapTableViewCell *cell = (MapTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     Map *map = [self.items remoteMapAtIndex:indexPath.urow];
-    if (cell.downloadView.downloading) {
-        cell.downloadImageView.hidden = NO;
-        cell.downloadView.downloading = NO;
+    if (map.isDownloading) {
         [map cancelDownload];
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     } else {
-        [map prepareToDownload];
-        cell.downloadView.percentComplete = 0;
-        cell.downloadImageView.hidden = YES;
-        cell.downloadView.downloading = YES;
-        map.progressAction = ^(double bytesWritten, double bytesExpected) {
+        MapTableViewCell *cell = (MapTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+        cell.percentComplete = 0;
+        map.downloadProgressAction = ^(double bytesWritten, double bytesExpected) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                cell.downloadView.percentComplete =  bytesWritten/bytesExpected;
+                cell.percentComplete =  bytesWritten/bytesExpected;
             });
         };
-        __weak Map *weakMap = map;
-        map.completionAction = ^(NSURL *mapUrl, BOOL success) {
+        map.downloadCompletionAction = ^(Map *newMap) {
             //on background thread
             dispatch_async(dispatch_get_main_queue(), ^{
-                if (success) {
+                if (newMap) {
                     [self.items removeRemoteMapAtIndex:indexPath.urow];
                     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-                    [self.items insertLocalMap:weakMap atIndex:0];
+                    [self.items insertLocalMap:newMap atIndex:0];
                     [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
                 } else {
                     [[[UIAlertView alloc] initWithTitle:nil message:@"Can't download map." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-                    cell.downloadView.downloading = NO;
-                    cell.downloadImageView.hidden = NO;
+                    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
                 }
             });
         };
         [map startDownload];
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
 

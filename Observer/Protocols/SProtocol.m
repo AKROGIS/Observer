@@ -25,10 +25,11 @@
     NSString *_title;  //properties from a protocol cannot be synthesized
 }
 @property (nonatomic) BOOL parsedJSON;
-@property (nonatomic) BOOL downloading;
+
 //TODO: move to NSOperation
-@property (nonatomic, strong) NSURLSessionTask *downloadTask;
+@property (nonatomic) BOOL downloading;
 @property (nonatomic, strong) NSURLSession *session;
+@property (nonatomic, strong) NSURLSessionTask *downloadTask;
 @end
 
 @implementation SProtocol
@@ -86,6 +87,8 @@
 }
 
 
+
+
 #pragma mark - AKRTableViewItem
 
 - (NSString *)title
@@ -106,6 +109,8 @@
 {
     return nil;
 }
+
+
 
 
 #pragma mark - public methods
@@ -315,6 +320,9 @@
     [self.downloadTask cancel];
     self.downloading = NO;
 }
+
+
+
 
 #pragma mark - NSURLSessionDownloadDelegate
 

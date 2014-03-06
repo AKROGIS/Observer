@@ -69,21 +69,21 @@
 //YES if the Map is available locally, NO otherwise;
 - (BOOL)isLocal;
 
-// download the Map from the remote URL to a local file...
-- (void)prepareToDownload;
+// download the Protocol from the remote URL to a local file...
 - (void)startDownload;
 - (void)cancelDownload;
 - (BOOL)isDownloading;
 
-//properties to support downloading
-//TODO: move these to a generic NSOperation
+// The download should continue if the app is put in the background
 @property (nonatomic) BOOL isBackground;
-@property (nonatomic) BOOL canReplace;
-@property (nonatomic, strong) NSURLSession *session;
-//@property (nonatomic, strong) NSURL *sourceURL;
+// Where the downloaded file should be stored, must be a file URL
+//  if nil, then a unique URL in the Documents folder based on the source URL will be used)
 @property (nonatomic, strong) NSURL *destinationURL;
-@property (nonatomic, copy) void(^progressAction)(double bytesWritten, double bytesExpected);
-@property (nonatomic, copy) void(^completionAction)(NSURL *imageUrl, BOOL success);
-
+// The download can over-write any existing file at destinationURL
+@property (nonatomic) BOOL canReplace;
+// A block to execute when there is progress to report
+@property (nonatomic, copy) void(^downloadProgressAction)(double bytesWritten, double bytesExpected);
+// A block to execute when the file as been stored at
+@property (nonatomic, copy) void(^downloadCompletionAction)(Map *newMap);
 
 @end

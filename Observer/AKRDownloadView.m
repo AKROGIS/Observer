@@ -15,7 +15,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        _percentComplete = 0.75;
+        _percentComplete = 0.0;
     }
     return self;
 }
