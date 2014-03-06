@@ -110,7 +110,7 @@
     return value ? value : DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP;
 }
 
-- (void)setactiveMapURL:(NSURL *)activeMapURL
+- (void)setActiveMapURL:(NSURL *)activeMapURL
 {
     NSString *string = activeMapURL.absoluteString;
     if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP]) {
@@ -133,7 +133,7 @@
     return value ? value : DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY;
 }
 
-- (void)setactiveSurveyURL:(NSURL *)activeSurveyURL
+- (void)setActiveSurveyURL:(NSURL *)activeSurveyURL
 {
     NSString *string = activeSurveyURL.absoluteString;
     if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY]) {
