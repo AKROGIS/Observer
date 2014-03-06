@@ -27,8 +27,8 @@
 //Views that need to updated thier display based on changes (made by settings app, or
 //other views) need to subscribe to NSUserDefaultsDidChangeNotification
 
-@property (nonatomic) NSURL *selectedMap;
-@property (nonatomic) NSURL *selectedSurvey;
+@property (nonatomic) NSURL *activeMapURL;
+@property (nonatomic) NSURL *activeSurveyURL;
 
 @property (nonatomic, strong) NSArray *surveys; //of NSURL
 

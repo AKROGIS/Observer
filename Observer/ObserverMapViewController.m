@@ -366,7 +366,7 @@
     }
     if ([self closeSurveyWithConcurrentOpen:(survey != nil)]) {
         _survey = survey;
-        [Settings manager].selectedSurvey = survey.url;
+        [Settings manager].activeSurveyURL = survey.url;
         [self openSurvey];
         [self updateSelectSurveyViewControllerWithNewSurvey:survey];
     }
@@ -382,7 +382,7 @@
     }
     [self closeMap];
     _map = map;
-    [Settings manager].selectedMap = map.url;
+    [Settings manager].activeMapURL = map.url;
     [self openMap];
     [self updateSelectMapViewControllerWithNewMap:map];
 }

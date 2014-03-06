@@ -28,11 +28,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    Map *savedMap = [[Map alloc] initWithLocalTileCache:[[Settings manager] selectedMap]];
+    Map *savedMap = [[Map alloc] initWithLocalTileCache:[Settings manager].activeMapURL];
     if (savedMap.isValid) {
         self.observerMapViewController.map = savedMap;
     }
-    Survey *savedSurvey = [[Survey alloc] initWithURL:[[Settings manager] selectedSurvey]];
+    Survey *savedSurvey = [[Survey alloc] initWithURL:[Settings manager].activeSurveyURL];
     if (savedSurvey.isValid) {
         self.observerMapViewController.survey = savedSurvey;
     }

@@ -17,11 +17,11 @@
  * a zero value, as it will always be replaced with your default
  */
 
-#define DEFAULTS_KEY_URL_FOR_SELECTED_MAP @"url_for_selected_map"
-#define DEFAULTS_DEFAULT_URL_FOR_SELECTED_MAP nil
+#define DEFAULTS_KEY_URL_FOR_ACTIVE_MAP @"url_for_active_map"
+#define DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP nil
 
-#define DEFAULTS_KEY_URL_FOR_SELECTED_SURVEY @"url_for_selected_survey"
-#define DEFAULTS_DEFAULT_URL_FOR_SELECTED_SURVEY nil
+#define DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY @"url_for_active_survey"
+#define DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY nil
 
 #define DEFAULTS_KEY_INDEX_OF_CURRENT_MAP @"index_of_current_map"
 #define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP 0
@@ -99,47 +99,47 @@
 
 
 
-@synthesize selectedMap = _selectedMap;
+@synthesize activeMapURL = _activeMapURL;
 
-- (NSURL *)selectedMap
+- (NSURL *)activeMapURL
 {
-    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_SELECTED_MAP];
+    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP];
     if ([value isKindOfClass:[NSString class]]) {
         value = [NSURL URLWithString:value];
     }
-    return value ? value : DEFAULTS_DEFAULT_URL_FOR_SELECTED_MAP;
+    return value ? value : DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP;
 }
 
-- (void)setSelectedMap:(NSURL *)selectedMap
+- (void)setactiveMapURL:(NSURL *)activeMapURL
 {
-    NSString *string = selectedMap.absoluteString;
-    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_SELECTED_MAP]) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_SELECTED_MAP];
+    NSString *string = activeMapURL.absoluteString;
+    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP];
     } else {
-        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_SELECTED_MAP];
+        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP];
     }
 }
 
 
 
-@synthesize selectedSurvey = _selectedSurvey;
+@synthesize activeSurveyURL = _activeSurveyURL;
 
-- (NSURL *)selectedSurvey
+- (NSURL *)activeSurveyURL
 {
-    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_SELECTED_SURVEY];
+    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY];
     if ([value isKindOfClass:[NSString class]]) {
         value = [NSURL URLWithString:value];
     }
-    return value ? value : DEFAULTS_DEFAULT_URL_FOR_SELECTED_SURVEY;
+    return value ? value : DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY;
 }
 
-- (void)setSelectedSurvey:(NSURL *)selectedSurvey
+- (void)setactiveSurveyURL:(NSURL *)activeSurveyURL
 {
-    NSString *string = selectedSurvey.absoluteString;
-    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_SELECTED_SURVEY]) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_SELECTED_SURVEY];
+    NSString *string = activeSurveyURL.absoluteString;
+    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY];
     } else {
-        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_SELECTED_SURVEY];
+        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY];
     }
 }
 
