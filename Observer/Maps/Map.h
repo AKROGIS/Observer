@@ -72,7 +72,7 @@
 // download the Map from the remote URL to a local file...
 - (void)prepareToDownload;
 - (void)startDownload;
-- (void)stopDownload;
+- (void)cancelDownload;
 - (BOOL)isDownloading;
 
 //properties to support downloading

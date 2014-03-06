@@ -358,28 +358,30 @@
 - (void) downloadItem:(NSIndexPath *)indexPath
 {
     MapTableViewCell *cell = (MapTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+    Map *map = [self.items remoteMapAtIndex:indexPath.urow];
     if (cell.downloadView.downloading) {
         cell.downloadImageView.hidden = NO;
         cell.downloadView.downloading = NO;
-        [self.items cancelDownloadMapAtIndex:indexPath.urow];
+        [map cancelDownload];
     } else {
-        [self.items prepareToDownloadMapAtIndex:indexPath.urow];
+        [map prepareToDownload];
         cell.downloadView.percentComplete = 0;
         cell.downloadImageView.hidden = YES;
         cell.downloadView.downloading = YES;
-        Map *map = [self.items remoteMapAtIndex:indexPath.urow];
         map.progressAction = ^(double bytesWritten, double bytesExpected) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 cell.downloadView.percentComplete =  bytesWritten/bytesExpected;
             });
         };
+        __weak Map *weakMap = map;
         map.completionAction = ^(NSURL *mapUrl, BOOL success) {
             //on background thread
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
-                    self.items.delegate = self;
-                    [self.items moveRemoteMapAtIndex:indexPath.urow toLocalMapAtIndex:0];
-                    self.items.delegate = nil;
+                    [self.items removeRemoteMapAtIndex:indexPath.urow];
+                    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+                    [self.items insertLocalMap:weakMap atIndex:0];
+                    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
                 } else {
                     [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't download map" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
                     cell.downloadView.downloading = NO;
@@ -394,7 +396,7 @@
 - (void) stopDownloadItem:(NSIndexPath *)indexPath
 {
     Map *map = [self.items remoteMapAtIndex:indexPath.urow];
-    [map stopDownload];
+    [map cancelDownload];
 }
 
 - (void)setFooterText

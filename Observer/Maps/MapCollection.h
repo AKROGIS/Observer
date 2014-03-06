@@ -38,6 +38,11 @@
 // This method does NOT send messsages to the delegate when items are added to the lists.
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
+// Refresh the list of remote Maps
+// Will send message to the delegate as items are added/removed from the local/remote lists
+// The completion handler is used only to signal success/failure of remote download
+- (void) refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+
 // UITableView DataSource Support
 - (NSUInteger)numberOfLocalMaps;
 - (NSUInteger)numberOfRemoteMaps;
@@ -49,24 +54,12 @@
 - (void)insertLocalMap:(Map *)map atIndex:(NSUInteger)index;
 // No-op if index out of bounds (semantics - the map at the index is already gone)
 - (void)removeLocalMapAtIndex:(NSUInteger)index;
+// No-op if index out of bounds (semantics - the map at the index is already gone)
+- (void)removeRemoteMapAtIndex:(NSUInteger)index;
 // Throws an exception if either index is out of bounds
 - (void)moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 // Throws an exception if either index is out of bounds
 - (void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
-
-// Download a Map from the server
-- (void)prepareToDownloadMapAtIndex:(NSUInteger)index;
-
-//TODO: is this the best API?
-- (void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toLocalMapAtIndex:(NSUInteger)toIndex;
-
-// Cancel a downloading map
-- (void)cancelDownloadMapAtIndex:(NSUInteger)index;
-
-// Refresh the list of remote Maps
-// Will send message to the delegate as items are added/removed from the local/remote lists
-// The completion handler is used only to signal success/failure
-- (void) refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 //TODO: I don't like making this public, but I need to save the cache after a map changes it's thumbnail url
 - (void)synchronize;

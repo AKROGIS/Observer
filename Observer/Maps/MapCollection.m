@@ -23,7 +23,7 @@
 static MapCollection *_sharedCollection = nil;
 static BOOL _isLoaded = NO;
 
-+ (MapCollection *) sharedCollection {
++ (MapCollection *)sharedCollection {
     @synchronized(self) {
         if (_sharedCollection == nil) {
             _sharedCollection = [[super allocWithZone:NULL] init];
@@ -93,12 +93,12 @@ static BOOL _isLoaded = NO;
     return self.remoteItems[index];
 }
 
--(NSUInteger)numberOfLocalMaps
+- (NSUInteger)numberOfLocalMaps
 {
     return self.localItems.count;
 }
 
--(NSUInteger)numberOfRemoteMaps
+- (NSUInteger)numberOfRemoteMaps
 {
     return self.remoteItems.count;
 }
@@ -110,7 +110,7 @@ static BOOL _isLoaded = NO;
     [self saveCache];
 }
 
--(void)removeLocalMapAtIndex:(NSUInteger)index
+- (void)removeLocalMapAtIndex:(NSUInteger)index
 {
     if (self.localItems.count <= index) {
         AKRLog(@"Array index out of bounds in [MapCollection removeLocalMapAtIndex:%d] size = %d",index,self.localItems.count);
@@ -123,7 +123,17 @@ static BOOL _isLoaded = NO;
     [self saveCache];
 }
 
--(void)moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+- (void)removeRemoteMapAtIndex:(NSUInteger)index
+{
+    if (self.remoteItems.count <= index) {
+        AKRLog(@"Array index out of bounds in [MapCollection removeRemoteMapAtIndex:%d] size = %d",index,self.remoteItems.count);
+        return;
+    }
+    [self.remoteItems removeObjectAtIndex:index];
+    [self saveCache];
+}
+
+- (void)moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
     if (fromIndex == toIndex)
         return;
@@ -134,7 +144,7 @@ static BOOL _isLoaded = NO;
     [self saveCache];
 }
 
--(void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+- (void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
     if (fromIndex == toIndex)
         return;
@@ -202,39 +212,6 @@ static BOOL _isLoaded = NO;
             completionHandler(success);
         }
     });
-}
-
--(void)prepareToDownloadMapAtIndex:(NSUInteger)index
-{
-    if (self.remoteItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [MapCollection prepareToDownloadMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
-        return;
-    }
-    [self.remoteItems[index] prepareToDownload];
-}
-
-- (void)cancelDownloadMapAtIndex:(NSUInteger)index
-{
-    if (self.remoteItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [MapCollection cancelDownloadMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
-        return;
-    }
-    [self.remoteItems[index] stopDownload];
-}
-
-- (void) moveRemoteMapAtIndex:(NSUInteger)fromIndex toLocalMapAtIndex:(NSUInteger)toIndex
-{
-    if (self.remoteItems.count <= fromIndex || self.localItems.count < toIndex) {
-        AKRLog(@"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toLocalMapAtIndex:%d] size = (%d,%d)",fromIndex,toIndex,self.remoteItems.count,self.localItems.count);
-        return;
-    }
-    Map *map = [self.remoteItems objectAtIndex:fromIndex];
-    id<CollectionChanged> delegate = self.delegate;
-    [self.remoteItems removeObjectAtIndex:fromIndex];
-    [delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex]];
-    [self.localItems insertObject:map atIndex:toIndex];
-    [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:toIndex]];
-    [self saveCache];
 }
 
 -(void)synchronize

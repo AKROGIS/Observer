@@ -336,7 +336,7 @@
     [self.downloadTask resume];
 }
 
-- (void)stopDownload
+- (void)cancelDownload
 {
     [self.downloadTask cancel];
     self.downloading = NO;
