@@ -14,7 +14,6 @@
 @interface MapCollection()
 @property (nonatomic, strong) NSMutableArray *localItems;  // of Map
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of Map
-@property (nonatomic, strong) NSURL *cacheFile;
 @end
 
 @implementation MapCollection
@@ -71,28 +70,10 @@ static BOOL _isLoaded = NO;
     return _remoteItems;
 }
 
-+ (NSURL *)documentsDirectory
-{
-    static NSURL *_documentsDirectory = nil;
-    if (!_documentsDirectory) {
-        _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
-    }
-    return _documentsDirectory;
-}
-
-- (NSURL *)cacheFile
-{
-    if (!_cacheFile) {
-        _cacheFile = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
-        _cacheFile = [_cacheFile URLByAppendingPathComponent:@"map_list.cache"];
-    }
-    return _cacheFile;
-}
 
 
 
-
-#pragma mark - TableView Data Soource Support
+#pragma mark - TableView Data Source Support
 
 - (Map *)localMapAtIndex:(NSUInteger)index
 {
@@ -189,14 +170,14 @@ static BOOL _isLoaded = NO;
         //Check and set self.isLoading on the main thread to guarantee there is no race condition.
         if (_isLoaded) {
             if (completionHandler)
-                completionHandler(self.localItems != nil  & self.remoteItems != nil);
+                completionHandler(self.localItems != nil  && self.remoteItems != nil);
         } else {
             if (isLoading) {
                 //wait until loading is completed, then return;
                 dispatch_async(dispatch_queue_create("gov.nps.akr.observer.mapcollection.open", DISPATCH_QUEUE_SERIAL), ^{
                     //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
                     if (completionHandler) {
-                        completionHandler(self.localItems != nil  & self.remoteItems != nil);
+                        completionHandler(self.localItems != nil && self.remoteItems != nil);
                     }
                 });
             } else {
@@ -210,7 +191,7 @@ static BOOL _isLoaded = NO;
                     _isLoaded = YES;
                     isLoading = NO;
                     if (completionHandler) {
-                        completionHandler(self.localItems != nil  & self.remoteItems != nil);
+                        completionHandler(self.localItems != nil && self.remoteItems != nil);
                     }
                 });
             }
@@ -224,15 +205,6 @@ static BOOL _isLoaded = NO;
         self.refreshDate = [NSDate date];
         [self refreshLocalMaps];
         BOOL success = [self refreshRemoteMaps];
-        //assume that changes were made to the model and save the cache.
-        //If there is a delegate, then it must be queued up on main thread, because the model changes occur there
-        if (self.delegate) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self saveCache];
-            });
-        } else {
-            [self saveCache];
-        }
         if (completionHandler) {
             completionHandler(success);
         }
@@ -256,35 +228,6 @@ static BOOL _isLoaded = NO;
     }
     [self.remoteItems[index] stopDownload];
 }
-
-//- (void)downloadMapAtIndex:(NSUInteger)index WithCompletionHandler:(void (^)(BOOL success))completionHandler
-//{
-//    //if (self.remoteItems.count <= index) return; //safety check
-//    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
-//        Map *map = [self remoteMapAtIndex:index];
-//        NSURL *newUrl = [self.documentsDirectory URLByAppendingPathComponent:map.url.lastPathComponent];
-//        newUrl = [newUrl URLByUniquingPath];
-//        BOOL success = [map downloadToURL:newUrl];
-//        if (success) {
-//            if (self.delegate) {
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [self.remoteItems removeObjectAtIndex:index];
-//                    [self.delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
-//                    [self.localItems insertObject:map atIndex:0];
-//                    [self.delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
-//                    [self saveCache];
-//                });
-//            } else {
-//                [self.remoteItems removeObjectAtIndex:index];
-//                [self.localItems insertObject:map atIndex:0];
-//                [self saveCache];
-//            }
-//        }
-//        if (completionHandler) {
-//            completionHandler(success);
-//        }
-//    });
-//}
 
 - (void) moveRemoteMapAtIndex:(NSUInteger)fromIndex toLocalMapAtIndex:(NSUInteger)toIndex
 {
@@ -313,13 +256,23 @@ static BOOL _isLoaded = NO;
 
 #pragma mark - Cache operations
 
++ (NSURL *)cacheFile
+{
+    static NSURL *_cacheFile = nil;
+    if (!_cacheFile) {
+        _cacheFile = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
+        _cacheFile = [_cacheFile URLByAppendingPathComponent:@"map_list.cache"];
+    }
+    return _cacheFile;
+}
+
 //TODO: - consider NSDefaults as it does memory mapping and defered writes
 //       this also make the class a singleton object
 
 //done on background thread
 - (void)loadCache
 {
-    NSArray *plist = [NSArray arrayWithContentsOfURL:self.cacheFile];
+    NSArray *plist = [NSArray arrayWithContentsOfURL:[MapCollection cacheFile]];
     for (id obj in plist) {
         if ([obj isKindOfClass:[NSDate class]]) {
             self.refreshDate = obj;
@@ -356,7 +309,7 @@ static BOOL _isLoaded = NO;
     }
     //File save can be safely done on a background thread.
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
-        [plist writeToURL:self.cacheFile atomically:YES];
+        [plist writeToURL:[MapCollection cacheFile] atomically:YES];
     });
 }
 
@@ -368,6 +321,7 @@ static BOOL _isLoaded = NO;
 //done on background thread
 - (void)refreshLocalMaps
 {
+    
     //NOTE: compare file name (without path), because iOS is inconsistent about symbolic links at root of documents path
     NSMutableArray *localMapFileNames = [MapCollection mapFileNamesInDocumentsFolder];
 
@@ -417,6 +371,16 @@ static BOOL _isLoaded = NO;
         [self.localItems removeObjectsAtIndexes:itemsToRemove];
         [self.localItems addObjectsFromArray:mapsToAdd];
     }
+    //update cache
+    if (0 < itemsToRemove.count || 0 < mapsToAdd.count) {
+        if (self.delegate) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self saveCache];
+            });
+        } else {
+            [self saveCache];
+        }
+    }
 }
 
 + (NSMutableArray *) /* of NSString */ mapFileNamesInDocumentsFolder
@@ -440,6 +404,15 @@ static BOOL _isLoaded = NO;
     return nil;
 }
 
++ (NSURL *)documentsDirectory
+{
+    static NSURL *_documentsDirectory = nil;
+    if (!_documentsDirectory) {
+        _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+    }
+    return _documentsDirectory;
+}
+
 
 
 
@@ -449,7 +422,7 @@ static BOOL _isLoaded = NO;
 - (BOOL)refreshRemoteMaps
 {
     NSURL *url = [Settings manager].urlForMaps;
-    NSMutableArray *serverMaps = [self fetchMapListFromURL:url];
+    NSMutableArray *serverMaps = [MapCollection fetchMapListFromURL:url];
     if (serverMaps) {
         [self syncCacheWithServerMaps:serverMaps];
         return YES;
@@ -459,7 +432,7 @@ static BOOL _isLoaded = NO;
 
 
 //done on background thread
-- (NSMutableArray *)fetchMapListFromURL:(NSURL *)url
++ (NSMutableArray *)fetchMapListFromURL:(NSURL *)url
 {
     NSMutableArray *maps = nil;
     NSData *data = [NSData dataWithContentsOfURL:url];
@@ -484,7 +457,7 @@ static BOOL _isLoaded = NO;
 }
 
 //done on background thread
--  (BOOL)syncCacheWithServerMaps:(NSMutableArray *)serverMaps
+- (void)syncCacheWithServerMaps:(NSMutableArray *)serverMaps
 {
     // return value of YES means changes were made and the caller should update the cache.
     // we need to remove cached items not on the server,
@@ -559,7 +532,16 @@ static BOOL _isLoaded = NO;
         [self.remoteItems removeObjectsAtIndexes:itemsToRemove];
         [self.remoteItems addObjectsFromArray:mapsToAdd];
     }
-    return modelChanged;
+    //update cache
+    if (modelChanged) {
+        if (self.delegate) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self saveCache];
+            });
+        } else {
+            [self saveCache];
+        }
+    }
 }
 
 @end
