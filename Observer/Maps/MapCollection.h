@@ -39,14 +39,20 @@
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // UITableView DataSource Support
-- (NSUInteger) numberOfLocalMaps;
-- (NSUInteger) numberOfRemoteMaps;
-- (Map *) localMapAtIndex:(NSUInteger)index;
-- (Map *) remoteMapAtIndex:(NSUInteger)index;
-- (void) insertLocalMap:(Map *)map atIndex:(NSUInteger)index;
-- (void) removeLocalMapAtIndex:(NSUInteger)index;
-- (void) moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
-- (void) moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
+- (NSUInteger)numberOfLocalMaps;
+- (NSUInteger)numberOfRemoteMaps;
+//returns nil if index out of bounds (semantics - there is no map at the index)
+- (Map *)localMapAtIndex:(NSUInteger)index;
+//returns nil if index out of bounds (semantics - there is no map at the index)
+- (Map *)remoteMapAtIndex:(NSUInteger)index;
+//Throws an exception if index is greater than the number of local maps
+- (void)insertLocalMap:(Map *)map atIndex:(NSUInteger)index;
+//No-op if index out of bounds (semantics - the map at the index is already gone)
+- (void)removeLocalMapAtIndex:(NSUInteger)index;
+//Throws an exception if either index is out of bounds
+- (void)moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
+//Throws an exception if either index is out of bounds
+- (void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
 // Download a Map from the server
 - (void)prepareToDownloadMapAtIndex:(NSUInteger)index;

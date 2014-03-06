@@ -105,7 +105,7 @@ static BOOL _isLoaded = NO;
 
 - (void)insertLocalMap:(Map *)map atIndex:(NSUInteger)index
 {
-    //if (self.localItems.count < index) return; //safety check
+    NSAssert(index <= self.localItems.count, @"Array index out of bounds in [MapCollection insertLocalMapAtIndex:%d]; size = %d",index,self.localItems.count);
     [self.localItems insertObject:map atIndex:index];
     [self saveCache];
 }
@@ -125,14 +125,9 @@ static BOOL _isLoaded = NO;
 
 -(void)moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
-    if (self.localItems.count <= fromIndex || self.localItems.count <= toIndex) {
-        AKRLog(@"Array index out of bounds in [MapCollection moveLocalMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.localItems.count);
-        return;
-    }
     if (fromIndex == toIndex)
         return;
-
-    //move the item
+    NSAssert(fromIndex < self.localItems.count && toIndex < self.localItems.count, @"Array index out of bounds in [MapCollection moveLocalMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.localItems.count);
     id temp = self.localItems[fromIndex];
     [self.localItems removeObjectAtIndex:fromIndex];
     [self.localItems insertObject:temp atIndex:toIndex];
@@ -141,12 +136,9 @@ static BOOL _isLoaded = NO;
 
 -(void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
-    if (self.remoteItems.count <= fromIndex || self.remoteItems.count <= toIndex) {
-        AKRLog(@"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.remoteItems.count);
-        return;
-    }
     if (fromIndex == toIndex)
         return;
+    NSAssert(fromIndex < self.remoteItems.count && toIndex < self.remoteItems.count, @"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.remoteItems.count);
     id temp = self.remoteItems[fromIndex];
     [self.remoteItems removeObjectAtIndex:fromIndex];
     [self.remoteItems insertObject:temp atIndex:toIndex];
