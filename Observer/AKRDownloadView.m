@@ -38,6 +38,7 @@
 {
     if (downloading != _downloading) {
         _downloading = downloading;
+        self.percentComplete = 0.0;
         [self setNeedsDisplay];
     }
 }

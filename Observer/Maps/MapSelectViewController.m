@@ -238,7 +238,7 @@
         {
             [[[UIAlertView alloc] initWithTitle:@"Try Again" message:@"Can not download while refreshing.  Please try again when refresh is complete." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
         } else {
-            [self downloadItem:indexPath];
+            [self startStopDownloadItem:indexPath];
         }
         return;
     }
@@ -358,7 +358,7 @@
     }];
 }
 
-- (void)downloadItem:(NSIndexPath *)indexPath
+- (void)startStopDownloadItem:(NSIndexPath *)indexPath
 {
     Map *map = [self.items remoteMapAtIndex:indexPath.urow];
     if (map.isDownloading) {
@@ -366,7 +366,6 @@
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     } else {
         MapTableViewCell *cell = (MapTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-        cell.percentComplete = 0;
         map.downloadProgressAction = ^(double bytesWritten, double bytesExpected) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 cell.percentComplete =  bytesWritten/bytesExpected;
@@ -389,12 +388,6 @@
         [map startDownload];
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
-}
-
-- (void)stopDownloadItem:(NSIndexPath *)indexPath
-{
-    Map *map = [self.items remoteMapAtIndex:indexPath.urow];
-    [map cancelDownload];
 }
 
 - (void)setFooterText

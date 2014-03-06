@@ -225,7 +225,7 @@
         {
             [[[UIAlertView alloc] initWithTitle:@"Try Again" message:@"Can not download while refreshing.  Please try again when refresh is complete." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
         } else {
-            [self downloadItem:indexPath];
+            [self startStopDownloadItem:indexPath];
         }
         return;
     }
@@ -341,31 +341,36 @@
     }];
 }
 
-- (void)downloadItem:(NSIndexPath *)indexPath
+- (void)startStopDownloadItem:(NSIndexPath *)indexPath
 {
     SProtocol *protocol = [self.items remoteProtocolAtIndex:indexPath.urow];
-    protocol.downloadCompletionAction = ^(SProtocol *newProtocol) {
-        //on background thread
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (newProtocol) {
-                [self.items removeRemoteProtocolAtIndex:indexPath.urow];
-                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-                [self.items insertLocalProtocol:newProtocol atIndex:0];
-                [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-            } else {
-                [[[UIAlertView alloc] initWithTitle:nil message:@"Can't download protocol." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-                [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            }
-        });
-    };
-    [protocol startDownload];
-    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-}
-
-- (void)stopDownloadItem:(NSIndexPath *)indexPath
-{
-    SProtocol *protocol = [self.items remoteProtocolAtIndex:indexPath.urow];
-    [protocol cancelDownload];
+    if (protocol.isDownloading) {
+        [protocol cancelDownload];
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } else {
+        ProtocolTableViewCell *cell = (ProtocolTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+        protocol.downloadProgressAction = ^(double bytesWritten, double bytesExpected) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                cell.percentComplete =  bytesWritten/bytesExpected;
+            });
+        };
+        protocol.downloadCompletionAction = ^(SProtocol *newProtocol) {
+            //on background thread
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (newProtocol) {
+                    [self.items removeRemoteProtocolAtIndex:indexPath.urow];
+                    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+                    [self.items insertLocalProtocol:newProtocol atIndex:0];
+                    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+                } else {
+                    [[[UIAlertView alloc] initWithTitle:nil message:@"Can't download protocol." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+                    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+                }
+            });
+        };
+        [protocol startDownload];
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
 }
 
 - (void)setFooterText
