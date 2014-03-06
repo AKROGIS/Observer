@@ -202,7 +202,8 @@ static BOOL _isLoaded = NO;
             } else {
                 isLoading = YES;
                 dispatch_async(dispatch_queue_create("gov.nps.akr.observer.mapcollection.open", DISPATCH_QUEUE_SERIAL), ^{
-                    [self loadAndCorrectListOfMaps];
+                    [self loadCache];
+                    [self refreshLocalMaps];
                     if (!self.refreshDate) {
                         [self refreshRemoteMaps];
                     }
@@ -221,7 +222,8 @@ static BOOL _isLoaded = NO;
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
         self.refreshDate = [NSDate date];
-        BOOL success = [self refreshRemoteMaps] && [self refreshLocalMaps];
+        [self refreshLocalMaps];
+        BOOL success = [self refreshRemoteMaps];
         //assume that changes were made to the model and save the cache.
         //If there is a delegate, then it must be queued up on main thread, because the model changes occur there
         if (self.delegate) {
@@ -236,7 +238,6 @@ static BOOL _isLoaded = NO;
         }
     });
 }
-
 
 -(void)prepareToDownloadMapAtIndex:(NSUInteger)index
 {
@@ -306,21 +307,11 @@ static BOOL _isLoaded = NO;
 }
 
 
+
+
 #pragma mark - private methods
 
-- (void)loadAndCorrectListOfMaps
-{
-    //TODO: compare with similar method in other collections
-    //temporarily remove the delegate so that updates are not sent for the bulk updates before the UI might be ready
-    //  currently unnecessary, since open is only called when the delegate is nil;
-    id savedDelegate = self.delegate;
-    self.delegate = nil;
-    [self loadCache];
-    [self refreshLocalMaps];
-    [self saveCache];
-    self.delegate = savedDelegate;
-
-}
+#pragma mark - Cache operations
 
 //TODO: - consider NSDefaults as it does memory mapping and defered writes
 //       this also make the class a singleton object
@@ -369,15 +360,13 @@ static BOOL _isLoaded = NO;
     });
 }
 
-//done on background thread
-- (BOOL)refreshLocalMaps
-{
-    [self syncWithFileSystem];
-    return YES;
-}
+
+
+
+#pragma mark - Local Maps
 
 //done on background thread
-- (void)syncWithFileSystem
+- (void)refreshLocalMaps
 {
     //NOTE: compare file name (without path), because iOS is inconsistent about symbolic links at root of documents path
     NSMutableArray *localMapFileNames = [MapCollection mapFileNamesInDocumentsFolder];
@@ -451,6 +440,10 @@ static BOOL _isLoaded = NO;
     return nil;
 }
 
+
+
+
+#pragma mark - Remote Maps
 
 //done on background thread
 - (BOOL)refreshRemoteMaps
