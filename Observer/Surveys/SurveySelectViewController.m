@@ -16,8 +16,6 @@
 #import "NSIndexPath+unsignedAccessors.h"
 
 @interface SurveySelectViewController ()
-// The list of items to present in the table view
-// TODO: should I make the collection the datasource delegate?
 @property (nonatomic, strong) SurveyCollection *items; //Model
 @property (strong, nonatomic) UIBarButtonItem *addButton;
 @property (strong, nonatomic) NSIndexPath *indexPathToDelete;
@@ -91,6 +89,16 @@
     // Dispose of any resources that can be recreated.
 }
 
+// Releasing the collection will save memory, but will also take time to recreate collection on each VC load
+- (void)dealloc
+{
+    [SurveyCollection releaseSharedCollection];
+}
+
+
+
+
+#pragma mark - lazy property initializers
 
 - (SurveyCollection *)items
 {

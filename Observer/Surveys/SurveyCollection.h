@@ -13,17 +13,12 @@
 @interface SurveyCollection : NSObject
 
 
-// There is only one list of surveys for the app.
-// This list represents the singular collection of files on disk
+// This list represents the ordered collection of survey files in the filesystem
+// It is a singleton, to avoid synchronization issues between multiple instances
 + (SurveyCollection *)sharedCollection;
 
+// This will release the memory used by the collection
 + (void)releaseSharedCollection;
-//TODO: this is a memory optimization that needs to be validated and tested
-//multiple instances will clash when saving state to the cache.
-//However, I want to create and destroy the survey list with the view controller to
-//avoid keeping the collection in memory if it isn't needed.  making a singleton object
-//ensures that it is trapped in memory, unless I create a cleanup method that the VC calls
-//when it disappears. - Not sure the best way to go here.
 
 //Does this collection manage the provided URL?
 + (BOOL)collectsURL:(NSURL *)url;

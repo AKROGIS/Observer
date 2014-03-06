@@ -59,6 +59,15 @@
     self.detailViewController = nil;
 }
 
+// Releasing the collection will save memory, but will also take time to recreate collection on each VC load
+- (void)dealloc
+{
+    [ProtocolCollection releaseSharedCollection];
+}
+
+
+
+
 #pragma mark - lazy property initializers
 
 - (ProtocolDetailViewController *)detailViewController

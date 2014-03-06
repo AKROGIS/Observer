@@ -21,21 +21,15 @@
 
 @property (nonatomic, weak) id<CollectionChanged> delegate;
 
-// This is a singleton - actually a psuedo singleton, it is based on the honor system.
-// if you create your own instance with alloc/init then the behaviour is unspecified
+// This list represents the ordered collection of protocol files in the filesystem and remote server
+// It is a singleton, to avoid synchronization issues between multiple instances
 + (ProtocolCollection *)sharedCollection;
 
+// This will release the memory used by the collection
 + (void)releaseSharedCollection;
-//TODO: this is a memory optimization that needs to be validated and tested
-//multiple instances will clash when saving state to the cache.
-//However, I want to create and destroy the protocol list with the view controller to
-//avoid keeping the collection in memory if it isn't needed.  making a singleton object
-//ensures that it is trapped in memory, unless I create a cleanup method that the VC calls
-//when it disappears. - Not sure the best way to go here.
-
 
 // Does this collection manage the provided URL?
-+ (BOOL) collectsURL:(NSURL *)url;
++ (BOOL)collectsURL:(NSURL *)url;
 
 // builds the list, and current selection from the filesystem and user defaults
 // This method does NOT send messsages to the delegate when items are added to the lists.
@@ -68,7 +62,7 @@
 // Refresh the list of remote protocols
 // Will send message to the delegate as items are added/removed from the local/remote lists
 // The completion handler is used only to signal success/failure
-- (void) refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (void)refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 @property (nonatomic, strong) NSDate *refreshDate;
 

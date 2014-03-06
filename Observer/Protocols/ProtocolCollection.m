@@ -41,6 +41,39 @@
 
 @implementation ProtocolCollection
 
+#pragma mark - singleton
+
+static ProtocolCollection *_sharedCollection = nil;
+static BOOL _isLoaded = NO;
+
++ (ProtocolCollection *) sharedCollection {
+    @synchronized(self) {
+        if (_sharedCollection == nil) {
+            _sharedCollection = [[super allocWithZone:NULL] init];
+        }
+    }
+    return _sharedCollection;
+}
+
++ (id)allocWithZone:(NSZone *)zone
+{
+    return [self sharedCollection];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return self;
+}
+
++ (void)releaseSharedCollection {
+    @synchronized(self) {
+        _sharedCollection = nil;
+        _isLoaded = NO;
+    }
+}
+
+
+
 
 #pragma mark - private properties
 
@@ -147,33 +180,17 @@
 
 #pragma mark - public methods
 
-static ProtocolCollection *_sharedCollection = nil;
-
-+ (ProtocolCollection *)sharedCollection
-{
-    if (!_sharedCollection) {
-        _sharedCollection = [[ProtocolCollection alloc] init];
-    }
-    return _sharedCollection;
-}
-
-+ (void)releaseSharedCollection {
-    _sharedCollection = nil;
-}
-
 + (BOOL) collectsURL:(NSURL *)url
 {
     return [[url pathExtension] isEqualToString:PROTOCOL_EXT];
 }
 
-
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    static BOOL isLoaded = NO;
     static BOOL isLoading = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
         //Check and set self.isLoading on the main thread to guarantee there is no race condition.
-        if (isLoaded) {
+        if (_isLoaded) {
             if (completionHandler)
                 completionHandler(self.localItems != nil  & self.remoteItems != nil);
         } else {
@@ -194,7 +211,7 @@ static ProtocolCollection *_sharedCollection = nil;
                         [self refreshRemoteProtocols];
                     }
                     [self saveCache];
-                    isLoaded = YES;
+                    _isLoaded = YES;
                     isLoading = NO;
                     if (completionHandler) {
                         completionHandler(self.localItems != nil  & self.remoteItems != nil);
@@ -204,7 +221,6 @@ static ProtocolCollection *_sharedCollection = nil;
         }
     });
 }
-
 
 - (SProtocol *)openURL:(NSURL *)url
 {
@@ -231,7 +247,6 @@ static ProtocolCollection *_sharedCollection = nil;
         }
     });
 }
-
 
 -(void)prepareToDownloadProtocolAtIndex:(NSUInteger)index
 {
@@ -269,6 +284,7 @@ static ProtocolCollection *_sharedCollection = nil;
         }
     });
 }
+
 
 
 

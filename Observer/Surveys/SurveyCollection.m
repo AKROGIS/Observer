@@ -19,14 +19,15 @@
 
 #pragma mark - singleton
 
+static SurveyCollection *_sharedCollection = nil;
+static BOOL _isLoaded = NO;
+
 + (SurveyCollection *) sharedCollection {
-    static SurveyCollection *_sharedCollection = nil;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    @synchronized(self) {
         if (_sharedCollection == nil) {
             _sharedCollection = [[super allocWithZone:NULL] init];
         }
-    });
+    }
     return _sharedCollection;
 }
 
@@ -40,12 +41,15 @@
     return self;
 }
 
-
 + (void)releaseSharedCollection {
-    //TODO: I can't release the shared collection with this type of singleton.
-    //This optimization may not be necessary
-    //_sharedCollection = nil;
+    @synchronized(self) {
+        _sharedCollection = nil;
+        _isLoaded = NO;
+    }
 }
+
+
+
 
 #pragma mark - private properties
 
@@ -68,21 +72,20 @@
 
 
 
+
 #pragma mark - Public methods
 
-+ (BOOL) collectsURL:(NSURL *)url
++ (BOOL)collectsURL:(NSURL *)url
 {
     return [[url pathExtension] isEqualToString:SURVEY_EXT];
 }
 
-
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    static BOOL isLoaded = NO;
     static BOOL isLoading = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
         //Check and set self.isLoading on the main thread to guarantee there is no race condition.
-        if (isLoaded) {
+        if (_isLoaded) {
             if (completionHandler)
                 completionHandler(self.items != nil);
         } else {
@@ -98,7 +101,7 @@
                 isLoading = YES;
                 dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
                     [self loadAndCorrectListOfSurveys];
-                    isLoaded = YES;
+                    _isLoaded = YES;
                     isLoading = NO;
                     if (completionHandler) {
                         completionHandler(self.items != nil);

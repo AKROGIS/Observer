@@ -19,6 +19,39 @@
 
 @implementation MapCollection
 
+#pragma mark - singleton
+
+static MapCollection *_sharedCollection = nil;
+static BOOL _isLoaded = NO;
+
++ (MapCollection *) sharedCollection {
+    @synchronized(self) {
+        if (_sharedCollection == nil) {
+            _sharedCollection = [[super allocWithZone:NULL] init];
+        }
+    }
+    return _sharedCollection;
+}
+
++ (id)allocWithZone:(NSZone *)zone
+{
+    return [self sharedCollection];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return self;
+}
+
++ (void)releaseSharedCollection {
+    @synchronized(self) {
+        _sharedCollection = nil;
+        _isLoaded = NO;
+    }
+}
+
+
+
 
 #pragma mark - private properties
 
@@ -55,6 +88,9 @@
     }
     return _cacheFile;
 }
+
+
+
 
 #pragma mark - TableView Data Soource Support
 
@@ -137,34 +173,21 @@
 }
 
 
+
+
 #pragma mark - public methods
 
-static MapCollection *_sharedCollection = nil;
-
-+ (MapCollection *)sharedCollection
-{
-    if (!_sharedCollection) {
-        _sharedCollection = [[MapCollection alloc] init];
-    }
-    return _sharedCollection;
-}
-
-+ (void)releaseSharedCollection {
-    _sharedCollection = nil;
-}
-
-+ (BOOL) collectsURL:(NSURL *)url
++ (BOOL)collectsURL:(NSURL *)url
 {
     return [[url pathExtension] isEqualToString:MAP_EXT];
 }
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
-    static BOOL isLoaded = NO;
     static BOOL isLoading = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
         //Check and set self.isLoading on the main thread to guarantee there is no race condition.
-        if (isLoaded) {
+        if (_isLoaded) {
             if (completionHandler)
                 completionHandler(self.localItems != nil  & self.remoteItems != nil);
         } else {
@@ -183,7 +206,7 @@ static MapCollection *_sharedCollection = nil;
                     if (!self.refreshDate) {
                         [self refreshRemoteMaps];
                     }
-                    isLoaded = YES;
+                    _isLoaded = YES;
                     isLoading = NO;
                     if (completionHandler) {
                         completionHandler(self.localItems != nil  & self.remoteItems != nil);
