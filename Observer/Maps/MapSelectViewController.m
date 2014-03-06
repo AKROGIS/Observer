@@ -7,16 +7,16 @@
 //
 
 #import "MapSelectViewController.h"
-#import "Map.h"
-#import "MapCollection.h"
-#import "NSIndexSet+indexPath.h"
-#import "NSIndexPath+unsignedAccessors.h"
-
 #import "MapDetailViewController.h"
 #import "MapTableViewCell.h"
-#import "NSDate+Formatting.h"
-#import "Settings.h"
 
+#import "Map.h"
+#import "MapCollection.h"
+
+#import "Settings.h"
+#import "NSDate+Formatting.h"
+#import "NSIndexPath+unsignedAccessors.h"
+#import "NSIndexSet+indexPath.h"
 
 @interface MapSelectViewController ()
 @property (strong, nonatomic) MapCollection *items; //Model
@@ -45,11 +45,11 @@
     self.refreshControl = [UIRefreshControl new];
 }
 
--(void)viewWillAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
 }
 
--(void)viewWillDisappear:(BOOL)animated
+- (void)viewWillDisappear:(BOOL)animated
 {
     [self.navigationController setToolbarHidden:YES animated:NO];
     [Settings manager].hideRemoteMaps = !self.showRemoteMaps;
@@ -100,7 +100,7 @@
 
 #pragma mark - Public Methods
 
-- (void) addMap:(Map *)map
+- (void)addMap:(Map *)map
 {
     [self.items insertLocalMap:map atIndex:0];
     [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]]
@@ -112,13 +112,13 @@
 #pragma mark - CollectionChanged
 
 //These delegates will be called on the main queue whenever the datamodel has changed
-- (void) collection:(id)collection addedLocalItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection addedLocalItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:0];
     [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
-- (void) collection:(id)collection addedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection addedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
     if (self.showRemoteMaps) {
@@ -126,13 +126,13 @@
     }
 }
 
-- (void) collection:(id)collection removedLocalItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection removedLocalItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:0];
     [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
-- (void) collection:(id)collection removedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection removedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
     if (self.showRemoteMaps) {
@@ -140,19 +140,22 @@
     }
 }
 
-- (void) collection:(id)collection changedLocalItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection changedLocalItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:0];
     [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
-- (void) collection:(id)collection changedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection changedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
     if (self.showRemoteMaps) {
         [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
+
+
+
 
 #pragma mark - Table View
 
@@ -179,7 +182,7 @@
     return 0;
 }
 
--(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     if (section == 0) {
         return @"On this device";
@@ -246,7 +249,6 @@
     }
 }
 
-
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return indexPath.section < 2;
@@ -262,7 +264,7 @@
     return (proposedDestinationIndexPath.section == sourceIndexPath.section) ? proposedDestinationIndexPath : sourceIndexPath;
 }
 
--(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return indexPath.section == 0  ? UITableViewCellEditingStyleDelete : UITableViewCellEditingStyleNone;
 }
@@ -293,23 +295,23 @@
         return;
     }
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        Map *map = [self.items localMapAtIndex:indexPath.urow];
         [self.items removeLocalMapAtIndex:indexPath.urow];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        Map *map = [self.items localMapAtIndex:indexPath.urow];
         if (self.mapDeletedAction) {
             self.mapDeletedAction(map);
         }
     }
 }
 
--(void)setEditing:(BOOL)editing animated:(BOOL)animated
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
     [super setEditing:editing animated:animated];
     [self.tableView setEditing:editing animated:animated];
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:2] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
--(void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //This is called _during_ the swipe to delete CommitEditing, and is ignored unless we dispatch it for later
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -330,7 +332,7 @@
     }
 }
 
-- (void) refresh:(id)sender
+- (void)refresh:(id)sender
 {
     [self.refreshControl beginRefreshing];
     self.refreshLabel.text = @"Looking for new maps...";
@@ -355,7 +357,7 @@
     }];
 }
 
-- (void) downloadItem:(NSIndexPath *)indexPath
+- (void)downloadItem:(NSIndexPath *)indexPath
 {
     MapTableViewCell *cell = (MapTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     Map *map = [self.items remoteMapAtIndex:indexPath.urow];
@@ -383,7 +385,7 @@
                     [self.items insertLocalMap:weakMap atIndex:0];
                     [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
                 } else {
-                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't download map" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+                    [[[UIAlertView alloc] initWithTitle:nil message:@"Can't download map." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
                     cell.downloadView.downloading = NO;
                     cell.downloadImageView.hidden = NO;
                 }
@@ -393,7 +395,7 @@
     }
 }
 
-- (void) stopDownloadItem:(NSIndexPath *)indexPath
+- (void)stopDownloadItem:(NSIndexPath *)indexPath
 {
     Map *map = [self.items remoteMapAtIndex:indexPath.urow];
     [map cancelDownload];
@@ -411,4 +413,3 @@
 }
 
 @end
-
