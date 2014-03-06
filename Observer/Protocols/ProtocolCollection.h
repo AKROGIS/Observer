@@ -39,14 +39,20 @@
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // UITableView DataSource Support
-- (NSUInteger) numberOfLocalProtocols;
-- (NSUInteger) numberOfRemoteProtocols;
-- (SProtocol *) localProtocolAtIndex:(NSUInteger)index;
-- (SProtocol *) remoteProtocolAtIndex:(NSUInteger)index;
-- (void) insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index;
-- (void) removeLocalProtocolAtIndex:(NSUInteger)index;
-- (void) moveLocalProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
-- (void) moveRemoteProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
+- (NSUInteger)numberOfLocalProtocols;
+- (NSUInteger)numberOfRemoteProtocols;
+// Returns nil if index out of bounds (semantics - there is no map at the index)
+- (SProtocol *)localProtocolAtIndex:(NSUInteger)index;
+// Returns nil if index out of bounds (semantics - there is no map at the index)
+- (SProtocol *)remoteProtocolAtIndex:(NSUInteger)index;
+// Throws an exception if index is greater than the number of local maps
+- (void)insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index;
+// No-op if index out of bounds (semantics - the map at the index is already gone)
+- (void)removeLocalProtocolAtIndex:(NSUInteger)index;
+// Throws an exception if either index is out of bounds
+- (void)moveLocalProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
+// Throws an exception if either index is out of bounds
+- (void)moveRemoteProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
 // Download a Protocol from the server
 - (void)prepareToDownloadProtocolAtIndex:(NSUInteger)index;
