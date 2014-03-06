@@ -11,6 +11,8 @@
 #import "ProtocolFeature.h"
 #import "ProtocolMissionFeature.h"
 
+#define PROTOCOL_EXT @"obsprot"
+
 @interface SProtocol : NSObject <NSCoding, AKRTableViewItem>
 
 @property (nonatomic, strong, readonly) NSURL *url;

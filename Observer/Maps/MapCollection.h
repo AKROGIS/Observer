@@ -6,12 +6,20 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
+//Note that the data model will be changed on the background thread, as changes are made to the collections
+//that are referenced by the table view, I must do the insert/delete/change on the mainthread with the call
+//to update the UI, otherwise, I will get an internal inconsistency error
+
 #import <Foundation/Foundation.h>
 #import "Map.h"
 #import "AKRCollectionChanged.h"
 
 @interface MapCollection : NSObject
 
+// Last time that the remote list was refreshed.
+@property (nonatomic, strong) NSDate *refreshDate;
+
+//The delegate is sent message to update the UI to stay synced with the model
 @property (nonatomic, weak) id<CollectionChanged> delegate;
 
 // This list represents the ordered collection of map files in the filesystem and remote server
@@ -24,11 +32,10 @@
 // Does this collection manage the provided URL?
 + (BOOL)collectsURL:(NSURL *)url;
 
-// builds/verifies the list, and current selection from the filesystem and user defaults
+// Builds and verifies the ordered lists of remote and local Maps.
+// Cache is corrected for changes in the local files system.
+// Remote server is queried if it has never been queried before.
 // This method does NOT send messsages to the delegate when items are added to the lists.
-// so the UI should be updated in the completionHandler;
-// Warning this must be called from the main thread if it might be called multiple times
-// assume completionHandler will be called on a background thread
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // UITableView DataSource Support
@@ -43,21 +50,17 @@
 
 // Download a Map from the server
 - (void)prepareToDownloadMapAtIndex:(NSUInteger)index;
-// On success, the delegate will be sent two messages, one to remove the remote item, the other to add the new local item.
-// The completion handler is used only to signal success/failure
-//- (void)downloadMapAtIndex:(NSUInteger)index WithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 //TODO: is this the best API?
 - (void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toLocalMapAtIndex:(NSUInteger)toIndex;
 
+// Cancel a downloading map
 - (void)cancelDownloadMapAtIndex:(NSUInteger)index;
 
 // Refresh the list of remote Maps
 // Will send message to the delegate as items are added/removed from the local/remote lists
 // The completion handler is used only to signal success/failure
 - (void) refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
-
-@property (nonatomic, strong) NSDate *refreshDate;
 
 //TODO: I don't like making this public, but I need to save the cache after a map changes it's thumbnail url
 - (void)synchronize;

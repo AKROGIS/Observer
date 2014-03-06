@@ -187,6 +187,7 @@ static BOOL _isLoaded = NO;
                     [self refreshLocalMaps];
                     if (!self.refreshDate) {
                         [self refreshRemoteMaps];
+                        self.refreshDate = [NSDate date];
                     }
                     _isLoaded = YES;
                     isLoading = NO;
@@ -256,6 +257,9 @@ static BOOL _isLoaded = NO;
 
 #pragma mark - Cache operations
 
+//TODO: - consider NSDefaults as it does memory mapping and defered writes
+//       this also make the class a singleton object
+
 + (NSURL *)cacheFile
 {
     static NSURL *_cacheFile = nil;
@@ -265,9 +269,6 @@ static BOOL _isLoaded = NO;
     }
     return _cacheFile;
 }
-
-//TODO: - consider NSDefaults as it does memory mapping and defered writes
-//       this also make the class a singleton object
 
 //done on background thread
 - (void)loadCache
@@ -289,7 +290,6 @@ static BOOL _isLoaded = NO;
         }
     }
 }
-
 
 //must be called by the thread that changes the model, after changes are complete.
 //because of the enumeration of the model, it cannot be called while the model might be changed.
@@ -321,7 +321,6 @@ static BOOL _isLoaded = NO;
 //done on background thread
 - (void)refreshLocalMaps
 {
-    
     //NOTE: compare file name (without path), because iOS is inconsistent about symbolic links at root of documents path
     NSMutableArray *localMapFileNames = [MapCollection mapFileNamesInDocumentsFolder];
 
@@ -346,11 +345,12 @@ static BOOL _isLoaded = NO;
     for (NSString *localMapFileName in localMapFileNames) {
         NSURL *mapUrl = [[MapCollection documentsDirectory] URLByAppendingPathComponent:localMapFileName];
         Map *map = [[Map alloc] initWithLocalTileCache:mapUrl];
-        if (!map.tileCache) {
+        if (map.isValid) {
+            [mapsToAdd addObject:map];
+        } else {
             AKRLog(@"data at %@ was not a valid map object",localMapFileName);
             [[NSFileManager defaultManager] removeItemAtURL:mapUrl error:nil];
         }
-        [mapsToAdd addObject:map];
     }
 
     //update lists and UI synchronously on UI thread if there is a delegate
@@ -430,7 +430,6 @@ static BOOL _isLoaded = NO;
     return NO;
 }
 
-
 //done on background thread
 + (NSMutableArray *)fetchMapListFromURL:(NSURL *)url
 {
@@ -495,7 +494,6 @@ static BOOL _isLoaded = NO;
     //add server maps not in cache (local or server)
     NSMutableArray *mapsToAdd = [NSMutableArray new];
     for (Map *map in serverMaps) {
-        //
         NSUInteger localIndex = [self.localItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
             return [map isEqualToMap:obj];
         }];

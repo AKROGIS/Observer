@@ -20,7 +20,7 @@
  queue, ensuring ordered operations, and no conflicting access to critical resources (i.e. my mutable lists)
  2) for the refresh and the bulk load, skip incremental updates, and do a bulk reload in the callback.  Any UI
  operation that might change the lists must be disabled between the call and the callback.
- 3) use locks for all changes and enumerations (all reads?) of the item lists. - somplicated and slow
+ 3) use locks for all changes and enumerations (all reads?) of the item lists. - complicated and slow
  4) do all changes on the UI thread, and make a copy from the UI for all background tasks, then syncronize updates on the UI thread.
  This doesn't sound like it will work.
  
@@ -28,7 +28,6 @@
 
 
 #import "ProtocolCollection.h"
-#import "SProtocol.h"
 #import "NSArray+map.h"
 #import "NSURL+unique.h"
 #import "Settings.h"
@@ -36,7 +35,6 @@
 @interface ProtocolCollection()
 @property (nonatomic, strong) NSMutableArray *localItems;  // of SProtocol
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of SProtocol
-@property (nonatomic, strong) NSURL *cacheFile;
 @end
 
 @implementation ProtocolCollection
@@ -93,23 +91,7 @@ static BOOL _isLoaded = NO;
     return _remoteItems;
 }
 
-+ (NSURL *)documentsDirectory
-{
-    static NSURL *_documentsDirectory = nil;
-    if (!_documentsDirectory) {
-        _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
-    }
-    return _documentsDirectory;
-}
 
-- (NSURL *)cacheFile
-{
-    if (!_cacheFile) {
-        _cacheFile = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
-        _cacheFile = [_cacheFile URLByAppendingPathComponent:@"protocol_list.cache"];
-    }
-    return _cacheFile;
-}
 
 
 #pragma mark - TableView Data Soource Support
@@ -192,14 +174,14 @@ static BOOL _isLoaded = NO;
         //Check and set self.isLoading on the main thread to guarantee there is no race condition.
         if (_isLoaded) {
             if (completionHandler)
-                completionHandler(self.localItems != nil  & self.remoteItems != nil);
+                completionHandler(self.localItems != nil  && self.remoteItems != nil);
         } else {
             if (isLoading) {
                 //wait until loading is completed, then return;
                 dispatch_async(dispatch_queue_create("gov.nps.akr.observer.protocolcollection.open", DISPATCH_QUEUE_SERIAL), ^{
                     //This task is serial with the task that will clear isLoading, so it will not run until loading is done;
                     if (completionHandler) {
-                        completionHandler(self.localItems != nil  & self.remoteItems != nil);
+                        completionHandler(self.localItems != nil  && self.remoteItems != nil);
                     }
                 });
             } else {
@@ -209,12 +191,12 @@ static BOOL _isLoaded = NO;
                     [self refreshLocalProtocols];
                     if (!self.refreshDate) {
                         [self refreshRemoteProtocols];
+                        self.refreshDate = [NSDate date];
                     }
-                    [self saveCache];
                     _isLoaded = YES;
                     isLoading = NO;
                     if (completionHandler) {
-                        completionHandler(self.localItems != nil  & self.remoteItems != nil);
+                        completionHandler(self.localItems != nil  && self.remoteItems != nil);
                     }
                 });
             }
@@ -226,16 +208,8 @@ static BOOL _isLoaded = NO;
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
         self.refreshDate = [NSDate date];
-        BOOL success = [self refreshRemoteProtocols] && [self refreshLocalProtocols];
-        //assume that changes were made to the model and save the cache.
-        //If there is a delegate, then it must be queued up on main thread, because the model changes occur there
-        if (self.delegate) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self saveCache];
-            });
-        } else {
-            [self saveCache];
-        }
+        [self refreshLocalProtocols];
+        BOOL success = [self refreshRemoteProtocols];
         if (completionHandler) {
             completionHandler(success);
         }
@@ -284,13 +258,28 @@ static BOOL _isLoaded = NO;
 
 #pragma mark - private methods
 
+#pragma mark - Cache operations
+
+
 //TODO: - consider NSDefaults as it does memory mapping and defered writes
 //       this also make the class a singleton object
+
++ (NSURL *)cacheFile
+{
+    static NSURL *_cacheFile = nil;
+    {
+        if (!_cacheFile) {
+            _cacheFile = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
+            _cacheFile = [_cacheFile URLByAppendingPathComponent:@"protocol_list.cache"];
+        }
+        return _cacheFile;
+    }
+}
 
 //done on background thread
 - (void)loadCache
 {
-    NSArray *plist = [NSArray arrayWithContentsOfURL:self.cacheFile];
+    NSArray *plist = [NSArray arrayWithContentsOfURL:[ProtocolCollection cacheFile]];
     for (id obj in plist) {
         if ([obj isKindOfClass:[NSDate class]]) {
             self.refreshDate = obj;
@@ -307,7 +296,6 @@ static BOOL _isLoaded = NO;
         }
     }
 }
-
 
 //must be called by the thread that changes the model, after changes are complete.
 //because of the enumeration of the model, it cannot be called while the model might be changed.
@@ -327,40 +315,17 @@ static BOOL _isLoaded = NO;
     }
     //File save can be safely done on a background thread.
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
-        [plist writeToURL:self.cacheFile atomically:YES];
+        [plist writeToURL:[ProtocolCollection cacheFile] atomically:YES];
     });
 }
 
-//done on background thread
-- (BOOL)refreshLocalProtocols
-{
-    [self syncWithFileSystem];
-    return YES;
-}
 
-+ (NSMutableArray *) /* of NSString */  protocolFileNamesInDocumentsFolder
-{
-    NSError *error = nil;
-    NSArray *documents = [[NSFileManager defaultManager]
-                          contentsOfDirectoryAtURL:self.documentsDirectory
-                          includingPropertiesForKeys:nil
-                          options:NSDirectoryEnumerationSkipsHiddenFiles
-                          error:&error];
-    if (documents) {
-        NSMutableArray *localFileNames = [NSMutableArray new];
-        for (NSURL *url in documents) {
-            if ([ProtocolCollection collectsURL:url]) {
-                [localFileNames addObject:[url lastPathComponent]];
-            }
-        }
-        return localFileNames;
-    }
-    AKRLog(@"Unable to enumerate %@: %@",[self.documentsDirectory lastPathComponent], error.localizedDescription);
-    return nil;
-}
+
+
+#pragma mark - Local Maps
 
 //done on background thread
-- (void)syncWithFileSystem
+- (void)refreshLocalProtocols
 {
     //NOTE: compare file name (without path), because iOS is inconsistent about symbolic links at root of documents path
     NSMutableArray *localProtocolFileNames = [ProtocolCollection protocolFileNamesInDocumentsFolder];
@@ -382,7 +347,6 @@ static BOOL _isLoaded = NO;
     //add valid protocols in the filesystem that are not in cache
     NSMutableArray *protocolsToAdd = [NSMutableArray new];
     for (NSString *localProtocolFileName in localProtocolFileNames) {
-        //add the URL only if we can create and validate (read/parse) a protocol with it.
         NSURL *protocolUrl = [[ProtocolCollection documentsDirectory] URLByAppendingPathComponent:localProtocolFileName];
         SProtocol *protocol = [[SProtocol alloc] initWithURL:protocolUrl];
         if (protocol.isValid) {
@@ -411,14 +375,58 @@ static BOOL _isLoaded = NO;
         [self.localItems removeObjectsAtIndexes:itemsToRemove];
         [self.localItems addObjectsFromArray:protocolsToAdd];
     }
+    //update cache
+    if (0 < itemsToRemove.count || 0 < protocolsToAdd.count) {
+        if (self.delegate) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self saveCache];
+            });
+        } else {
+            [self saveCache];
+        }
+    }
 }
 
++ (NSMutableArray *) /* of NSString */  protocolFileNamesInDocumentsFolder
+{
+    NSError *error = nil;
+    NSArray *documents = [[NSFileManager defaultManager]
+                          contentsOfDirectoryAtURL:self.documentsDirectory
+                          includingPropertiesForKeys:nil
+                          options:NSDirectoryEnumerationSkipsHiddenFiles
+                          error:&error];
+    if (documents) {
+        NSMutableArray *localFileNames = [NSMutableArray new];
+        for (NSURL *url in documents) {
+            if ([ProtocolCollection collectsURL:url]) {
+                [localFileNames addObject:[url lastPathComponent]];
+            }
+        }
+        return localFileNames;
+    }
+    AKRLog(@"Unable to enumerate %@: %@",[self.documentsDirectory lastPathComponent], error.localizedDescription);
+    return nil;
+}
+
++ (NSURL *)documentsDirectory
+{
+    static NSURL *_documentsDirectory = nil;
+    if (!_documentsDirectory) {
+        _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+    }
+    return _documentsDirectory;
+}
+
+
+
+
+#pragma mark - Remote Maps
 
 //done on background thread
 - (BOOL)refreshRemoteProtocols
 {
     NSURL *url = [Settings manager].urlForProtocols;
-    NSMutableArray *serverProtocols = [self fetchProtocolListFromURL:url];
+    NSMutableArray *serverProtocols = [ProtocolCollection fetchProtocolListFromURL:url];
     if (serverProtocols) {
         [self syncCacheWithServerProtocols:serverProtocols];
         return YES;
@@ -426,9 +434,8 @@ static BOOL _isLoaded = NO;
     return NO;
 }
 
-
 //done on background thread
-- (NSMutableArray *)fetchProtocolListFromURL:(NSURL *)url
++ (NSMutableArray *)fetchProtocolListFromURL:(NSURL *)url
 {
     NSMutableArray *protocols = nil;
     NSData *data = [NSData dataWithContentsOfURL:url];
@@ -445,8 +452,6 @@ static BOOL _isLoaded = NO;
                                                                      title:item[@"name"]
                                                                    version:item[@"version"]
                                                                       date:item[@"date"]];
-                    //Do not check validity - trust the server for now.
-                    //Checking validity will cause protocol to be downloaded and parsed
                     if (protocol) {
                         [protocols addObject:protocol];
                     }
@@ -458,7 +463,7 @@ static BOOL _isLoaded = NO;
 }
 
 //done on background thread
--  (BOOL)syncCacheWithServerProtocols:(NSMutableArray *)serverProtocols
+-  (void)syncCacheWithServerProtocols:(NSMutableArray *)serverProtocols
 {
     // return value of YES means changes were made and the caller should update the cache.
     // we need to remove cached items not on the server,
@@ -496,7 +501,6 @@ static BOOL _isLoaded = NO;
     //add server protocols not in cache (local or server)
     NSMutableArray *protocolsToAdd = [NSMutableArray new];
     for (SProtocol *protocol in serverProtocols) {
-        //
         NSUInteger localIndex = [self.localItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
             return [protocol isEqualToProtocol:obj];
         }];
@@ -533,7 +537,16 @@ static BOOL _isLoaded = NO;
         [self.remoteItems removeObjectsAtIndexes:itemsToRemove];
         [self.remoteItems addObjectsFromArray:protocolsToAdd];
     }
-    return modelChanged;
+    //update cache
+    if (modelChanged) {
+        if (self.delegate) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self saveCache];
+            });
+        } else {
+            [self saveCache];
+        }
+    }
 }
 
 @end

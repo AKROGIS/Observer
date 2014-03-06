@@ -14,11 +14,12 @@
 #import "SProtocol.h"
 #import "AKRCollectionChanged.h"
 
-#define PROTOCOL_EXT @"obsprot"
-#define PROTOCOL_DIR @"protocols"
-
 @interface ProtocolCollection : NSObject
 
+// Last time that the remote list was refreshed.
+@property (nonatomic, strong) NSDate *refreshDate;
+
+//The delegate is sent message to update the UI to stay synced with the model
 @property (nonatomic, weak) id<CollectionChanged> delegate;
 
 // This list represents the ordered collection of protocol files in the filesystem and remote server
@@ -31,9 +32,10 @@
 // Does this collection manage the provided URL?
 + (BOOL)collectsURL:(NSURL *)url;
 
-// builds the list, and current selection from the filesystem and user defaults
+// Builds the ordered lists of remote and local protocols from a saved cache.
+// Cache is corrected for changes in the local files system.
+// Remote server is queried if it has never been queried before.
 // This method does NOT send messsages to the delegate when items are added to the lists.
-// so the UI should be updated in the completionHandler;
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // UITableView DataSource Support
@@ -48,6 +50,7 @@
 
 // Download a Protocol from the server
 - (void)prepareToDownloadProtocolAtIndex:(NSUInteger)index;
+
 // On success, the delegate will be sent two messages, one to remove the remote item, the other to add the new local item.
 // The completion handler is used only to signal success/failure
 - (void)downloadProtocolAtIndex:(NSUInteger)index WithCompletionHandler:(void (^)(BOOL success))completionHandler;
@@ -56,7 +59,5 @@
 // Will send message to the delegate as items are added/removed from the local/remote lists
 // The completion handler is used only to signal success/failure
 - (void)refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
-
-@property (nonatomic, strong) NSDate *refreshDate;
 
 @end
