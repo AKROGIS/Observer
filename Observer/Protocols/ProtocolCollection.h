@@ -38,6 +38,11 @@
 // This method does NOT send messsages to the delegate when items are added to the lists.
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
+// Refresh the list of remote protocols
+// Will send message to the delegate as items are added/removed from the local/remote lists
+// The completion handler is used only to signal success/failure
+- (void)refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+
 // UITableView DataSource Support
 - (NSUInteger)numberOfLocalProtocols;
 - (NSUInteger)numberOfRemoteProtocols;
@@ -49,21 +54,11 @@
 - (void)insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index;
 // No-op if index out of bounds (semantics - the map at the index is already gone)
 - (void)removeLocalProtocolAtIndex:(NSUInteger)index;
+// No-op if index out of bounds (semantics - the map at the index is already gone)
+- (void)removeRemoteProtocolAtIndex:(NSUInteger)index;
 // Throws an exception if either index is out of bounds
 - (void)moveLocalProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 // Throws an exception if either index is out of bounds
 - (void)moveRemoteProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
-
-// Download a Protocol from the server
-- (void)prepareToDownloadProtocolAtIndex:(NSUInteger)index;
-
-// On success, the delegate will be sent two messages, one to remove the remote item, the other to add the new local item.
-// The completion handler is used only to signal success/failure
-- (void)downloadProtocolAtIndex:(NSUInteger)index WithCompletionHandler:(void (^)(BOOL success))completionHandler;
-
-// Refresh the list of remote protocols
-// Will send message to the delegate as items are added/removed from the local/remote lists
-// The completion handler is used only to signal success/failure
-- (void)refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 @end

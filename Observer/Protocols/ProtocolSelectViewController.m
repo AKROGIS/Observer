@@ -7,14 +7,16 @@
 //
 
 #import "ProtocolSelectViewController.h"
+#import "ProtocolDetailViewController.h"
 #import "ProtocolTableViewCell.h"
+
 #import "SProtocol.h"
 #import "ProtocolCollection.h"
-#import "ProtocolDetailViewController.h"
-#import "NSIndexSet+indexPath.h"
-#import "NSDate+Formatting.h"
+
 #import "Settings.h"
+#import "NSDate+Formatting.h"
 #import "NSIndexPath+unsignedAccessors.h"
+#import "NSIndexSet+indexPath.h"
 
 @interface ProtocolSelectViewController ()
 @property (strong, nonatomic) ProtocolCollection *items; //Model
@@ -43,11 +45,11 @@
     self.refreshControl = [UIRefreshControl new];
 }
 
--(void)viewWillAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
 }
 
--(void)viewWillDisappear:(BOOL)animated
+- (void)viewWillDisappear:(BOOL)animated
 {
     [self.navigationController setToolbarHidden:YES animated:NO];
     [Settings manager].hideRemoteProtocols = !self.showRemoteProtocols;
@@ -81,8 +83,6 @@
 - (ProtocolCollection *)items
 {
     if (!_items) {
-        _items = [ProtocolCollection sharedCollection];
-        _items.delegate = self;
         ProtocolCollection *protocols = [ProtocolCollection sharedCollection];
         [protocols openWithCompletionHandler:^(BOOL success) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -100,7 +100,7 @@
 
 #pragma mark - Public Methods
 
-- (void) addProtocol:(SProtocol *)protocol
+- (void)addProtocol:(SProtocol *)protocol
 {
     [self.items insertLocalProtocol:protocol atIndex:0];
     [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]]
@@ -112,13 +112,13 @@
 #pragma mark - CollectionChanged
 
 //These delegates will be called on the main queue whenever the datamodel has changed
-- (void) collection:(id)collection addedLocalItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection addedLocalItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:0];
     [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
-- (void) collection:(id)collection addedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection addedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
     if (self.showRemoteProtocols) {
@@ -126,13 +126,13 @@
     }
 }
 
-- (void) collection:(id)collection removedLocalItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection removedLocalItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:0];
     [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
-- (void) collection:(id)collection removedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection removedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
     if (self.showRemoteProtocols) {
@@ -140,13 +140,13 @@
     }
 }
 
-- (void) collection:(id)collection changedLocalItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection changedLocalItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:0];
     [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
-- (void) collection:(id)collection changedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
+- (void)collection:(id)collection changedRemoteItemsAtIndexes:(NSIndexSet *)indexSet
 {
     NSArray *indexPaths = [indexSet indexPathsWithSection:1];
     if (self.showRemoteProtocols) {
@@ -154,11 +154,18 @@
     }
 }
 
+
+
+
 #pragma mark - Table View
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 3;
+    if (!self.items) {
+        return 0;
+    } else {
+        return 3;
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -175,7 +182,7 @@
     return 0;
 }
 
--(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     if (section == 0) {
         return @"On this device";
@@ -245,7 +252,7 @@
     return (proposedDestinationIndexPath.section == sourceIndexPath.section) ? proposedDestinationIndexPath : sourceIndexPath;
 }
 
--(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return indexPath.section == 0  ? UITableViewCellEditingStyleDelete : UITableViewCellEditingStyleNone;
 }
@@ -281,14 +288,14 @@
     }
 }
 
--(void)setEditing:(BOOL)editing animated:(BOOL)animated
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
     [super setEditing:editing animated:animated];
     [self.tableView setEditing:editing animated:animated];
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:2] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
--(void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //This is called _during_ the swipe to delete CommitEditing, and is ignored unless we dispatch it for later
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -309,10 +316,10 @@
     }
 }
 
-- (void) refresh:(id)sender
+- (void)refresh:(id)sender
 {
-    self.refreshLabel.text = @"Looking for new protocols...";
     [self.refreshControl beginRefreshing];
+    self.refreshLabel.text = @"Looking for new protocols...";
     self.isBackgroundRefreshing = YES;
     self.items.delegate = self;
     [self.items refreshWithCompletionHandler:^(BOOL success) {
@@ -334,24 +341,31 @@
     }];
 }
 
-- (void) downloadItem:(NSIndexPath *)indexPath
+- (void)downloadItem:(NSIndexPath *)indexPath
 {
-    [self.items prepareToDownloadProtocolAtIndex:indexPath.urow];
-    UITableView *tableView = self.tableView;
-    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-    self.items.delegate = self;
-    [self.items downloadProtocolAtIndex:indexPath.urow WithCompletionHandler:^(BOOL success) {
+    SProtocol *protocol = [self.items remoteProtocolAtIndex:indexPath.urow];
+    protocol.downloadCompletionAction = ^(SProtocol *newProtocol) {
         //on background thread
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (!success) {
-               [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't download protocol" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            if (newProtocol) {
+                [self.items removeRemoteProtocolAtIndex:indexPath.urow];
+                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+                [self.items insertLocalProtocol:newProtocol atIndex:0];
+                [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
             } else {
-                // updates are done by delegate calls
+                [[[UIAlertView alloc] initWithTitle:nil message:@"Can't download protocol." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+                [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
             }
-            self.items.delegate = nil;
         });
-    }];
+    };
+    [protocol startDownload];
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)stopDownloadItem:(NSIndexPath *)indexPath
+{
+    SProtocol *protocol = [self.items remoteProtocolAtIndex:indexPath.urow];
+    [protocol cancelDownload];
 }
 
 - (void)setFooterText
@@ -364,6 +378,5 @@
         }
     }
 }
-
 
 @end

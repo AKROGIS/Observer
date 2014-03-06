@@ -13,7 +13,7 @@
 
 #define PROTOCOL_EXT @"obsprot"
 
-@interface SProtocol : NSObject <NSCoding, AKRTableViewItem>
+@interface SProtocol : NSObject <NSCoding, AKRTableViewItem, NSURLSessionDownloadDelegate>
 
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, strong, readonly) NSNumber *version;
@@ -42,11 +42,25 @@
 - (id)initWithURL:(NSURL *)url;
 - (id) init __attribute__((unavailable("Must use initWithURL: instead.")));
 
-// download the protocol from the remote URL to a local file...
-- (void)prepareToDownload;
-- (BOOL)isDownloading;
-- (BOOL)downloadToURL:(NSURL *)url;
+// Save the Protocol to the URL;  This is synchronous, so remote protocols will block
+// url must be a file URL
 - (BOOL)saveCopyToURL:(NSURL *)url;
 
+// download the Protocol from the remote URL to a local file...
+- (void)startDownload;
+- (void)cancelDownload;
+- (BOOL)isDownloading;
+
+// The download should continue if the app is put in the background
+@property (nonatomic) BOOL isBackground;
+// Where the downloaded file should be stored, must be a file URL
+//  if nil, then a unique URL in the Documents folder based on the source URL will be used)
+@property (nonatomic, strong) NSURL *destinationURL;
+// The download can over-write any existing file at destinationURL
+@property (nonatomic) BOOL canReplace;
+// A block to execute when there is progress to report
+@property (nonatomic, copy) void(^downloadProgressAction)(double bytesWritten, double bytesExpected);
+// A block to execute when the file as been stored at 
+@property (nonatomic, copy) void(^downloadCompletionAction)(SProtocol *newProtocol);
 
 @end

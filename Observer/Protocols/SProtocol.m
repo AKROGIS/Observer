@@ -1,5 +1,5 @@
 //
-//  Protocol.m
+//  SProtocol.m
 //  Observer
 //
 //  Created by Regan Sarwas on 11/18/13.
@@ -8,8 +8,9 @@
 
 #import "SProtocol.h"
 #import "AKRFormatter.h"
-#import "NSDate+Formatting.h"
 #import "NSArray+map.h"
+#import "NSDate+Formatting.h"
+#import "NSURL+unique.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -25,6 +26,9 @@
 }
 @property (nonatomic) BOOL parsedJSON;
 @property (nonatomic) BOOL downloading;
+//TODO: move to NSOperation
+@property (nonatomic, strong) NSURLSessionTask *downloadTask;
+@property (nonatomic, strong) NSURLSession *session;
 @end
 
 @implementation SProtocol
@@ -128,34 +132,6 @@
            ((self.date == other.date) || [self.date isEqual:other.date]);
 }
 
-- (void)prepareToDownload
-{
-    self.downloading = YES;
-}
-
-- (BOOL)isDownloading
-{
-    return self.downloading;
-}
-
-- (BOOL)downloadToURL:(NSURL *)url
-{
-    BOOL success = NO;
-    //TODO: This check causes remote data to be downloaded and parsed, then we downloaded it again if it is valid
-    if (!self.isLocal && self.isValid) {
-        if ([self saveCopyToURL:url]) {
-            _url = url;
-            success = YES;
-        } else {
-            AKRLog(@"Protocol.downloadToURL:  Got data but write to %@ failed",url);
-        }
-    } else {
-        AKRLog(@"Protocol.downloadToURL: Unable to get data at %@", self.url);
-    }
-    self.downloading = NO;
-    return success;
-}
-
 - (BOOL)saveCopyToURL:(NSURL *)url
 {
     return [[NSData dataWithContentsOfURL:self.url] writeToURL:url options:0 error:nil];
@@ -173,6 +149,8 @@
 {
     return self.version ? [self.version stringValue] : @"Unknown";
 }
+
+
 
 
 #pragma mark - property accessors
@@ -217,10 +195,6 @@
     return _featuresWithLocateByTouch;
 }
 
--(NSString *)description
-{
-    return [NSString stringWithFormat:@"%@; %@",self.title, self.subtitle];
-}
 
 
 
@@ -294,6 +268,103 @@
         }
     }
     return [newArray copy];
+}
+
+
+
+
+#pragma mark - download
+//TODO: move this to a NSOperation
+
+- (NSURLSession *)session
+{
+
+    static NSURLSession *backgroundSession = nil;
+
+    if (!_session) {
+        NSURLSessionConfiguration *configuration;
+        if (self.isBackground) {
+            if (!backgroundSession) {
+                configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"gov.nps.observer.BackgroundDownloadSession"];
+                backgroundSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
+            }
+            _session = backgroundSession;
+        } else {
+            configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+            _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
+        }
+    }
+    return _session;
+}
+
+- (void)startDownload
+{
+    NSURLRequest *request = [NSURLRequest requestWithURL:self.url];
+    self.downloadTask = [self.session downloadTaskWithRequest:request];
+    self.downloading = YES;
+    [self.downloadTask resume];
+}
+
+- (BOOL)isDownloading
+{
+    return self.downloading;
+}
+
+- (void)cancelDownload
+{
+    [self.downloadTask cancel];
+    self.downloading = NO;
+}
+
+#pragma mark - NSURLSessionDownloadDelegate
+
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
+{
+    //TODO: implement method to support resume download (for paused or lost connection)
+    AKRLog(@"did resume download");
+}
+
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+{
+    if (downloadTask == self.downloadTask && self.downloadProgressAction){
+        self.downloadProgressAction((double)totalBytesWritten, (double)totalBytesExpectedToWrite);
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+{
+    self.downloading = NO;
+    if (downloadTask.state == NSURLSessionTaskStateCanceling) {
+        return;
+    }
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (!self.destinationURL) {
+        NSURL *documentsDirectory = [[fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+        NSURL *originalURL = downloadTask.originalRequest.URL;
+        self.destinationURL = [documentsDirectory URLByAppendingPathComponent:originalURL.lastPathComponent];
+    }
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[self.destinationURL path]]) {
+        if (self.canReplace) {
+            [fileManager removeItemAtURL:self.destinationURL error:NULL];
+        } else {
+            self.destinationURL = [self.destinationURL URLByUniquingPath];
+        }
+    }
+    BOOL success = [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];
+    SProtocol *newProtocol = nil;
+    if (success) {
+        newProtocol = [[SProtocol alloc] initWithURL:self.destinationURL title:self.title version:self.version date:self.date];
+        if (!newProtocol.isValid)
+            newProtocol = nil;
+    }
+    if (self.downloadCompletionAction){
+        self.downloadCompletionAction(newProtocol);
+    }
+}
+
+-(NSString *)description
+{
+    return [NSString stringWithFormat:@"%@; %@",self.title, self.subtitle];
 }
 
 @end

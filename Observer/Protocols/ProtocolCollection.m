@@ -143,6 +143,16 @@ static BOOL _isLoaded = NO;
     [self saveCache];
 }
 
+- (void)removeRemoteProtocolAtIndex:(NSUInteger)index
+{
+    if (self.remoteItems.count <= index) {
+        AKRLog(@"Array index out of bounds in [ProtocolCollection removeRemoteProtocolAtIndex:%d] size = %d",index,self.remoteItems.count);
+        return;
+    }
+    [self.remoteItems removeObjectAtIndex:index];
+    [self saveCache];
+}
+
 -(void)moveLocalProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
     if (fromIndex == toIndex)
@@ -218,43 +228,6 @@ static BOOL _isLoaded = NO;
         self.refreshDate = [NSDate date];
         [self refreshLocalProtocols];
         BOOL success = [self refreshRemoteProtocols];
-        if (completionHandler) {
-            completionHandler(success);
-        }
-    });
-}
-
--(void)prepareToDownloadProtocolAtIndex:(NSUInteger)index
-{
-    //if (self.remoteItems.count <= index) return; //safety check
-    [self.remoteItems[index] prepareToDownload];
-}
-
-
-- (void)downloadProtocolAtIndex:(NSUInteger)index WithCompletionHandler:(void (^)(BOOL success))completionHandler
-{
-    //if (self.remoteItems.count <= index) return; //safety check
-    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
-        SProtocol *protocol = [self remoteProtocolAtIndex:index];
-        NSURL *newUrl = [[ProtocolCollection documentsDirectory] URLByAppendingPathComponent:protocol.url.lastPathComponent];
-        newUrl = [newUrl URLByUniquingPath];
-        BOOL success = [protocol downloadToURL:newUrl];
-        if (success) {
-            id<CollectionChanged> delegate = self.delegate;
-            if (delegate) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.remoteItems removeObjectAtIndex:index];
-                    [delegate collection:self removedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
-                    [self.localItems insertObject:protocol atIndex:0];
-                    [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
-                    [self saveCache];
-                });
-            } else {
-                [self.remoteItems removeObjectAtIndex:index];
-                [self.localItems insertObject:protocol atIndex:0];
-                [self saveCache];
-            }
-        }
         if (completionHandler) {
             completionHandler(success);
         }
