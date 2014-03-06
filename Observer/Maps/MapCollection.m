@@ -217,11 +217,6 @@ static BOOL _isLoaded = NO;
     });
 }
 
-- (Map *)openURL:(NSURL *)url
-{
-    return [self openURL:url saveCache:YES];
-}
-
 - (void)refreshWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
@@ -372,70 +367,6 @@ static BOOL _isLoaded = NO;
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
         [plist writeToURL:self.cacheFile atomically:YES];
     });
-}
-
-//done on callers thread
-- (Map *)openURL:(NSURL *)url saveCache:(BOOL)shouldSaveCache
-{
-    NSURL *newUrl = [[MapCollection documentsDirectory] URLByAppendingPathComponent:url.lastPathComponent];
-    newUrl = [newUrl URLByUniquingPath];
-    NSError *error = nil;
-    [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
-    if (error) {
-        AKRLog(@"MapCollection.openURL: Unable to copy %@ to %@; error: %@",url, newUrl, error);
-        return nil;
-    }
-    Map *map = [[Map alloc] initWithLocalTileCache:newUrl];
-    if (!map.tileCache) {
-        AKRLog(@"data in %@ was not a valid map object",url.lastPathComponent);
-        [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
-        [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
-        return nil;
-    }
-    //Check if the map is already in our local list
-    NSUInteger localIndex = [self.localItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [map isEqualToMap:obj];
-    }];
-    if (localIndex != NSNotFound)
-    {
-        AKRLog(@"We already have the map in %@.  Ignoring the duplicate.",url.lastPathComponent);
-        [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
-        [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
-        return self.localItems[localIndex];
-    }
-    [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
-
-    //Adding a new local map, might need to remove the same remote map
-    NSUInteger remoteIndex = [self.remoteItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [map isEqualToMap:obj];
-    }];
-
-    id<CollectionChanged> delegate = self.delegate;
-    if (delegate) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.localItems insertObject:map atIndex:0];
-            [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
-            if (remoteIndex != NSNotFound)
-            {
-                [self.remoteItems removeObjectAtIndex:remoteIndex];
-                [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
-            }
-            if (shouldSaveCache) {
-                [self saveCache];
-            }
-        });
-    } else {
-        [self.localItems insertObject:map atIndex:0];
-        if (remoteIndex != NSNotFound)
-        {
-            [self.remoteItems removeObjectAtIndex:remoteIndex];
-            [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
-        }
-        if (shouldSaveCache) {
-            [self saveCache];
-        }
-    }
-    return map;
 }
 
 //done on background thread

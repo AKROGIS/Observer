@@ -222,12 +222,6 @@ static BOOL _isLoaded = NO;
     });
 }
 
-- (SProtocol *)openURL:(NSURL *)url
-{
-    return [self openURL:url saveCache:YES];
-}
-
-
 - (void)refreshWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
@@ -335,70 +329,6 @@ static BOOL _isLoaded = NO;
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
         [plist writeToURL:self.cacheFile atomically:YES];
     });
-}
-
-//done on callers thread
-- (SProtocol *)openURL:(NSURL *)url saveCache:(BOOL)shouldSaveCache
-{
-    NSURL *newUrl = [[ProtocolCollection documentsDirectory] URLByAppendingPathComponent:url.lastPathComponent];
-    newUrl = [newUrl URLByUniquingPath];
-    NSError *error = nil;
-    [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
-    if (error) {
-        AKRLog(@"ProtocolCollection.openURL: Unable to copy %@ to %@; error: %@",url, newUrl, error);
-        return nil;
-    }
-    SProtocol *protocol = [[SProtocol alloc] initWithURL:newUrl];
-    if (!protocol.isValid) {
-        AKRLog(@"data in %@ was not a valid protocol object",url.lastPathComponent);
-        [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
-        [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
-        return nil;
-    }
-    //Check if the protocol is already in our local list
-    NSUInteger localIndex = [self.localItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [protocol isEqualToProtocol:obj];
-    }];
-    if (localIndex != NSNotFound)
-    {
-        AKRLog(@"We already have the protocol in %@.  Ignoring the duplicate.",url.lastPathComponent);
-        [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
-        [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
-        return self.localItems[localIndex];
-    }
-    [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
-
-    //Adding a new local protocol, might need to remove the same remote protocol
-    NSUInteger remoteIndex = [self.remoteItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [protocol isEqualToProtocol:obj];
-    }];
-
-    id<CollectionChanged> delegate = self.delegate;
-    if (delegate) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.localItems insertObject:protocol atIndex:0];
-            [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:0]];
-            if (remoteIndex != NSNotFound)
-            {
-                [self.remoteItems removeObjectAtIndex:remoteIndex];
-                [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
-            }
-            if (shouldSaveCache) {
-                [self saveCache];
-            }
-        });
-    } else {
-        [self.localItems insertObject:protocol atIndex:0];
-        if (remoteIndex != NSNotFound)
-        {
-            [self.remoteItems removeObjectAtIndex:remoteIndex];
-            [delegate collection:self addedLocalItemsAtIndexes:[NSIndexSet indexSetWithIndex:remoteIndex]];
-        }
-        if (shouldSaveCache) {
-            [self saveCache];
-        }
-    }
-    return protocol;
 }
 
 //done on background thread

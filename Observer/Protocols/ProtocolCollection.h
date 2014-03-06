@@ -36,13 +36,6 @@
 // so the UI should be updated in the completionHandler;
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
-// Opens a file from Mail/Safari (via the App delegate)
-// nil return indicates the URL could not be opened or is not valid.
-// Will return an existing protocol if it already exists in the local collection.
-// If the protocol exists in the remote list, it will be added to the local list and removed from the remote list.
-// Will send messages to the delegate when/if the changes to the model occur.
-- (SProtocol *)openURL:(NSURL *)url;
-
 // UITableView DataSource Support
 - (NSUInteger) numberOfLocalProtocols;
 - (NSUInteger) numberOfRemoteProtocols;

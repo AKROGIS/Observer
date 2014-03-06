@@ -31,10 +31,6 @@
 // returns the first survey that has the given (local) url
 - (Survey *)surveyForURL:(NSURL *)url;
 
-// Opens a survey file from the App delegate, and adds it to the begining of the list
-// TODO: check that it does similar checking like map/protocol
-- (Survey *)openURL:(NSURL *)url;
-
 // Creates a new survey from the protocol and adds it to the list
 // returns the index of the new survey (NSNotFound if it could not be created)
 - (NSUInteger)newSurveyWithProtocol:(SProtocol *)protcol;
