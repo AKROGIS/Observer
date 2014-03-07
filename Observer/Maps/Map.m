@@ -325,6 +325,7 @@
 {
     NSURLRequest *request = [NSURLRequest requestWithURL:self.url];
     self.downloadTask = [self.session downloadTaskWithRequest:request];
+    self.downloadPercentComplete = 0;
     self.downloading = YES;
     [self.downloadTask resume];
 }
@@ -354,6 +355,7 @@
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
     if (downloadTask == self.downloadTask && self.downloadProgressAction){
+        self.downloadPercentComplete = totalBytesWritten/totalBytesExpectedToWrite;
         self.downloadProgressAction((double)totalBytesWritten, (double)totalBytesExpectedToWrite);
     }
 }

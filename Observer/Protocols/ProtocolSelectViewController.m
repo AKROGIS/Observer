@@ -201,12 +201,18 @@
         cell.textLabel.text = self.showRemoteProtocols ? @"Show Only Downloaded Protocols" : @"Show All Protocols";
         return cell;
     } else {
-        SProtocol *item = (indexPath.section == 0) ? [self.items localProtocolAtIndex:indexPath.urow] : [self.items remoteProtocolAtIndex:indexPath.urow];
+        SProtocol *protocol = (indexPath.section == 0) ? [self.items localProtocolAtIndex:indexPath.urow] : [self.items remoteProtocolAtIndex:indexPath.urow];
         NSString *identifier = (indexPath.section == 0) ? @"LocalProtocolCell" : @"RemoteProtocolCell";
         ProtocolTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
-        cell.titleLabel.text = item.title;
-        cell.subtitleLabel.text = item.subtitle;
-        cell.downloading = item.isDownloading;
+        cell.titleLabel.text = protocol.title;
+        cell.subtitleLabel.text = protocol.subtitle;
+        cell.downloading = protocol.isDownloading;
+        cell.percentComplete = protocol.downloadPercentComplete;
+        protocol.downloadProgressAction = ^(double bytesWritten, double bytesExpected) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                cell.percentComplete = bytesWritten/bytesExpected;
+            });
+        };
         return cell;
     }
 }

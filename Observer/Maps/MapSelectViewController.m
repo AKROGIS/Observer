@@ -206,20 +206,26 @@
         cell.textLabel.text = self.showRemoteMaps ? @"Show Only Downloaded Maps" : @"Show All Maps";
         return cell;
     } else {
-        Map *item = (indexPath.section == 0) ? [self.items localMapAtIndex:indexPath.urow] : [self.items remoteMapAtIndex:indexPath.urow];
+        Map *map = (indexPath.section == 0) ? [self.items localMapAtIndex:indexPath.urow] : [self.items remoteMapAtIndex:indexPath.urow];
         NSString *identifier = (indexPath.section == 0) ? @"LocalMapCell" : @"RemoteMapCell";
         MapTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
-        cell.titleLabel.text = item.title;
-        cell.subtitle1Label.text = item.subtitle;
-        cell.subtitle2Label.text = item.subtitle2;
+        cell.titleLabel.text = map.title;
+        cell.subtitle1Label.text = map.subtitle;
+        cell.subtitle2Label.text = map.subtitle2;
         //TODO: fix thumbnail get default if not loaded, then load, else use loaded thumbnail
-        [item openThumbnailWithCompletionHandler:^(BOOL success) {
+        [map openThumbnailWithCompletionHandler:^(BOOL success) {
             //on background thread
             dispatch_async(dispatch_get_main_queue(), ^{
-                cell.thumbnailImageView.image = item.thumbnail;
+                cell.thumbnailImageView.image = map.thumbnail;
             });
         }];
-        cell.downloading = item.isDownloading;
+        cell.downloading = map.isDownloading;
+        cell.percentComplete = map.downloadPercentComplete;
+        map.downloadProgressAction = ^(double bytesWritten, double bytesExpected) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                cell.percentComplete = bytesWritten/bytesExpected;
+            });
+        };
         return cell;
     }
 }
@@ -365,12 +371,6 @@
         [map cancelDownload];
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     } else {
-        MapTableViewCell *cell = (MapTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-        map.downloadProgressAction = ^(double bytesWritten, double bytesExpected) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                cell.percentComplete =  bytesWritten/bytesExpected;
-            });
-        };
         map.downloadCompletionAction = ^(Map *newMap) {
             //on background thread
             dispatch_async(dispatch_get_main_queue(), ^{
