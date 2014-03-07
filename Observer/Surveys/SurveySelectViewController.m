@@ -230,16 +230,13 @@
 - (void) newSurveyWithProtocol:(SProtocol *)protocol
 {
     AKRLog(@"New survey with protocol %@", protocol.title);
-    NSUInteger row = [self.items newSurveyWithProtocol:protocol];
-    if (row == NSNotFound) {
-        [[[UIAlertView alloc] initWithTitle:@"Error"
-                                    message:@"The new survey could not be created."
-                                   delegate:nil
-                          cancelButtonTitle:@"OK"
-                          otherButtonTitles:nil] show];
-    } else {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(NSInteger)row inSection:0];
+    Survey *newSurvey = [[Survey alloc] initWithProtocol:protocol];
+    if (newSurvey.isValid) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        [self.items insertSurvey:newSurvey atIndex:0];
         [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } else {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"New survey could not be created." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
     }
 }
 

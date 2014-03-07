@@ -23,23 +23,24 @@
 //Does this collection manage the provided URL?
 + (BOOL)collectsURL:(NSURL *)url;
 
-// builds/verifies the list, and current selection from the filesystem and user defaults
-// Warning this must be called from the main thread if it might be called multiple times
-// assume completionHandler will be called on a background thread
+// Builds the ordered lists of remote and local protocols from a saved cache.
+// Cache is corrected for changes in the local files system.
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
-// returns the first survey that has the given (local) url
-- (Survey *)surveyForURL:(NSURL *)url;
-
-// Creates a new survey from the protocol and adds it to the list
-// returns the index of the new survey (NSNotFound if it could not be created)
-- (NSUInteger)newSurveyWithProtocol:(SProtocol *)protcol;
+// Refresh the list of surveys
+// Will NOT send message to a delegate or post notifications.
+// Use the completion handler to reload the UITableView
+- (void)refreshWithCompletionHandler:(void (^)())completionHandler;
 
 // UITableView DataSource Support
-- (NSUInteger) numberOfSurveys;
-- (Survey *) surveyAtIndex:(NSUInteger)index;
-- (void) insertSurvey:(Survey *)survey atIndex:(NSUInteger)index;
-- (void) removeSurveyAtIndex:(NSUInteger)index;
-- (void) moveSurveyAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
+- (NSUInteger)numberOfSurveys;
+// Returns nil if index out of bounds (semantics - there is no survey at the index)
+- (Survey *)surveyAtIndex:(NSUInteger)index;
+// Throws an exception if index is greater than the number of local maps
+- (void)insertSurvey:(Survey *)survey atIndex:(NSUInteger)index;
+// No-op if index out of bounds (semantics - the survey at the index is already gone)
+- (void)removeSurveyAtIndex:(NSUInteger)index;
+// Throws an exception if either index is out of bounds
+- (void)moveSurveyAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
 @end

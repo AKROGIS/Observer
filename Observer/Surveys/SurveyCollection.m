@@ -51,28 +51,6 @@ static BOOL _isLoaded = NO;
 
 
 
-#pragma mark - private properties
-
-- (NSMutableArray *)items
-{
-    if (!_items) {
-        _items = [NSMutableArray new];
-    }
-    return _items;
-}
-
-+ (NSURL *)documentsDirectory
-{
-    static NSURL *_documentsDirectory = nil;
-    if (!_documentsDirectory) {
-        _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
-    }
-    return _documentsDirectory;
-}
-
-
-
-
 #pragma mark - Public methods
 
 + (BOOL)collectsURL:(NSURL *)url
@@ -100,7 +78,8 @@ static BOOL _isLoaded = NO;
             } else {
                 isLoading = YES;
                 dispatch_async(dispatch_queue_create("gov.nps.akr.observer.surveycollection.open", DISPATCH_QUEUE_SERIAL), ^{
-                    [self loadAndCorrectListOfSurveys];
+                    [self loadCache];
+                    [self refreshLocalSurveys];
                     _isLoaded = YES;
                     isLoading = NO;
                     if (completionHandler) {
@@ -112,25 +91,16 @@ static BOOL _isLoaded = NO;
     });
 }
 
-- (Survey *)surveyForURL:(NSURL *)url
+- (void)refreshWithCompletionHandler:(void (^)())completionHandler
 {
-    NSUInteger index = [self.items indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [url isEqual:[obj url]];
-    }];
-    return (index == NSNotFound) ? nil : [self.items objectAtIndex:index];
+    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
+        [self refreshLocalSurveys];
+        if (completionHandler) {
+            completionHandler();
+        }
+    });
 }
 
-- (NSUInteger)newSurveyWithProtocol:(SProtocol *)protocol {
-    Survey *newSurvey = [[Survey alloc] initWithProtocol:protocol];
-    if (newSurvey) {
-        NSUInteger index = 0;     //insert at top of list
-        [self.items insertObject:newSurvey atIndex:index];
-        [self saveCache];
-        return index;
-    } else {
-        return NSNotFound;
-    }
-}
 
 
 
@@ -143,22 +113,28 @@ static BOOL _isLoaded = NO;
 
 - (Survey *)surveyAtIndex:(NSUInteger)index
 {
-    if (self.items.count <= index) return nil; //safety check
+    if (self.items.count <= index) {
+        AKRLog(@"Array index out of bounds in [SurveyCollection survey:atIndex:%d]; size = %d",index,self.items.count);
+        return nil;
+    }
     return self.items[index];
 }
 
 - (void)insertSurvey:(Survey *)survey atIndex:(NSUInteger)index
 {
-    //if (self.items.count < index) return; //safety check
+    NSAssert(index <= self.items.count, @"Array index out of bounds in [SurveyCollection insertSurvey:atIndex:%d]; size = %d",index,self.items.count);
     [self.items insertObject:survey atIndex:index];
     [self saveCache];
 }
 
 -(void)removeSurveyAtIndex:(NSUInteger)index
 {
-    if (self.items.count <= index) return; //safety check
-    Survey *item = [self surveyAtIndex:index];
+    if (self.items.count <= index) {
+        AKRLog(@"Array index out of bounds in [SurveyCollection removeSurveyAtIndex:%d] size = %d",index,self.items.count);
+        return;
+    }
     //TODO: if the document is open, close it first, or set it to nil, so subsequent attempts to close it do not generate errors.
+    Survey *item = [self surveyAtIndex:index];
     [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
     [self.items removeObjectAtIndex:index];
     [self saveCache];
@@ -166,11 +142,9 @@ static BOOL _isLoaded = NO;
 
 -(void)moveSurveyAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
-    if (self.items.count <= fromIndex || self.items.count <= toIndex) return;  //safety check
     if (fromIndex == toIndex)
         return;
-
-    //move the item
+    NSAssert(fromIndex < self.items.count && toIndex < self.items.count, @"Array index out of bounds in [SurveyCollection moveSurveyAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.items.count);
     id temp = self.items[fromIndex];
     [self.items removeObjectAtIndex:fromIndex];
     [self.items insertObject:temp atIndex:toIndex];
@@ -179,35 +153,76 @@ static BOOL _isLoaded = NO;
 
 
 
+
 #pragma mark - private methods
 
-- (void) loadAndCorrectListOfSurveys
+#pragma mark - private properties
+
+- (NSMutableArray *)items
+{
+    if (!_items) {
+        _items = [NSMutableArray new];
+    }
+    return _items;
+}
+
+
+
+
+#pragma mark - Cache operations
+
+- (void)loadCache
+{
+    NSArray *surveyUrls = [Settings manager].surveys;
+    self.items = [surveyUrls mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
+        return [[Survey alloc] initWithURL:obj];
+    }];
+}
+
+- (void)saveCache
+{
+    [Settings manager].surveys = [self.items mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
+        return [obj url];
+    }];
+}
+
+
+
+
+#pragma mark - Local Surveys
+
+- (void) refreshLocalSurveys
 {
     //NOTE: compare file name (without path), because iOS is inconsistent about symbolic links at root of documents path
-    BOOL cacheWasOutdated = NO;
-    NSArray *cachedSurveyUrls = [Settings manager].surveys;
+    BOOL modelChanged = NO;
+
+    // Load cache
+    NSArray *surveyUrls = [self.items mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
+        return [obj url];
+    }];
     
     // create (in order) surveys from cached urls IFF they are found in the Documents Folder
+    [self.items removeAllObjects];
     NSMutableSet *localSurveyFileNames = [SurveyCollection surveyFileNamesInDocumentsFolder];
-    for (NSURL *cachedSurveyUrl in cachedSurveyUrls) {
-        NSString *cachedSurveyFileName = [cachedSurveyUrl lastPathComponent];
+    for (NSURL *surveyUrl in surveyUrls) {
+        NSString *cachedSurveyFileName = [surveyUrl lastPathComponent];
         if ([localSurveyFileNames containsObject:cachedSurveyFileName]) {
-            [self.items addObject:[[Survey alloc] initWithURL:cachedSurveyUrl]];
+            [self.items addObject:[[Survey alloc] initWithURL:surveyUrl]];
             [localSurveyFileNames removeObject:cachedSurveyFileName];
         }
     }
-    if (self.items.count < cachedSurveyUrls.count) {
-        cacheWasOutdated = YES;
+    if (self.items.count < surveyUrls.count) {
+        modelChanged = YES;
     }
 
     //Add any other Surveys in filesystem (maybe added via iTunes) to end of list from cached list
     for (NSString *localSurveyFileName in localSurveyFileNames) {
         NSURL *surveyUrl = [[SurveyCollection documentsDirectory] URLByAppendingPathComponent:localSurveyFileName];
         [self.items addObject:[[Survey alloc] initWithURL:surveyUrl]];
-        cacheWasOutdated = YES;
+        modelChanged = YES;
     }
 
-    if (cacheWasOutdated) {
+    if (modelChanged) {
         [self saveCache];
     }
 }
@@ -233,12 +248,13 @@ static BOOL _isLoaded = NO;
     return nil;
 }
 
-
-- (void)saveCache
++ (NSURL *)documentsDirectory
 {
-    [Settings manager].surveys = [self.items mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return [obj url];
-    }];
+    static NSURL *_documentsDirectory = nil;
+    if (!_documentsDirectory) {
+        _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+    }
+    return _documentsDirectory;
 }
 
 @end
