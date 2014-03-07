@@ -52,112 +52,6 @@ static BOOL _isLoaded = NO;
 
 
 
-#pragma mark - private properties
-
-- (NSMutableArray *)localItems
-{
-    if (!_localItems) {
-        _localItems = [NSMutableArray new];
-    }
-    return _localItems;
-}
-
-- (NSMutableArray *)remoteItems
-{
-    if (!_remoteItems) {
-        _remoteItems = [NSMutableArray new];
-    }
-    return _remoteItems;
-}
-
-
-
-
-#pragma mark - TableView Data Source Support
-
-- (Map *)localMapAtIndex:(NSUInteger)index
-{
-    if (self.localItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [MapCollection localMapAtIndex:%d]; size = %d",index,self.localItems.count);
-        return nil;
-    }
-    return self.localItems[index];
-}
-
-- (Map *)remoteMapAtIndex:(NSUInteger)index
-{
-    if (self.remoteItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [MapCollection remoteMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
-        return nil;
-    }
-    return self.remoteItems[index];
-}
-
-- (NSUInteger)numberOfLocalMaps
-{
-    return self.localItems.count;
-}
-
-- (NSUInteger)numberOfRemoteMaps
-{
-    return self.remoteItems.count;
-}
-
-- (void)insertLocalMap:(Map *)map atIndex:(NSUInteger)index
-{
-    NSAssert(index <= self.localItems.count, @"Array index out of bounds in [MapCollection insertLocalMapAtIndex:%d]; size = %d",index,self.localItems.count);
-    [self.localItems insertObject:map atIndex:index];
-    [self saveCache];
-}
-
-- (void)removeLocalMapAtIndex:(NSUInteger)index
-{
-    if (self.localItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [MapCollection removeLocalMapAtIndex:%d] size = %d",index,self.localItems.count);
-        return;
-    }
-    Map *item = [self localMapAtIndex:index];
-    [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
-    [[NSFileManager defaultManager] removeItemAtURL:item.thumbnailUrl error:nil];
-    [self.localItems removeObjectAtIndex:index];
-    [self saveCache];
-}
-
-- (void)removeRemoteMapAtIndex:(NSUInteger)index
-{
-    if (self.remoteItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [MapCollection removeRemoteMapAtIndex:%d] size = %d",index,self.remoteItems.count);
-        return;
-    }
-    [self.remoteItems removeObjectAtIndex:index];
-    [self saveCache];
-}
-
-- (void)moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
-{
-    if (fromIndex == toIndex)
-        return;
-    NSAssert(fromIndex < self.localItems.count && toIndex < self.localItems.count, @"Array index out of bounds in [MapCollection moveLocalMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.localItems.count);
-    id temp = self.localItems[fromIndex];
-    [self.localItems removeObjectAtIndex:fromIndex];
-    [self.localItems insertObject:temp atIndex:toIndex];
-    [self saveCache];
-}
-
-- (void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
-{
-    if (fromIndex == toIndex)
-        return;
-    NSAssert(fromIndex < self.remoteItems.count && toIndex < self.remoteItems.count, @"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.remoteItems.count);
-    id temp = self.remoteItems[fromIndex];
-    [self.remoteItems removeObjectAtIndex:fromIndex];
-    [self.remoteItems insertObject:temp atIndex:toIndex];
-    [self saveCache];
-}
-
-
-
-
 #pragma mark - public methods
 
 + (BOOL)collectsURL:(NSURL *)url
@@ -222,7 +116,113 @@ static BOOL _isLoaded = NO;
 
 
 
+#pragma mark - TableView Data Source Support
+
+- (NSUInteger)numberOfLocalMaps
+{
+    return self.localItems.count;
+}
+
+- (NSUInteger)numberOfRemoteMaps
+{
+    return self.remoteItems.count;
+}
+
+- (Map *)localMapAtIndex:(NSUInteger)index
+{
+    if (self.localItems.count <= index) {
+        AKRLog(@"Array index out of bounds in [MapCollection localMapAtIndex:%d]; size = %d",index,self.localItems.count);
+        return nil;
+    }
+    return self.localItems[index];
+}
+
+- (Map *)remoteMapAtIndex:(NSUInteger)index
+{
+    if (self.remoteItems.count <= index) {
+        AKRLog(@"Array index out of bounds in [MapCollection remoteMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
+        return nil;
+    }
+    return self.remoteItems[index];
+}
+
+- (void)insertLocalMap:(Map *)map atIndex:(NSUInteger)index
+{
+    NSAssert(index <= self.localItems.count, @"Array index out of bounds in [MapCollection insertLocalMapAtIndex:%d]; size = %d",index,self.localItems.count);
+    [self.localItems insertObject:map atIndex:index];
+    [self saveCache];
+}
+
+- (void)removeLocalMapAtIndex:(NSUInteger)index
+{
+    if (self.localItems.count <= index) {
+        AKRLog(@"Array index out of bounds in [MapCollection removeLocalMapAtIndex:%d] size = %d",index,self.localItems.count);
+        return;
+    }
+    Map *item = [self localMapAtIndex:index];
+    [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:item.thumbnailUrl error:nil];
+    [self.localItems removeObjectAtIndex:index];
+    [self saveCache];
+}
+
+- (void)removeRemoteMapAtIndex:(NSUInteger)index
+{
+    if (self.remoteItems.count <= index) {
+        AKRLog(@"Array index out of bounds in [MapCollection removeRemoteMapAtIndex:%d] size = %d",index,self.remoteItems.count);
+        return;
+    }
+    [self.remoteItems removeObjectAtIndex:index];
+    [self saveCache];
+}
+
+- (void)moveLocalMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+{
+    if (fromIndex == toIndex)
+        return;
+    NSAssert(fromIndex < self.localItems.count && toIndex < self.localItems.count, @"Array index out of bounds in [MapCollection moveLocalMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.localItems.count);
+    id temp = self.localItems[fromIndex];
+    [self.localItems removeObjectAtIndex:fromIndex];
+    [self.localItems insertObject:temp atIndex:toIndex];
+    [self saveCache];
+}
+
+- (void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+{
+    if (fromIndex == toIndex)
+        return;
+    NSAssert(fromIndex < self.remoteItems.count && toIndex < self.remoteItems.count, @"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.remoteItems.count);
+    id temp = self.remoteItems[fromIndex];
+    [self.remoteItems removeObjectAtIndex:fromIndex];
+    [self.remoteItems insertObject:temp atIndex:toIndex];
+    [self saveCache];
+}
+
+
+
+
 #pragma mark - private methods
+
+#pragma mark - private properties
+
+- (NSMutableArray *)localItems
+{
+    if (!_localItems) {
+        _localItems = [NSMutableArray new];
+    }
+    return _localItems;
+}
+
+- (NSMutableArray *)remoteItems
+{
+    if (!_remoteItems) {
+        _remoteItems = [NSMutableArray new];
+    }
+    return _remoteItems;
+}
+
+
+
 
 #pragma mark - Cache operations
 

@@ -73,111 +73,6 @@ static BOOL _isLoaded = NO;
 
 
 
-#pragma mark - private properties
-
-- (NSMutableArray *)localItems
-{
-    if (!_localItems) {
-        _localItems = [NSMutableArray new];
-    }
-    return _localItems;
-}
-
-- (NSMutableArray *)remoteItems
-{
-    if (!_remoteItems) {
-        _remoteItems = [NSMutableArray new];
-    }
-    return _remoteItems;
-}
-
-
-
-
-#pragma mark - TableView Data Soource Support
-
-- (SProtocol *)localProtocolAtIndex:(NSUInteger)index
-{
-    if (self.localItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [ProtocolCollection localProtocolAtIndex:%d]; size = %d",index,self.localItems.count);
-        return nil;
-    }
-    return self.localItems[index];
-}
-
-- (SProtocol *)remoteProtocolAtIndex:(NSUInteger)index
-{
-    if (self.remoteItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [ProtocolCollection remoteProtocolAtIndex:%d]; size = %d",index,self.remoteItems.count);
-        return nil;
-    }
-    return self.remoteItems[index];
-}
-
--(NSUInteger)numberOfLocalProtocols
-{
-    return self.localItems.count;
-}
-
--(NSUInteger)numberOfRemoteProtocols
-{
-    return self.remoteItems.count;
-}
-
-- (void)insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index
-{
-    NSAssert(index <= self.localItems.count, @"Array index out of bounds in [ProtocolCollection insertLocalProtocolAtIndex:%d]; size = %d",index,self.localItems.count);
-    [self.localItems insertObject:protocol atIndex:index];
-    [self saveCache];
-}
-
--(void)removeLocalProtocolAtIndex:(NSUInteger)index
-{
-    if (self.localItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [ProtocolCollection removeLocalProtocolAtIndex:%d] size = %d",index,self.localItems.count);
-        return;
-    }
-    SProtocol *item = [self localProtocolAtIndex:index];
-    [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
-    [self.localItems removeObjectAtIndex:index];
-    [self saveCache];
-}
-
-- (void)removeRemoteProtocolAtIndex:(NSUInteger)index
-{
-    if (self.remoteItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [ProtocolCollection removeRemoteProtocolAtIndex:%d] size = %d",index,self.remoteItems.count);
-        return;
-    }
-    [self.remoteItems removeObjectAtIndex:index];
-    [self saveCache];
-}
-
--(void)moveLocalProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
-{
-    if (fromIndex == toIndex)
-        return;
-    NSAssert(fromIndex < self.localItems.count && toIndex < self.localItems.count, @"Array index out of bounds in [ProtocolCollection moveLocalProtocolAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.localItems.count);
-    id temp = self.localItems[fromIndex];
-    [self.localItems removeObjectAtIndex:fromIndex];
-    [self.localItems insertObject:temp atIndex:toIndex];
-    [self saveCache];
-}
-
--(void)moveRemoteProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
-{
-    if (fromIndex == toIndex)
-        return;
-    NSAssert(fromIndex < self.remoteItems.count && toIndex < self.remoteItems.count, @"Array index out of bounds in [ProtocolCollection moveRemoteProtocolAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.remoteItems.count);
-    id temp = self.remoteItems[fromIndex];
-    [self.remoteItems removeObjectAtIndex:fromIndex];
-    [self.remoteItems insertObject:temp atIndex:toIndex];
-    [self saveCache];
-}
-
-
-
-
 #pragma mark - public methods
 
 + (BOOL)collectsURL:(NSURL *)url
@@ -237,7 +132,112 @@ static BOOL _isLoaded = NO;
 
 
 
+#pragma mark - TableView Data Soource Support
+
+-(NSUInteger)numberOfLocalProtocols
+{
+    return self.localItems.count;
+}
+
+-(NSUInteger)numberOfRemoteProtocols
+{
+    return self.remoteItems.count;
+}
+
+- (SProtocol *)localProtocolAtIndex:(NSUInteger)index
+{
+    if (self.localItems.count <= index) {
+        AKRLog(@"Array index out of bounds in [ProtocolCollection localProtocolAtIndex:%d]; size = %d",index,self.localItems.count);
+        return nil;
+    }
+    return self.localItems[index];
+}
+
+- (SProtocol *)remoteProtocolAtIndex:(NSUInteger)index
+{
+    if (self.remoteItems.count <= index) {
+        AKRLog(@"Array index out of bounds in [ProtocolCollection remoteProtocolAtIndex:%d]; size = %d",index,self.remoteItems.count);
+        return nil;
+    }
+    return self.remoteItems[index];
+}
+
+- (void)insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index
+{
+    NSAssert(index <= self.localItems.count, @"Array index out of bounds in [ProtocolCollection insertLocalProtocolAtIndex:%d]; size = %d",index,self.localItems.count);
+    [self.localItems insertObject:protocol atIndex:index];
+    [self saveCache];
+}
+
+-(void)removeLocalProtocolAtIndex:(NSUInteger)index
+{
+    if (self.localItems.count <= index) {
+        AKRLog(@"Array index out of bounds in [ProtocolCollection removeLocalProtocolAtIndex:%d] size = %d",index,self.localItems.count);
+        return;
+    }
+    SProtocol *item = [self localProtocolAtIndex:index];
+    [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
+    [self.localItems removeObjectAtIndex:index];
+    [self saveCache];
+}
+
+- (void)removeRemoteProtocolAtIndex:(NSUInteger)index
+{
+    if (self.remoteItems.count <= index) {
+        AKRLog(@"Array index out of bounds in [ProtocolCollection removeRemoteProtocolAtIndex:%d] size = %d",index,self.remoteItems.count);
+        return;
+    }
+    [self.remoteItems removeObjectAtIndex:index];
+    [self saveCache];
+}
+
+-(void)moveLocalProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+{
+    if (fromIndex == toIndex)
+        return;
+    NSAssert(fromIndex < self.localItems.count && toIndex < self.localItems.count, @"Array index out of bounds in [ProtocolCollection moveLocalProtocolAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.localItems.count);
+    id temp = self.localItems[fromIndex];
+    [self.localItems removeObjectAtIndex:fromIndex];
+    [self.localItems insertObject:temp atIndex:toIndex];
+    [self saveCache];
+}
+
+-(void)moveRemoteProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+{
+    if (fromIndex == toIndex)
+        return;
+    NSAssert(fromIndex < self.remoteItems.count && toIndex < self.remoteItems.count, @"Array index out of bounds in [ProtocolCollection moveRemoteProtocolAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.remoteItems.count);
+    id temp = self.remoteItems[fromIndex];
+    [self.remoteItems removeObjectAtIndex:fromIndex];
+    [self.remoteItems insertObject:temp atIndex:toIndex];
+    [self saveCache];
+}
+
+
+
+
 #pragma mark - private methods
+
+#pragma mark - private properties
+
+- (NSMutableArray *)localItems
+{
+    if (!_localItems) {
+        _localItems = [NSMutableArray new];
+    }
+    return _localItems;
+}
+
+- (NSMutableArray *)remoteItems
+{
+    if (!_remoteItems) {
+        _remoteItems = [NSMutableArray new];
+    }
+    return _remoteItems;
+}
+
+
+
 
 #pragma mark - Cache operations
 
