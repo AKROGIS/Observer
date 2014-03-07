@@ -382,9 +382,13 @@
     BOOL success = [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];
     Map *newMap = nil;
     if (success) {
-        newMap = [[Map alloc] initWithURL:self.destinationURL];
-        if (!newMap.isValid)
+        NSURL *savedUrl = self.url;
+        newMap = self;  //This is a cheat, I should make a copy, but self (the obsolete remote version) will be removed momentarily
+        newMap.url = self.destinationURL;
+        if (!newMap.isValid) {
             newMap = nil;
+            self.url = savedUrl;
+        }
     }
     if (self.downloadCompletionAction){
         self.downloadCompletionAction(newMap);
