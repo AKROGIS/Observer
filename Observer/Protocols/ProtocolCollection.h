@@ -46,15 +46,15 @@
 // UITableView DataSource Support
 - (NSUInteger)numberOfLocalProtocols;
 - (NSUInteger)numberOfRemoteProtocols;
-// Returns nil if index out of bounds (semantics - there is no map at the index)
+// Returns nil if index out of bounds (semantics - there is no protocol at the index)
 - (SProtocol *)localProtocolAtIndex:(NSUInteger)index;
-// Returns nil if index out of bounds (semantics - there is no map at the index)
+// Returns nil if index out of bounds (semantics - there is no protocol at the index)
 - (SProtocol *)remoteProtocolAtIndex:(NSUInteger)index;
-// Throws an exception if index is greater than the number of local maps
+// Throws an exception if index is greater than the number of local protocols
 - (void)insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index;
-// No-op if index out of bounds (semantics - the map at the index is already gone)
+// No-op if index out of bounds (semantics - the protocol at the index is already gone)
 - (void)removeLocalProtocolAtIndex:(NSUInteger)index;
-// No-op if index out of bounds (semantics - the map at the index is already gone)
+// No-op if index out of bounds (semantics - the protocol at the index is already gone)
 - (void)removeRemoteProtocolAtIndex:(NSUInteger)index;
 // Throws an exception if either index is out of bounds
 - (void)moveLocalProtocolAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
