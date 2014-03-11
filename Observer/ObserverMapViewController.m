@@ -481,6 +481,9 @@
     if (self.isRecording) {
         for (CLLocation *location in locations) {
             if ([self isNewLocation:location]) {
+                //Should probalby be something like:
+                //[self.survey addGpsPoint:location];
+                //[self.mapView addGpsPoint:location];
                 GpsPoint *gpsPoint = [self createGpsPoint:location];
                 [self drawGpsPoint:gpsPoint];
             }
@@ -1252,9 +1255,7 @@
         if (previousPoint.missionProperty) {
             observing = previousPoint.missionProperty.observing;
         }
-        //draw the GPS tracks
-        //TODO: draw a polyline instead of single lines
-        [self drawTrackObserving:observing From:previousPoint to:gpsPoint];
+        [self drawTrackObserving:observing from:previousPoint to:gpsPoint];
 
         previousPoint = gpsPoint;
     }
@@ -1415,13 +1416,16 @@
 - (void)drawGpsPoint:(GpsPoint *)gpsPoint
 {
     [self drawGpsPointAtMapPoint:[self mapPointFromGpsPoint:gpsPoint]];
+    if (self.lastGpsPointSaved) {
+        [self drawTrackObserving:self.isObserving from:self.lastGpsPointSaved to:gpsPoint];
+    }
+    self.lastGpsPointSaved = gpsPoint;
 }
 
 - (void)drawGpsPointAtMapPoint:(AGSPoint *)mapPoint
 {
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:nil];
     [self.graphicsLayers[kGpsPointEntityName] addGraphic:graphic];
-    //TODO: Add segment to polyline
 }
 
 
@@ -1743,8 +1747,9 @@
 
 #pragma mark - Private Methods - misc support for data model
 
-- (void)drawTrackObserving:(BOOL)observing From:(GpsPoint *)fromPoint to:(GpsPoint *)toPoint
+- (void)drawTrackObserving:(BOOL)observing from:(GpsPoint *)fromPoint to:(GpsPoint *)toPoint
 {
+    //TODO: draw a polyline instead of single lines
     AGSPoint *point1 = [self mapPointFromGpsPoint:fromPoint];
     AGSPoint *point2 = [self mapPointFromGpsPoint:toPoint];
     AGSMutablePolyline *line = [[AGSMutablePolyline alloc] init];
