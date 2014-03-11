@@ -1784,6 +1784,7 @@
     }
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
+    dialog.resizeWhenKeyboardPresented = NO; //I'm putting this in a popover
     dialog.managedObject = entity;
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
