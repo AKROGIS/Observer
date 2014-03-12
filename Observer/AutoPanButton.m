@@ -45,23 +45,16 @@
 
 - (void)turnOff
 {
-    //TODO: replace text with cool images/highlighting
-    //self.title = @"Off";
-    self.title = nil;
     self.image = self.gpsOff;
 }
 
 - (void)turnOnWithoutRotate
 {
-    //self.title = @"On";
-    self.title = nil;
     self.image = self.gpsOn;
 }
 
 - (void)turnOnWithRotate
 {
-    //self.title = @"OnR";
-    self.title = nil;
     self.image = self.gpsRotate;
 }
 
