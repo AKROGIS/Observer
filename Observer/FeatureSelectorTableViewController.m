@@ -10,6 +10,9 @@
 #import "NSIndexPath+unsignedAccessors.h"
 #import "NSDate+Formatting.h"
 
+#define kPopoverMaxHeight 500
+#define kPopoverWidth     320
+
 @interface FeatureSelectorTableViewController ()
 
 @property (strong, nonatomic) NSMutableArray *layerNames;
@@ -32,6 +35,7 @@
         [self.layerNames addObject:key];
         [self.graphics addObject:features[key]];
     }
+    self.preferredContentSize = CGSizeMake(kPopoverWidth, [self heightForTableContents]);
 }
 
 
@@ -92,6 +96,23 @@
         id graphic = graphics[indexPath.urow];
         self.featureSelectedCallback(layerName, graphic);
     }
+}
+
+
+
+
+#pragma mark - private methods
+
+- (CGFloat)heightForTableContents
+{
+    CGFloat height = 0;
+    NSInteger sections = [self numberOfSectionsInTableView:self.tableView];
+    height = self.tableView.sectionHeaderHeight * sections;
+    for (NSInteger i = 0; i < sections; i++) {
+        NSInteger rows = [self tableView:self.tableView numberOfRowsInSection:i];
+        height += self.tableView.rowHeight * rows;
+    }
+    return kPopoverMaxHeight < height ? kPopoverMaxHeight : height;
 }
 
 @end
