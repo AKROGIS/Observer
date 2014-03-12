@@ -68,9 +68,11 @@
         timestamp = (NSDate *)item;
     }
     if (timestamp) {
-        //TODO: display a better timestamp
-        //cell.textLabel.text = [timestamp stringWithRelativeTimeFormat];
-        cell.textLabel.text = [NSString stringWithFormat:@"%@", timestamp];
+        if ([timestamp isToday]) {
+            cell.textLabel.text = [timestamp stringWithMediumTimeFormat];
+        } else {
+            cell.textLabel.text = [timestamp stringWithMediumDateTimeFormat];
+        }
     } else {
         cell.textLabel.text = @"Unknown timestamp";
     }
