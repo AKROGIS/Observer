@@ -19,33 +19,25 @@
 
 @implementation FeatureSelectorTableViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
+#pragma mark - properties
+
+- (void)setFeatures:(NSDictionary *)features
 {
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
+    _features = features;
+    self.layerNames = [NSMutableArray new];
+    self.graphics = [NSMutableArray new];
+    NSEnumerator *keyEnumerator = features.keyEnumerator;
+    id key;
+    while ((key = [keyEnumerator nextObject])) {
+        [self.layerNames addObject:key];
+        [self.graphics addObject:features[key]];
     }
-    return self;
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-}
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
-#pragma mark - Table view data source
+#pragma mark - UITableView DataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -85,6 +77,11 @@
     return cell;
 }
 
+
+
+
+#pragma mark - UITableView Delegate
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.featureSelectedCallback) {
@@ -92,19 +89,6 @@
         NSArray *graphics = (NSArray *)self.graphics[indexPath.usection];
         id graphic = graphics[indexPath.urow];
         self.featureSelectedCallback(layerName, graphic);
-    }
-}
-
-- (void)setFeatures:(NSDictionary *)features
-{
-    _features = features;
-    self.layerNames = [NSMutableArray new];
-    self.graphics = [NSMutableArray new];
-    NSEnumerator *keyEnumerator = features.keyEnumerator;
-    id key;
-    while ((key = [keyEnumerator nextObject])) {
-        [self.layerNames addObject:key];
-        [self.graphics addObject:features[key]];
     }
 }
 
