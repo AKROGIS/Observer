@@ -31,6 +31,7 @@
 #import "AttributeViewController.h"
 #import "FeatureSelectorTableViewController.h"
 #import "AGSMapView+AKRAdditions.h"
+#import "UIPopoverController+Presenting.h"
 
 //Views
 #import "AutoPanButton.h"
@@ -222,11 +223,7 @@
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    if (self.attributePopoverController) {
-        CGPoint screenPoint = [self.mapView toScreenPoint:self.popoverMapPoint];
-        CGRect rect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
-        [self.attributePopoverController presentPopoverFromRect:rect inView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
-    }
+    [self.featureSelectorPopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
 
 
@@ -537,11 +534,11 @@
     [self decrementBusy];
 }
 
-- (BOOL)mapView:(AGSMapView *)mapView shouldHitTestLayer:(AGSLayer *)layer atPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint
+- (BOOL)mapView:(AGSMapView *)mapView shouldHitTestLayer:(AGSLayer *)layer atPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint
 {
     //Asks delegate whether to find which graphics in the specified layer intersect the tapped location. Default is YES.
     //This function may or may not be called on the main thread.
-    //AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mappoint, graphicsLayer.name);
+    //AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mapPoint, graphicsLayer.name);
     BOOL findableLayer = !([layer.name isEqualToString:kGpsPointsLayer] ||
                            [layer.name isEqualToString:kObservingTracksLayer] ||
                            [layer.name isEqualToString:kNotObservingTracksLayer]);
@@ -553,13 +550,13 @@
 
 #pragma mark - Delegate Methods: AGSMapViewTouchDelegate (all optional)
 
-- (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
+- (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint features:(NSDictionary *)features
 {
     //Tells the delegate the map was single-tapped at specified location.
     //features: id<AGSFeature> objects from all hit-testable layers in the map that intersect or contain the location.
     //The dictionary contains layer name (key) : Array of id<AGSFeature> (value)
 
-    //AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mappoint, features);
+    //AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mapPoint, features);
 
     switch (features.count) {  //Number of layers with selected features
         case 0:
@@ -568,10 +565,10 @@
                     case 0:
                         break;
                     case 1:
-                        [self addFeature:self.survey.protocol.featuresWithLocateByTouch[0] atMapPoint:mappoint];
+                        [self addFeature:self.survey.protocol.featuresWithLocateByTouch[0] atMapPoint:mapPoint];
                         break;
                     default:
-                        [self presentProtocolFeatureSelector:self.survey.protocol.featuresWithLocateByTouch atPoint:screen mapPoint:mappoint];
+                        [self presentProtocolFeatureSelector:self.survey.protocol.featuresWithLocateByTouch atPoint:screen mapPoint:mapPoint];
                         break;
                 }
             }
@@ -580,21 +577,21 @@
             NSString *layerName = (NSString *)[features.keyEnumerator nextObject];
             NSArray *featureList = features[layerName];
             if (featureList.count == 1) {  //Number of selected features in layer
-                [self presentFeature:featureList[0] fromLayer:layerName atPoint:screen];
+                [self presentFeature:featureList[0] fromLayer:layerName atMapPoint:mapPoint];
             } else {
-                [self presentAGSFeatureSelector:features atPoint:screen];
+                [self presentAGSFeatureSelector:features atMapPoint:mapPoint];
             }
             break;
         }
         default:
-            [self presentAGSFeatureSelector:features atPoint:screen];
+            [self presentAGSFeatureSelector:features atMapPoint:mapPoint];
             break;
     }
 }
 
-- (void)mapView:(AGSMapView *)mapView didTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
+- (void)mapView:(AGSMapView *)mapView didTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint features:(NSDictionary *)features
 {
-    //AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, features);
+    //AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
 
     if (0 < [features count]) {
         AKRLog(@"Try to move selected graphic - if allowed");
@@ -610,20 +607,20 @@
     }
 }
 
-- (void)mapView:(AGSMapView *)mapView didMoveTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
+- (void)mapView:(AGSMapView *)mapView didMoveTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint features:(NSDictionary *)features
 {
-    //AKRLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, features);
+    //AKRLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
 
     //FIXME: if this is a mission point, then snap to gps points
     AGSGraphic *graphic = [features[kObservationLayer] lastObject];
     if (graphic) {
-        [graphic setGeometry:mappoint];
+        [graphic setGeometry:mapPoint];
     }
 }
 
-- (void) mapView:(AGSMapView *)mapView didEndTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mappoint features:(NSDictionary *)features
+- (void) mapView:(AGSMapView *)mapView didEndTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint features:(NSDictionary *)features
 {
-    //AKRLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mappoint, features);
+    //AKRLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
 
     //FIXME: need to save new adhoc map point for dragged graphic.
     //Should I check if we have actually moved??
@@ -1655,9 +1652,9 @@
 
 #pragma mark - Private Methods to Support Feature Selection/Presentation
 
-- (void)presentProtocolFeatureSelector:(NSArray *)features atPoint:(CGPoint)screenpoint mapPoint:(AGSPoint *)mappoint
+- (void)presentProtocolFeatureSelector:(NSArray *)features atPoint:(CGPoint)screenpoint mapPoint:(AGSPoint *)mapPoint
 {
-    self.mapPointAtAddSelectedFeature = mappoint;
+    self.mapPointAtAddSelectedFeature = mapPoint;
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     sheet.tag = kActionSheetSelectFeature;
 
@@ -1673,28 +1670,27 @@
     [sheet showFromRect:rect inView:self.mapView animated:NO];
 }
 
-- (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mappoint
+- (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mapPoint
 {
-    Observation *observation = [self createObservation:feature AtMapLocation:mappoint];
-    [self drawObservation:observation atPoint:mappoint];
-    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mappoint];
+    Observation *observation = [self createObservation:feature AtMapLocation:mapPoint];
+    [self drawObservation:observation atPoint:mapPoint];
+    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint];
 }
 
-- (void)presentAGSFeatureSelector:(NSDictionary *)features atPoint:(CGPoint)screen
+- (void)presentAGSFeatureSelector:(NSDictionary *)features atMapPoint:(AGSPoint *)mapPoint
 {
     FeatureSelectorTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"FeatureSelectorTableViewController"];
     vc.features = features;
     vc.featureSelectedCallback = ^(NSString *layerName, id<AGSFeature> graphic) {
-        [self presentFeature:graphic fromLayer:layerName atPoint:screen];
+        [self presentFeature:graphic fromLayer:layerName atMapPoint:mapPoint];
         //dismiss popover?
     };
-    CGRect rect = CGRectMake(screen.x, screen.y, 1, 1);
     //TODO: reduce popover size
     self.featureSelectorPopoverController = [[UIPopoverController alloc] initWithContentViewController:vc];
-    [self.featureSelectorPopoverController presentPopoverFromRect:rect inView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    [self.attributePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
 
-- (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atPoint:(CGPoint)screenPoint
+- (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atMapPoint:(AGSPoint *)mapPoint
 {
     NSDate *timestamp = (NSDate *)[agsFeature safeAttributeForKey:kTimestampKey];
 
@@ -1734,8 +1730,7 @@
     }
 
     //get data from entity attributes (unobscure the key names)
-    AGSPoint *mappoint = [self.mapView toMapPoint:screenPoint];
-    [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:mappoint];
+    [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:mapPoint];
 
     //FIXME: if this is an angle distance location, provide button for angle distance editor
     //FIXME: can I support a readonly survey, and just look at the attributes with editing disabled??
@@ -1761,7 +1756,7 @@
     [self.graphicsLayers[name] addGraphic:graphic];
 }
 
-- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mappoint
+- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint
 {
     //TODO: can we support observations that have no attributes (no dialog)?
     //get data from entity attributes (unobscure the key names)
@@ -1784,7 +1779,6 @@
     }
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
-    dialog.resizeWhenKeyboardPresented = NO; //I'm putting this in a popover
     dialog.managedObject = entity;
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
@@ -1792,12 +1786,11 @@
 //        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
 //        dialog.navigationController.navigationBar.items = @[cancelButton,self.navigationItem ,doneButton];
 //        dialog.modalInPopover = YES;
+        dialog.resizeWhenKeyboardPresented = NO; //I'm putting this in a popover
         self.attributePopoverController = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
         self.attributePopoverController.delegate = self;
-        self.popoverMapPoint = mappoint;
-        CGPoint screenPoint = [self.mapView nearestScreenPoint:mappoint];
-        CGRect rect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
-        [self.attributePopoverController presentPopoverFromRect:rect inView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        self.popoverMapPoint = mapPoint;
+        [self.attributePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     } else {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];

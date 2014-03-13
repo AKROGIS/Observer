@@ -89,6 +89,7 @@
 		39D947A418BEA79E0069DB31 /* ObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947A318BEA79E0069DB31 /* ObserverTests.m */; };
 		39D947AD18BEA7DF0069DB31 /* AGSPointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947AB18BEA7DF0069DB31 /* AGSPointTests.m */; };
 		39D947AE18BEA7DF0069DB31 /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947AC18BEA7DF0069DB31 /* LocationAngleDistanceTests.m */; };
+		5980662018D16420004830E7 /* UIPopoverController+Presenting.m in Sources */ = {isa = PBXBuildFile; fileRef = 5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */; };
 		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
 		59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FEE1863FDBF00470791 /* AKRFormatter.m */; };
 /* End PBXBuildFile section */
@@ -268,6 +269,8 @@
 		39D947A518BEA79E0069DB31 /* ObserverTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ObserverTests-Prefix.pch"; sourceTree = "<group>"; };
 		39D947AB18BEA7DF0069DB31 /* AGSPointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGSPointTests.m; sourceTree = "<group>"; };
 		39D947AC18BEA7DF0069DB31 /* LocationAngleDistanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationAngleDistanceTests.m; sourceTree = "<group>"; };
+		5980661E18D16420004830E7 /* UIPopoverController+Presenting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIPopoverController+Presenting.h"; path = "Categories/UIPopoverController+Presenting.h"; sourceTree = "<group>"; };
+		5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIPopoverController+Presenting.m"; path = "Categories/UIPopoverController+Presenting.m"; sourceTree = "<group>"; };
 		59C60FE6185ABF9400470791 /* AKRDirectionIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDirectionIndicatorView.h; sourceTree = "<group>"; };
 		59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDirectionIndicatorView.m; sourceTree = "<group>"; };
 		59C60FED1863FDBF00470791 /* AKRFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRFormatter.h; sourceTree = "<group>"; };
@@ -434,6 +437,8 @@
 				3989085C1857EDE1007B3F67 /* NSURL+unique.m */,
 				396E1E8E189864AE00B735EF /* NSIndexPath+unsignedAccessors.h */,
 				396E1E8F189864AE00B735EF /* NSIndexPath+unsignedAccessors.m */,
+				5980661E18D16420004830E7 /* UIPopoverController+Presenting.h */,
+				5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -735,6 +740,7 @@
 				3982F6CA18C00D040081C3F9 /* AGSMapView+AKRAdditions.m in Sources */,
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
+				5980662018D16420004830E7 /* UIPopoverController+Presenting.m in Sources */,
 				398908601857EDE1007B3F67 /* NSIndexSet+indexPath.m in Sources */,
 				394CC2501858F11800FA859C /* AngleDistanceLocation.m in Sources */,
 				3989084D1857ED00007B3F67 /* Survey.m in Sources */,
