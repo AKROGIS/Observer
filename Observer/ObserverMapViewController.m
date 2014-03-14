@@ -40,6 +40,9 @@
 //Support Model Objects
 #import "AutoPanStateMachine.h"
 
+//Support sub-system
+#import "QuickDialog.h"
+
 //Constants and Magic Numbers/Strings
 #define kGpsPointsLayer            @"gpsPointsLayer"
 #define kObservationLayer          @"observationsLayer"
@@ -1453,7 +1456,7 @@
     Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     [self drawObservation:observation atPoint:mapPoint];
-    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint];
+    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint editing:NO];
 }
 
 - (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
@@ -1481,7 +1484,7 @@
 {
     Observation *observation = [self createObservation:feature AtMapLocation:self.mapView.mapAnchor];
     [self drawObservation:observation atPoint:self.mapView.mapAnchor];
-    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:self.mapView.mapAnchor];
+    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:self.mapView.mapAnchor editing:NO];
 }
 
 - (Observation *)createObservation:(ProtocolFeature *)feature
@@ -1639,7 +1642,7 @@
     }
     missionProperty.observing = self.isObserving;
     if (edit) {
-        [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:template atPoint:mapPoint];
+        [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:template atPoint:mapPoint editing:NO];
     } else {
         [self copyAttributesForFeature:self.survey.protocol.missionFeature fromEntity:template toEntity:missionProperty];
     }
@@ -1674,7 +1677,7 @@
 {
     Observation *observation = [self createObservation:feature AtMapLocation:mapPoint];
     [self drawObservation:observation atPoint:mapPoint];
-    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint];
+    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint editing:NO];
 }
 
 - (void)presentAGSFeatureSelector:(NSDictionary *)features atMapPoint:(AGSPoint *)mapPoint
@@ -1730,7 +1733,7 @@
     }
 
     //get data from entity attributes (unobscure the key names)
-    [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:mapPoint];
+    [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:mapPoint editing:YES];
 
     //FIXME: if this is an angle distance location, provide button for angle distance editor
     //FIXME: can I support a readonly survey, and just look at the attributes with editing disabled??
@@ -1756,7 +1759,7 @@
     [self.graphicsLayers[name] addGraphic:graphic];
 }
 
-- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint
+- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint editing:(BOOL)editing
 {
     //TODO: can we support observations that have no attributes (no dialog)?
     //get data from entity attributes (unobscure the key names)
@@ -1778,14 +1781,26 @@
         data = nil;
     }
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
+    NSString *buttonText = editing ? @"Delete" : @"Cancel";
+    QButtonElement *deleteButton = [[QButtonElement alloc] initWithTitle:buttonText];
+    deleteButton.appearance.buttonAlignment = NSTextAlignmentCenter;
+    if (editing) {
+        deleteButton.appearance.actionColorEnabled = [UIColor redColor];
+    } else {
+        deleteButton.appearance.actionColorEnabled = self.view.tintColor;
+    }
+    deleteButton.onSelected = ^(){
+        [self.context deleteObject:entity];
+        //FIXME: if we cancel or delete a mission property,it may effect the observing status
+        //[self.graphicsLayers[@"name"] deleteFeature:graphic];
+        [self.attributePopoverController dismissPopoverAnimated:YES];
+    };
+    [[root.sections lastObject] addElement:deleteButton];
+
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
-//        UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismiss:)];
-//        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
-//        dialog.navigationController.navigationBar.items = @[cancelButton,self.navigationItem ,doneButton];
-//        dialog.modalInPopover = YES;
         dialog.resizeWhenKeyboardPresented = NO; //I'm putting this in a popover
         self.attributePopoverController = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
         self.attributePopoverController.delegate = self;
@@ -1907,7 +1922,7 @@
         self.angleDistancePopoverController = nil;
         Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
         [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
-        [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint];
+        [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint editing:NO];
     };
     vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
         self.angleDistancePopoverController = nil;
