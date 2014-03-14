@@ -1472,7 +1472,7 @@
     }
     if (button) {
         // It is not possible (AFIK) to set the anchor for a manual popover seque, hence I must do the "segue" with code
-        if ([self shouldPerformAngleDistanceSequeWithFeature:feature button:button]) {
+        if ([self shouldPerformAngleDistanceSequeWithFeature:feature]) {
             [self performAngleDistanceSequeWithFeature:feature button:button];
         }
     } else {
@@ -1793,17 +1793,16 @@
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
     
     //Angle/Distance Button
+    //FIXME: how do I determine if this entity has an angleDistance?
     if (true) {
         QButtonElement *adButton = [[QButtonElement alloc] initWithTitle:@"Fix Location"];
-        //FIXME: appearance is shared, so the color is shared
+        //FIXME: appearance is shared with the delete button
         adButton.appearance.buttonAlignment = NSTextAlignmentCenter;
         adButton.appearance.actionColorEnabled = self.view.tintColor;
         adButton.onSelected = ^(){
-            //get angle distance values
-            //need similar methods, but now I don't have a button
-//            if ([self shouldPerformAngleDistanceSequeWithFeature:feature button:button]) {
-//                [self performAngleDistanceSequeWithFeature:feature button:button];
-//            }
+            if ([self shouldPerformAngleDistanceSequeWithFeature:feature]) {
+                [self performAngleDistanceSequeWithFeature:feature entity:entity mapPoint:mapPoint];
+            }
         };
         [[root.sections lastObject] addElement:adButton];
     }
@@ -1901,7 +1900,7 @@
     return (NSManagedObject *)[results lastObject]; // will return nil if there was an error, or no results
 }
 
-- (BOOL) shouldPerformAngleDistanceSequeWithFeature:(ProtocolFeature *)feature button:(UIBarButtonItem *)button
+- (BOOL) shouldPerformAngleDistanceSequeWithFeature:(ProtocolFeature *)feature
 {
     if (self.angleDistancePopoverController) {
         //TODO: is this code path possible?
@@ -1967,6 +1966,11 @@
     }
 }
 
+- (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature entity:(NSManagedObject *)entity mapPoint:(AGSPoint *)mapPoint
+{
+    //Setup angle distance form
+    [self.angleDistancePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+}
 
 
 
