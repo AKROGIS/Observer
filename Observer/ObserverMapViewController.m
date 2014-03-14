@@ -1472,7 +1472,7 @@
     }
     if (button) {
         // It is not possible (AFIK) to set the anchor for a manual popover seque, hence I must do the "segue" with code
-        if ([self  shouldPerformAngleDistanceSequeWithFeature:feature button:button]) {
+        if ([self shouldPerformAngleDistanceSequeWithFeature:feature button:button]) {
             [self performAngleDistanceSequeWithFeature:feature button:button];
         }
     } else {
@@ -1791,6 +1791,24 @@
         data = nil;
     }
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
+    
+    //Angle/Distance Button
+    if (true) {
+        QButtonElement *adButton = [[QButtonElement alloc] initWithTitle:@"Fix Location"];
+        //FIXME: appearance is shared, so the color is shared
+        adButton.appearance.buttonAlignment = NSTextAlignmentCenter;
+        adButton.appearance.actionColorEnabled = self.view.tintColor;
+        adButton.onSelected = ^(){
+            //get angle distance values
+            //need similar methods, but now I don't have a button
+//            if ([self shouldPerformAngleDistanceSequeWithFeature:feature button:button]) {
+//                [self performAngleDistanceSequeWithFeature:feature button:button];
+//            }
+        };
+        [[root.sections lastObject] addElement:adButton];
+    }
+    
+    //Delete/Cancel Button
     NSString *buttonText = editing ? @"Delete" : @"Cancel";
     QButtonElement *deleteButton = [[QButtonElement alloc] initWithTitle:buttonText];
     deleteButton.appearance.buttonAlignment = NSTextAlignmentCenter;
