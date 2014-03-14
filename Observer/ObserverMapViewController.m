@@ -1455,8 +1455,8 @@
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
     Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    [self drawObservation:observation atPoint:mapPoint];
-    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint editing:NO];
+    AGSGraphic *graphic = [self drawObservation:observation atPoint:mapPoint];
+    [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint editing:NO];
 }
 
 - (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
@@ -1483,8 +1483,8 @@
 - (void)addFeatureAtTarget:(ProtocolFeature *)feature
 {
     Observation *observation = [self createObservation:feature AtMapLocation:self.mapView.mapAnchor];
-    [self drawObservation:observation atPoint:self.mapView.mapAnchor];
-    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:self.mapView.mapAnchor editing:NO];
+    AGSGraphic *graphic = [self drawObservation:observation atPoint:self.mapView.mapAnchor];
+    [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:self.mapView.mapAnchor editing:NO];
 }
 
 - (Observation *)createObservation:(ProtocolFeature *)feature
@@ -1535,7 +1535,7 @@
     [self drawObservation:observation atPoint:point];
 }
 
-- (void)drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
+- (AGSGraphic *)drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
 {
     //AKRLog(@"    Drawing observation type %@",observation.entity.name);
     NSDate *timestamp = observation.gpsPoint ? observation.gpsPoint.timestamp : observation.adhocLocation.timestamp;
@@ -1543,6 +1543,7 @@
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     NSString * name = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
     [self.graphicsLayers[name] addGraphic:graphic];
+    return graphic;
 }
 
 - (AdhocLocation *)createAdhocLocationWithMapPoint:(AGSPoint *)mapPoint
@@ -1612,12 +1613,13 @@
     [self drawMissionProperty:missionProperty atPoint:point];
 }
 
-- (void)drawMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
+- (AGSGraphic *)drawMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
 {
     NSDate *timestamp = missionProperty.gpsPoint ? missionProperty.gpsPoint.timestamp : missionProperty.adhocLocation.timestamp;
     NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     [self.graphicsLayers[kMissionPropertyEntityName] addGraphic:graphic];
+    return graphic;
 }
 
 - (void)saveNewMissionPropertyEditAttributes:(BOOL)edit
@@ -1641,13 +1643,13 @@
         AKRLog(@"Oh No!, Unable to create a new Mission Property");
     }
     missionProperty.observing = self.isObserving;
+    AGSGraphic *graphic = [self drawMissionProperty:missionProperty atPoint:mapPoint];
     if (edit) {
-        [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty defaults:template atPoint:mapPoint editing:NO];
+        [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty graphic:graphic defaults:template atPoint:mapPoint editing:NO];
     } else {
         [self copyAttributesForFeature:self.survey.protocol.missionFeature fromEntity:template toEntity:missionProperty];
     }
     self.currentMissionProperty = missionProperty;
-    [self drawMissionProperty:missionProperty atPoint:mapPoint];
 }
 
 
@@ -1676,8 +1678,8 @@
 - (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mapPoint
 {
     Observation *observation = [self createObservation:feature AtMapLocation:mapPoint];
-    [self drawObservation:observation atPoint:mapPoint];
-    [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint editing:NO];
+    AGSGraphic *graphic = [self drawObservation:observation atPoint:mapPoint];
+    [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint editing:NO];
 }
 
 - (void)presentAGSFeatureSelector:(NSDictionary *)features atMapPoint:(AGSPoint *)mapPoint
@@ -1733,11 +1735,10 @@
     }
 
     //get data from entity attributes (unobscure the key names)
-    [self setAttributesForFeatureType:feature entity:entity defaults:entity atPoint:mapPoint editing:YES];
+    [self setAttributesForFeatureType:feature entity:entity graphic:(AGSGraphic *)agsFeature defaults:entity atPoint:mapPoint editing:YES];
 
     //FIXME: if this is an angle distance location, provide button for angle distance editor
     //FIXME: can I support a readonly survey, and just look at the attributes with editing disabled??
-    //FIXME: if feature is deletable, provide a delete button.
 }
 
 
@@ -1759,7 +1760,16 @@
     [self.graphicsLayers[name] addGraphic:graphic];
 }
 
-- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint editing:(BOOL)editing
+- (AGSGraphicsLayer *)layerForFeatureType:(ProtocolFeature *)feature
+{
+    if ([feature isKindOfClass:[ProtocolMissionFeature class]]) {
+        return self.graphicsLayers[kMissionPropertyEntityName];
+    } else {
+        return self.graphicsLayers[feature.name];
+    }
+}
+
+- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint editing:(BOOL)editing
 {
     //TODO: can we support observations that have no attributes (no dialog)?
     //get data from entity attributes (unobscure the key names)
@@ -1792,7 +1802,7 @@
     deleteButton.onSelected = ^(){
         [self.context deleteObject:entity];
         //FIXME: if we cancel or delete a mission property,it may effect the observing status
-        //[self.graphicsLayers[@"name"] deleteFeature:graphic];
+        [[self layerForFeatureType:feature] removeGraphic:graphic];
         [self.attributePopoverController dismissPopoverAnimated:YES];
     };
     [[root.sections lastObject] addElement:deleteButton];
@@ -1921,8 +1931,8 @@
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
         self.angleDistancePopoverController = nil;
         Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
-        [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
-        [self setAttributesForFeatureType:feature entity:observation defaults:nil atPoint:mapPoint editing:NO];
+        AGSGraphic *graphic = [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
+        [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint editing:NO];
     };
     vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
         self.angleDistancePopoverController = nil;
