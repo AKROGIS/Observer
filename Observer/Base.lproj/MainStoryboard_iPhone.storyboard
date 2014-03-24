@@ -505,7 +505,7 @@
                                 <connections>
                                     <outlet property="subtitleLabel" destination="sFY-0m-J9H" id="5oc-S2-ume"/>
                                     <outlet property="titleLabel" destination="9A6-6M-7NN" id="hYf-yn-LbH"/>
-                                    <segue destination="Hj7-l6-1dd" kind="push" identifier="Protocol Details" trigger="accessoryAction" id="FtE-ZQ-aQY"/>
+                                    <segue destination="Hj7-l6-1dd" kind="push" identifier="Local Protocol Details" trigger="accessoryAction" id="FtE-ZQ-aQY"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="RemoteProtocolCell" id="mcz-f7-Sjj" customClass="ProtocolTableViewCell">
@@ -567,7 +567,7 @@
                                     <outlet property="startDownloadImageView" destination="gyt-Yy-YbQ" id="tUQ-fF-Dyf"/>
                                     <outlet property="subtitleLabel" destination="a41-2C-XmK" id="8ei-Zz-cw1"/>
                                     <outlet property="titleLabel" destination="hQ4-3N-zon" id="KXj-cu-2yE"/>
-                                    <segue destination="Hj7-l6-1dd" kind="push" identifier="Protocol Details" trigger="accessoryAction" id="o90-mJ-v8O"/>
+                                    <segue destination="Hj7-l6-1dd" kind="push" identifier="Remote Protocol Details" trigger="accessoryAction" id="o90-mJ-v8O"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ProtocolButtonCell" textLabel="870-Ql-hWA" style="IBUITableViewCellStyleDefault" id="tPw-Wf-bwO">

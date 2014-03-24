@@ -567,7 +567,7 @@
                                 <connections>
                                     <outlet property="subtitleLabel" destination="ayv-si-ggL" id="Dx5-dh-y7p"/>
                                     <outlet property="titleLabel" destination="0Kl-GF-r3W" id="zYu-mb-mol"/>
-                                    <segue destination="9U9-rX-WUq" kind="push" identifier="Protocol Details" trigger="accessoryAction" id="1d5-Zq-mkx"/>
+                                    <segue destination="9U9-rX-WUq" kind="push" identifier="Local Protocol Details" trigger="accessoryAction" id="1d5-Zq-mkx"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="RemoteProtocolCell" id="bJ4-Nn-f5X" customClass="ProtocolTableViewCell">
@@ -629,7 +629,7 @@
                                     <outlet property="startDownloadImageView" destination="oXa-hZ-WgQ" id="0lS-cK-3v3"/>
                                     <outlet property="subtitleLabel" destination="r5w-fS-frM" id="Hi4-Gb-6S4"/>
                                     <outlet property="titleLabel" destination="HDD-kj-z00" id="hch-Ry-s8p"/>
-                                    <segue destination="9U9-rX-WUq" kind="push" identifier="Protocol Details" trigger="accessoryAction" id="vKc-cb-JIv"/>
+                                    <segue destination="9U9-rX-WUq" kind="push" identifier="Remote Protocol Details" trigger="accessoryAction" id="vKc-cb-JIv"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ProtocolButtonCell" textLabel="fvw-A3-Ml5" style="IBUITableViewCellStyleDefault" id="IMz-ad-cm8">
@@ -1211,6 +1211,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="oVE-mF-eJP"/>
-        <segue reference="1d5-Zq-mkx"/>
+        <segue reference="vKc-cb-JIv"/>
     </inferredMetricsTieBreakers>
 </document>

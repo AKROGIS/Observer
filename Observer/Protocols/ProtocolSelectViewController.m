@@ -311,7 +311,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:@"Protocol Details"]) {
+    if ([segue.identifier isEqualToString:@"Remote Protocol Details"] || [segue.identifier isEqualToString:@"Local Protocol Details"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
         SProtocol *item = indexPath.section == 0 ? [self.items localProtocolAtIndex:indexPath.urow] :  [self.items remoteProtocolAtIndex:indexPath.urow];
         ProtocolDetailViewController *vc = (ProtocolDetailViewController *)[segue destinationViewController];
