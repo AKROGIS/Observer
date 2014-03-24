@@ -91,6 +91,8 @@
 @property (strong, nonatomic) MapReference *currentMapEntity;
 @property (strong, nonatomic) Mission *mission;
 @property (strong, nonatomic) MissionProperty *currentMissionProperty;
+@property (strong, nonatomic) id<AGSFeature> movingGraphic;
+@property (strong, nonatomic) NSManagedObject *movingEntity;
 
 //Used to save state for delegate callbacks (alertview, actionsheet and segue)
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
@@ -591,19 +593,45 @@
 
 - (void)mapView:(AGSMapView *)mapView didTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint features:(NSDictionary *)features
 {
-    //AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
+    //Ignore if there is no selectable feature (only layers that pass the hit test will be passed to this method)
+    //If there are multiple selectable features, tell the user to zoom in an select a single feature
+    //if feature is a mission property or an observation with a map location
+    //   then remember it for upcoming didMoveTapAndHold and didEndTapAndHold delegate calls
+    //if feature is an observation with an angle distance
+    //   then flash the gps observation point and open the angle distance dialog on that point (try not to hide observation)
+    //   move the feature when the dialog is dismissed.
 
-    if (0 < [features count]) {
-        AKRLog(@"Try to move selected graphic - if allowed");
-        //FIXME: implement move selected graphic
-        //if feature is an adhoc location (no need to check if adhoc is allowed, as it must be since the user created one)
-        //   then just move it
-        //if feature is an angle distance feature
-        //   then flash the gps observation point and open the angle distance dialog on that point (try not to hide observation)
-        //   move the feature when the dialog is dismissed.
-        //ignore GPS locations
-        //Allow mission properties
-        //archive feature being moved, for use in didEndTapAndHold
+    //AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
+    self.movingEntity = nil;
+    self.movingGraphic = nil;
+    switch (features.count) {  //Number of layers with selected features
+        case 0:
+            return;
+        case 1: {
+            NSString *layerName = (NSString *)[features.keyEnumerator nextObject];
+            NSArray *featureList = features[layerName];
+            switch (featureList.count) {
+                case 0:
+                    break;
+                case 1: {
+                    id<AGSFeature> feature = featureList[0];
+                    NSDate *timestamp = (NSDate *)[feature safeAttributeForKey:kTimestampKey];
+                    NSManagedObject *entity = [self entityOnLayerNamed:layerName atTimestamp:timestamp];
+                    if (entity) { //FIXME: check entity type and location type type before saving
+                        self.movingEntity = entity;
+                        self.movingGraphic = feature;
+                    }
+                    break;
+                }
+                default:
+                    [[[UIAlertView alloc] initWithTitle:nil message:@"Zoom in to select a single feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                    break;
+            }
+            break;
+        }
+        default:
+            [[[UIAlertView alloc] initWithTitle:nil message:@"Zoom in to select a single feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            break;
     }
 }
 
@@ -611,11 +639,9 @@
 {
     //AKRLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
 
-    //FIXME: find the layer and the selected feature. Filter based on layer, and number of features.
-    //FIXME: if this is a mission point, then snap to gps points
-    AGSGraphic *graphic = [features[kMissionPropertyEntityName] lastObject];
-    if (graphic) {
-        [graphic setGeometry:mapPoint];
+    //FIXME: if this is a mission property, then snap to nearest gps point
+    if (self.movingGraphic) {
+        [self.movingGraphic setGeometry:mapPoint];
     }
 }
 
@@ -624,8 +650,12 @@
     //AKRLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
 
     //FIXME: need to save new adhoc map point for dragged graphic.
+    //FIXME: if this was a mission property, then we need to update the tracklogs.
     //Should I check if we have actually moved??
     //If it is a mission property then use then snap to the closest gps Point
+    //self.entity update adhoc location
+    self.movingEntity = nil;
+    self.movingGraphic = nil;
 }
 
 
