@@ -328,7 +328,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:@"Map Details"]) {
+    if ([segue.identifier isEqualToString:@"Remote Map Details"] || [segue.identifier isEqualToString:@"Local Map Details"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
         Map *item = indexPath.section == 0 ? [self.items localMapAtIndex:indexPath.urow] :  [self.items remoteMapAtIndex:indexPath.urow];
         MapDetailViewController *vc = (MapDetailViewController *)[segue destinationViewController];

@@ -747,7 +747,7 @@
                                     <outlet property="subtitle2Label" destination="GgC-xu-vEE" id="53z-QM-8v1"/>
                                     <outlet property="thumbnailImageView" destination="tzH-6q-ceL" id="UxX-dT-Aaj"/>
                                     <outlet property="titleLabel" destination="aQf-f5-eDk" id="ZUV-dX-BIX"/>
-                                    <segue destination="u11-OH-Bf8" kind="push" identifier="Map Details" trigger="accessoryAction" id="SVv-73-UGG"/>
+                                    <segue destination="u11-OH-Bf8" kind="push" identifier="Local Map Details" trigger="accessoryAction" id="SVv-73-UGG"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="RemoteMapCell" rowHeight="75" id="byv-4E-Ilv" customClass="MapTableViewCell">
@@ -831,7 +831,7 @@
                                     <outlet property="subtitle2Label" destination="Zxs-bs-80D" id="pEL-pA-0oI"/>
                                     <outlet property="thumbnailImageView" destination="uhb-cw-TK9" id="l8n-2D-QaJ"/>
                                     <outlet property="titleLabel" destination="OhN-a1-LUR" id="kFC-JI-xOS"/>
-                                    <segue destination="u11-OH-Bf8" kind="push" identifier="Map Details" trigger="accessoryAction" id="0DA-OT-F9o"/>
+                                    <segue destination="u11-OH-Bf8" kind="push" identifier="Remote Map Details" trigger="accessoryAction" id="0DA-OT-F9o"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="MapButtonCell" textLabel="nxX-Yr-gnZ" rowHeight="40" style="IBUITableViewCellStyleDefault" id="Gvh-qq-c7g" customClass="MapTableViewCell">
@@ -1146,7 +1146,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="0DA-OT-F9o"/>
         <segue reference="o90-mJ-v8O"/>
-        <segue reference="SVv-73-UGG"/>
     </inferredMetricsTieBreakers>
 </document>
