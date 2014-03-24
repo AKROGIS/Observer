@@ -542,10 +542,7 @@
     //Asks delegate whether to find which graphics in the specified layer intersect the tapped location. Default is YES.
     //This function may or may not be called on the main thread.
     //AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mapPoint, layer.name);
-    BOOL findableLayer = !([layer.name isEqualToString:kGpsPointEntityName] ||
-                           [layer.name isEqualToString:[NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn]] ||
-                           [layer.name isEqualToString:[NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]);
-    return findableLayer;
+    return [self isSelectableLayerName:layer.name];
 }
 
 
@@ -1711,13 +1708,8 @@
     //NOTE: entityNamed:atTimestamp: only works with layers that have a gpspoint or an adhoc, so missionProperties and Observations
     //NOTE: gpsPoints do not have a QuickDialog definition; tracklogs would need to use the related missionProperty
     //TODO: expand to work on gpsPoints and tracklog segments
-    for (NSString *badName in @[kGpsPointEntityName,
-                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn],
-                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]) {
-        if ([layerName isEqualToString:badName]) {
-            AKRLog(@"  Bailing. layer type is not supported");
-            return;
-        }
+    if (![self isSelectableLayerName:layerName]) {
+        AKRLog(@"  Bailing. layer type is not supported");
     }
 
     //get the feature type from the layername
@@ -1734,7 +1726,7 @@
     }
 
     //get entity using the timestamp on the layername and the timestamp on the AGS Feature
-    NSManagedObject *entity = [self entityNamed:layerName atTimestamp:timestamp];
+    NSManagedObject *entity = [self entityOnLayerNamed:layerName atTimestamp:timestamp];
 
     if (!feature || !entity) {
         AKRLog(@"  Bailing. Could not find the dialog configuration, and/or the feature");
@@ -1752,15 +1744,6 @@
 
 
 #pragma mark - Private Methods - misc support for data model
-
-- (AGSGraphicsLayer *)layerForFeatureType:(ProtocolFeature *)feature
-{
-    if ([feature isKindOfClass:[ProtocolMissionFeature class]]) {
-        return self.graphicsLayers[kMissionPropertyEntityName];
-    } else {
-        return self.graphicsLayers[feature.name];
-    }
-}
 
 - (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint editing:(BOOL)editing
 {
@@ -1870,30 +1853,52 @@
 
 #pragma mark - Private Methods - misc support
 
-- (NSManagedObject *)entityNamed:(NSString *)name atTimestamp:(NSDate *)timestamp
+- (NSManagedObject *)entityOnLayerNamed:(NSString *)layerName atTimestamp:(NSDate *)timestamp
 {
-    if (!name || !timestamp) {
+    if (!layerName || !timestamp) {
         return nil;
     }
-    for (NSString *badName in @[kGpsPointEntityName,
-                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn],
-                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]) {
-        if ([name isEqualToString:badName]) {
-            return nil;
-        }
+    if (![self isSelectableLayerName:layerName]) {
+        return nil;
     }
-
+    
     //Deal with ESRI graphic date bug
     NSDate *start = [timestamp dateByAddingTimeInterval:-0.01];
     NSDate *end = [timestamp dateByAddingTimeInterval:+0.01];
-    NSString *obscuredName = name;
-    if (![name isEqualToString:kMissionPropertyEntityName]) {
-        obscuredName = [NSString stringWithFormat:@"%@%@",kObservationPrefix, name];
-    }
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:obscuredName];
+    NSString *name = [self entityNameFromLayerName:layerName];
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:name];
     request.predicate = [NSPredicate predicateWithFormat:@"(%@ <= gpsPoint.timestamp AND gpsPoint.timestamp <= %@) || (%@ <= adhocLocation.timestamp AND adhocLocation.timestamp <= %@)",start,end,start,end];
     NSArray *results = [self.context executeFetchRequest:request error:nil];
     return (NSManagedObject *)[results lastObject]; // will return nil if there was an error, or no results
+}
+
+- (NSString *)entityNameFromLayerName:(NSString *)layerName {
+    NSString *entityName = layerName;
+    if (![layerName isEqualToString:kMissionPropertyEntityName]) {
+        //FIXME: need to check track layers and GPS Layer
+        entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix, layerName];
+    }
+    return entityName;
+}
+
+- (BOOL)isSelectableLayerName:(NSString *)layerName {
+    for (NSString *badName in @[kGpsPointEntityName,
+                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn],
+                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]) {
+        if ([layerName isEqualToString:badName]) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+- (AGSGraphicsLayer *)layerForFeatureType:(ProtocolFeature *)feature
+{
+    if ([feature isKindOfClass:[ProtocolMissionFeature class]]) {
+        return self.graphicsLayers[kMissionPropertyEntityName];
+    } else {
+        return self.graphicsLayers[feature.name];
+    }
 }
 
 - (BOOL) shouldPerformAngleDistanceSequeWithFeature:(ProtocolFeature *)feature
