@@ -24,7 +24,7 @@
 @property (nonatomic, strong, readwrite) NSString *description;
 @property (nonatomic, strong, readwrite) NSString *author;
 @property (nonatomic, strong, readwrite) NSDate *date;
-@property (nonatomic, readwrite) NSUInteger byteCount;
+@property (nonatomic, readwrite) unsigned long long byteCount;
 @property (nonatomic, readwrite) AGSEnvelope *extents;
 @property (nonatomic, strong, readwrite) NSURL *thumbnailUrl;
 
@@ -100,7 +100,7 @@
         item = dictionary[kAuthorKey];
         map.author = ([item isKindOfClass:[NSString class]] ? item : nil);
         item =  dictionary[kSizeKey];
-        map.byteCount = [item isKindOfClass:[NSNumber class]] ? [item integerValue] : 0;
+        map.byteCount = [item isKindOfClass:[NSNumber class]] ? [item unsignedLongLongValue] : 0;
         item =  dictionary[kDescriptionKey];
         map.description = [item isKindOfClass:[NSString class]] ? item : nil;
         item =  dictionary[kThumbnailUrlKey];
@@ -153,7 +153,7 @@
     [aCoder encodeObject:self.author forKey:kAuthorKey];
     [aCoder encodeObject:self.date forKey:kDateKey];
     [aCoder encodeObject:self.description forKey:kDescriptionKey];
-    [aCoder encodeObject:[NSNumber numberWithUnsignedInteger:self.byteCount] forKey:kSizeKey];
+    [aCoder encodeObject:[NSNumber numberWithUnsignedLongLong:self.byteCount] forKey:kSizeKey];
     [aCoder encodeObject:self.thumbnailUrl forKey:kThumbnailUrlKey];
     [aCoder encodeObject:[self.extents encodeToJSON] forKey:kExtentsKey];
 }

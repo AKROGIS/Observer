@@ -26,14 +26,20 @@
     return [dateFormatter dateFromString:dateString];
 }
 
-+ (NSString *)stringFromBytes:(long long)bytes
++ (NSString *)stringFromBytes:(unsigned long long)bytes
 {
     static NSByteCountFormatter *formatter = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         formatter = [NSByteCountFormatter new];
     });
-    return [formatter stringFromByteCount:bytes];
+    //drop the sign, because of an inconsistency in Apple's API
+    long long bytes2 = (long long)bytes;
+    if (bytes2 < 0) {
+        return @"Bigger than you can imagine";
+    } else {
+        return [formatter stringFromByteCount:(long long)bytes];
+    }
 }
 
 + (NSString *)stringWith3SigFigsFromDouble:(double)number

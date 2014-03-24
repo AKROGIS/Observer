@@ -11,7 +11,7 @@
 @interface AKRFormatter : NSObject
 
 + (NSDate *)dateFromISOString:(NSString *)dateString;
-+ (NSString *)stringFromBytes:(long long)bytes;
++ (NSString *)stringFromBytes:(unsigned long long)bytes;
 + (NSString *)stringWith3SigFigsFromDouble:(double)number;
 + (NSString *)stringWith4SigFigsFromDouble:(double)number;
 
