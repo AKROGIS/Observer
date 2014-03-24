@@ -1,0 +1,3 @@
+[submodule "QuickDialog"]
+	path = QuickDialog
+	url = git@github.com:regan-sarwas/QuickDialog.git
