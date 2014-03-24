@@ -32,7 +32,8 @@
 // so I just load it all up once when initialized
 - (void)defineReadonlyProperties:(NSDictionary *)json
 {
-    _agsSymbol = [self simpleMarkerSymbolFromColor:json[@"color"] Size:json[@"size"]];
+    _agsMarkerSymbol = [self simpleMarkerSymbolFromColor:json[@"color"] Size:json[@"size"]];
+    _agsLineSymbol = [self simpleLineSymbolFromColor:json[@"color"] Size:json[@"size"]];
 }
 
 - (AGSSimpleMarkerSymbol *)simpleMarkerSymbolFromColor:(id)color Size:(id)size
@@ -47,6 +48,22 @@
     if ([size isKindOfClass:[NSNumber class]]) {
         CGFloat realSize = [(NSNumber *)size floatValue];
         symbol.size = CGSizeMake(realSize, realSize);
+    }
+    return symbol;
+}
+
+- (AGSSimpleLineSymbol *)simpleLineSymbolFromColor:(id)color Size:(id)size
+{
+    AGSSimpleLineSymbol *symbol = [AGSSimpleLineSymbol simpleLineSymbol];
+    if ([color isKindOfClass:[NSString class]]) {
+        UIColor *realColor = [self colorFromHexString:(NSString *)color];
+        if (realColor) {
+            symbol.color =  realColor;
+        }
+    }
+    if ([size isKindOfClass:[NSNumber class]]) {
+        CGFloat realSize = [(NSNumber *)size floatValue];
+        symbol.width = realSize;
     }
     return symbol;
 }

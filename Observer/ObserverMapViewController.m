@@ -480,12 +480,18 @@
     //AKRLog(@"locationManager: didUpdateLocations:%@",locations);
     if (self.isRecording) {
         for (CLLocation *location in locations) {
+            //Should probably be something like:
+            //if ([self.survey addGpsPoint:location]) {
+            //    [self.mapView addGpsPoint:location];
+            //}
+
             if ([self isNewLocation:location]) {
-                //Should probalby be something like:
-                //[self.survey addGpsPoint:location];
-                //[self.mapView addGpsPoint:location];
+                GpsPoint *oldPoint = self.lastGpsPointSaved;
                 GpsPoint *gpsPoint = [self createGpsPoint:location];
-                [self drawGpsPoint:gpsPoint];
+                [self drawGpsPointAtMapPoint:[self mapPointFromGpsPoint:gpsPoint]];
+                if (oldPoint) {
+                    [self drawTrackObserving:self.isObserving from:oldPoint to:gpsPoint];
+                }
             }
         }
     }
@@ -1182,7 +1188,7 @@
     //All Features
     for (ProtocolFeature *feature in self.survey.protocol.features) {
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.symbology.agsSymbol]];
+        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.symbology.agsMarkerSymbol]];
         [self.mapView addMapLayer:graphicsLayer withName:feature.name];
         self.graphicsLayers[feature.name] = graphicsLayer;
     }
@@ -1190,19 +1196,19 @@
     //Mission Property points
     ProtocolMissionFeature *feature = self.survey.protocol.missionFeature;
     graphicsLayer = [[AGSGraphicsLayer alloc] init];
-    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.symbology.agsSymbol]];
+    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.symbology.agsMarkerSymbol]];
     [self.mapView addMapLayer:graphicsLayer withName:kMissionPropertyEntityName];
     self.graphicsLayers[kMissionPropertyEntityName] = graphicsLayer;
     //Mission Property observing tracks
     NSString * name = [NSString stringWithFormat:@"%@_On", kMissionPropertyEntityName];
     graphicsLayer = [[AGSGraphicsLayer alloc] init];
-    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.observingymbology.agsSymbol]];
+    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.observingymbology.agsLineSymbol]];
     [self.mapView addMapLayer:graphicsLayer withName:name];
     self.graphicsLayers[name] = graphicsLayer;
     //Mission Property not observing track
     name = [NSString stringWithFormat:@"%@_Off", kMissionPropertyEntityName];
     graphicsLayer = [[AGSGraphicsLayer alloc] init];
-    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.notObservingymbology.agsSymbol]];
+    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.notObservingymbology.agsLineSymbol]];
     [self.mapView addMapLayer:graphicsLayer withName:name];
     self.graphicsLayers[name] = graphicsLayer;
 }
@@ -1392,6 +1398,7 @@
     if (self.lastGpsPointSaved && [self.lastGpsPointSaved.timestamp timeIntervalSinceDate:gpsData.timestamp] == 0) {
         return self.lastGpsPointSaved;
     }
+    //TODO: shoudn't this check be before the use of gpsData.timestamp
     if (!gpsData.timestamp) {
         AKRLog(@"Can't save a GPS Point without a timestamp!");
         //return nil; //TODO: added for testing on simulator, remove for production
@@ -1413,19 +1420,24 @@
     return gpsPoint;
 }
 
-- (void)drawGpsPoint:(GpsPoint *)gpsPoint
-{
-    [self drawGpsPointAtMapPoint:[self mapPointFromGpsPoint:gpsPoint]];
-    if (self.lastGpsPointSaved) {
-        [self drawTrackObserving:self.isObserving from:self.lastGpsPointSaved to:gpsPoint];
-    }
-    self.lastGpsPointSaved = gpsPoint;
-}
-
 - (void)drawGpsPointAtMapPoint:(AGSPoint *)mapPoint
 {
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:nil];
     [self.graphicsLayers[kGpsPointEntityName] addGraphic:graphic];
+}
+
+- (void)drawTrackObserving:(BOOL)observing from:(GpsPoint *)fromPoint to:(GpsPoint *)toPoint
+{
+    //TODO: draw a polyline instead of single lines
+    AGSPoint *point1 = [self mapPointFromGpsPoint:fromPoint];
+    AGSPoint *point2 = [self mapPointFromGpsPoint:toPoint];
+    AGSMutablePolyline *line = [[AGSMutablePolyline alloc] init];
+    [line addPathToPolyline];
+    [line addPointToPath:point1];
+    [line addPointToPath:point2];
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:line symbol:nil attributes:nil];
+    NSString *name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, (observing ? @"On" : @"Off")];
+    [self.graphicsLayers[name] addGraphic:graphic];
 }
 
 
@@ -1745,20 +1757,6 @@
 
 
 #pragma mark - Private Methods - misc support for data model
-
-- (void)drawTrackObserving:(BOOL)observing from:(GpsPoint *)fromPoint to:(GpsPoint *)toPoint
-{
-    //TODO: draw a polyline instead of single lines
-    AGSPoint *point1 = [self mapPointFromGpsPoint:fromPoint];
-    AGSPoint *point2 = [self mapPointFromGpsPoint:toPoint];
-    AGSMutablePolyline *line = [[AGSMutablePolyline alloc] init];
-    [line addPathToPolyline];
-    [line addPointToPath:point1];
-    [line addPointToPath:point2];
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:line symbol:nil attributes:nil];
-    NSString *name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, (observing ? @"On" : @"Off")];
-    [self.graphicsLayers[name] addGraphic:graphic];
-}
 
 - (AGSGraphicsLayer *)layerForFeatureType:(ProtocolFeature *)feature
 {

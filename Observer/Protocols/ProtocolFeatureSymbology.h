@@ -17,6 +17,7 @@
 - (id)initWithSymbologyJSON:(id)json version:(NSInteger) version;
 - (id) init __attribute__((unavailable("Must use initWithSymbologyJSON:version: instead.")));
 
-@property (strong, nonatomic, readonly) AGSSymbol *agsSymbol;
+@property (strong, nonatomic, readonly) AGSSymbol *agsMarkerSymbol;
+@property (strong, nonatomic, readonly) AGSSymbol *agsLineSymbol;
 
 @end
