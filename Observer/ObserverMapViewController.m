@@ -541,7 +541,7 @@
 {
     //Asks delegate whether to find which graphics in the specified layer intersect the tapped location. Default is YES.
     //This function may or may not be called on the main thread.
-    AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mapPoint, layer.name);
+    //AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mapPoint, layer.name);
     BOOL findableLayer = !([layer.name isEqualToString:kGpsPointEntityName] ||
                            [layer.name isEqualToString:[NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn]] ||
                            [layer.name isEqualToString:[NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]);
@@ -559,7 +559,7 @@
     //features: id<AGSFeature> objects from all hit-testable layers in the map that intersect or contain the location.
     //The dictionary contains layer name (key) : Array of id<AGSFeature> (value)
 
-    AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mapPoint, features);
+    //AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mapPoint, features);
 
     switch (features.count) {  //Number of layers with selected features
         case 0:
