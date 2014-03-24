@@ -1011,7 +1011,7 @@
     //AKRLog(@"Rotating compass icon to %f degrees", degrees);
     //angle in radians with positive being counterclockwise (on iOS)
     double radians = -1*degrees * M_PI / 180.0;
-    self.compassRoseButton.transform = CGAffineTransformMakeRotation(radians);
+    self.compassRoseButton.transform = CGAffineTransformMakeRotation((CGFloat)radians);
 }
 
 - (void)startRecording

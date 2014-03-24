@@ -210,7 +210,7 @@
         cell.percentComplete = protocol.downloadPercentComplete;
         protocol.downloadProgressAction = ^(double bytesWritten, double bytesExpected) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                cell.percentComplete = bytesWritten/bytesExpected;
+                cell.percentComplete = (float)(bytesWritten/bytesExpected);
             });
         };
         return cell;
@@ -357,7 +357,7 @@
         ProtocolTableViewCell *cell = (ProtocolTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
         protocol.downloadProgressAction = ^(double bytesWritten, double bytesExpected) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                cell.percentComplete =  bytesWritten/bytesExpected;
+                cell.percentComplete =  (float)(bytesWritten/bytesExpected);
             });
         };
         protocol.downloadCompletionAction = ^(SProtocol *newProtocol) {
