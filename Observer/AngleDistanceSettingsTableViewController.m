@@ -104,9 +104,9 @@
     self.clockwiseTVC.accessoryType = angleDirection == AngleDirectionClockwise ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     self.counterclockwiseTVC.accessoryType = angleDirection == AngleDirectionCounterClockwise ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     
-    self.deadAheadZeroTVC.accessoryType = abs(angleBaseline - 0.0) < 1.0 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-    self.deadAhead90TVC.accessoryType = abs(angleBaseline - 90.0) < 1.0 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-    self.deadAhead180TVC.accessoryType = abs(angleBaseline - 180.0) < 1.0 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    self.deadAheadZeroTVC.accessoryType = fabs(angleBaseline - 0.0) < 1.0 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    self.deadAhead90TVC.accessoryType = fabs(angleBaseline - 90.0) < 1.0 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    self.deadAhead180TVC.accessoryType = fabs(angleBaseline - 180.0) < 1.0 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
 }
 
 - (void) selectAngleDirection:(NSInteger)row
