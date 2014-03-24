@@ -44,12 +44,6 @@
 #import "QuickDialog.h"
 
 //Constants and Magic Numbers/Strings
-#define kGpsPointsLayer            @"gpsPointsLayer"
-#define kObservationLayer          @"observationsLayer"
-#define kMissionPropertiesLayer    @"missionPropertiesLayer"
-#define kObservingTracksLayer      @"observingTracksLayer"
-#define kNotObservingTracksLayer   @"notObservingTracksLayer"
-
 #define kActionSheetSelectLocation 1
 #define kActionSheetSelectFeature  2
 
@@ -547,10 +541,10 @@
 {
     //Asks delegate whether to find which graphics in the specified layer intersect the tapped location. Default is YES.
     //This function may or may not be called on the main thread.
-    //AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mapPoint, graphicsLayer.name);
-    BOOL findableLayer = !([layer.name isEqualToString:kGpsPointsLayer] ||
-                           [layer.name isEqualToString:kObservingTracksLayer] ||
-                           [layer.name isEqualToString:kNotObservingTracksLayer]);
+    AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mapPoint, layer.name);
+    BOOL findableLayer = !([layer.name isEqualToString:kGpsPointEntityName] ||
+                           [layer.name isEqualToString:[NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn]] ||
+                           [layer.name isEqualToString:[NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]);
     return findableLayer;
 }
 
@@ -565,7 +559,7 @@
     //features: id<AGSFeature> objects from all hit-testable layers in the map that intersect or contain the location.
     //The dictionary contains layer name (key) : Array of id<AGSFeature> (value)
 
-    //AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mapPoint, features);
+    AKRLog(@"mapView:didClickAtPoint:(%f,%f)=(%@) with graphics:%@", screen.x, screen.y, mapPoint, features);
 
     switch (features.count) {  //Number of layers with selected features
         case 0:
@@ -620,8 +614,9 @@
 {
     //AKRLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
 
+    //FIXME: find the layer and the selected feature. Filter based on layer, and number of features.
     //FIXME: if this is a mission point, then snap to gps points
-    AGSGraphic *graphic = [features[kObservationLayer] lastObject];
+    AGSGraphic *graphic = [features[kMissionPropertyEntityName] lastObject];
     if (graphic) {
         [graphic setGeometry:mapPoint];
     }
@@ -1200,13 +1195,13 @@
     [self.mapView addMapLayer:graphicsLayer withName:kMissionPropertyEntityName];
     self.graphicsLayers[kMissionPropertyEntityName] = graphicsLayer;
     //Mission Property observing tracks
-    NSString * name = [NSString stringWithFormat:@"%@_On", kMissionPropertyEntityName];
+    NSString * name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
     graphicsLayer = [[AGSGraphicsLayer alloc] init];
     [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.observingymbology.agsLineSymbol]];
     [self.mapView addMapLayer:graphicsLayer withName:name];
     self.graphicsLayers[name] = graphicsLayer;
     //Mission Property not observing track
-    name = [NSString stringWithFormat:@"%@_Off", kMissionPropertyEntityName];
+    name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
     graphicsLayer = [[AGSGraphicsLayer alloc] init];
     [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.notObservingymbology.agsLineSymbol]];
     [self.mapView addMapLayer:graphicsLayer withName:name];
@@ -1436,7 +1431,7 @@
     [line addPointToPath:point1];
     [line addPointToPath:point2];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:line symbol:nil attributes:nil];
-    NSString *name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, (observing ? @"On" : @"Off")];
+    NSString *name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, (observing ? kTrackOn : kTrackOff)];
     [self.graphicsLayers[name] addGraphic:graphic];
 }
 
@@ -1716,9 +1711,9 @@
     //NOTE: entityNamed:atTimestamp: only works with layers that have a gpspoint or an adhoc, so missionProperties and Observations
     //NOTE: gpsPoints do not have a QuickDialog definition; tracklogs would need to use the related missionProperty
     //TODO: expand to work on gpsPoints and tracklog segments
-    for (NSString *badName in @[kGpsPointsLayer,
-                                [NSString stringWithFormat:@"%@_On", kMissionPropertyEntityName],
-                                [NSString stringWithFormat:@"%@_Off", kMissionPropertyEntityName]]) {
+    for (NSString *badName in @[kGpsPointEntityName,
+                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn],
+                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]) {
         if ([layerName isEqualToString:badName]) {
             AKRLog(@"  Bailing. layer type is not supported");
             return;
@@ -1727,7 +1722,7 @@
 
     //get the feature type from the layername
     ProtocolFeature * feature = nil;
-    if ([layerName isEqualToString:self.survey.protocol.missionFeature.name]) {
+    if ([layerName isEqualToString:kMissionPropertyEntityName]) {
         feature =  self.survey.protocol.missionFeature;
     } else {
         for (ProtocolFeature *f in self.survey.protocol.features) {
@@ -1880,9 +1875,9 @@
     if (!name || !timestamp) {
         return nil;
     }
-    for (NSString *badName in @[kGpsPointsLayer,
-                                [NSString stringWithFormat:@"%@_On", kMissionPropertyEntityName],
-                                [NSString stringWithFormat:@"%@_Off", kMissionPropertyEntityName]]) {
+    for (NSString *badName in @[kGpsPointEntityName,
+                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn],
+                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]) {
         if ([name isEqualToString:badName]) {
             return nil;
         }
@@ -1891,7 +1886,10 @@
     //Deal with ESRI graphic date bug
     NSDate *start = [timestamp dateByAddingTimeInterval:-0.01];
     NSDate *end = [timestamp dateByAddingTimeInterval:+0.01];
-    NSString *obscuredName = [NSString stringWithFormat:@"%@%@",kObservationPrefix, name];
+    NSString *obscuredName = name;
+    if (![name isEqualToString:kMissionPropertyEntityName]) {
+        obscuredName = [NSString stringWithFormat:@"%@%@",kObservationPrefix, name];
+    }
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:obscuredName];
     request.predicate = [NSPredicate predicateWithFormat:@"(%@ <= gpsPoint.timestamp AND gpsPoint.timestamp <= %@) || (%@ <= adhocLocation.timestamp AND adhocLocation.timestamp <= %@)",start,end,start,end];
     NSArray *results = [self.context executeFetchRequest:request error:nil];

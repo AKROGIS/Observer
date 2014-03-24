@@ -37,3 +37,6 @@
 #define kMapEntityName                   @"Map"
 #define kAngleDistanceLocationEntityName @"AngleDistanceLocation"
 #define kAdhocLocationEntityName         @"AdhocLocation"
+
+#define kTrackOff                        @"Off"
+#define kTrackOn                         @"On"
