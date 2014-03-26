@@ -1823,6 +1823,8 @@
 - (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint isNew:(BOOL)isNew isEditing:(BOOL)isEditing
 {
     //TODO: can we support observations that have no attributes (no dialog)?
+    //TODO: if I can't edit, then I should change the behavior of the controls on the form to reflect that
+
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
     if (template) {
@@ -1844,25 +1846,32 @@
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
 
     //FIXME: if we are reviewing/editing an existing record, show the observing status
+    //FIXME: self.view.tintColor is gray after Angle/Distance ViewController
 
-    //Angle/Distance Button
-    //FIXME: how do I determine if this entity has an angleDistance?
-    //FIXME: label as "Location Details" if not angle/distance - show readonly location details
-    if (true) {
-        QButtonElement *adButton = [[QButtonElement alloc] initWithTitle:@"Fix Location"];
-        //FIXME: appearance is shared with the delete button
-        adButton.appearance = [[QFlatAppearance alloc] init];
-        adButton.appearance.buttonAlignment = NSTextAlignmentCenter;
-        adButton.appearance.actionColorEnabled = self.view.tintColor;
-        adButton.onSelected = ^(){
-            if ([self shouldPerformAngleDistanceSequeWithFeature:feature]) {
-                [self performAngleDistanceSequeWithFeature:feature entity:entity mapPoint:mapPoint];
-            }
-        };
-        [[root.sections lastObject] addElement:adButton];
+    //Show a Location Button only when editing/reviewing
+    if (!isNew) {
+        AngleDistanceLocation *angleDistanceLocation = [self angleDistanceLocationFromEntity:entity];
+        QButtonElement *locationButton = [[QButtonElement alloc] init];
+        locationButton.appearance = [[QFlatAppearance alloc] init];
+        locationButton.appearance.buttonAlignment = NSTextAlignmentCenter;
+        locationButton.appearance.actionColorEnabled = self.view.tintColor;
+        if (angleDistanceLocation) {
+            locationButton.title = @"Change Location";
+            locationButton.onSelected = ^(){
+                //FIXME: Use angleDistanceLocation and self.survey.protocol to initialize the UIViewController
+                if ([self shouldPerformAngleDistanceSequeWithFeature:feature]) {
+                    [self performAngleDistanceSequeWithFeature:feature entity:entity mapPoint:mapPoint];
+                }
+            };
+        } else {
+            locationButton.title = @"Review Location";
+            locationButton.onSelected = ^(){
+                //TODO: Show readonly GPS data table or Adhoc location data table
+                [[[UIAlertView alloc] initWithTitle:nil message:@"Feature not implemented yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            };
+        }
+        [[root.sections lastObject] addElement:locationButton];
     }
-
-    //TODO: if I can't edit, then I should change the behavior of the controls on the form to reflect that
 
     //Delete/Cancel Button
     NSString *buttonText = isNew ? @"Cancel" : @"Delete";
@@ -1882,6 +1891,7 @@
         self.editAttributePopoverController = nil;
     };
     [[root.sections lastObject] addElement:deleteButton];
+
 
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
@@ -1981,6 +1991,38 @@
         }
     }
     return YES;
+}
+
+- (AngleDistanceLocation *)angleDistanceLocationFromEntity:(NSManagedObject *)entity
+{
+    if ([entity.entity.name hasPrefix:kObservationPrefix]) {
+        return ((Observation *)entity).angleDistanceLocation;
+    }
+    return nil;
+}
+
+- (GpsPoint *)gpsPointFromEntity:(NSManagedObject *)entity
+{
+    NSString *entityName = entity.entity.name;
+    if ([entityName hasPrefix:kObservationPrefix]) {
+        return ((Observation *)entity).gpsPoint;
+    }
+    if ([entityName isEqualToString:kMissionPropertyEntityName]) {
+        return ((MissionProperty *)entity).gpsPoint;
+    }
+    return nil;
+}
+
+- (AdhocLocation *)adhocLocationFromEntity:(NSManagedObject *)entity
+{
+    NSString *entityName = entity.entity.name;
+    if ([entityName hasPrefix:kObservationPrefix]) {
+        return ((Observation *)entity).adhocLocation;
+    }
+    if ([entityName isEqualToString:kMissionPropertyEntityName]) {
+        return ((MissionProperty *)entity).adhocLocation;
+    }
+    return nil;
 }
 
 - (AGSGraphicsLayer *)layerForFeatureType:(ProtocolFeature *)feature
