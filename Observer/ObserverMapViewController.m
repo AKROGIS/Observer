@@ -1529,7 +1529,7 @@
     Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     AGSGraphic *graphic = [self drawObservation:observation atPoint:mapPoint];
-    [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint editing:NO];
+    [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
 }
 
 - (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
@@ -1557,7 +1557,7 @@
 {
     Observation *observation = [self createObservation:feature AtMapLocation:self.mapView.mapAnchor];
     AGSGraphic *graphic = [self drawObservation:observation atPoint:self.mapView.mapAnchor];
-    [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:self.mapView.mapAnchor editing:NO];
+    [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:self.mapView.mapAnchor isNew:YES isEditing:YES];
 }
 
 - (Observation *)createObservation:(ProtocolFeature *)feature
@@ -1727,7 +1727,7 @@
     missionProperty.observing = self.isObserving;
     AGSGraphic *graphic = [self drawMissionProperty:missionProperty atPoint:mapPoint];
     if (edit) {
-        [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty graphic:graphic defaults:template atPoint:mapPoint editing:NO];
+        [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty graphic:graphic defaults:template atPoint:mapPoint  isNew:YES isEditing:YES];
     } else {
         [self copyAttributesForFeature:self.survey.protocol.missionFeature fromEntity:template toEntity:missionProperty];
     }
@@ -1761,7 +1761,7 @@
 {
     Observation *observation = [self createObservation:feature AtMapLocation:mapPoint];
     AGSGraphic *graphic = [self drawObservation:observation atPoint:mapPoint];
-    [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint editing:NO];
+    [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint  isNew:YES isEditing:YES];
 }
 
 - (void)presentAGSFeatureSelector:(NSDictionary *)features atMapPoint:(AGSPoint *)mapPoint
@@ -1811,10 +1811,8 @@
         return;
     }
 
-    //get data from entity attributes (unobscure the key names)
-    [self setAttributesForFeatureType:feature entity:entity graphic:(AGSGraphic *)agsFeature defaults:entity atPoint:mapPoint editing:YES];
-
-    //FIXME: can I support a readonly survey, and just look at the attributes with editing disabled??
+    //TODO: When to I implement readonly features
+    [self setAttributesForFeatureType:feature entity:entity graphic:(AGSGraphic *)agsFeature defaults:entity atPoint:mapPoint isNew:NO isEditing:YES];
 }
 
 
@@ -1822,7 +1820,7 @@
 
 #pragma mark - Private Methods - misc support for data model
 
-- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint editing:(BOOL)editing
+- (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint isNew:(BOOL)isNew isEditing:(BOOL)isEditing
 {
     //TODO: can we support observations that have no attributes (no dialog)?
     //get data from entity attributes (unobscure the key names)
@@ -1845,7 +1843,7 @@
     }
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
 
-    //FIXME: if we are reviewing/editing an existing record, so the observing status
+    //FIXME: if we are reviewing/editing an existing record, show the observing status
 
     //Angle/Distance Button
     //FIXME: how do I determine if this entity has an angleDistance?
@@ -1853,6 +1851,7 @@
     if (true) {
         QButtonElement *adButton = [[QButtonElement alloc] initWithTitle:@"Fix Location"];
         //FIXME: appearance is shared with the delete button
+        adButton.appearance = [[QFlatAppearance alloc] init];
         adButton.appearance.buttonAlignment = NSTextAlignmentCenter;
         adButton.appearance.actionColorEnabled = self.view.tintColor;
         adButton.onSelected = ^(){
@@ -1862,12 +1861,15 @@
         };
         [[root.sections lastObject] addElement:adButton];
     }
-    
+
+    //TODO: if I can't edit, then I should change the behavior of the controls on the form to reflect that
+
     //Delete/Cancel Button
-    NSString *buttonText = editing ? @"Delete" : @"Cancel";
+    NSString *buttonText = isNew ? @"Cancel" : @"Delete";
     QButtonElement *deleteButton = [[QButtonElement alloc] initWithTitle:buttonText];
+    deleteButton.appearance = [[QFlatAppearance alloc] init];
     deleteButton.appearance.buttonAlignment = NSTextAlignmentCenter;
-    if (editing) {
+    if (!isNew) {
         deleteButton.appearance.actionColorEnabled = [UIColor redColor];
     } else {
         deleteButton.appearance.actionColorEnabled = self.view.tintColor;
@@ -1877,6 +1879,7 @@
         //FIXME: if we cancel or delete a mission property,it may effect the observing status
         [[self layerForFeatureType:feature] removeGraphic:graphic];
         [self.editAttributePopoverController dismissPopoverAnimated:YES];
+        self.editAttributePopoverController = nil;
     };
     [[root.sections lastObject] addElement:deleteButton];
 
@@ -1884,23 +1887,28 @@
     dialog.managedObject = entity;
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
-        dialog.resizeWhenKeyboardPresented = NO; //I'm putting this in a popover
-        self.editAttributePopoverController = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
-        self.editAttributePopoverController.delegate = self;
+        dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
+        UIPopoverController *popover = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
+        popover.delegate = self;
         self.popoverMapPoint = mapPoint;
-        [self.editAttributePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        if (isEditing) {
+            self.editAttributePopoverController = popover;
+        } else {
+            self.reviewAttributePopoverController = popover;
+        }
+        [popover presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     } else {
+        //TODO: test behavior for iPhone idiom
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
         dialog.toolbarItems = @[doneButton];
         self.modalAttributeCollector.toolbarHidden = NO;
         self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
-        //TODO: the modal view control does not respond to done button on keyboard or move up for keyboard
         [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
     }
 }
 
-// Called by done button on attribute dialogs
+// Called when editing popover is dismissed (or maybe when save/done button is tapped)
 - (void)saveAttributes:(UIBarButtonItem *)sender
 {
     AKRLog(@"Saving attributes from the recently dismissed modalAttributeCollector VC");
@@ -2033,7 +2041,7 @@
         self.angleDistancePopoverController = nil;
         Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
         AGSGraphic *graphic = [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
-        [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint editing:NO];
+        [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
     };
     vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
         self.angleDistancePopoverController = nil;
