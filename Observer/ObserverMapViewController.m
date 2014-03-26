@@ -704,7 +704,10 @@
     if (popoverController == self.mapsPopoverController) {
         self.mapsPopoverController = nil;
     }
-    if (popoverController == self.attributePopoverController) {
+    if (popoverController == self.reviewAttributePopoverController) {
+        self.attributePopoverController = nil;
+    }
+    if (popoverController == self.editAttributePopoverController) {
         [self saveAttributes:nil];
         self.attributePopoverController = nil;
     }
@@ -1800,7 +1803,6 @@
     //get data from entity attributes (unobscure the key names)
     [self setAttributesForFeatureType:feature entity:entity graphic:(AGSGraphic *)agsFeature defaults:entity atPoint:mapPoint editing:YES];
 
-    //FIXME: if this is an angle distance location, provide button for angle distance editor
     //FIXME: can I support a readonly survey, and just look at the attributes with editing disabled??
 }
 
@@ -1831,9 +1833,12 @@
         data = nil;
     }
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
-    
+
+    //FIXME: if we are reviewing/editing an existing record, so the observing status
+
     //Angle/Distance Button
     //FIXME: how do I determine if this entity has an angleDistance?
+    //FIXME: label as "Location Details" if not angle/distance - show readonly location details
     if (true) {
         QButtonElement *adButton = [[QButtonElement alloc] initWithTitle:@"Fix Location"];
         //FIXME: appearance is shared with the delete button
@@ -1937,9 +1942,12 @@
 }
 
 - (NSString *)entityNameFromLayerName:(NSString *)layerName {
-    NSString *entityName = layerName;
-    if (![layerName isEqualToString:kMissionPropertyEntityName]) {
-        //FIXME: need to check track layers and GPS Layer
+    NSString *entityName = nil;
+    if ([layerName isEqualToString:kGpsPointEntityName] || [layerName isEqualToString:kMissionPropertyEntityName]) {
+        entityName = layerName;
+    } else if ([layerName hasPrefix:kMissionPropertyEntityName]) {
+        entityName = nil;
+    } else {
         entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix, layerName];
     }
     return entityName;
