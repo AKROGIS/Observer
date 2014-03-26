@@ -106,10 +106,12 @@
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 @property (strong, nonatomic) UIPopoverController *surveysPopoverController;
-@property (strong, nonatomic) UIPopoverController *attributePopoverController;
-@property (strong, nonatomic) AGSPoint *popoverMapPoint;
-@property (strong, nonatomic) UINavigationController *modalAttributeCollector;
 @property (strong, nonatomic) UIPopoverController *featureSelectorPopoverController;
+@property (strong, nonatomic) UIPopoverController *reviewAttributePopoverController;
+@property (strong, nonatomic) UIPopoverController *editAttributePopoverController;
+@property (strong, nonatomic) AGSPoint *popoverMapPoint;
+//TODO: do I need this UINavigationController?
+@property (strong, nonatomic) UINavigationController *modalAttributeCollector;
 
 @end
 
@@ -216,13 +218,22 @@
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     self.mapView.locationDisplay.interfaceOrientation = toInterfaceOrientation;
-    if (self.attributePopoverController) {
-        [self.attributePopoverController dismissPopoverAnimated:NO];
+    //popovers not presented from a UIBarButtonItem must close and reopen in the new orientation
+    if (self.editAttributePopoverController) {
+        [self.editAttributePopoverController dismissPopoverAnimated:NO];
+    }
+    if (self.reviewAttributePopoverController) {
+        [self.reviewAttributePopoverController dismissPopoverAnimated:NO];
+    }
+    if (self.featureSelectorPopoverController) {
+        [self.featureSelectorPopoverController dismissPopoverAnimated:NO];
     }
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
+    [self.editAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    [self.reviewAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.featureSelectorPopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
 
@@ -705,11 +716,11 @@
         self.mapsPopoverController = nil;
     }
     if (popoverController == self.reviewAttributePopoverController) {
-        self.attributePopoverController = nil;
+        self.reviewAttributePopoverController = nil;
     }
     if (popoverController == self.editAttributePopoverController) {
         [self saveAttributes:nil];
-        self.attributePopoverController = nil;
+        self.editAttributePopoverController = nil;
     }
 }
 
@@ -1763,7 +1774,7 @@
     };
     //TODO: reduce popover size
     self.featureSelectorPopoverController = [[UIPopoverController alloc] initWithContentViewController:vc];
-    [self.attributePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    [self.editAttributePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
 
 - (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atMapPoint:(AGSPoint *)mapPoint
@@ -1865,7 +1876,7 @@
         [self.context deleteObject:entity];
         //FIXME: if we cancel or delete a mission property,it may effect the observing status
         [[self layerForFeatureType:feature] removeGraphic:graphic];
-        [self.attributePopoverController dismissPopoverAnimated:YES];
+        [self.editAttributePopoverController dismissPopoverAnimated:YES];
     };
     [[root.sections lastObject] addElement:deleteButton];
 
@@ -1874,10 +1885,10 @@
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
         dialog.resizeWhenKeyboardPresented = NO; //I'm putting this in a popover
-        self.attributePopoverController = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
-        self.attributePopoverController.delegate = self;
+        self.editAttributePopoverController = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
+        self.editAttributePopoverController.delegate = self;
         self.popoverMapPoint = mapPoint;
-        [self.attributePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        [self.editAttributePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     } else {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
