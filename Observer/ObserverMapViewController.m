@@ -92,7 +92,8 @@
 @property (strong, nonatomic) Mission *mission;
 @property (strong, nonatomic) MissionProperty *currentMissionProperty;
 @property (strong, nonatomic) id<AGSFeature> movingGraphic;
-@property (strong, nonatomic) NSManagedObject *movingEntity;
+@property (strong, nonatomic) Observation *movingObservation;
+@property (strong, nonatomic) MissionProperty *movingMissionProperty;
 
 //Used to save state for delegate callbacks (alertview, actionsheet and segue)
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
@@ -601,8 +602,9 @@
     //   then flash the gps observation point and open the angle distance dialog on that point (try not to hide observation)
     //   move the feature when the dialog is dismissed.
 
-    //AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
-    self.movingEntity = nil;
+    AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
+    self.movingObservation = nil;
+    self.movingMissionProperty = nil;
     self.movingGraphic = nil;
     switch (features.count) {  //Number of layers with selected features
         case 0:
@@ -617,8 +619,27 @@
                     id<AGSFeature> feature = featureList[0];
                     NSDate *timestamp = (NSDate *)[feature safeAttributeForKey:kTimestampKey];
                     NSManagedObject *entity = [self entityOnLayerNamed:layerName atTimestamp:timestamp];
-                    if (entity) { //FIXME: check entity type and location type type before saving
-                        self.movingEntity = entity;
+                    if ([entity.entity.name isEqualToString:kMissionPropertyEntityName]) {
+                        self.movingMissionProperty = (MissionProperty *)entity;
+                    } else {
+                        self.movingObservation = (Observation *)entity;
+                    }
+                    if (self.movingMissionProperty) {
+                        //TODO: support moving mission properties
+                        [[[UIAlertView alloc] initWithTitle:nil message:@"Can't move mission properties yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                        self.movingMissionProperty = nil;
+                    }
+                    if (self.movingObservation.angleDistanceLocation) {
+                        //TODO: Support moving Angle/Distance located observations
+                        [[[UIAlertView alloc] initWithTitle:nil message:@"Can't move angle/distance features yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                        self.movingObservation = nil;
+                    }
+                    if (self.movingObservation.gpsPoint) {
+                        //TODO: support moving GPS located observations
+                        [[[UIAlertView alloc] initWithTitle:nil message:@"Can't move GPS located features yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                        self.movingObservation = nil;
+                    }
+                    if (self.movingMissionProperty || self.movingObservation) {
                         self.movingGraphic = feature;
                     }
                     break;
@@ -633,13 +654,14 @@
             [[[UIAlertView alloc] initWithTitle:nil message:@"Zoom in to select a single feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
             break;
     }
+    AKRLog(@"moving %@",self.movingGraphic);
 }
 
 - (void)mapView:(AGSMapView *)mapView didMoveTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint features:(NSDictionary *)features
 {
     //AKRLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
 
-    //FIXME: if this is a mission property, then snap to nearest gps point
+    //TODO: If the moving feature is based on a GPS point, then snap to the closest GPS point
     if (self.movingGraphic) {
         [self.movingGraphic setGeometry:mapPoint];
     }
@@ -647,14 +669,17 @@
 
 - (void) mapView:(AGSMapView *)mapView didEndTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint features:(NSDictionary *)features
 {
-    //AKRLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
+    AKRLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
 
-    //FIXME: need to save new adhoc map point for dragged graphic.
-    //FIXME: if this was a mission property, then we need to update the tracklogs.
-    //Should I check if we have actually moved??
-    //If it is a mission property then use then snap to the closest gps Point
-    //self.entity update adhoc location
-    self.movingEntity = nil;
+    //TODO: If the feature is based on a GPS point, then snap to the closest GPS point
+    //TODO: if this was a mission property, then we need to update the tracklogs.
+    if (self.movingGraphic) {
+        [self.movingGraphic setGeometry:mapPoint];
+    }
+    [self updateAdhocLocation:self.movingObservation.adhocLocation withMapPoint:mapPoint];
+    [self updateAdhocLocation:self.movingMissionProperty.adhocLocation withMapPoint:mapPoint];
+    self.movingObservation = nil;
+    self.movingMissionProperty = nil;
     self.movingGraphic = nil;
 }
 
@@ -1578,6 +1603,15 @@
     NSString * name = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
     [self.graphicsLayers[name] addGraphic:graphic];
     return graphic;
+}
+
+- (void)updateAdhocLocation:(AdhocLocation *)adhocLocation withMapPoint:(AGSPoint *)mapPoint
+{
+    //mapPoint is in the map coordinates, convert to WGS84
+    AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:self.wgs84];
+    adhocLocation.latitude = wgs84Point.y;
+    adhocLocation.longitude = wgs84Point.x;
+    adhocLocation.timestamp = [NSDate date];
 }
 
 - (AdhocLocation *)createAdhocLocationWithMapPoint:(AGSPoint *)mapPoint
