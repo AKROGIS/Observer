@@ -1809,7 +1809,7 @@
         return;
     }
 
-    //TODO: When to I implement readonly features
+    //TODO: When do I implement readonly features
     [self setAttributesForFeatureType:feature entity:entity graphic:(AGSGraphic *)agsFeature defaults:entity atPoint:mapPoint isNew:NO isEditing:YES];
 }
 
@@ -2107,39 +2107,6 @@
 
 
 #pragma mark - Diagnostic Aids - to be removed
-
-//TODO: not used - use or remove
-
-//ESRI BUG - date returned from graphic is not the same as the date that is provided
-//    NSDate *t1 = (NSDate *)attribs[kTimestampKey];
-//    NSDate *t2 = [graphic attributeAsDateForKey:kTimestampKey];
-//    AKRLog(@"dict-graphic: DateIn: %@ (%f) dateOut: %@ (%f) equal:%u",t1,[t1 timeIntervalSince1970],t2, [t2 timeIntervalSince1970], [t1 isEqualToDate:t2]);
-
-
-//TODO: Rob some of the following code for deleting an individual observation
-//- (void)clearData
-//{
-//    if (!self.context) {
-//        return;
-//    }
-//
-//    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
-//    NSError *error = [[NSError alloc] init];
-//    NSArray *results = [self.context executeFetchRequest:request error:&error];
-//    if (!results && error.code)
-//        AKRLog(@"Error Fetching Observation %@",error);
-//    for (Observation *observation in results) {
-//        [self.context deleteObject:observation];
-//    }
-//    request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
-//    results = [self.context executeFetchRequest:request error:&error];
-//    if (!results && error.code)
-//        AKRLog(@"Error Fetching GpsPoints%@",error);
-//    for (GpsPoint *gpsPoint in results) {
-//        [self.context deleteObject:gpsPoint];
-//    }
-//    self.lastGpsPointSaved = nil;
-//}
 
 - (void)logStats
 {
