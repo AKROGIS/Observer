@@ -63,7 +63,4 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (void)closeDocumentWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler;
 
-//TODO: memory releaser (unload properties), reset object to unborn
-//
-
 @end

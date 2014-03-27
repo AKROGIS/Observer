@@ -44,7 +44,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //TODO: simplify, we are always enabled now.
     [self configureControlsEnableAddButton:YES];
 }
 
