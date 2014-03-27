@@ -1210,7 +1210,6 @@
 - (void)closeMap
 {
     [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
-    //TODO: reset does not clear the image, so the display is confusing; need to log ESRI bug, and add Covering view in Storyboard
     self.currentMapEntity = nil;
     self.noMapView.hidden = NO;
     self.panButton.enabled = NO;
@@ -1456,13 +1455,12 @@
 - (GpsPoint *)createGpsPoint:(CLLocation *)gpsData
 {
     //AKRLog(@"Creating GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
-    if (self.lastGpsPointSaved && [self.lastGpsPointSaved.timestamp timeIntervalSinceDate:gpsData.timestamp] == 0) {
-        return self.lastGpsPointSaved;
-    }
-    //TODO: shoudn't this check be before the use of gpsData.timestamp
     if (!gpsData.timestamp) {
         AKRLog(@"Can't save a GPS Point without a timestamp!");
         //return nil; //TODO: added for testing on simulator, remove for production
+    }
+    if (self.lastGpsPointSaved && [self.lastGpsPointSaved.timestamp timeIntervalSinceDate:gpsData.timestamp] == 0) {
+        return self.lastGpsPointSaved;
     }
     GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:kGpsPointEntityName
                                                        inManagedObjectContext:self.context];
