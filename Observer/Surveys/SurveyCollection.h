@@ -39,6 +39,7 @@
 // Throws an exception if index is greater than the number of local maps
 - (void)insertSurvey:(Survey *)survey atIndex:(NSUInteger)index;
 // No-op if index out of bounds (semantics - the survey at the index is already gone)
+// Caller is responsible for closing survey before deleting.
 - (void)removeSurveyAtIndex:(NSUInteger)index;
 // Throws an exception if either index is out of bounds
 - (void)moveSurveyAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;

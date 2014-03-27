@@ -133,7 +133,6 @@ static BOOL _isLoaded = NO;
         AKRLog(@"Array index out of bounds in [SurveyCollection removeSurveyAtIndex:%d] size = %d",index,self.items.count);
         return;
     }
-    //TODO: if the document is open, close it first, or set it to nil, so subsequent attempts to close it do not generate errors.
     Survey *item = [self surveyAtIndex:index];
     [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
     [self.items removeObjectAtIndex:index];
