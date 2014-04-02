@@ -7,6 +7,7 @@
 //
 
 #import "Map.h"
+#import "MapCollection.h"
 #import "NSDate+Formatting.h"
 #import "NSURL+unique.h"
 #import "Settings.h"
@@ -26,7 +27,8 @@
 @property (nonatomic, strong, readwrite) NSDate *date;
 @property (nonatomic, readwrite) unsigned long long byteCount;
 @property (nonatomic, readwrite) AGSEnvelope *extents;
-@property (nonatomic, strong, readwrite) NSURL *thumbnailUrl;
+@property (nonatomic, strong, readwrite) NSURL *localThumbnailUrl;
+@property (nonatomic, strong, readwrite) NSURL *remoteThumbnailUrl;
 
 @property (nonatomic, strong, readwrite) UIImage *thumbnail;
 @property (nonatomic, strong, readwrite) AGSLocalTiledLayer *tileCache;
@@ -70,7 +72,7 @@
         map.byteCount = [fileAttributes fileSize];
         map.date = [fileAttributes fileCreationDate];  //TODO: Get the date from the esriinfo.xml file in the zipped tpk
         map.description = @"Not available."; //TODO: get the description from the esriinfo.xml file in the zipped tpk
-        map.thumbnailUrl = [self thumbnailUrlForMapName:map.title];
+        map.localThumbnailUrl = [self createThumbnailUrlForMapName:map.title];
         [UIImagePNGRepresentation(map.tileCache.thumbnail) writeToURL:map.thumbnailUrl atomically:YES];
         map.thumbnail = map.tileCache.thumbnail;
         map.thumbnailIsLoaded = YES;
@@ -103,8 +105,8 @@
         map.byteCount = [item isKindOfClass:[NSNumber class]] ? [item unsignedLongLongValue] : 0;
         item =  dictionary[kDescriptionKey];
         map.description = [item isKindOfClass:[NSString class]] ? item : nil;
-        item =  dictionary[kThumbnailUrlKey];
-        map.thumbnailUrl = [item isKindOfClass:[NSString class]] ? [NSURL URLWithString:item] : nil;
+        item =  dictionary[kRemoteThumbnailUrlKey];
+        map.remoteThumbnailUrl = [item isKindOfClass:[NSString class]] ? [NSURL URLWithString:item] : nil;
         item =  dictionary[kXminKey];
         CGFloat xmin = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
         item =  dictionary[kYminKey];
@@ -135,7 +137,8 @@
                 map.description = [aDecoder decodeObjectForKey:kDescriptionKey];
                 NSNumber *bytes = [aDecoder decodeObjectForKey:kSizeKey];
                 map.byteCount = [bytes unsignedIntegerValue];
-                map.thumbnailUrl = [aDecoder decodeObjectForKey:kThumbnailUrlKey];
+                map.remoteThumbnailUrl = [aDecoder decodeObjectForKey:kRemoteThumbnailUrlKey];
+                map.localThumbnailUrl = [aDecoder decodeObjectForKey:kLocalThumbnailUrlKey];
                 map.extents = [[AGSEnvelope alloc] initWithJSON:[aDecoder decodeObjectForKey:kExtentsKey]];
             }
             return map;
@@ -154,7 +157,8 @@
     [aCoder encodeObject:self.date forKey:kDateKey];
     [aCoder encodeObject:self.description forKey:kDescriptionKey];
     [aCoder encodeObject:[NSNumber numberWithUnsignedLongLong:self.byteCount] forKey:kSizeKey];
-    [aCoder encodeObject:self.thumbnailUrl forKey:kThumbnailUrlKey];
+    [aCoder encodeObject:self.remoteThumbnailUrl forKey:kRemoteThumbnailUrlKey];
+    [aCoder encodeObject:self.localThumbnailUrl forKey:kLocalThumbnailUrlKey];
     [aCoder encodeObject:[self.extents encodeToJSON] forKey:kExtentsKey];
 }
 
@@ -184,21 +188,28 @@
     }
 }
 
-- (void)openThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler
+- (BOOL)hasLoadedThumbnail
 {
-    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
-        UIImage *thumbnail = self.thumbnail;
+    return _thumbnailIsLoaded;
+}
+
+- (void)loadThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler
+{
+    if (_thumbnail || self.thumbnailIsLoaded) {
         if (completionHandler) {
-            completionHandler(thumbnail != nil);
+            completionHandler(_thumbnail != nil);
+        }
+    }
+    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
+        self->_thumbnail = [self loadThumbnail];
+        if (completionHandler) {
+            completionHandler(self->_thumbnail != nil);
         }
     });
 }
 
 - (UIImage *)thumbnail
 {
-    if (!_thumbnail && !self.thumbnailIsLoaded) {
-        [self loadThumbnail];
-    }
     return _thumbnail;
 }
 
@@ -264,26 +275,29 @@
 
 #pragma mark - loaders
 
-- (BOOL)loadThumbnail
+- (UIImage *)loadThumbnail
 {
-    //TODO: cache network thumbnails, then update the object cache with the cached url
+    UIImage *thumbnail = nil;
+    if (self.localThumbnailUrl && [[NSFileManager defaultManager] fileExistsAtPath:[self.localThumbnailUrl path]]) {
+        NSData *data = [NSData dataWithContentsOfURL:self.thumbnailUrl];
+        thumbnail = [[UIImage alloc] initWithData:data];
+    } else {
+        self.localThumbnailUrl = [self createThumbnailUrlForMapName:self.title];
+        //TODO: do this transfer in an NSOperation Queue
+        NSData *data = [NSData dataWithContentsOfURL:self.thumbnailUrl];
+        if ([data writeToURL:self.localThumbnailUrl atomically:YES]) {
+            thumbnail = [[UIImage alloc] initWithData:data];
+        }
+    }
+    //Update the cache:
+    //TODO: Have the map manage it's own cache, so I don't need call the collection to do the save;
+    [[MapCollection sharedCollection] synchronize];
+
     self.thumbnailIsLoaded = YES;
-    NSData *data = [NSData dataWithContentsOfURL:self.thumbnailUrl];
-    //    if (![self.thumbnailUrl isFileReferenceURL]) {
-    //        NSString *name = [[self.thumbnailUrl lastPathComponent] stringByDeletingPathExtension];
-    //        NSURL *newUrl = [self thumbnailUrlForMapName:name];
-    //        if ([data writeToURL:newUrl atomically:YES]) {
-    //            self.thumbnailUrl = newUrl;
-    //        }
-    //    }
-    //TODO: let the collection know we need to update the cache;
-    _thumbnail = [[UIImage alloc] initWithData:data];
-    if (!_thumbnail)
-        _thumbnail = [UIImage imageNamed:@"TilePackage"];
-    return !_thumbnail;
+    return thumbnail;
 }
 
-- (NSURL *)thumbnailUrlForMapName:(NSString *)name
+- (NSURL *)createThumbnailUrlForMapName:(NSString *)name
 {
     NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     NSURL *folder = [library URLByAppendingPathComponent:@"mapthumbs" isDirectory:YES];

@@ -23,7 +23,8 @@
 #define kXmaxKey          @"xmax"        //NSNumber -> float (WGS84 decimal degrees)
 #define kYminKey          @"ymin"        //NSNumber -> float (WGS84 decimal degrees)
 #define kYmaxKey          @"ymax"        //NSNumber -> float (WGS84 decimal degrees)
-#define kThumbnailUrlKey  @"thumbnail"   //NSString -> NSURL
+#define kLocalThumbnailUrlKey   @"localThumbnail"   //NSString -> NSURL
+#define kRemoteThumbnailUrlKey  @"thumbnail"        //NSString -> NSURL
 
 
 @interface Map : NSObject <NSCoding, AKRTableViewItem, NSURLSessionDownloadDelegate>
@@ -42,7 +43,8 @@
 @property (nonatomic, strong, readonly) UIImage *thumbnail;
 @property (nonatomic, strong, readonly) AGSLocalTiledLayer *tileCache;
 
-- (void)openThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (BOOL)hasLoadedThumbnail;
+- (void)loadThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // Designated initializer
 // This initializer should not be called by clients, as it returns a useless map.  Instead, use the convenience initializers
