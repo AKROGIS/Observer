@@ -1856,10 +1856,11 @@
         if (angleDistanceLocation) {
             locationButton.title = @"Change Location";
             locationButton.onSelected = ^(){
-                //FIXME: Use angleDistanceLocation and self.survey.protocol to initialize the UIViewController
-                if ([self shouldPerformAngleDistanceSequeWithFeature:feature]) {
-                    [self performAngleDistanceSequeWithFeature:feature entity:entity mapPoint:mapPoint];
-                }
+                [[[UIAlertView alloc] initWithTitle:nil message:@"Feature not implemented yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                //TODO: Use angleDistanceLocation and self.survey.protocol to initialize the UIViewController
+                //if ([self shouldPerformAngleDistanceSequeWithFeature:feature]) {
+                //    [self performAngleDistanceSequeWithFeature:feature entity:entity mapPoint:mapPoint];
+                //}
             };
         } else {
             locationButton.title = @"Review Location";
