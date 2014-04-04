@@ -1844,7 +1844,6 @@
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
 
     //TODO: if we are reviewing/editing an existing record, show the observing status
-    //FIXME: self.view.tintColor is gray after Angle/Distance ViewController
 
     //Show a Location Button only when editing/reviewing
     if (!isNew) {
@@ -1852,6 +1851,7 @@
         QButtonElement *locationButton = [[QButtonElement alloc] init];
         locationButton.appearance = [[QFlatAppearance alloc] init];
         locationButton.appearance.buttonAlignment = NSTextAlignmentCenter;
+        //TODO: self.view.tintColor is gray after feature selector ViewControllers
         locationButton.appearance.actionColorEnabled = self.view.tintColor;
         if (angleDistanceLocation) {
             locationButton.title = @"Change Location";
@@ -1881,6 +1881,7 @@
         if (!isNew) {
             deleteButton.appearance.actionColorEnabled = [UIColor redColor];
         } else {
+            //TODO: self.view.tintColor is gray after Angle/Distance
             deleteButton.appearance.actionColorEnabled = self.view.tintColor;
         }
         deleteButton.onSelected = ^(){
