@@ -1843,7 +1843,7 @@
     }
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
 
-    //FIXME: if we are reviewing/editing an existing record, show the observing status
+    //TODO: if we are reviewing/editing an existing record, show the observing status
     //FIXME: self.view.tintColor is gray after Angle/Distance ViewController
 
     //Show a Location Button only when editing/reviewing
@@ -1872,23 +1872,25 @@
     }
 
     //Delete/Cancel Button
-    NSString *buttonText = isNew ? @"Cancel" : @"Delete";
-    QButtonElement *deleteButton = [[QButtonElement alloc] initWithTitle:buttonText];
-    deleteButton.appearance = [[QFlatAppearance alloc] init];
-    deleteButton.appearance.buttonAlignment = NSTextAlignmentCenter;
-    if (!isNew) {
-        deleteButton.appearance.actionColorEnabled = [UIColor redColor];
-    } else {
-        deleteButton.appearance.actionColorEnabled = self.view.tintColor;
+    //TODO: support delete/cancel on a mission property
+    if (![feature isKindOfClass:[ProtocolMissionFeature class]]) {
+        NSString *buttonText = isNew ? @"Cancel" : @"Delete";
+        QButtonElement *deleteButton = [[QButtonElement alloc] initWithTitle:buttonText];
+        deleteButton.appearance = [[QFlatAppearance alloc] init];
+        deleteButton.appearance.buttonAlignment = NSTextAlignmentCenter;
+        if (!isNew) {
+            deleteButton.appearance.actionColorEnabled = [UIColor redColor];
+        } else {
+            deleteButton.appearance.actionColorEnabled = self.view.tintColor;
+        }
+        deleteButton.onSelected = ^(){
+            [[self layerForFeatureType:feature] removeGraphic:graphic];
+            //FIXME: delete the feature in addition to the graphic.
+            [self.editAttributePopoverController dismissPopoverAnimated:YES];
+            self.editAttributePopoverController = nil;
+        };
+        [[root.sections lastObject] addElement:deleteButton];
     }
-    deleteButton.onSelected = ^(){
-        [self.context deleteObject:entity];
-        //FIXME: if we cancel or delete a mission property,it may effect the observing status
-        [[self layerForFeatureType:feature] removeGraphic:graphic];
-        [self.editAttributePopoverController dismissPopoverAnimated:YES];
-        self.editAttributePopoverController = nil;
-    };
-    [[root.sections lastObject] addElement:deleteButton];
 
 
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
