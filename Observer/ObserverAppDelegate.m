@@ -16,6 +16,7 @@
 #import <Crashlytics/Crashlytics.h>
 
 #define kAlertViewNewProtocol      1
+#define kAppDistributionPlist      @"http://akrgis.nps.gov/observer/Park_Observer.plist"
 
 
 @interface ObserverAppDelegate()
@@ -31,6 +32,8 @@
 {
     //Activate the Crash reporting system
     [Crashlytics startWithAPIKey:@"48e51797d0250122096db58d369feab2cac2da33"];
+
+    [self checkForUpdates];
 
     Map *savedMap = [[Map alloc] initWithLocalTileCache:[Settings manager].activeMapURL];
     if (savedMap.isValid) {
@@ -65,6 +68,7 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    [self checkForUpdates];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -151,6 +155,39 @@
     return nil;
 }
 
+- (void)checkForUpdates
+{
+    [self checkForUpdateWithCallback:^(BOOL found) {
+        if (found) {
+            [[[UIAlertView alloc] initWithTitle:@"New Version" message:@"During the Beta Program you must upgrade." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            NSString *url = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@",kAppDistributionPlist];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+        }
+    }];
+}
+
+- (void)checkForUpdateWithCallback:(void (^)(BOOL found))callback
+{
+    if (!callback)
+        return;
+
+    BOOL updateAvailable = NO;
+    NSDictionary *updateDictionary = [NSDictionary dictionaryWithContentsOfURL:
+                                      [NSURL URLWithString:kAppDistributionPlist]];
+
+    if(updateDictionary)
+    {
+        NSArray *items = [updateDictionary objectForKey:@"items"];
+        NSDictionary *itemDict = [items lastObject];
+
+        NSDictionary *metaData = [itemDict objectForKey:@"metadata"];
+        NSString *newversion = [metaData valueForKey:@"bundle-version"];
+        NSString *currentversion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+
+        updateAvailable = [newversion compare:currentversion options:NSNumericSearch] == NSOrderedDescending;
+    }
+    callback(updateAvailable);
+}
 
 
 
