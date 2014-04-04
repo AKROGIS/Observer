@@ -23,7 +23,8 @@
 #define kXmaxKey          @"xmax"        //NSNumber -> float (WGS84 decimal degrees)
 #define kYminKey          @"ymin"        //NSNumber -> float (WGS84 decimal degrees)
 #define kYmaxKey          @"ymax"        //NSNumber -> float (WGS84 decimal degrees)
-#define kThumbnailUrlKey  @"thumbnail"   //NSString -> NSURL
+#define kLocalThumbnailUrlKey   @"localThumbnail"   //NSString -> NSURL
+#define kRemoteThumbnailUrlKey  @"thumbnail"        //NSString -> NSURL
 
 
 @interface Map : NSObject <NSCoding, AKRTableViewItem, NSURLSessionDownloadDelegate>
@@ -35,14 +36,14 @@
 @property (nonatomic, strong, readonly) NSDate *date;
 @property (nonatomic, readonly) unsigned long long byteCount;
 @property (nonatomic, readonly) AGSEnvelope *extents;
-@property (nonatomic, strong, readonly) NSURL *thumbnailUrl;
 
 //The following properties will block (reading data from the network/filessytem)
 //To avoid the potential delay, call openXXXWithCompletionHandler first.
 @property (nonatomic, strong, readonly) UIImage *thumbnail;
 @property (nonatomic, strong, readonly) AGSLocalTiledLayer *tileCache;
 
-- (void)openThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
+- (BOOL)hasLoadedThumbnail;
+- (void)loadThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // Designated initializer
 // This initializer should not be called by clients, as it returns a useless map.  Instead, use the convenience initializers
@@ -87,5 +88,8 @@
 @property (nonatomic, copy) void(^downloadCompletionAction)(Map *newMap);
 // The percent complete of the download, saved incase the the popover is dismissed, and then re-presented
 @property (nonatomic) float downloadPercentComplete;
+
+//Delete all map data, thumbnails, and cached properties from the file system.
+- (void)deleteFromFileSystem;
 
 @end

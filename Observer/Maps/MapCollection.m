@@ -160,8 +160,7 @@ static BOOL _isLoaded = NO;
         return;
     }
     Map *item = [self localMapAtIndex:index];
-    [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
-    [[NSFileManager defaultManager] removeItemAtURL:item.thumbnailUrl error:nil];
+    [item deleteFromFileSystem];
     [self.localItems removeObjectAtIndex:index];
     [self saveCache];
 }
@@ -301,8 +300,8 @@ static BOOL _isLoaded = NO;
             NSUInteger index = [localMapFileNames indexOfObject:[map.url lastPathComponent]];
             if (index == NSNotFound) {
                 [itemsToRemove addIndex:i];
-                //deleting a map with iTunes will leave the thumbnail behind
-                [[NSFileManager defaultManager] removeItemAtURL:map.thumbnailUrl error:nil];
+                //make sure any other cached data about the map file is also deleted
+                [map deleteFromFileSystem];
             } else {
                 [localMapFileNames removeObjectAtIndex:index];
             }

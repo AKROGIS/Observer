@@ -212,13 +212,19 @@
         cell.titleLabel.text = map.title;
         cell.subtitle1Label.text = map.subtitle;
         cell.subtitle2Label.text = map.subtitle2;
-        //TODO: fix thumbnail get default if not loaded, then load, else use loaded thumbnail
-        [map openThumbnailWithCompletionHandler:^(BOOL success) {
-            //on background thread
-            dispatch_async(dispatch_get_main_queue(), ^{
-                cell.thumbnailImageView.image = map.thumbnail;
-            });
-        }];
+        if (map.hasLoadedThumbnail) {
+            cell.thumbnailImageView.image = map.thumbnail;
+        } else {
+            cell.thumbnailImageView.image = [UIImage imageNamed:@"TilePackage"];
+            [map loadThumbnailWithCompletionHandler:^(BOOL success) {
+                //on background thread
+                if (success) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        cell.thumbnailImageView.image = map.thumbnail;
+                    });
+                }
+            }];
+        }
         cell.downloading = map.isDownloading;
         cell.percentComplete = map.downloadPercentComplete;
         map.downloadProgressAction = ^(double bytesWritten, double bytesExpected) {
@@ -232,7 +238,6 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
     if (indexPath.section == 2) {
         self.showRemoteMaps = ! self.showRemoteMaps;
         [tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:UITableViewRowAnimationAutomatic];
