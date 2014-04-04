@@ -16,6 +16,7 @@
 #import <Crashlytics/Crashlytics.h>
 
 #define kAlertViewNewProtocol      1
+#define kAlertViewNewVersion       2
 #define kAppDistributionPlist      @"http://akrgis.nps.gov/observer/Park_Observer.plist"
 
 
@@ -32,8 +33,6 @@
 {
     //Activate the Crash reporting system
     [Crashlytics startWithAPIKey:@"48e51797d0250122096db58d369feab2cac2da33"];
-
-    [self checkForUpdates];
 
     Map *savedMap = [[Map alloc] initWithLocalTileCache:[Settings manager].activeMapURL];
     if (savedMap.isValid) {
@@ -159,9 +158,9 @@
 {
     [self checkForUpdateWithCallback:^(BOOL found) {
         if (found) {
-            [[[UIAlertView alloc] initWithTitle:@"New Version" message:@"During the Beta Program you must upgrade." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-            NSString *url = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@",kAppDistributionPlist];
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"New Version" message:@"During the Beta Program you must upgrade." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+            alertView.tag = kAlertViewNewVersion;
+            [alertView show];
         }
     }];
 }
@@ -205,6 +204,13 @@
                 } else {
                     [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create new survey." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
                 }
+            }
+            break;
+        }
+        case kAlertViewNewVersion: {
+            if (buttonIndex != 99) {  //During the Beta Program you must upgrade.
+                NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@",kAppDistributionPlist]];
+                [[UIApplication sharedApplication] openURL:url];
             }
             break;
         }
