@@ -1885,7 +1885,7 @@
         }
         deleteButton.onSelected = ^(){
             [[self layerForFeatureType:feature] removeGraphic:graphic];
-            //FIXME: delete the feature in addition to the graphic.
+            [self.context deleteObject:entity];
             [self.editAttributePopoverController dismissPopoverAnimated:YES];
             self.editAttributePopoverController = nil;
         };
