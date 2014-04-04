@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		392E8FBD18EF2F030055D312 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 392E8FBC18EF2F030055D312 /* Crashlytics.framework */; };
 		39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */; };
 		39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4D18AC25B100620A3A /* AddFeatureBarButtonItem.m */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
@@ -127,6 +128,7 @@
 
 /* Begin PBXFileReference section */
 		3929196617BEB6A8008B0FFC /* Todo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Todo.rtf; sourceTree = "<group>"; };
+		392E8FBC18EF2F030055D312 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		39336F4418A1BA2100620A3A /* ProtocolMissionFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolMissionFeature.h; path = Protocols/ProtocolMissionFeature.h; sourceTree = "<group>"; };
 		39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolMissionFeature.m; path = Protocols/ProtocolMissionFeature.m; sourceTree = "<group>"; };
 		39336F4A18AC23DC00620A3A /* Protocol Specification.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = "Protocol Specification.rtf"; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				394CC2381858E05F00FA859C /* libQuickDialog.a in Frameworks */,
+				392E8FBD18EF2F030055D312 /* Crashlytics.framework in Frameworks */,
 				39D1D95A17BC21D00014C68F /* CoreData.framework in Frameworks */,
 				39955EA41783388600D225D7 /* OpenGLES.framework in Frameworks */,
 				39955EA21783382200D225D7 /* libz.dylib in Frameworks */,
@@ -465,6 +468,7 @@
 		39955E49178334BF00D225D7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				392E8FBC18EF2F030055D312 /* Crashlytics.framework */,
 				39C3B86A18BE8D770041FF36 /* XCTest.framework */,
 				394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */,
 				39D1D95917BC21D00014C68F /* CoreData.framework */,
@@ -598,6 +602,7 @@
 				39955E43178334BF00D225D7 /* Sources */,
 				39955E44178334BF00D225D7 /* Frameworks */,
 				39955E45178334BF00D225D7 /* Resources */,
+				392E8FBA18EF2E620055D312 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -714,6 +719,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		392E8FBA18EF2E620055D312 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Crashlytics.framework/run 48e51797d0250122096db58d369feab2cac2da33 2d48ac30a10b38d753d96fd97e0ec905cca09dd7a4929622195851d73f94c37e";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		39955E43178334BF00D225D7 /* Sources */ = {
@@ -924,6 +945,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -939,6 +964,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";

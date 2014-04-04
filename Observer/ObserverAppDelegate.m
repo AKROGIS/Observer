@@ -13,6 +13,7 @@
 #import "SurveyCollection.h"
 #import "MapCollection.h"
 #import "ProtocolCollection.h"
+#import <Crashlytics/Crashlytics.h>
 
 #define kAlertViewNewProtocol      1
 
@@ -28,6 +29,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    //Activate the Crash reporting system
+    [Crashlytics startWithAPIKey:@"48e51797d0250122096db58d369feab2cac2da33"];
+
     Map *savedMap = [[Map alloc] initWithLocalTileCache:[Settings manager].activeMapURL];
     if (savedMap.isValid) {
         self.observerMapViewController.map = savedMap;
