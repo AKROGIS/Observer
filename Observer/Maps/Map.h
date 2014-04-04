@@ -36,7 +36,6 @@
 @property (nonatomic, strong, readonly) NSDate *date;
 @property (nonatomic, readonly) unsigned long long byteCount;
 @property (nonatomic, readonly) AGSEnvelope *extents;
-@property (nonatomic, strong, readonly) NSURL *thumbnailUrl;
 
 //The following properties will block (reading data from the network/filessytem)
 //To avoid the potential delay, call openXXXWithCompletionHandler first.
@@ -89,5 +88,8 @@
 @property (nonatomic, copy) void(^downloadCompletionAction)(Map *newMap);
 // The percent complete of the download, saved incase the the popover is dismissed, and then re-presented
 @property (nonatomic) float downloadPercentComplete;
+
+//Delete all map data, thumbnails, and cached properties from the file system.
+- (void)deleteFromFileSystem;
 
 @end

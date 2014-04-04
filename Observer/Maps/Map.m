@@ -73,7 +73,7 @@
         map.date = [fileAttributes fileCreationDate];  //TODO: Get the date from the esriinfo.xml file in the zipped tpk
         map.description = @"Not available."; //TODO: get the description from the esriinfo.xml file in the zipped tpk
         map.localThumbnailUrl = [self createThumbnailUrlForMapName:map.title];
-        [UIImagePNGRepresentation(map.tileCache.thumbnail) writeToURL:map.thumbnailUrl atomically:YES];
+        [UIImagePNGRepresentation(map.tileCache.thumbnail) writeToURL:map.localThumbnailUrl atomically:YES];
         map.thumbnail = map.tileCache.thumbnail;
         map.thumbnailIsLoaded = YES;
         map.extents = map.tileCache.fullEnvelope;
@@ -270,6 +270,14 @@
     return [[AGSGeometryEngine defaultGeometryEngine] shapePreservingAreaOfGeometry:self.extents inUnit:AGSAreaUnitsSquareKilometers];
 }
 
+- (void)deleteFromFileSystem
+{
+    [[NSFileManager defaultManager] removeItemAtURL:self.url error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:self.localThumbnailUrl error:nil];
+    //TODO: Have the map manage it's own cache, so I don't need call the collection to do the save;
+    //[[MapCollection sharedCollection] synchronize];
+}
+
 
 
 
@@ -279,19 +287,20 @@
 {
     UIImage *thumbnail = nil;
     if (self.localThumbnailUrl && [[NSFileManager defaultManager] fileExistsAtPath:[self.localThumbnailUrl path]]) {
-        NSData *data = [NSData dataWithContentsOfURL:self.thumbnailUrl];
+        NSData *data = [NSData dataWithContentsOfURL:self.localThumbnailUrl];
         thumbnail = [[UIImage alloc] initWithData:data];
     } else {
         self.localThumbnailUrl = [self createThumbnailUrlForMapName:self.title];
         //TODO: do this transfer in an NSOperation Queue
-        NSData *data = [NSData dataWithContentsOfURL:self.thumbnailUrl];
+        //TODO: need to deal with various network errors
+        NSData *data = [NSData dataWithContentsOfURL:self.remoteThumbnailUrl];
         if ([data writeToURL:self.localThumbnailUrl atomically:YES]) {
             thumbnail = [[UIImage alloc] initWithData:data];
         }
     }
     //Update the cache:
     //TODO: Have the map manage it's own cache, so I don't need call the collection to do the save;
-    [[MapCollection sharedCollection] synchronize];
+    //[[MapCollection sharedCollection] synchronize];
 
     self.thumbnailIsLoaded = YES;
     return thumbnail;
