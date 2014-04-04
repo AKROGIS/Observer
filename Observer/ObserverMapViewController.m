@@ -1772,7 +1772,7 @@
     };
     //TODO: reduce popover size
     self.featureSelectorPopoverController = [[UIPopoverController alloc] initWithContentViewController:vc];
-    [self.editAttributePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    [self.featureSelectorPopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
 
 - (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atMapPoint:(AGSPoint *)mapPoint
