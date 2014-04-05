@@ -1,0 +1,15 @@
+Create an Archive: Xcode->Product->Archive
+Select the new archive in XCode organizer
+Click the Distribute... button
+Select "Save for Enterprise or Ad Hoc Deployment"
+Verify the provisioning profile in the pick list, then click Export
+Change the Save As Name to Park_Observer (Note the underscore)
+Click the Save for Enterprise Distribution, and fill out the form as follows:
+  Application URL: http://akrgis.nps.gov/Observer/Park_Observer.ipa
+  Title: Park Observer
+  SubTitle:
+  LargeImage URL: http://akrgis.nps.gov/Observer/app_icon_large.png
+  Small Image URL: http://akrgis.nps.gov/Observer/app_icon_small.png
+  leave the Add shine option unchecked
+This will create the *.ipa and *.plist files in the desktop (or wherever)
+Copy these to akrgis.nps.gov/inetapps/observer
