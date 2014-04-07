@@ -748,7 +748,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "version=`/usr/libexec/PlistBuddy -c \"Print CFBundleShortVersionString\" \"$SRCROOT/Observer/Observer-Info.plist\"`\nbuild=`/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$SRCROOT/Observer/Observer-Info.plist\"`\ndisplaytext=\"$version ($build)\"\n/usr/libexec/PlistBuddy \"$SRCROOT/Observer/Settings.bundle/Root.plist\" -c \"set PreferenceSpecifiers:10:DefaultValue $displaytext\"\n";
+			shellScript = "version=`/usr/libexec/PlistBuddy -c \"Print CFBundleShortVersionString\" \"$INFOPLIST_FILE\"`\nbuild=`/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$INFOPLIST_FILE\"`\nbuild=$(($build + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build\" \"$INFOPLIST_FILE\"\ndisplaytext=\"$version ($build)\"\n/usr/libexec/PlistBuddy \"$SRCROOT/Observer/Settings.bundle/Root.plist\" -c \"set PreferenceSpecifiers:10:DefaultValue $displaytext\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
