@@ -601,8 +601,9 @@
 			buildPhases = (
 				39955E43178334BF00D225D7 /* Sources */,
 				39955E44178334BF00D225D7 /* Frameworks */,
+				392E8FBE18F354AE0055D312 /* Update Settings Bundle with Version Info */,
 				39955E45178334BF00D225D7 /* Resources */,
-				392E8FBA18EF2E620055D312 /* ShellScript */,
+				392E8FBA18EF2E620055D312 /* Update Crashlytics with new build */,
 			);
 			buildRules = (
 			);
@@ -721,18 +722,33 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		392E8FBA18EF2E620055D312 /* ShellScript */ = {
+		392E8FBA18EF2E620055D312 /* Update Crashlytics with new build */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Update Crashlytics with new build";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "./Crashlytics.framework/run 48e51797d0250122096db58d369feab2cac2da33 2d48ac30a10b38d753d96fd97e0ec905cca09dd7a4929622195851d73f94c37e";
+		};
+		392E8FBE18F354AE0055D312 /* Update Settings Bundle with Version Info */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Update Settings Bundle with Version Info";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "version=`/usr/libexec/PlistBuddy -c \"Print CFBundleShortVersionString\" \"$SRCROOT/Observer/Observer-Info.plist\"`\nbuild=`/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$SRCROOT/Observer/Observer-Info.plist\"`\ndisplaytext=\"$version ($build)\"\n/usr/libexec/PlistBuddy \"$SRCROOT/Observer/Settings.bundle/Root.plist\" -c \"set PreferenceSpecifiers:10:DefaultValue $displaytext\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
