@@ -81,7 +81,7 @@
                                             <action selector="startStopObserving:" destination="TiC-11-YSU" id="1Ay-IQ-Qfc"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem enabled="NO" title="+MP" id="Fdi-yp-sWi">
+                                    <barButtonItem enabled="NO" image="Weather" id="Fdi-yp-sWi">
                                         <connections>
                                             <action selector="changeEnvironment:" destination="TiC-11-YSU" id="ICq-DA-pR3"/>
                                         </connections>
@@ -1203,6 +1203,7 @@
         <image name="Crosshairs" width="64" height="64"/>
         <image name="Download" width="27" height="26"/>
         <image name="GpsOff" width="22" height="22"/>
+        <image name="Weather" width="22" height="22"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
