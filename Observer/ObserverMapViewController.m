@@ -1088,6 +1088,7 @@
     self.startStopObservingBarButtonItem.enabled = YES;
     [self setBarButtonAtIndex:5 action:@selector(startStopRecording:) ToPlay:NO];
     [self startLocationUpdates];
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
     self.mission = [NSEntityDescription insertNewObjectForEntityForName:kMissionEntityName
                                                  inManagedObjectContext:self.context];
 }
@@ -1104,6 +1105,7 @@
     self.startStopObservingBarButtonItem.enabled = NO;
     [self setBarButtonAtIndex:5 action:@selector(startStopRecording:) ToPlay:YES];
     [self stopLocationUpdates];
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
     //[self.survey saveWithCompletionHandler:nil];
     self.mission = nil;
 }
