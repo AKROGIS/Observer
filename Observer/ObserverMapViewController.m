@@ -1625,7 +1625,12 @@
     AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:self.wgs84];
     adhocLocation.latitude = wgs84Point.y;
     adhocLocation.longitude = wgs84Point.x;
-    adhocLocation.timestamp = [NSDate date];
+    if (self.lastGpsPointSaved) {
+        adhocLocation.timestamp = self.lastGpsPointSaved.timestamp;
+        //Used for relating the adhoc observation to where the observer was when the observation was made
+    } else {
+        adhocLocation.timestamp = [NSDate date];
+    }
 }
 
 - (AdhocLocation *)createAdhocLocationWithMapPoint:(AGSPoint *)mapPoint
@@ -1634,11 +1639,7 @@
     AdhocLocation *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:kAdhocLocationEntityName
                                                                  inManagedObjectContext:self.context];
     NSAssert(adhocLocation, @"%@", @"Could not create an AdhocLocation in Core Data");
-    //mapPoint is in the map coordinates, convert to WGS84
-    AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:self.wgs84];
-    adhocLocation.latitude = wgs84Point.y;
-    adhocLocation.longitude = wgs84Point.x;
-    adhocLocation.timestamp = [NSDate date];
+    [self updateAdhocLocation:adhocLocation withMapPoint:mapPoint];
     adhocLocation.map = self.currentMapEntity;
     return adhocLocation;
 }
@@ -1896,7 +1897,6 @@
                         [graphic setGeometry:[self mapPointFromGpsPoint:self.lastGpsPointSaved]];
                         //Note: do not remove adhoc location as that records the time of the observation
                         //TODO: make sure that observations with gps and adhoc, draw as GPS
-                        //TODO: make sure that normal adhoc do save gps time (for relationship), but do not save gps point
                     };
                 }
             }
