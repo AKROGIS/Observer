@@ -1599,12 +1599,13 @@
     if (observation.angleDistanceLocation) {
         point = [self mapPointFromAngleDistance:observation.angleDistanceLocation gpsPoint:observation.gpsPoint];
     }
-    else if (observation.adhocLocation) {
+    else if (observation.adhocLocation && !observation.gpsPoint) {
         point = [self mapPointFromAdhocLocation:observation.adhocLocation];
     }
     else if (observation.gpsPoint) {
         point = [self mapPointFromGpsPoint:observation.gpsPoint];
     }
+    NSAssert(point, @"An observation in %@ has no location", observation.entity.name);
     [self drawObservation:observation atPoint:point];
 }
 
@@ -1895,8 +1896,7 @@
                     updateLocationButton.onSelected = ^(){
                         observation.gpsPoint = self.lastGpsPointSaved;
                         [graphic setGeometry:[self mapPointFromGpsPoint:self.lastGpsPointSaved]];
-                        //Note: do not remove adhoc location as that records the time of the observation
-                        //TODO: make sure that observations with gps and adhoc, draw as GPS
+                        //Note: do not remove the adhoc location as that records the time of the observation
                     };
                 }
             }
