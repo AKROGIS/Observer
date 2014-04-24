@@ -1877,11 +1877,11 @@
     }
 
     //Show a move to GPS button if:
-    //  We have GPS locations
+    //  We have a GPS location (assumed to be recent)
     //  This is an observation feature that:
     //    allows GPS locations
     //    has an ad-hoc location
-    if (self.locationServicesAvailable) {
+    if (self.locationServicesAvailable && self.isRecording && self.lastGpsPointSaved) {
         if ([self isKindOfObservation:entity]) {
             Observation *observation = (Observation *)entity;
             WaysToLocateFeature options = feature.allowedLocations.nonTouchChoices;
@@ -1898,6 +1898,7 @@
                         [graphic setGeometry:[self mapPointFromGpsPoint:self.lastGpsPointSaved]];
                         //Note: do not remove the adhoc location as that records the time of the observation
                     };
+                    [[root.sections lastObject] addElement:updateLocationButton];
                 }
             }
         }
