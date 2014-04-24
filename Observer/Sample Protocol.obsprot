@@ -2,8 +2,8 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":1,
 	"name":"Test Protocol",
-	"version":1.0,
-	"date":"2014-02-21",
+	"version":1.1,
+	"date":"2014-04-24",
 	"description":"This survey protocol is for for testing various features of the protocol specification",
     "mission":{
 		"attributes":[
@@ -73,19 +73,19 @@
 					{
 						"title":"On the water",
 					    "elements":[
-							{"type":"QDecimalElement", "key":"wh", "bind":"numberValue:countWaterPending", "title":"On hold"},
-							{"type":"QDecimalElement", "key":"wm", "bind":"numberValue:countWaterMarbled", "title":"Marbled"},
-							{"type":"QDecimalElement", "key":"wk", "bind":"numberValue:countWaterKitlitz", "title":"Kitlitz"},
-							{"type":"QDecimalElement", "key":"wu", "bind":"numberValue:countWaterUnknown", "title":"Unidentified"}
+							{"type":"QIntegerElement", "key":"wh", "bind":"numberValue:countWaterPending", "title":"On hold"},
+							{"type":"QIntegerElement", "key":"wm", "bind":"numberValue:countWaterMarbled", "title":"Marbled"},
+							{"type":"QIntegerElement", "key":"wk", "bind":"numberValue:countWaterKitlitz", "title":"Kitlitz"},
+							{"type":"QIntegerElement", "key":"wu", "bind":"numberValue:countWaterUnknown", "title":"Unidentified"}
 					  	]
 					},
 					{
 						"title":"Flying",
 					    "elements":[
-							{"type":"QDecimalElement", "key":"fh", "bind":"numberValue:countFlyingPending", "title":"On hold"},
-							{"type":"QDecimalElement", "key":"fm", "bind":"numberValue:countFlyingMarbled", "title":"Marbled"},
-							{"type":"QDecimalElement", "key":"fk", "bind":"numberValue:countFlyingKitlitz", "title":"Kitlitz"},
-							{"type":"QDecimalElement", "key":"fu", "bind":"numberValue:countFlyingUnknown", "title":"Unidentified"}
+							{"type":"QIntegerElement", "key":"fh", "bind":"numberValue:countFlyingPending", "title":"On hold"},
+							{"type":"QIntegerElement", "key":"fm", "bind":"numberValue:countFlyingMarbled", "title":"Marbled"},
+							{"type":"QIntegerElement", "key":"fk", "bind":"numberValue:countFlyingKitlitz", "title":"Kitlitz"},
+							{"type":"QIntegerElement", "key":"fu", "bind":"numberValue:countFlyingUnknown", "title":"Unidentified"}
 					    ]
 					}
 				]
@@ -115,7 +115,7 @@
 					    "elements":[
 						    {"type":"QEntryElement",   "key":"i1", "bind":"textValue:nestid",   "title":"Nest Id", "placeholder":"Unique Id"},
 							{"type":"QBooleanElement", "key":"o1", "bind":"boolValue:occupied", "title":"Occupied"},
-							{"type":"QDecimalElement", "key":"s1", "bind":"numberValue:chicks", "title":"Chick Count"}
+							{"type":"QIntegerElement", "key":"s1", "bind":"numberValue:chicks", "title":"Chick Count"}
 					  	]
 					}
 				]
