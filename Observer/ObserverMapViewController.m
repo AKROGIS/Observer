@@ -1874,6 +1874,36 @@
         [[root.sections lastObject] addElement:locationButton];
     }
 
+    //Show a move to GPS button if:
+    //  We have GPS locations
+    //  This is an observation feature that:
+    //    allows GPS locations
+    //    has an ad-hoc location
+    if (self.locationServicesAvailable) {
+        if ([self isKindOfObservation:entity]) {
+            Observation *observation = (Observation *)entity;
+            WaysToLocateFeature options = feature.allowedLocations.nonTouchChoices;
+            if ((options & LocateFeatureWithGPS) == LocateFeatureWithGPS) {
+                AdhocLocation *adhocLocation = [self adhocLocationFromEntity:observation];
+                if (adhocLocation) {
+                    QButtonElement *updateLocationButton = [[QButtonElement alloc] init];
+                    updateLocationButton.appearance = [[QFlatAppearance alloc] init];
+                    updateLocationButton.appearance.buttonAlignment = NSTextAlignmentCenter;
+                    updateLocationButton.appearance.actionColorEnabled = self.view.tintColor;
+                    updateLocationButton.title = @"Move to GPS Location";
+                    updateLocationButton.onSelected = ^(){
+                        observation.gpsPoint = self.lastGpsPointSaved;
+                        [graphic setGeometry:[self mapPointFromGpsPoint:self.lastGpsPointSaved]];
+                        //Note: do not remove adhoc location as that records the time of the observation
+                        //TODO: make sure that observations with gps and adhoc, draw as GPS
+                        //TODO: make sure that normal adhoc do save gps time (for relationship), but do not save gps point
+                    };
+                }
+            }
+        }
+    }
+
+
     //Delete/Cancel Button
     //TODO: support delete/cancel on a mission property
     if (![feature isKindOfClass:[ProtocolMissionFeature class]]) {
@@ -1995,6 +2025,11 @@
         }
     }
     return YES;
+}
+
+- (BOOL)isKindOfObservation:(NSManagedObject *)entity
+{
+    return [entity.entity.name hasPrefix:kObservationPrefix];
 }
 
 - (AngleDistanceLocation *)angleDistanceLocationFromEntity:(NSManagedObject *)entity
