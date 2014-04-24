@@ -1328,7 +1328,7 @@
         previousPoint = gpsPoint;
     }
 
-    //Get adhoc observations - these are the only observations where gpsPoint might be null
+    //Get Observations
     AKRLog(@"  Fetching observations");
     request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
     results = [self.context executeFetchRequest:request error:&error];
@@ -1338,7 +1338,7 @@
     for (Observation *observation in results) {
         [self loadObservation:observation];
     }
-    //Get MissionProperties were gpsPoint is null
+    //Get MissionProperties
     AKRLog(@"  Fetching mission properties");
     request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
     results = [self.context executeFetchRequest:request error:&error];
@@ -1613,6 +1613,7 @@
 {
     //AKRLog(@"    Drawing observation type %@",observation.entity.name);
     NSDate *timestamp = observation.gpsPoint ? observation.gpsPoint.timestamp : observation.adhocLocation.timestamp;
+    NSAssert(timestamp, @"An observation in %@ has no timestamp", observation.entity.name);
     NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     NSString * name = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
@@ -1688,18 +1689,20 @@
 - (void)loadMissionProperty:(MissionProperty *)missionProperty
 {
     //AKRLog(@"    Loading missionProperty");
-    AGSPoint *point;
+    AGSPoint *point = nil;
     if (missionProperty.gpsPoint) {
         point = [self mapPointFromGpsPoint:missionProperty.gpsPoint];
     } else {
         point = [self mapPointFromAdhocLocation:missionProperty.adhocLocation];
     }
+    NSAssert(point, @"A mission property has no location");
     [self drawMissionProperty:missionProperty atPoint:point];
 }
 
 - (AGSGraphic *)drawMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
 {
     NSDate *timestamp = missionProperty.gpsPoint ? missionProperty.gpsPoint.timestamp : missionProperty.adhocLocation.timestamp;
+    NSAssert(timestamp, @"A mission property has no timestamp");
     NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     [self.graphicsLayers[kMissionPropertyEntityName] addGraphic:graphic];
@@ -1876,7 +1879,7 @@
         [[root.sections lastObject] addElement:locationButton];
     }
 
-    //Show a move to GPS button if:
+    //Show a "move to GPS button" if:
     //  We have a GPS location (assumed to be recent)
     //  This is an observation feature that:
     //    allows GPS locations
