@@ -13,7 +13,7 @@
 - (id)initWithJSON:(id)json version:(NSInteger) version;
 
 // How should these features be drawn on the map
-@property (strong, nonatomic, readonly) ProtocolFeatureSymbology *observingymbology;
-@property (strong, nonatomic, readonly) ProtocolFeatureSymbology *notObservingymbology;
+@property (strong, nonatomic, readonly) ProtocolFeatureSymbology *observingSymbology;
+@property (strong, nonatomic, readonly) ProtocolFeatureSymbology *notObservingSymbology;
 
 @end

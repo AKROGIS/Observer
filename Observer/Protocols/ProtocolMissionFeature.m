@@ -31,8 +31,8 @@
 // so I just load it all up once when initialized
 - (void)defineMissionReadonlyProperties:(NSDictionary *)json version:(NSInteger)version
 {
-    _observingymbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"on-symbology"] version:version];
-    _notObservingymbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"off-symbology"] version:version];
+    _observingSymbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"on-symbology"] version:version];
+    _notObservingSymbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"off-symbology"] version:version];
 }
 
 @end
