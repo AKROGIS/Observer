@@ -1115,10 +1115,12 @@
 - (void)startObserving
 {
     AKRLog(@"start observing");
-    self.isObserving = YES;
-    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:NO];
-    [self saveNewMissionPropertyEditAttributes:YES];
-    [self enableControls];
+    if ([self saveNewMissionPropertyEditAttributes:YES])
+    {
+        self.isObserving = YES;
+        self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:NO];
+        [self enableControls];
+    }
 }
 
 - (void)stopObserving
@@ -1733,7 +1735,7 @@
     return graphic;
 }
 
-- (void)saveNewMissionPropertyEditAttributes:(BOOL)edit
+- (BOOL)saveNewMissionPropertyEditAttributes:(BOOL)edit
 {
     MissionProperty *missionProperty;
     AGSPoint *mapPoint;
@@ -1752,7 +1754,7 @@
     }
     if (!missionProperty) {
         [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create a new Mission Property." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-        return;
+        return NO;
     }
     missionProperty.observing = self.isObserving;
     AGSGraphic *graphic = [self drawMissionProperty:missionProperty atPoint:mapPoint];
@@ -1762,6 +1764,7 @@
         [self copyAttributesForFeature:self.survey.protocol.missionFeature fromEntity:template toEntity:missionProperty];
     }
     self.currentMissionProperty = missionProperty;
+    return YES;
 }
 
 
