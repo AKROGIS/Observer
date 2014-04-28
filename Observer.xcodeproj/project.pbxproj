@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		391C77A5190AFD40006E220E /* DataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 391C77A4190AFD40006E220E /* DataLoader.m */; };
 		392E8FBD18EF2F030055D312 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 392E8FBC18EF2F030055D312 /* Crashlytics.framework */; };
 		39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */; };
 		39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4D18AC25B100620A3A /* AddFeatureBarButtonItem.m */; };
@@ -127,6 +128,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		391C77A3190AFD40006E220E /* DataLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataLoader.h; sourceTree = "<group>"; };
+		391C77A4190AFD40006E220E /* DataLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataLoader.m; sourceTree = "<group>"; };
 		3929196617BEB6A8008B0FFC /* Todo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Todo.rtf; sourceTree = "<group>"; };
 		392E8FBC18EF2F030055D312 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		39336F4418A1BA2100620A3A /* ProtocolMissionFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolMissionFeature.h; path = Protocols/ProtocolMissionFeature.h; sourceTree = "<group>"; };
@@ -491,6 +494,8 @@
 		39955E50178334BF00D225D7 /* Observer */ = {
 			isa = PBXGroup;
 			children = (
+				391C77A3190AFD40006E220E /* DataLoader.h */,
+				391C77A4190AFD40006E220E /* DataLoader.m */,
 				398908631857F087007B3F67 /* AKRCollectionChanged.h */,
 				398908621857EFF3007B3F67 /* AKRTableViewItem.h */,
 				59C60FED1863FDBF00470791 /* AKRFormatter.h */,
@@ -776,6 +781,7 @@
 				39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */,
 				3982F6CA18C00D040081C3F9 /* AGSMapView+AKRAdditions.m in Sources */,
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
+				391C77A5190AFD40006E220E /* DataLoader.m in Sources */,
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
 				5980662018D16420004830E7 /* UIPopoverController+Presenting.m in Sources */,
 				398908601857EDE1007B3F67 /* NSIndexSet+indexPath.m in Sources */,

@@ -26,6 +26,22 @@
     return [dateFormatter dateFromString:dateString];
 }
 
++ (NSDate *)datetimeFromISOString:(NSString *)dateString
+{
+    if (!dateString) {
+        return nil;
+    }
+    static NSDateFormatter *dateFormatter = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dateFormatter = [NSDateFormatter new];
+        [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+        [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd' 'HH':'mm':'ss"];
+        [dateFormatter setLenient:YES];
+    });
+    return [dateFormatter dateFromString:dateString];
+}
+
 + (NSString *)stringFromBytes:(unsigned long long)bytes
 {
     static NSByteCountFormatter *formatter = nil;

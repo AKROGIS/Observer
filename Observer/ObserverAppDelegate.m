@@ -14,6 +14,7 @@
 #import "MapCollection.h"
 #import "ProtocolCollection.h"
 #import <Crashlytics/Crashlytics.h>
+#import "DataLoader.h"
 
 #define kAlertViewNewProtocol      1
 #define kAlertViewNewVersion       2
@@ -33,6 +34,9 @@
 {
     //Activate the Crash reporting system
     [Crashlytics startWithAPIKey:@"48e51797d0250122096db58d369feab2cac2da33"];
+
+    AKRLog(@"Start loading CSV data");
+    [[[DataLoader alloc] init] loadData];
 
     Map *savedMap = [[Map alloc] initWithLocalTileCache:[Settings manager].activeMapURL];
     if (savedMap.isValid) {
