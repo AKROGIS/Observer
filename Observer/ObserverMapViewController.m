@@ -496,8 +496,10 @@
             if ([self isNewLocation:location]) {
                 GpsPoint *oldPoint = self.lastGpsPointSaved;
                 GpsPoint *gpsPoint = [self createGpsPoint:location];
-                [self drawGpsPointAtMapPoint:[self mapPointFromGpsPoint:gpsPoint]];
-                if (oldPoint) {
+                if (gpsPoint) {
+                    [self drawGpsPointAtMapPoint:[self mapPointFromGpsPoint:gpsPoint]];
+                }
+                if (oldPoint && gpsPoint) {
                     [self drawTrackObserving:self.isObserving from:oldPoint to:gpsPoint];
                 }
             }
@@ -1264,13 +1266,13 @@
     //Mission Property observing tracks
     NSString * name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
     graphicsLayer = [[AGSGraphicsLayer alloc] init];
-    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.observingymbology.agsLineSymbol]];
+    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.observingSymbology.agsLineSymbol]];
     [self.mapView addMapLayer:graphicsLayer withName:name];
     self.graphicsLayers[name] = graphicsLayer;
     //Mission Property not observing track
     name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
     graphicsLayer = [[AGSGraphicsLayer alloc] init];
-    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.notObservingymbology.agsLineSymbol]];
+    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.notObservingSymbology.agsLineSymbol]];
     [self.mapView addMapLayer:graphicsLayer withName:name];
     self.graphicsLayers[name] = graphicsLayer;
 }
@@ -1459,14 +1461,18 @@
     //AKRLog(@"Creating GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
     if (!gpsData.timestamp) {
         AKRLog(@"Can't save a GPS Point without a timestamp!");
-        //return nil; //TODO: added for testing on simulator, remove for production
+        return nil; //TODO: added for testing on simulator, remove for production
     }
     if (self.lastGpsPointSaved && [self.lastGpsPointSaved.timestamp timeIntervalSinceDate:gpsData.timestamp] == 0) {
         return self.lastGpsPointSaved;
     }
     GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:kGpsPointEntityName
                                                        inManagedObjectContext:self.context];
-    NSAssert(gpsPoint, @"%@", @"Could not create a Gps Point in Core Data");
+    if (!gpsPoint) {
+        AKRLog(@"Could not create a Gps Point in Core Data");
+        return nil;
+    }
+
     gpsPoint.mission = self.mission;
     gpsPoint.altitude = gpsData.altitude;
     gpsPoint.course = gpsData.course;
@@ -1475,7 +1481,7 @@
     gpsPoint.latitude = gpsData.coordinate.latitude;
     gpsPoint.longitude = gpsData.coordinate.longitude;
     gpsPoint.speed = gpsData.speed;
-    gpsPoint.timestamp = gpsData.timestamp ? gpsData.timestamp : [NSDate date]; //TODO: added for testing on simulator, remove for production
+    gpsPoint.timestamp = gpsData.timestamp; // ? gpsData.timestamp : [NSDate date]; //TODO: added for testing on simulator, remove for production
     gpsPoint.verticalAccuracy = gpsData.verticalAccuracy;
     self.lastGpsPointSaved = gpsPoint;
     return gpsPoint;
@@ -1526,7 +1532,15 @@
 - (void)addFeatureAtGps:(ProtocolFeature *)feature
 {
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    if (!gpsPoint) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get GPS point for Feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        return;
+    }
     Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
+    if (!observation) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        return;
+    }
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     AGSGraphic *graphic = [self drawObservation:observation atPoint:mapPoint];
     [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
@@ -1627,7 +1641,7 @@
     AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:self.wgs84];
     adhocLocation.latitude = wgs84Point.y;
     adhocLocation.longitude = wgs84Point.x;
-    if (self.lastGpsPointSaved) {
+    if (self.lastGpsPointSaved && [self.lastGpsPointSaved.timestamp timeIntervalSinceDate: [NSDate date]] < kStaleInterval) {
         adhocLocation.timestamp = self.lastGpsPointSaved.timestamp;
         //Used for relating the adhoc observation to where the observer was when the observation was made
     } else {
@@ -1673,6 +1687,10 @@
 - (MissionProperty *)createMissionPropertyAtGpsPoint:(GpsPoint *)gpsPoint
 {
     //AKRLog(@"Creating MissionProperty at GPS point");
+    if (!gpsPoint.timestamp) {
+        AKRLog(@"Unable to create a mission property; timestamp for gps point is nil");
+        return nil;
+    }
     MissionProperty *missionProperty = [self createMissionProperty];
     missionProperty.gpsPoint = gpsPoint;
     return missionProperty;
@@ -1681,8 +1699,14 @@
 - (MissionProperty *)createMissionPropertyAtMapLocation:(AGSPoint *)mapPoint
 {
     //AKRLog(@"Creating MissionProperty at Map point");
+    AdhocLocation *adhocLocation = [self createAdhocLocationWithMapPoint:mapPoint];
+    if (!adhocLocation.timestamp) {
+        AKRLog(@"Unable to create a mission property; timestamp for adhoc location is nil");
+        [self.context deleteObject:adhocLocation];
+        return nil;
+    }
     MissionProperty *missionProperty = [self createMissionProperty];
-    missionProperty.adhocLocation = [self createAdhocLocationWithMapPoint:mapPoint];
+    missionProperty.adhocLocation = adhocLocation;
     return missionProperty;
 }
 
@@ -1727,7 +1751,8 @@
         missionProperty = [self createMissionPropertyAtMapLocation:mapPoint];
     }
     if (!missionProperty) {
-        AKRLog(@"Oh No!, Unable to create a new Mission Property");
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create a new Mission Property." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        return;
     }
     missionProperty.observing = self.isObserving;
     AGSGraphic *graphic = [self drawMissionProperty:missionProperty atPoint:mapPoint];
@@ -2105,6 +2130,10 @@
 
     //create/save current GpsPoint, because it may take a while for the user to enter an angle/distance
     GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    if (!gpsPoint) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get GPS point for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        return;
+    }
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     double currentCourse = gpsPoint.course;
 

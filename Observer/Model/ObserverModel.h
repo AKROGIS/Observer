@@ -40,3 +40,5 @@
 
 #define kTrackOff                        @"Off"
 #define kTrackOn                         @"On"
+
+#define kStaleInterval                   5 //Seconds before lastGpsPoint is considered too old to use.
