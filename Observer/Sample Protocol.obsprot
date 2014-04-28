@@ -2,8 +2,8 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":1,
 	"name":"Test Protocol",
-	"version":1.1,
-	"date":"2014-04-24",
+	"version":1.2,
+	"date":"2014-04-28",
 	"description":"This survey protocol is for for testing various features of the protocol specification",
     "mission":{
 		"attributes":[
@@ -40,11 +40,11 @@
 		},
 		"on-symbology":{
 			"color":"#FF0000",
-			"size":2
+			"size":3
 		},
 		"off-symbology":{
-			"color":"#808080",
-			"size":1
+			"color":"#FFFFC2",
+			"size":2
 		}
 	},
     "features":[
