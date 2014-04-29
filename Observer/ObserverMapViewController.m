@@ -110,7 +110,6 @@
 @property (strong, nonatomic) UIPopoverController *featureSelectorPopoverController;
 @property (strong, nonatomic) UIPopoverController *reviewAttributePopoverController;
 @property (strong, nonatomic) UIPopoverController *editAttributePopoverController;
-@property (strong, nonatomic) UIPopoverController *gpsPointPopoverController;
 
 @property (strong, nonatomic) AGSPoint *popoverMapPoint;
 //TODO: do I need this UINavigationController?
@@ -1903,15 +1902,12 @@
         } else {
             locationButton.title = @"Review Location";
             locationButton.onSelected = ^(){
-                //TODO: Show readonly GPS data table or Adhoc location data table
-                //[[[UIAlertView alloc] initWithTitle:nil message:@"Feature not implemented yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-
                 GpsPointTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"GpsPointTableViewController"];
                 vc.gpsPoint = [self gpsPointFromEntity:entity];
                 vc.adhocLocation = [self adhocLocationFromEntity:entity];
-                self.gpsPointPopoverController = [[UIPopoverController alloc] initWithContentViewController:vc];
-                [self.gpsPointPopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
-
+                CGSize contentSize = self.editAttributePopoverController ? self.editAttributePopoverController.popoverContentSize : self.reviewAttributePopoverController.popoverContentSize;
+                vc.preferredContentSize = contentSize;
+                [self.modalAttributeCollector pushViewController:vc animated:YES];
             };
         }
         [[root.sections lastObject] addElement:locationButton];
