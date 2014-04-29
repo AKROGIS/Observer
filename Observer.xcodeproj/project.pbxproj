@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		391C77AA190F270D006E220E /* GpsPointTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 391C77A9190F270D006E220E /* GpsPointTableViewController.m */; };
 		392E8FBD18EF2F030055D312 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 392E8FBC18EF2F030055D312 /* Crashlytics.framework */; };
 		39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */; };
 		39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4D18AC25B100620A3A /* AddFeatureBarButtonItem.m */; };
@@ -127,6 +128,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		391C77A8190F270D006E220E /* GpsPointTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GpsPointTableViewController.h; sourceTree = "<group>"; };
+		391C77A9190F270D006E220E /* GpsPointTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GpsPointTableViewController.m; sourceTree = "<group>"; };
 		3929196617BEB6A8008B0FFC /* Todo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Todo.rtf; sourceTree = "<group>"; };
 		392E8FBC18EF2F030055D312 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		39336F4418A1BA2100620A3A /* ProtocolMissionFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolMissionFeature.h; path = Protocols/ProtocolMissionFeature.h; sourceTree = "<group>"; };
@@ -345,6 +348,8 @@
 				39A836CA185FDAB8008BF4E3 /* AttributeViewController.m */,
 				39C3B84918B816020041FF36 /* FeatureSelectorTableViewController.h */,
 				39C3B84A18B816020041FF36 /* FeatureSelectorTableViewController.m */,
+				391C77A8190F270D006E220E /* GpsPointTableViewController.h */,
+				391C77A9190F270D006E220E /* GpsPointTableViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -796,6 +801,7 @@
 				39D1D94C17B464B40014C68F /* LocationAngleDistance.m in Sources */,
 				398908681857F192007B3F67 /* SurveyDetailViewController.m in Sources */,
 				398908691857F192007B3F67 /* SurveyTableViewCell.m in Sources */,
+				391C77AA190F270D006E220E /* GpsPointTableViewController.m in Sources */,
 				398908411857ECE4007B3F67 /* SProtocol.m in Sources */,
 				3989083B1857EBF6007B3F67 /* ProtocolCollection.m in Sources */,
 				39C53E61187F411B00C0CECE /* AutoPanStateMachine.m in Sources */,
