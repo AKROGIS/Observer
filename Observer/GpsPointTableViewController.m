@@ -79,13 +79,13 @@
                     cell.textLabel.text = @"Latitude";
                     cell.detailTextLabel.text = self.gpsPoint.horizontalAccuracy < 0
                     ? @"Unknown"
-                    : [NSString stringWithFormat:@"%g°",self.gpsPoint.latitude] ;
+                    : [NSString stringWithFormat:@"%0.5f°",self.gpsPoint.latitude] ;
                     break;
                 case 2:
                     cell.textLabel.text = @"Longitude";
                     cell.detailTextLabel.text = self.gpsPoint.horizontalAccuracy < 0
                     ? @"Unknown"
-                    : [NSString stringWithFormat:@"%g°",self.gpsPoint.longitude] ;
+                    : [NSString stringWithFormat:@"%0.5f°",self.gpsPoint.longitude] ;
                     break;
                 case 3:
                     cell.textLabel.text = @"Error";
@@ -97,13 +97,13 @@
                     cell.textLabel.text = @"Altitude";
                     cell.detailTextLabel.text = self.gpsPoint.verticalAccuracy < 0
                     ? @"Unknown"
-                    : [NSString stringWithFormat:@"%g\u00B1%g meters ",self.gpsPoint.altitude,self.gpsPoint.verticalAccuracy] ;
+                    : [NSString stringWithFormat:@"%0.0f\u00B1%0.0f meters ",self.gpsPoint.altitude,self.gpsPoint.verticalAccuracy] ;
                     break;
                 case 5:
                     cell.textLabel.text = @"Speed";
                     cell.detailTextLabel.text = self.gpsPoint.speed < 0
                     ? @"Unknown"
-                    : [NSString stringWithFormat:@"%g meters/second",self.gpsPoint.speed];
+                    : [NSString stringWithFormat:@"%0.1f mph",self.gpsPoint.speed*2.23694];
                     break;
                 case 6:
                     cell.textLabel.text = @"Course ";
@@ -125,11 +125,11 @@
                     break;
                 case 1:
                     cell.textLabel.text = @"Latitude";
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%g°",self.adhocLocation.latitude];
+                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%0.5f°",self.adhocLocation.latitude];
                     break;
                 case 2:
                     cell.textLabel.text = @"Longitude";
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%g°",self.adhocLocation.longitude];
+                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%0.5f°",self.adhocLocation.longitude];
                     break;
                 default:
                     break;
