@@ -1998,11 +1998,17 @@
     AttributeViewController *dialog = [self.modalAttributeCollector.viewControllers firstObject];
     [dialog.root fetchValueUsingBindingsIntoObject:dict];
     NSManagedObject *obj = dialog.managedObject;
-    for (NSString *aKey in dict){
-        //This will throw an exception if the key is not valid. This will only happen with a bad protocol file - catch problem in testing, or protocol load
-        NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,aKey];
-        //AKRLog(@"Saving Attributes from Dialog key:%@ (%@) Value:%@", aKey, obscuredKey, [dict valueForKey:aKey]);
-        [obj setValue:[dict valueForKey:aKey] forKey:obscuredKey];
+    @try {
+        for (NSString *aKey in dict){
+            //This will throw an exception if the key is not valid. This will only happen with a bad protocol file - catch problem in testing, or protocol load
+            NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,aKey];
+            //AKRLog(@"Saving Attributes from Dialog key:%@ (%@) Value:%@", aKey, obscuredKey, [dict valueForKey:aKey]);
+            [obj setValue:[dict valueForKey:aKey] forKey:obscuredKey];
+        }
+    }
+    @catch (NSException *ex) {
+        NSString *msg = [NSString stringWithFormat:@"%@\nCheck the protocol file.", ex.description];
+        [[[UIAlertView alloc] initWithTitle:@"Save Failed" message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
     }
     //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
     [self dismissViewControllerAnimated:YES completion:nil];
