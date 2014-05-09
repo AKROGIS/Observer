@@ -1605,7 +1605,7 @@
 - (AGSGraphic *)drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
 {
     //AKRLog(@"    Drawing observation type %@",observation.entity.name);
-    NSDate *timestamp = observation.gpsPoint ? observation.gpsPoint.timestamp : observation.adhocLocation.timestamp;
+    NSDate *timestamp = [observation timestamp];
     NSAssert(timestamp, @"An observation in %@ has no timestamp", observation.entity.name);
     NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
@@ -1699,7 +1699,7 @@
 
 - (AGSGraphic *)drawMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
 {
-    NSDate *timestamp = missionProperty.gpsPoint ? missionProperty.gpsPoint.timestamp : missionProperty.adhocLocation.timestamp;
+    NSDate *timestamp = [missionProperty timestamp];
     NSAssert(timestamp, @"A mission property has no timestamp");
     NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
