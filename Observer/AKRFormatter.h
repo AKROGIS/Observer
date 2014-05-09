@@ -12,6 +12,7 @@
 
 + (NSDate *)dateFromISOString:(NSString *)dateString;
 + (NSString *)longDateFromString:(NSDate *)date;
++ (NSString *)isoStringFromDate:(NSDate *)date;
 + (NSString *)stringFromBytes:(unsigned long long)bytes;
 + (NSString *)stringWith3SigFigsFromDouble:(double)number;
 + (NSString *)stringWith4SigFigsFromDouble:(double)number;

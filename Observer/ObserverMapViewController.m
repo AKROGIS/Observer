@@ -33,6 +33,7 @@
 #import "AGSMapView+AKRAdditions.h"
 #import "UIPopoverController+Presenting.h"
 #import "GpsPointTableViewController.h"
+#import "Survey+CsvExport.h"
 
 //Views
 #import "AutoPanButton.h"
@@ -48,7 +49,6 @@
 #define kActionSheetSelectLocation 1
 #define kActionSheetSelectFeature  2
 
-#define kTimestampKey              @"timestamp"
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 #define kCancelButtonText          NSLocalizedString(@"Cancel", @"Cancel button text")
 
@@ -2216,6 +2216,8 @@
     request = [NSFetchRequest fetchRequestWithEntityName:kMapEntityName];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
     AKRLog(@"  %d Maps", results.count);
+    AKRLog(@"  All GPS as CSV:\n%@",[self.survey csvForGpsPointsMatching:nil]);
+    AKRLog(@"  GPS (last 7 days) as CSV:\n%@",[self.survey csvForGpsPointsSince:[[NSDate date] dateByAddingTimeInterval:-(60*60*24*20)]]);
 #endif
 }
 

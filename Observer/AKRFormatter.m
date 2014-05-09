@@ -41,6 +41,22 @@
     return [outDateFormatter stringFromDate:date];
 }
 
++ (NSString *)isoStringFromDate:(NSDate *)date
+{
+    if (!date) {
+        return nil;
+    }
+    static NSDateFormatter *out2DateFormatter = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        out2DateFormatter = [NSDateFormatter new];
+        [out2DateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+        [out2DateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+        [out2DateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
+    });
+    return [out2DateFormatter stringFromDate:date];
+}
+
 + (NSString *)stringFromBytes:(unsigned long long)bytes
 {
     static NSByteCountFormatter *formatter = nil;
