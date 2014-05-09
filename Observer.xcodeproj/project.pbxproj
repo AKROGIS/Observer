@@ -16,6 +16,9 @@
 		39449F1418ADABCF00A1F8FE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39449F1618ADABCF00A1F8FE /* Localizable.strings */; };
 		394BDD13191D2FEC000C8A4B /* GpsPoint+CsvExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 394BDD12191D2FEC000C8A4B /* GpsPoint+CsvExport.m */; };
 		394BDD17191D33C4000C8A4B /* Survey+CsvExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 394BDD16191D33C4000C8A4B /* Survey+CsvExport.m */; };
+		394BDD1A191D4867000C8A4B /* Observation+Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 394BDD19191D4867000C8A4B /* Observation+Location.m */; };
+		394BDD1D191D6802000C8A4B /* MissionProperty+Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 394BDD1C191D6802000C8A4B /* MissionProperty+Location.m */; };
+		394BDD20191D6BFE000C8A4B /* GpsPoint+Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 394BDD1F191D6BFE000C8A4B /* GpsPoint+Location.m */; };
 		394CC2381858E05F00FA859C /* libQuickDialog.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 394CC2351858DFFA00FA859C /* libQuickDialog.a */; };
 		394CC23E1858EF5800FA859C /* ObserverModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 394CC23C1858EF5800FA859C /* ObserverModel.xcdatamodeld */; };
 		394CC2411858F11700FA859C /* MapReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC2401858F11700FA859C /* MapReference.m */; };
@@ -151,6 +154,12 @@
 		394BDD12191D2FEC000C8A4B /* GpsPoint+CsvExport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "GpsPoint+CsvExport.m"; path = "Model/GpsPoint+CsvExport.m"; sourceTree = "<group>"; };
 		394BDD15191D33C4000C8A4B /* Survey+CsvExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Survey+CsvExport.h"; path = "Surveys/Survey+CsvExport.h"; sourceTree = "<group>"; };
 		394BDD16191D33C4000C8A4B /* Survey+CsvExport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Survey+CsvExport.m"; path = "Surveys/Survey+CsvExport.m"; sourceTree = "<group>"; };
+		394BDD18191D4867000C8A4B /* Observation+Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Observation+Location.h"; path = "Model/Observation+Location.h"; sourceTree = "<group>"; };
+		394BDD19191D4867000C8A4B /* Observation+Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Observation+Location.m"; path = "Model/Observation+Location.m"; sourceTree = "<group>"; };
+		394BDD1B191D6802000C8A4B /* MissionProperty+Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MissionProperty+Location.h"; path = "Model/MissionProperty+Location.h"; sourceTree = "<group>"; };
+		394BDD1C191D6802000C8A4B /* MissionProperty+Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MissionProperty+Location.m"; path = "Model/MissionProperty+Location.m"; sourceTree = "<group>"; };
+		394BDD1E191D6BFE000C8A4B /* GpsPoint+Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "GpsPoint+Location.h"; path = "Model/GpsPoint+Location.h"; sourceTree = "<group>"; };
+		394BDD1F191D6BFE000C8A4B /* GpsPoint+Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "GpsPoint+Location.m"; path = "Model/GpsPoint+Location.m"; sourceTree = "<group>"; };
 		394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = QuickDialog.xcodeproj; path = QuickDialog/QuickDialog.xcodeproj; sourceTree = "<group>"; };
 		394CC23D1858EF5800FA859C /* ObserverModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ObserverModel.xcdatamodel; sourceTree = "<group>"; };
 		394CC23F1858F11700FA859C /* MapReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapReference.h; path = Model/MapReference.h; sourceTree = "<group>"; };
@@ -572,6 +581,12 @@
 				39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */,
 				394BDD11191D2FEC000C8A4B /* GpsPoint+CsvExport.h */,
 				394BDD12191D2FEC000C8A4B /* GpsPoint+CsvExport.m */,
+				394BDD18191D4867000C8A4B /* Observation+Location.h */,
+				394BDD19191D4867000C8A4B /* Observation+Location.m */,
+				394BDD1B191D6802000C8A4B /* MissionProperty+Location.h */,
+				394BDD1C191D6802000C8A4B /* MissionProperty+Location.m */,
+				394BDD1E191D6BFE000C8A4B /* GpsPoint+Location.h */,
+				394BDD1F191D6BFE000C8A4B /* GpsPoint+Location.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -791,6 +806,7 @@
 				59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */,
 				39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */,
 				3982F6CA18C00D040081C3F9 /* AGSMapView+AKRAdditions.m in Sources */,
+				394BDD1D191D6802000C8A4B /* MissionProperty+Location.m in Sources */,
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
 				5980662018D16420004830E7 /* UIPopoverController+Presenting.m in Sources */,
@@ -799,6 +815,7 @@
 				3989084D1857ED00007B3F67 /* Survey.m in Sources */,
 				59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */,
 				398908611857EDE1007B3F67 /* NSURL+unique.m in Sources */,
+				394BDD1A191D4867000C8A4B /* Observation+Location.m in Sources */,
 				3989083D1857EBF6007B3F67 /* ProtocolSelectViewController.m in Sources */,
 				3989083E1857EBF6007B3F67 /* ProtocolTableViewCell.m in Sources */,
 				394CC2441858F11800FA859C /* MissionProperty.m in Sources */,
@@ -828,6 +845,7 @@
 				398908241857EB2F007B3F67 /* MapDetailViewController.m in Sources */,
 				398908261857EB2F007B3F67 /* MapTableViewCell.m in Sources */,
 				3989083C1857EBF6007B3F67 /* ProtocolDetailViewController.m in Sources */,
+				394BDD20191D6BFE000C8A4B /* GpsPoint+Location.m in Sources */,
 				398908501857ED00007B3F67 /* SurveyObjectModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

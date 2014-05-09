@@ -34,6 +34,9 @@
 #import "UIPopoverController+Presenting.h"
 #import "GpsPointTableViewController.h"
 #import "Survey+CsvExport.h"
+#import "GpsPoint+Location.h"
+#import "Observation+Location.h"
+#import "MissionProperty+Location.h"
 
 //Views
 #import "AutoPanButton.h"
@@ -1360,26 +1363,7 @@
 
 - (AGSPoint *)mapPointFromGpsPoint:(GpsPoint *)gpsPoint
 {
-    AGSPoint *point = [AGSPoint pointWithX:gpsPoint.longitude y:gpsPoint.latitude spatialReference:self.wgs84];
-    point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:point toSpatialReference:self.mapView.spatialReference];
-    return point;
-}
-
-- (AGSPoint *)mapPointFromAdhocLocation:(AdhocLocation *)adhocLocation
-{
-    AGSPoint *point = [AGSPoint pointWithX:adhocLocation.longitude y:adhocLocation.latitude spatialReference:self.wgs84];
-    point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:point toSpatialReference:self.mapView.spatialReference];
-    return point;
-}
-
-- (AGSPoint *)mapPointFromAngleDistance:(AngleDistanceLocation *)angleDistance gpsPoint:(GpsPoint *)gpsPoint
-{
-    LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:angleDistance.direction
-                                                                       protocolFeature:nil //A protocol is not required to reconsistute an angle/distance
-                                                                         absoluteAngle:angleDistance.angle
-                                                                              distance:angleDistance.distance];
-    AGSPoint *point = [location pointFromPoint:[self mapPointFromGpsPoint:gpsPoint]];
-    return point;
+    return [gpsPoint pointOfGpsWithSpatialReference:self.mapView.spatialReference];
 }
 
 
@@ -1613,16 +1597,7 @@
 - (void)loadObservation:(Observation *)observation
 {
     //AKRLog(@"    Loading observation");
-    AGSPoint *point;
-    if (observation.angleDistanceLocation) {
-        point = [self mapPointFromAngleDistance:observation.angleDistanceLocation gpsPoint:observation.gpsPoint];
-    }
-    else if (observation.adhocLocation && !observation.gpsPoint) {
-        point = [self mapPointFromAdhocLocation:observation.adhocLocation];
-    }
-    else if (observation.gpsPoint) {
-        point = [self mapPointFromGpsPoint:observation.gpsPoint];
-    }
+    //AGSPoint *point = [observation pointOfFeatureWithSpatialReference:self.mapView.spatialReference];
     NSAssert(point, @"An observation in %@ has no location", observation.entity.name);
     [self drawObservation:observation atPoint:point];
 }
@@ -1717,12 +1692,7 @@
 - (void)loadMissionProperty:(MissionProperty *)missionProperty
 {
     //AKRLog(@"    Loading missionProperty");
-    AGSPoint *point = nil;
-    if (missionProperty.gpsPoint) {
-        point = [self mapPointFromGpsPoint:missionProperty.gpsPoint];
-    } else {
-        point = [self mapPointFromAdhocLocation:missionProperty.adhocLocation];
-    }
+    AGSPoint *point = [missionProperty pointOfMissionPropertyWithSpatialReference:self.mapView.spatialReference];
     NSAssert(point, @"A mission property has no location");
     [self drawMissionProperty:missionProperty atPoint:point];
 }

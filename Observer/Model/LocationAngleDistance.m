@@ -95,6 +95,29 @@
     return [point pointWithAngle:self.absoluteAngle distance:self.distanceMeters units:AGSSRUnitMeter];
 }
 
+- (CLLocationCoordinate2D)locationFromLocation:(CLLocationCoordinate2D)startLocation
+{
+    // From http://www.movable-type.co.uk/scripts/latlong.html
+    const double radiusEarthMeters = 6371010.0;
+    double distRatio = self.distanceMeters / radiusEarthMeters;
+    double distRatioSine = sin(distRatio);
+    double distRatioCosine = cos(distRatio);
+    double initialBearingRadians = self.absoluteAngle;
+
+    double startLatRad = startLocation.latitude * M_PI / 180.0;
+    double startLonRad = startLocation.longitude * M_PI / 180.0;
+    double startLatCos = cos(startLatRad);
+    double startLatSin = sin(startLatRad);
+
+    double endLatRads = asin((startLatSin * distRatioCosine) + (startLatCos * distRatioSine * cos(initialBearingRadians)));
+    double endLonRads = startLonRad
+                        + atan2(sin(initialBearingRadians) * distRatioSine * startLatCos,
+                                distRatioCosine - startLatSin * sin(endLatRads));
+    CLLocationCoordinate2D location;
+    location.latitude = endLatRads * 180.0 / M_PI;
+    location.longitude = endLonRads * 180.0 / M_PI;
+    return location;
+}
 
 #pragma mark - Private Methods
 
