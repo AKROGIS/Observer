@@ -43,6 +43,7 @@
     NSEntityDescription *observation = [[mom entitiesByName] valueForKey:kObservationEntityName];
     NSEntityDescription *entity = [[NSEntityDescription alloc] init];
     entity.name = entityName;
+    entity.managedObjectClassName = @"Observation";
     observation.subentities = [[observation subentities] arrayByAddingObject:entity];
     mom.entities = [[mom entities] arrayByAddingObject:entity];
     [entity setProperties:attributes];

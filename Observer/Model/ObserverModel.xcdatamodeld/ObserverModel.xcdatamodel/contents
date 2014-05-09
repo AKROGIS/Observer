@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5063" systemVersion="13C64" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13C1021" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="AdhocLocation" representedClassName="AdhocLocation" syncable="YES">
         <attribute name="latitude" attributeType="Double" minValueString="-90" maxValueString="90" syncable="YES"/>
         <attribute name="longitude" attributeType="Double" minValueString="-180" maxValueString="180" syncable="YES"/>
@@ -44,7 +44,7 @@
         <relationship name="gpsPoint" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GpsPoint" inverseName="missionProperty" inverseEntity="GpsPoint" syncable="YES"/>
         <relationship name="mission" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Mission" inverseName="missionProperties" inverseEntity="Mission" syncable="YES"/>
     </entity>
-    <entity name="Observation" representedClassName="" syncable="YES">
+    <entity name="Observation" representedClassName="Observation" syncable="YES">
         <relationship name="adhocLocation" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AdhocLocation" inverseName="observation" inverseEntity="AdhocLocation" syncable="YES"/>
         <relationship name="angleDistanceLocation" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AngleDistanceLocation" inverseName="observation" inverseEntity="AngleDistanceLocation" syncable="YES"/>
         <relationship name="gpsPoint" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GpsPoint" inverseName="observation" inverseEntity="GpsPoint" syncable="YES"/>
