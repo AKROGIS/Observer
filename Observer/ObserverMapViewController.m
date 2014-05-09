@@ -1597,7 +1597,7 @@
 - (void)loadObservation:(Observation *)observation
 {
     //AKRLog(@"    Loading observation");
-    //AGSPoint *point = [observation pointOfFeatureWithSpatialReference:self.mapView.spatialReference];
+    AGSPoint *point = [observation pointOfFeatureWithSpatialReference:self.mapView.spatialReference];
     NSAssert(point, @"An observation in %@ has no location", observation.entity.name);
     [self drawObservation:observation atPoint:point];
 }
