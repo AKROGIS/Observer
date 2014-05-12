@@ -2186,8 +2186,12 @@
     request = [NSFetchRequest fetchRequestWithEntityName:kMapEntityName];
     results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
     AKRLog(@"  %d Maps", results.count);
-    AKRLog(@"  All GPS as CSV:\n%@",[self.survey csvForGpsPointsMatching:nil]);
-    AKRLog(@"  GPS (last 7 days) as CSV:\n%@",[self.survey csvForGpsPointsSince:[[NSDate date] dateByAddingTimeInterval:-(60*60*24*20)]]);
+    //AKRLog(@"  All GPS as CSV:\n%@",[self.survey csvForGpsPointsMatching:nil]);
+    AKRLog(@"  GPS (last 7 days) as CSV:\n%@",[self.survey csvForGpsPointsSince:[[NSDate date] dateByAddingTimeInterval:-(60*60*24*7)]]);
+    NSDictionary *dict = [self.survey csvForFeaturesMatching:nil];
+    for (NSString *key in dict){
+        AKRLog(@"\n   Observations of %@\n%@\n",key,dict[key]);
+    }
 #endif
 }
 

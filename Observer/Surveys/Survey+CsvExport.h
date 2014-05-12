@@ -13,4 +13,10 @@
 - (NSString *)csvForGpsPointsMatching:(NSPredicate *)predicate;
 - (NSString *)csvForGpsPointsSince:(NSDate *)timestamp;
 
+- (NSString *)csvForFeature:(ProtocolFeature *)feature matching:(NSPredicate *)predicate;
+- (NSString *)csvForFeature:(ProtocolFeature *)feature since:(NSDate *)timestamp;
+
+- (NSDictionary *)csvForFeaturesMatching:(NSPredicate *)predicate;
+- (NSDictionary *)csvForFeaturesSince:(NSDate *)timestamp;
+
 @end
