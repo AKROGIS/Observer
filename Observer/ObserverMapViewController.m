@@ -321,14 +321,7 @@
 - (void)pleaseAddFeature:(AddFeatureBarButtonItem *)sender
 {
     ProtocolFeature *feature = sender.feature;
-    WaysToLocateFeature locationMethod = feature.allowedLocations.defaultNonTouchChoice;
-    if (!locationMethod) {
-        if (!feature.preferredLocationMethod) {
-            feature.preferredLocationMethod = feature.allowedLocations.initialNonTouchChoice;
-        }
-        locationMethod = feature.preferredLocationMethod;
-    }
-    [self addFeature:feature withNonTouchLocationMethod:locationMethod];
+    [self addFeature:feature withNonTouchLocationMethod:feature.locationMethod];
 }
 
 - (void)selectFeatureLocationMethod:(UILongPressGestureRecognizer *)sender

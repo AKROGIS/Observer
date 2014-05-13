@@ -37,4 +37,7 @@
 // The user selected location method
 @property (nonatomic) WaysToLocateFeature preferredLocationMethod;
 
+// The default (default or initial or preferred) location method
+- (WaysToLocateFeature) locationMethod;
+
 @end

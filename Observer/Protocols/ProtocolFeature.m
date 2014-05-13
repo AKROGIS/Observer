@@ -108,4 +108,16 @@
     return nil;
 }
 
+- (WaysToLocateFeature) locationMethod
+{
+    WaysToLocateFeature locationMethod = self.allowedLocations.defaultNonTouchChoice;
+    if (!locationMethod) {
+        if (!self.preferredLocationMethod) {
+            self.preferredLocationMethod = self.allowedLocations.initialNonTouchChoice;
+        }
+        locationMethod = self.preferredLocationMethod;
+    }
+    return locationMethod;
+}
+
 @end
