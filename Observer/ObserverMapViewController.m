@@ -1120,11 +1120,12 @@
 - (void)startObserving
 {
     AKRLog(@"start observing");
-    if ([self saveNewMissionPropertyEditAttributes:YES])
-    {
-        self.isObserving = YES;
+    self.isObserving = YES;
+    if ([self saveNewMissionPropertyEditAttributes:YES]){
         self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:NO];
         [self enableControls];
+    } else {
+        self.isObserving = NO;
     }
 }
 
