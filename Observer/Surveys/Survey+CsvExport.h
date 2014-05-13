@@ -19,4 +19,7 @@
 - (NSDictionary *)csvForFeaturesMatching:(NSPredicate *)predicate;
 - (NSDictionary *)csvForFeaturesSince:(NSDate *)timestamp;
 
+- (NSString *)csvForTrackLogMatching:(NSPredicate *)predicate;
+- (NSString *)csvForTrackLogSince:(NSDate *)timestamp;
+
 @end

@@ -2188,6 +2188,7 @@
     AKRLog(@"  %d Maps", results.count);
     //AKRLog(@"  All GPS as CSV:\n%@",[self.survey csvForGpsPointsMatching:nil]);
     AKRLog(@"  GPS (last 7 days) as CSV:\n%@",[self.survey csvForGpsPointsSince:[[NSDate date] dateByAddingTimeInterval:-(60*60*24*7)]]);
+    AKRLog(@"  TrackLog Summary as CSV:\n%@",[self.survey csvForTrackLogMatching:nil]);
     NSDictionary *dict = [self.survey csvForFeaturesMatching:nil];
     for (NSString *key in dict){
         AKRLog(@"\n   Observations of %@\n%@\n",key,dict[key]);
