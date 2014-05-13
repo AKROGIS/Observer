@@ -18,7 +18,7 @@
 
 - (NSString *)asCSV
 {
-    return [NSString stringWithFormat:@"%g,%g,WGS84,%g,%0.6f,%0.6f,%g,%@,%g", self.altitude, self.course, self.horizontalAccuracy, self.latitude, self.longitude, self.speed, [AKRFormatter isoStringFromDate:self.timestamp], self.verticalAccuracy];
+    return [NSString stringWithFormat:@"%g,%g,WGS84,%g,%0.6f,%0.6f,%g,%@,%g", self.altitude, self.course, self.horizontalAccuracy, self.latitude, self.longitude, self.speed, [AKRFormatter utcIsoStringFromDate:self.timestamp], self.verticalAccuracy];
 }
 
 @end

@@ -29,7 +29,7 @@
     CLLocationCoordinate2D featureLocation = [self locationOfFeature];
     CLLocationCoordinate2D observerLocation = [self locationOfObserver];
     NSMutableString *csv = [NSMutableString stringWithFormat:@"%@,WGS84,%0.6f,%0.6f,%0.6f,%0.6f",
-                            [AKRFormatter isoStringFromDate:[self timestamp]],
+                            [AKRFormatter utcIsoStringFromDate:[self timestamp]],
                             featureLocation.latitude, featureLocation.longitude,
                             observerLocation.latitude, observerLocation.longitude];
 

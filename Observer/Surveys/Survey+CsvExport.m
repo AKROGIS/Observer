@@ -125,8 +125,8 @@
     NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSDayCalendarUnit inUnit:NSYearCalendarUnit forDate:start.timestamp];
     NSMutableString *csv;
     csv = [NSMutableString stringWithFormat:@"%@,%@,%0.6f,%0.6f,%@,%@,%0.6f,%0.6f,WGS84,%g,%d,%u,%@",
-            [AKRFormatter isoStringFromDate:start.timestamp], @"", start.latitude, start.longitude,
-            [AKRFormatter isoStringFromDate:end.timestamp], @"", end.latitude, end.longitude,
+            [AKRFormatter utcIsoStringFromDate:start.timestamp], [AKRFormatter localIsoStringFromDate:start.timestamp], start.latitude, start.longitude,
+            [AKRFormatter utcIsoStringFromDate:end.timestamp], [AKRFormatter localIsoStringFromDate:start.timestamp], end.latitude, end.longitude,
             0.0, year, dayOfYear, (props.observing ? @"Yes" : @"No")];
 
     //get the variable attributes based on the feature type
