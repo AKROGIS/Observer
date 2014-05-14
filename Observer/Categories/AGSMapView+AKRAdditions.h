@@ -12,4 +12,10 @@
 
 - (CGPoint)nearestScreenPoint :(AGSPoint *)point;
 
+- (void)clearGraphicsLayers;
+
+- (BOOL)isProjected;
+
+- (BOOL)isAutoRotating;
+
 @end

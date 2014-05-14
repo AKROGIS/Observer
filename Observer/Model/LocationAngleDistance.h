@@ -55,8 +55,6 @@
 //convenience initializer with default values of 0 for deadAhead, nil for protocol feature and -1 for angle and distance.
 - (id) init;
 
-@property (strong,nonatomic) AGSPoint *gpsPoint;
-
 //the course (or heading) for dead ahead (positive = clockwise, with 0 = north)
 //default value = 0.0
 @property (nonatomic,readonly) double deadAhead;
@@ -101,6 +99,7 @@
 //The input point is the point of reference for the angle/distance measurements
 //Requires non-null input and 0 <= deadAhead, 0 < distanceMeters, 0 <= absoluteAngle
 - (AGSPoint *) pointFromPoint:(AGSPoint *)point;
+- (CLLocationCoordinate2D)locationFromLocation:(CLLocationCoordinate2D)location;
 
 
 @end

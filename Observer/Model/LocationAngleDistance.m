@@ -95,6 +95,60 @@
     return [point pointWithAngle:self.absoluteAngle distance:self.distanceMeters units:AGSSRUnitMeter];
 }
 
+- (CLLocationCoordinate2D)locationFromLocation:(CLLocationCoordinate2D)location
+{
+    //Find the UTM zone based on our lat/long, then use AGS to create a LL point
+    // project to UTM, do angle/distance offset, then project new UTM point to LL
+    NSUInteger zone = 1 + (NSUInteger)((180 + location.longitude)/6.0);
+    NSUInteger wkid = location.latitude < 0 ? 32700 + zone : 32600 + zone;
+    AGSSpatialReference *utm = [AGSSpatialReference spatialReferenceWithWKID:wkid];
+    AGSSpatialReference *wgs84  = [AGSSpatialReference wgs84SpatialReference];
+    AGSPoint *startLL = [AGSPoint pointFromLocation:location spatialReference:wgs84];
+    AGSGeometryEngine *ge = [AGSGeometryEngine defaultGeometryEngine];
+    AGSPoint *startUTM = (AGSPoint *)[ge projectGeometry:startLL toSpatialReference:utm];
+    AGSPoint *endUTM = [startUTM pointWithAngle:self.absoluteAngle distance:self.distanceMeters units:AGSSRUnitMeter];
+    AGSPoint *endLL = (AGSPoint *)[ge projectGeometry:endUTM toSpatialReference:wgs84];
+    CLLocationCoordinate2D newLocation;
+    newLocation.latitude = endLL.y;
+    newLocation.longitude = endLL.x;
+    return newLocation;
+}
+
+//- (CLLocationCoordinate2D)locationFromLocation1:(CLLocationCoordinate2D)location
+//{
+//    AGSSpatialReference *wgs84  = [AGSSpatialReference wgs84SpatialReference];
+//    AGSPoint *startLL = [AGSPoint pointFromLocation:location spatialReference:wgs84];
+//    AGSPoint *endLL = [startLL pointWithAngle:self.absoluteAngle distance:self.distanceMeters units:AGSSRUnitMeter];
+//    CLLocationCoordinate2D newLocation;
+//    newLocation.latitude = endLL.y;
+//    newLocation.longitude = endLL.x;
+//    return newLocation;
+//}
+
+//- (CLLocationCoordinate2D)locationFromLocation2:(CLLocationCoordinate2D)startLocation
+//{
+//    // haversine formula From http://www.movable-type.co.uk/scripts/latlong.html
+//    const double radiusEarthMeters = 6371010.0;
+//    double distRatio = self.distanceMeters / radiusEarthMeters;
+//    double distRatioSine = sin(distRatio);
+//    double distRatioCosine = cos(distRatio);
+//    double initialBearingRadians = self.absoluteAngle;
+//
+//    double startLatRad = startLocation.latitude * M_PI / 180.0;
+//    double startLonRad = startLocation.longitude * M_PI / 180.0;
+//    double startLatCos = cos(startLatRad);
+//    double startLatSin = sin(startLatRad);
+//
+//    double endLatRads = asin((startLatSin * distRatioCosine) + (startLatCos * distRatioSine * cos(initialBearingRadians)));
+//    double endLonRads = startLonRad
+//    + atan2(sin(initialBearingRadians) * distRatioSine * startLatCos,
+//            distRatioCosine - startLatSin * sin(endLatRads));
+//    CLLocationCoordinate2D location;
+//    location.latitude = endLatRads * 180.0 / M_PI;
+//    location.longitude = endLonRads * 180.0 / M_PI;
+//    return location;
+//}
+
 
 #pragma mark - Private Methods
 
@@ -116,6 +170,7 @@
     AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleDirection : [Settings manager].angleDistanceAngleDirection;
     double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
     double localAngle = referenceAngle + direction * (angle - self.deadAhead);
+    localAngle = fmod(localAngle, 360.0);
     return [NSNumber numberWithDouble:localAngle];
 }
 

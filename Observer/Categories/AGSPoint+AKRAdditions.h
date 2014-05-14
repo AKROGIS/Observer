@@ -23,4 +23,6 @@
  */
 -(AGSPoint *)pointWithAngle:(double)angle distance:(double)distance units:(AGSSRUnit)units;
 
++ (AGSPoint *)pointFromLocation:(CLLocationCoordinate2D)location spatialReference:(AGSSpatialReference*)spatialReference;
+
 @end

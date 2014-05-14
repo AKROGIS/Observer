@@ -26,7 +26,7 @@
     return [dateFormatter dateFromString:dateString];
 }
 
-+ (NSString *)longDateFromString:(NSDate *)date
++ (NSString *)descriptiveStringFromDate:(NSDate *)date
 {
     if (!date) {
         return nil;
@@ -39,6 +39,37 @@
         [outDateFormatter setDateFormat:@"MMM' 'd', 'y' at 'HH':'mm':'ss.SS' 'zzz"];
     });
     return [outDateFormatter stringFromDate:date];
+}
+
++ (NSString *)utcIsoStringFromDate:(NSDate *)date
+{
+    if (!date) {
+        return nil;
+    }
+    static NSDateFormatter *dateFormatter = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dateFormatter = [NSDateFormatter new];
+        [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+        [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+        [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
+    });
+    return [dateFormatter stringFromDate:date];
+}
+
++ (NSString *)localIsoStringFromDate:(NSDate *)date
+{
+    if (!date) {
+        return nil;
+    }
+    static NSDateFormatter *dateFormatter = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dateFormatter = [NSDateFormatter new];
+        [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+        [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS' 'z"];
+    });
+    return [dateFormatter stringFromDate:date];
 }
 
 + (NSString *)stringFromBytes:(unsigned long long)bytes

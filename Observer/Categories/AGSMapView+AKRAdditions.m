@@ -26,5 +26,28 @@
     return [self toScreenPoint:proximity.point];
 }
 
+- (void)clearGraphicsLayers
+{
+    NSMutableArray *graphicsLayers = [NSMutableArray new];
+    for (AGSLayer *layer in self.mapLayers) {
+        if ([layer isKindOfClass:[AGSGraphicsLayer class]]) {
+            [graphicsLayers addObject:layer];
+        }
+    }
+    for (AGSLayer *layer in graphicsLayers) {
+        [self removeMapLayer:layer];
+    }
+}
+
+- (BOOL)isProjected
+{
+    return self.loaded && self.spatialReference.inLinearUnits;
+}
+
+- (BOOL)isAutoRotating
+{
+    return self.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation ||
+    self.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation;
+}
 
 @end

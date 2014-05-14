@@ -14,6 +14,11 @@
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
 		39449F1418ADABCF00A1F8FE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39449F1618ADABCF00A1F8FE /* Localizable.strings */; };
+		394BDD13191D2FEC000C8A4B /* GpsPoint+CsvExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 394BDD12191D2FEC000C8A4B /* GpsPoint+CsvExport.m */; };
+		394BDD17191D33C4000C8A4B /* Survey+CsvExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 394BDD16191D33C4000C8A4B /* Survey+CsvExport.m */; };
+		394BDD1A191D4867000C8A4B /* Observation+Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 394BDD19191D4867000C8A4B /* Observation+Location.m */; };
+		394BDD1D191D6802000C8A4B /* MissionProperty+Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 394BDD1C191D6802000C8A4B /* MissionProperty+Location.m */; };
+		394BDD20191D6BFE000C8A4B /* GpsPoint+Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 394BDD1F191D6BFE000C8A4B /* GpsPoint+Location.m */; };
 		394CC2381858E05F00FA859C /* libQuickDialog.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 394CC2351858DFFA00FA859C /* libQuickDialog.a */; };
 		394CC23E1858EF5800FA859C /* ObserverModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 394CC23C1858EF5800FA859C /* ObserverModel.xcdatamodeld */; };
 		394CC2411858F11700FA859C /* MapReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC2401858F11700FA859C /* MapReference.m */; };
@@ -54,6 +59,7 @@
 		398908691857F192007B3F67 /* SurveyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908671857F192007B3F67 /* SurveyTableViewCell.m */; };
 		3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989086B1857F399007B3F67 /* AKRDownloadView.m */; };
 		39890DA31858C99E007B3F67 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39890DA21858C99E007B3F67 /* Images.xcassets */; };
+		39946AB0191DA0EA00875D90 /* Observation+CsvExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */; };
 		39955E4B178334BF00D225D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
 		39955E4D178334BF00D225D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4C178334BF00D225D7 /* Foundation.framework */; };
 		39955E4F178334BF00D225D7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4E178334BF00D225D7 /* CoreGraphics.framework */; };
@@ -145,6 +151,16 @@
 		39449F1818ADAC8C00A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		39449F1918AE8A1800A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		39449F1A18AE8AFB00A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		394BDD11191D2FEC000C8A4B /* GpsPoint+CsvExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "GpsPoint+CsvExport.h"; path = "Model/GpsPoint+CsvExport.h"; sourceTree = "<group>"; };
+		394BDD12191D2FEC000C8A4B /* GpsPoint+CsvExport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "GpsPoint+CsvExport.m"; path = "Model/GpsPoint+CsvExport.m"; sourceTree = "<group>"; };
+		394BDD15191D33C4000C8A4B /* Survey+CsvExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Survey+CsvExport.h"; path = "Surveys/Survey+CsvExport.h"; sourceTree = "<group>"; };
+		394BDD16191D33C4000C8A4B /* Survey+CsvExport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Survey+CsvExport.m"; path = "Surveys/Survey+CsvExport.m"; sourceTree = "<group>"; };
+		394BDD18191D4867000C8A4B /* Observation+Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Observation+Location.h"; path = "Model/Observation+Location.h"; sourceTree = "<group>"; };
+		394BDD19191D4867000C8A4B /* Observation+Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Observation+Location.m"; path = "Model/Observation+Location.m"; sourceTree = "<group>"; };
+		394BDD1B191D6802000C8A4B /* MissionProperty+Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MissionProperty+Location.h"; path = "Model/MissionProperty+Location.h"; sourceTree = "<group>"; };
+		394BDD1C191D6802000C8A4B /* MissionProperty+Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MissionProperty+Location.m"; path = "Model/MissionProperty+Location.m"; sourceTree = "<group>"; };
+		394BDD1E191D6BFE000C8A4B /* GpsPoint+Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "GpsPoint+Location.h"; path = "Model/GpsPoint+Location.h"; sourceTree = "<group>"; };
+		394BDD1F191D6BFE000C8A4B /* GpsPoint+Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "GpsPoint+Location.m"; path = "Model/GpsPoint+Location.m"; sourceTree = "<group>"; };
 		394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = QuickDialog.xcodeproj; path = QuickDialog/QuickDialog.xcodeproj; sourceTree = "<group>"; };
 		394CC23D1858EF5800FA859C /* ObserverModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ObserverModel.xcdatamodel; sourceTree = "<group>"; };
 		394CC23F1858F11700FA859C /* MapReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapReference.h; path = Model/MapReference.h; sourceTree = "<group>"; };
@@ -225,6 +241,8 @@
 		3989086A1857F399007B3F67 /* AKRDownloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDownloadView.h; sourceTree = "<group>"; };
 		3989086B1857F399007B3F67 /* AKRDownloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDownloadView.m; sourceTree = "<group>"; };
 		39890DA21858C99E007B3F67 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		39946AAE191DA0EA00875D90 /* Observation+CsvExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Observation+CsvExport.h"; path = "Model/Observation+CsvExport.h"; sourceTree = "<group>"; };
+		39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Observation+CsvExport.m"; path = "Model/Observation+CsvExport.m"; sourceTree = "<group>"; };
 		39955E47178334BF00D225D7 /* Park Observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Park Observer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		39955E4A178334BF00D225D7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39955E4C178334BF00D225D7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -424,6 +442,8 @@
 				3989084A1857ED00007B3F67 /* SurveyObjectModel.m */,
 				3989084B1857ED00007B3F67 /* SurveySelectViewController.h */,
 				3989084C1857ED00007B3F67 /* SurveySelectViewController.m */,
+				394BDD15191D33C4000C8A4B /* Survey+CsvExport.h */,
+				394BDD16191D33C4000C8A4B /* Survey+CsvExport.m */,
 			);
 			name = Surveys;
 			sourceTree = "<group>";
@@ -562,6 +582,16 @@
 				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
 				39C53E5F187F411B00C0CECE /* AutoPanStateMachine.h */,
 				39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */,
+				394BDD11191D2FEC000C8A4B /* GpsPoint+CsvExport.h */,
+				394BDD12191D2FEC000C8A4B /* GpsPoint+CsvExport.m */,
+				394BDD18191D4867000C8A4B /* Observation+Location.h */,
+				394BDD19191D4867000C8A4B /* Observation+Location.m */,
+				394BDD1B191D6802000C8A4B /* MissionProperty+Location.h */,
+				394BDD1C191D6802000C8A4B /* MissionProperty+Location.m */,
+				394BDD1E191D6BFE000C8A4B /* GpsPoint+Location.h */,
+				394BDD1F191D6BFE000C8A4B /* GpsPoint+Location.m */,
+				39946AAE191DA0EA00875D90 /* Observation+CsvExport.h */,
+				39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -766,7 +796,9 @@
 				3989085E1857EDE1007B3F67 /* NSArray+map.m in Sources */,
 				394CC24D1858F11800FA859C /* Mission.m in Sources */,
 				396E1E991899AD4B00B735EF /* ProtocolFeatureAllowedLocations.m in Sources */,
+				394BDD13191D2FEC000C8A4B /* GpsPoint+CsvExport.m in Sources */,
 				398908251857EB2F007B3F67 /* MapSelectViewController.m in Sources */,
+				39946AB0191DA0EA00875D90 /* Observation+CsvExport.m in Sources */,
 				39955E5B178334C000D225D7 /* ObserverAppDelegate.m in Sources */,
 				398908231857EB2F007B3F67 /* MapCollection.m in Sources */,
 				394CC2471858F11800FA859C /* GpsPoint.m in Sources */,
@@ -780,6 +812,7 @@
 				59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */,
 				39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */,
 				3982F6CA18C00D040081C3F9 /* AGSMapView+AKRAdditions.m in Sources */,
+				394BDD1D191D6802000C8A4B /* MissionProperty+Location.m in Sources */,
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
 				5980662018D16420004830E7 /* UIPopoverController+Presenting.m in Sources */,
@@ -788,6 +821,7 @@
 				3989084D1857ED00007B3F67 /* Survey.m in Sources */,
 				59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */,
 				398908611857EDE1007B3F67 /* NSURL+unique.m in Sources */,
+				394BDD1A191D4867000C8A4B /* Observation+Location.m in Sources */,
 				3989083D1857EBF6007B3F67 /* ProtocolSelectViewController.m in Sources */,
 				3989083E1857EBF6007B3F67 /* ProtocolTableViewCell.m in Sources */,
 				394CC2441858F11800FA859C /* MissionProperty.m in Sources */,
@@ -802,6 +836,7 @@
 				398908681857F192007B3F67 /* SurveyDetailViewController.m in Sources */,
 				398908691857F192007B3F67 /* SurveyTableViewCell.m in Sources */,
 				391C77AA190F270D006E220E /* GpsPointTableViewController.m in Sources */,
+				394BDD17191D33C4000C8A4B /* Survey+CsvExport.m in Sources */,
 				398908411857ECE4007B3F67 /* SProtocol.m in Sources */,
 				3989083B1857EBF6007B3F67 /* ProtocolCollection.m in Sources */,
 				39C53E61187F411B00C0CECE /* AutoPanStateMachine.m in Sources */,
@@ -816,6 +851,7 @@
 				398908241857EB2F007B3F67 /* MapDetailViewController.m in Sources */,
 				398908261857EB2F007B3F67 /* MapTableViewCell.m in Sources */,
 				3989083C1857EBF6007B3F67 /* ProtocolDetailViewController.m in Sources */,
+				394BDD20191D6BFE000C8A4B /* GpsPoint+Location.m in Sources */,
 				398908501857ED00007B3F67 /* SurveyObjectModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

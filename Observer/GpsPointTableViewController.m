@@ -73,7 +73,7 @@
             switch (indexPath.row) {
                 case 0:
                     cell.textLabel.text = @"Time";
-                    cell.detailTextLabel.text = [AKRFormatter longDateFromString:self.gpsPoint.timestamp];
+                    cell.detailTextLabel.text = [AKRFormatter descriptiveStringFromDate:self.gpsPoint.timestamp];
                     break;
                 case 1:
                     cell.textLabel.text = @"Latitude";
@@ -121,7 +121,7 @@
             switch (indexPath.row) {
                 case 0:
                     cell.textLabel.text = @"Time";
-                    cell.detailTextLabel.text = [AKRFormatter longDateFromString:self.adhocLocation.timestamp];
+                    cell.detailTextLabel.text = [AKRFormatter descriptiveStringFromDate:self.adhocLocation.timestamp];
                     break;
                 case 1:
                     cell.textLabel.text = @"Latitude";

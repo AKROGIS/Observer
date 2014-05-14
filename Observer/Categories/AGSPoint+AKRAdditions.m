@@ -43,4 +43,11 @@
     }
 }
 
++ (AGSPoint *)pointFromLocation:(CLLocationCoordinate2D)location spatialReference:(AGSSpatialReference*)spatialReference
+{
+    AGSPoint *point = [AGSPoint pointWithX:location.longitude y:location.latitude spatialReference:[AGSSpatialReference wgs84SpatialReference]];
+    point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:point toSpatialReference:spatialReference];
+    return point;
+}
+
 @end
