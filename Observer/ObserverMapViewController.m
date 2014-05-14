@@ -1861,11 +1861,9 @@
         if (angleDistanceLocation) {
             locationButton.title = @"Change Location";
             locationButton.onSelected = ^(){
+                //TODO uncomment this when the method is complete
+                //[self performAngleDistanceSequeWithFeature:feature entity:entity graphic:graphic];
                 [[[UIAlertView alloc] initWithTitle:nil message:@"Feature not implemented yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-                //TODO: Use angleDistanceLocation and self.survey.protocol to initialize the UIViewController
-                //if ([self shouldPerformAngleDistanceSequeWithFeature:feature]) {
-                //    [self performAngleDistanceSequeWithFeature:feature entity:entity mapPoint:mapPoint];
-                //}
             };
         } else {
             locationButton.title = @"Review Location";
@@ -2144,10 +2142,36 @@
     }
 }
 
-- (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature entity:(NSManagedObject *)entity mapPoint:(AGSPoint *)mapPoint
+// This will be callled from the feature editor (setAttributesForFeatureType:), when it is finished.
+- (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic
 {
+    //TODO need entities gps origin and course/heading
+    GpsPoint *gpsPoint = nil; //entity.gpsPoint;
+    AGSPoint *mapPoint = (AGSPoint *)graphic.geometry;
+    double currentCourse = gpsPoint.course; //TODO this may be -1, in which case the heading was used (but I don't have it)
+    LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocolFeature:feature];;
+
+    AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
+    vc.location = location;
+    vc.completionBlock = ^(AngleDistanceViewController *controller) {
+        self.angleDistancePopoverController = nil;
+        //TODO update the entities angleDistance entity
+        [graphic setGeometry:[controller.location pointFromPoint:mapPoint]];
+    };
+    vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
+        self.angleDistancePopoverController = nil;
+    };
+
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        self.angleDistancePopoverController = [[UIPopoverController alloc] initWithContentViewController:nav];
+        vc.popover = self.angleDistancePopoverController;
+        vc.popover.delegate = self;
+        [self.angleDistancePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    } else {
+        [self.navigationController pushViewController:vc animated:YES];
+    }
     //Setup angle distance form
-    [self.angleDistancePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 }
 
 
