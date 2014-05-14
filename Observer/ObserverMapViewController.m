@@ -96,8 +96,8 @@
 @property (strong, nonatomic) Mission *mission;
 @property (strong, nonatomic) MissionProperty *currentMissionProperty;
 @property (strong, nonatomic) id<AGSFeature> movingGraphic;  //maintain state between AGSMapViewTouchDelegate calls
-@property (strong, nonatomic) Observation *movingObservation;
-@property (strong, nonatomic) MissionProperty *movingMissionProperty;
+@property (strong, nonatomic) Observation *movingObservation;  //maintain state between AGSMapViewTouchDelegate calls
+@property (strong, nonatomic) MissionProperty *movingMissionProperty;  //maintain state between AGSMapViewTouchDelegate calls
 
 //Setup for AngleDistance ViewController
 @property (strong, nonatomic) LocationAngleDistance *angleDistanceOrientation;
@@ -110,6 +110,7 @@
 
 @property (strong, nonatomic) NSMutableDictionary *graphicsLayers; // of AGSGraphicsLayer
 
+//Must maintain a reference to popover controllers, otherwise they are GC'd after they are presented
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 @property (strong, nonatomic) UIPopoverController *surveysPopoverController;
@@ -118,6 +119,7 @@
 @property (strong, nonatomic) UIPopoverController *editAttributePopoverController;
 
 @property (strong, nonatomic) AGSPoint *popoverMapPoint;  //maintain popover location while rotating device (did/willRotateToInterfaceOrientation:)
+
 //TODO: do I need this UINavigationController?
 @property (strong, nonatomic) UINavigationController *modalAttributeCollector;
 
