@@ -39,6 +39,15 @@
     }
 }
 
+- (BOOL)isProjected
+{
+    return self.loaded && self.spatialReference.inLinearUnits;
+}
 
+- (BOOL)isAutoRotating
+{
+    return self.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation ||
+    self.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation;
+}
 
 @end

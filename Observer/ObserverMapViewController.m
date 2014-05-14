@@ -804,7 +804,7 @@
 
 - (BOOL)mapIsProjected
 {
-    return self.hasMap && self.mapView.spatialReference.inLinearUnits;
+    return self.mapView.isProjected;
 }
 
 
@@ -844,12 +844,6 @@
 {
     //this value is undefined if the there is no locationManager
     return !self.locationManager ? NO : _locationServicesAvailable;
-}
-
-- (BOOL)isAutoRotating
-{
-    return self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeCompassNavigation ||
-    self.mapView.locationDisplay.autoPanMode == AGSLocationDisplayAutoPanModeNavigation;
 }
 
 - (NSMutableDictionary *)graphicsLayers
@@ -1062,7 +1056,7 @@
 
 - (void)startStopLocationServicesForPanMode
 {
-    if ([self isAutoRotating]) {
+    if (self.mapView.isAutoRotating) {
         [self startHeadingUpdates];  //monitor heading to rotate compass rose
         [self startLocationUpdates]; //monitor speed to switch between navigation modes
     } else {
@@ -1182,7 +1176,7 @@
 - (void)stopLocationUpdates
 {
     //I may try to stop for multiple reasons. Only stop if they all want to stop
-    if (!self.isRecording && ![self isAutoRotating]) {
+    if (!self.isRecording && !self.mapView.isAutoRotating) {
         self.userWantsLocationUpdates = NO;
         if (self.locationServicesAvailable) {
             //AKRLog(@"Stop Updating Location");

@@ -14,4 +14,8 @@
 
 - (void)clearGraphicsLayers;
 
+- (BOOL)isProjected;
+
+- (BOOL)isAutoRotating;
+
 @end
