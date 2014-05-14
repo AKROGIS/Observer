@@ -95,7 +95,7 @@
 @property (strong, nonatomic) MapReference *currentMapEntity;
 @property (strong, nonatomic) Mission *mission;
 @property (strong, nonatomic) MissionProperty *currentMissionProperty;
-@property (strong, nonatomic) id<AGSFeature> movingGraphic;
+@property (strong, nonatomic) id<AGSFeature> movingGraphic;  //maintain state between AGSMapViewTouchDelegate calls
 @property (strong, nonatomic) Observation *movingObservation;
 @property (strong, nonatomic) MissionProperty *movingMissionProperty;
 
@@ -106,9 +106,8 @@
 //Used to save state for delegate callbacks (alertview, actionsheet and segue)
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
 @property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
-@property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;
+@property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;  //maintain state for UIActionSheetDelegate callback
 
-@property (strong, nonatomic) AGSSpatialReference *wgs84;
 @property (strong, nonatomic) NSMutableDictionary *graphicsLayers; // of AGSGraphicsLayer
 
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
@@ -118,7 +117,7 @@
 @property (strong, nonatomic) UIPopoverController *reviewAttributePopoverController;
 @property (strong, nonatomic) UIPopoverController *editAttributePopoverController;
 
-@property (strong, nonatomic) AGSPoint *popoverMapPoint;
+@property (strong, nonatomic) AGSPoint *popoverMapPoint;  //maintain popover location while rotating device (did/willRotateToInterfaceOrientation:)
 //TODO: do I need this UINavigationController?
 @property (strong, nonatomic) UINavigationController *modalAttributeCollector;
 
@@ -237,6 +236,9 @@
     if (self.featureSelectorPopoverController) {
         [self.featureSelectorPopoverController dismissPopoverAnimated:NO];
     }
+    if (self.angleDistancePopoverController) {
+        [self.angleDistancePopoverController dismissPopoverAnimated:NO];
+    }
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -244,6 +246,7 @@
     [self.editAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.reviewAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.featureSelectorPopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    [self.angleDistancePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
 
 
@@ -854,14 +857,6 @@
     if (!_graphicsLayers)
         _graphicsLayers = [[NSMutableDictionary alloc] init];
     return _graphicsLayers;
-}
-
-- (AGSSpatialReference *)wgs84
-{
-    if (!_wgs84) {
-        _wgs84 = [AGSSpatialReference wgs84SpatialReference];
-    }
-    return _wgs84;
 }
 
 - (MapReference *)currentMapEntity
@@ -1615,7 +1610,7 @@
 - (void)updateAdhocLocation:(AdhocLocation *)adhocLocation withMapPoint:(AGSPoint *)mapPoint
 {
     //mapPoint is in the map coordinates, convert to WGS84
-    AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:self.wgs84];
+    AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:[AGSSpatialReference wgs84SpatialReference]];
     adhocLocation.latitude = wgs84Point.y;
     adhocLocation.longitude = wgs84Point.x;
     if (self.lastGpsPointSaved && [self.lastGpsPointSaved.timestamp timeIntervalSinceDate: [NSDate date]] < kStaleInterval) {
@@ -1778,6 +1773,7 @@
     //TODO: reduce popover size
     self.featureSelectorPopoverController = [[UIPopoverController alloc] initWithContentViewController:vc];
     [self.featureSelectorPopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    self.popoverMapPoint = mapPoint;
 }
 
 - (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atMapPoint:(AGSPoint *)mapPoint
@@ -1938,13 +1934,13 @@
         dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
         UIPopoverController *popover = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
         popover.delegate = self;
-        self.popoverMapPoint = mapPoint;
         if (isEditing) {
             self.editAttributePopoverController = popover;
         } else {
             self.reviewAttributePopoverController = popover;
         }
         [popover presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        self.popoverMapPoint = mapPoint;
     } else {
         //TODO: test behavior for iPhone idiom
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
@@ -2168,6 +2164,7 @@
         vc.popover = self.angleDistancePopoverController;
         vc.popover.delegate = self;
         [self.angleDistancePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        self.popoverMapPoint = mapPoint;
     } else {
         [self.navigationController pushViewController:vc animated:YES];
     }
