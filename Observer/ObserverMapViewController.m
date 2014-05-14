@@ -99,6 +99,10 @@
 @property (strong, nonatomic) Observation *movingObservation;
 @property (strong, nonatomic) MissionProperty *movingMissionProperty;
 
+//Setup for AngleDistance ViewController
+@property (strong, nonatomic) LocationAngleDistance *angleDistanceOrientation;
+@property (strong, nonatomic) GpsPoint *angleDistanceLocation;
+
 //Used to save state for delegate callbacks (alertview, actionsheet and segue)
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
 @property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
@@ -2089,49 +2093,38 @@
         self.angleDistancePopoverController = nil;
         return NO;
     }
-    if (!self.mapView.locationDisplay.mapLocation) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Location Unknown" message:@"Unable to calculate a location with a current location for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil];
-        [alert show];
-        return NO;
-    }
 
-    if (self.mapView.locationDisplay.location.course < 0 && self.locationManager.heading.trueHeading < 0) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Heading Unknown" message:@"Unable to calculate a location with a current heading for reference." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil];
-        [alert show];
-        return NO;
+    self.angleDistanceOrientation = nil;
+    self.angleDistanceLocation = [self createGpsPoint:self.locationManager.location];
+
+    double currentCourse = self.angleDistanceLocation.course;
+    if (0 <= currentCourse) {
+        self.angleDistanceOrientation = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocolFeature:feature];
+    } else {
+        double currentHeading = self.locationManager.heading.trueHeading;
+        if (0 <= currentHeading) {
+            self.angleDistanceOrientation = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocolFeature:feature];
+        }
     }
-    return YES;
+    if (!self.angleDistanceLocation) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current location for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+    }
+    if (!self.angleDistanceOrientation) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current heading for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+    }
+    return self.angleDistanceOrientation && self.angleDistanceLocation;
 }
 
 - (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature button:(UIBarButtonItem *)button
 {
+    LocationAngleDistance *location = self.angleDistanceOrientation;
+    GpsPoint *gpsPoint = self.angleDistanceLocation;
+
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
-
-    //create/save current GpsPoint, because it may take a while for the user to enter an angle/distance
-    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
-    if (!gpsPoint) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get GPS point for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-        return;
-    }
-    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    double currentCourse = gpsPoint.course;
-
-    LocationAngleDistance *location;
-    if (0 <= currentCourse) {
-        location = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocolFeature:feature];
-    }
-    else {
-        double currentHeading = self.locationManager.heading.trueHeading;
-        if (0 <= currentHeading) {
-            location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocolFeature:feature];
-        }
-        else {
-            location = [[LocationAngleDistance alloc] initWithDeadAhead:0.0 protocolFeature:feature];
-        }
-    }
     vc.location = location;
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
         self.angleDistancePopoverController = nil;
+        AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
         Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
         AGSGraphic *graphic = [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
         [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
