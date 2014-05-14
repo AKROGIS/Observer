@@ -12,4 +12,6 @@
 
 - (CGPoint)nearestScreenPoint :(AGSPoint *)point;
 
+- (void)clearGraphicsLayers;
+
 @end

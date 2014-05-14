@@ -26,5 +26,19 @@
     return [self toScreenPoint:proximity.point];
 }
 
+- (void)clearGraphicsLayers
+{
+    NSMutableArray *graphicsLayers = [NSMutableArray new];
+    for (AGSLayer *layer in self.mapLayers) {
+        if ([layer isKindOfClass:[AGSGraphicsLayer class]]) {
+            [graphicsLayers addObject:layer];
+        }
+    }
+    for (AGSLayer *layer in graphicsLayers) {
+        [self removeMapLayer:layer];
+    }
+}
+
+
 
 @end

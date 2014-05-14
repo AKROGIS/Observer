@@ -1277,19 +1277,6 @@
     self.graphicsLayers[name] = graphicsLayer;
 }
 
-- (void)clearGraphics
-{
-    NSMutableArray *graphicsLayers = [NSMutableArray new];
-    for (AGSLayer *layer in self.mapView.mapLayers) {
-        if ([layer isKindOfClass:[AGSGraphicsLayer class]]) {
-            [graphicsLayers addObject:layer];
-        }
-    }
-    for (AGSLayer *layer in graphicsLayers) {
-        [self.mapView removeMapLayer:layer];
-    }
-}
-
 - (void)loadGraphics
 {
     BOOL surveyReady = self.survey.document.documentState == UIDocumentStateNormal;
@@ -1400,7 +1387,7 @@
                 [self stopRecording];
             }
             [self clearCachedEntities];
-            [self clearGraphics];
+            [self.mapView clearGraphicsLayers];
             [survey closeDocumentWithCompletionHandler:^(BOOL success) {
                 //this completion handler runs on the main queue;
                 //AKRLog(@"Start CloseSurvey completion handler");
