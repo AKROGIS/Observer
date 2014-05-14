@@ -923,7 +923,7 @@
     self.mapView.layerDelegate = self;
     self.mapView.touchDelegate = self;
     self.mapView.callout.delegate = self;
-    self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
+    //the remaining configuration will occur after a layer is loaded
     if (self.map.tileCache) {
         [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
         //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
@@ -1045,6 +1045,7 @@
 {
     self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
     self.mapView.locationDisplay.wanderExtentFactor = 0.0;
+    self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
     [self.mapView.locationDisplay startDataSource];
     [self startStopLocationServicesForPanMode];
 }
