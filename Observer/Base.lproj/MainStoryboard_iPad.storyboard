@@ -73,12 +73,12 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="pyp-S6-0zm"/>
                                     <barButtonItem enabled="NO" style="plain" systemItem="play" id="fCO-tO-IRq">
                                         <connections>
-                                            <action selector="startStopRecording:" destination="TiC-11-YSU" id="2Oq-NH-554"/>
+                                            <action selector="startRecording:" destination="TiC-11-YSU" id="ALu-rh-3xw"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem enabled="NO" style="plain" systemItem="play" id="faa-Nc-OBV">
                                         <connections>
-                                            <action selector="startStopObserving:" destination="TiC-11-YSU" id="1Ay-IQ-Qfc"/>
+                                            <action selector="startObserving:" destination="TiC-11-YSU" id="Zik-gs-nSQ"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem enabled="NO" image="Weather" id="Fdi-yp-sWi">

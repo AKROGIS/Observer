@@ -13,9 +13,12 @@
 #import "AdhocLocation.h"
 #import "AngleDistanceLocation.h"
 #import "GpsPoint.h"
+#import "GpsPoint+Location.h"
 #import "LocationAngleDistance.h"
 #import "Observation.h"
+#import "Observation+Location.h"
 #import "MissionProperty.h"
+#import "MissionProperty+Location.h"
 #import "MapReference.h"
 
 #import "AGSPoint+AKRAdditions.h"
@@ -27,6 +30,7 @@
 #import "Survey.h"
 #import "Map.h"
 #import "SProtocol.h"
+#import "TrackLogSegment.h"
 
 #define kAttributePrefix                 @"A_"
 #define kObservationPrefix               @"O_"
