@@ -13,21 +13,16 @@
 
 // Layer Methods
 - (NSDictionary *)graphicsLayersByName;
-//- (AGSGraphicsLayer *)graphicsLayerForGpsPoints;
-//- (AGSGraphicsLayer *)graphicsLayerForMissionProperties;
-//- (AGSGraphicsLayer *)graphicsLayerForTracksLogObserving:(BOOL)observing;
 - (AGSGraphicsLayer *)graphicsLayerForObservation:(Observation *)observation;
 - (AGSGraphicsLayer *)graphicsLayerForFeature:(ProtocolFeature *)feature;
 
 - (BOOL)isSelectableLayerName:(NSString *)layerName;
 - (NSManagedObject *)entityOnLayerNamed:(NSString *)layerName atTimestamp:(NSDate *)timestamp;
-//- (ProtocolFeature *)featureOnLayerNamed:(NSString *)layerName;
 
 // State Control
-- (BOOL)isReadyToRecord;
 - (void)startRecording;
 - (BOOL)isRecording;
-- (Mission *)currentMission;
+//- (Mission *)currentMission;
 - (void)stopRecording;
 
 - (void)setMap:(Map *)map;
@@ -40,8 +35,7 @@
 
 // GPS Methods
 - (GpsPoint *)addGpsPointAtLocation:(CLLocation *)location;
-- (BOOL)hasGpsPoint;
-- (GpsPoint *)lastGpsPoint;
+//- (GpsPoint *)lastGpsPoint;
 
 //TrackLogs
 - (TrackLogSegment *)startObserving;
@@ -61,14 +55,10 @@
 - (void)updateAdhocLocation:(AdhocLocation *)adhocLocation withMapPoint:(AGSPoint *)mapPoint;
 
 
-
 // Misc - rethink
-
-//- (BOOL)saveNewMissionPropertyEditAttributes:(BOOL)edit;
 
 - (void)loadGraphics;
 
 - (void)deleteObject:(NSManagedObject *)object;
-
 
 @end

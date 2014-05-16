@@ -30,21 +30,17 @@
 #import "MapSelectViewController.h"
 #import "AttributeViewController.h"
 #import "FeatureSelectorTableViewController.h"
-#import "AGSMapView+AKRAdditions.h"
 #import "UIPopoverController+Presenting.h"
 #import "GpsPointTableViewController.h"
-#import "Survey+CsvExport.h"
-#import "Survey+Mapping.h"
-#import "GpsPoint+Location.h"
-#import "Observation+Location.h"
-#import "MissionProperty+Location.h"
 
 //Views
 #import "AutoPanButton.h"
 #import "AddFeatureBarButtonItem.h"
+#import "AGSMapView+AKRAdditions.h"
 
 //Support Model Objects
 #import "AutoPanStateMachine.h"
+#import "Survey+CsvExport.h"
 
 //Support sub-system
 #import "QuickDialog.h"
@@ -61,9 +57,6 @@
 @interface ObserverMapViewController () {
     CGFloat _initialRotationOfViewAtGestureStart;
 }
-
-//Model
-//@property (weak,   nonatomic, readonly) NSManagedObjectContext *context; //shortcut to self.survey.document.managedObjectContext
 
 //Views
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
@@ -126,7 +119,7 @@
 
 - (void)viewDidLoad
 {
-    AKRLog(@"Main view controller view did load");
+    //AKRLog(@"Main view controller view did load");
     [super viewDidLoad];
     [self configureMapView];
     [self configureGpsButton];
@@ -222,28 +215,20 @@
 {
     self.mapView.locationDisplay.interfaceOrientation = toInterfaceOrientation;
     //popovers not presented from a UIBarButtonItem must close and reopen in the new orientation
-    if (self.editAttributePopoverController) {
-        [self.editAttributePopoverController dismissPopoverAnimated:NO];
-    }
-    if (self.reviewAttributePopoverController) {
-        [self.reviewAttributePopoverController dismissPopoverAnimated:NO];
-    }
-    if (self.featureSelectorPopoverController) {
-        [self.featureSelectorPopoverController dismissPopoverAnimated:NO];
-    }
-    if (self.angleDistancePopoverController) {
-        [self.angleDistancePopoverController dismissPopoverAnimated:NO];
-    }
+    [self.editAttributePopoverController dismissPopoverAnimated:NO];
+    [self.reviewAttributePopoverController dismissPopoverAnimated:NO];
+    [self.featureSelectorPopoverController dismissPopoverAnimated:NO];
+    [self.angleDistancePopoverController dismissPopoverAnimated:NO];
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
+    //re-present popovers not presented from a UIBarButtonItem in the new orientation
     [self.editAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.reviewAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.featureSelectorPopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.angleDistancePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
-
 
 
 
@@ -310,7 +295,7 @@
         return;
     }
     TrackLogSegment *tracklog = [self.survey startObserving];
-    [self editTrackLogAttributes:tracklog];
+    [self showTrackLogAttributeEditor:tracklog];
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(stopObserving:) ToPlay:NO];
     [self enableControls];
 }
@@ -318,7 +303,7 @@
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
     TrackLogSegment *tracklog = [self.survey startNewTrackLogSegment];
-    [self editTrackLogAttributes:tracklog];
+    [self showTrackLogAttributeEditor:tracklog];
 }
 
 
@@ -344,7 +329,7 @@
     if (!self.survey.isObserving) {
         return;
     }
-    [self.survey startObserving];
+    [self.survey stopObserving];
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startObserving:) ToPlay:YES];
     [self enableControls];
 }
@@ -722,10 +707,6 @@
 
 
 
-#pragma mark - Delegate Methods: AGSCalloutDelegate (all optional)
-
-
-
 
 #pragma mark - Delegate Methods: UIPopoverControllerDelegate
 
@@ -909,7 +890,7 @@
         for (ProtocolFeature *feature in self.survey.protocol.features) {
             feature.allowedLocations.locationPresenter = self;
             if (feature.allowedLocations.countOfNonTouchChoices > 0) {
-                //TODO: feature names are too long for buttons, use a short name, or an icon
+                //TODO: feature names may be too long for buttons, use a short name, or an icon
                 AddFeatureBarButtonItem *addFeatureButton = [[AddFeatureBarButtonItem alloc] initWithTitle:feature.name style:UIBarButtonItemStylePlain target:self action:@selector(pleaseAddFeature:)];
                 addFeatureButton.feature = feature;
                 if (feature.allowedLocations.countOfNonTouchChoices > 1) {
@@ -941,7 +922,7 @@
 
 -(void)updateTitleBar
 {
-    self.selectSurveyButton.title = (self.survey.isReadyToRecord ? self.survey.title : @"Select Survey");
+    self.selectSurveyButton.title = (self.survey.isReady ? self.survey.title : @"Select Survey");
 }
 
 -(void)disableControls
@@ -966,7 +947,7 @@
 
     self.panButton.enabled = self.mapView.loaded;
 
-    self.startStopRecordingBarButtonItem.enabled = self.survey.isReadyToRecord;
+    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady;
     self.startStopObservingBarButtonItem.enabled = self.survey.isRecording;
     //TODO: if there are no mission properties, we should remove this button.
     self.editEnvironmentBarButton.enabled = self.survey.isRecording && self.survey.protocol.missionFeature.attributes.count > 0;
@@ -999,15 +980,6 @@
     }
     self.busyCount--;
     //AKRLog(@"Finished decrement busy = %d",self.busyCount);
-}
-
-- (void)setupGPS
-{
-    self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
-    self.mapView.locationDisplay.wanderExtentFactor = 0.0;
-    self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
-    [self.mapView.locationDisplay startDataSource];
-    [self startStopLocationServicesForPanMode];
 }
 
 
@@ -1105,6 +1077,7 @@
 {
     [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
     [self.survey clearMap];
+    [self.survey clearMapMapViewSpatialReference];
     self.noMapView.hidden = NO;
     self.panButton.enabled = NO;
 }
@@ -1120,11 +1093,32 @@
             self.map.tileCache.delegate = self;
             AKRLog(@"Loading the basemap %@", self.map);
             [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
-            //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
+            //adding a layer is async. See AGSLayerDelegate layerDidLoad or layerDidFailToLoad for additional action taken when opening a map
         } else {
             [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the map." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         }
     }
+}
+
+- (void)setupGPS
+{
+    self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
+    self.mapView.locationDisplay.wanderExtentFactor = 0.0;
+    self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
+    [self.mapView.locationDisplay startDataSource];
+    [self startStopLocationServicesForPanMode];
+}
+
+- (void)loadGraphics
+{
+    if (!self.survey.isReady || !self.mapView.loaded) {
+        AKRLog(@"Loading graphics - can't because %@.", self.survey.isReady ? @"map isn't loaded" : (self.mapView.loaded ? @"survey isn't loaded" : @"map AND survey are null! - how did that happen?"));
+        return;
+    }
+    [self.survey setMap:self.map];
+    [self.survey setMapViewSpatialReference:self.mapView.spatialReference];
+    [self initializeGraphicsLayer];
+    [self.survey loadGraphics];
 }
 
 - (void)initializeGraphicsLayer
@@ -1133,19 +1127,6 @@
     for (NSString *name in graphicsLayers) {
         [self.mapView addMapLayer:graphicsLayers[name] withName:name];
     }
-}
-
-- (void)loadGraphics
-{
-    BOOL surveyReady = self.survey.document.documentState == UIDocumentStateNormal;
-    if (!surveyReady || !self.mapView.loaded) {
-        AKRLog(@"Loading graphics - can't because %@.", surveyReady ? @"map isn't loaded" : (self.mapView.loaded ? @"survey isn't loaded" : @"map AND survey are null! - how did that happen?"));
-        return;
-    }
-    [self.survey setMap:self.map];
-    [self.survey setMapViewSpatialReference:self.mapView.spatialReference];
-    [self initializeGraphicsLayer];
-    [self.survey loadGraphics];
 }
 
 
@@ -1162,9 +1143,8 @@
         [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
             //do any other background work;
             dispatch_async(dispatch_get_main_queue(), ^{
-                //AKRLog(@"Start OpenSurvey completion handler");
                 if (success) {
-                    [self logStats];
+                    //[self logStats];
                     [self loadGraphics];
                     [self configureObservationButtons];
                 } else {
@@ -1188,11 +1168,9 @@
             if (self.survey.isRecording) {
                 [self stopRecording:nil];
             }
-            //[self clearCachedEntities];
             [self.mapView clearGraphicsLayers];
             [survey closeDocumentWithCompletionHandler:^(BOOL success) {
                 //this completion handler runs on the main queue;
-                //AKRLog(@"Start CloseSurvey completion handler");
                 if (!success) {
                     //This happens if I deleted the active survey (and there are unsaved changes).  Due to the asyncronity
                     //the delete can happen before the close can finish.  But I don't really care, because it is deleted.
@@ -1228,18 +1206,11 @@
 
 
 
-#pragma mark - Private Methods - support for data model - gps points
-
-- (AGSPoint *)mapPointFromGpsPoint:(GpsPoint *)gpsPoint
-{
-    return [gpsPoint pointOfGpsWithSpatialReference:self.mapView.spatialReference];
-}
-
-
 
 
 #pragma mark - Private Methods - support for data model - observations
 
+//Called by bar buttons
 - (void)addFeature:(ProtocolFeature *)feature withNonTouchLocationMethod:(WaysToLocateFeature)locationMethod
 {
     switch (locationMethod) {
@@ -1399,7 +1370,7 @@
 
 #pragma mark - Private Methods - misc support for data model
 
-- (void)editTrackLogAttributes:(TrackLogSegment *)tracklog
+- (void)showTrackLogAttributeEditor:(TrackLogSegment *)tracklog
 {
     NSManagedObject *entity = tracklog.missionProperty;
     NSManagedObject *template = tracklog.missionProperty;
@@ -1472,7 +1443,7 @@
     //  This is an observation feature that:
     //    allows GPS locations
     //    has an ad-hoc location
-    if (self.locationServicesAvailable && self.survey.isRecording && self.survey.hasGpsPoint) {
+    if (self.locationServicesAvailable && self.survey.isRecording) {
         if ([self isKindOfObservation:entity]) {
             Observation *observation = (Observation *)entity;
             WaysToLocateFeature options = feature.allowedLocations.nonTouchChoices;
@@ -1485,8 +1456,8 @@
                     updateLocationButton.appearance.actionColorEnabled = self.view.tintColor;
                     updateLocationButton.title = @"Move to GPS Location";
                     updateLocationButton.onSelected = ^(){
-                        observation.gpsPoint = self.survey.lastGpsPoint;
-                        [graphic setGeometry:[self mapPointFromGpsPoint:self.survey.lastGpsPoint]];
+                        observation.gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
+                        [graphic setGeometry:[self mapPointFromGpsPoint:observation.gpsPoint]];
                         //Note: do not remove the adhoc location as that records the time of the observation
                     };
                     [[root.sections lastObject] addElement:updateLocationButton];
@@ -1702,6 +1673,16 @@
     }
     //Setup angle distance form
 }
+
+
+#pragma mark - Private Methods - support for data model - gps points
+
+- (AGSPoint *)mapPointFromGpsPoint:(GpsPoint *)gpsPoint
+{
+    return [gpsPoint pointOfGpsWithSpatialReference:self.mapView.spatialReference];
+}
+
+
 
 
 

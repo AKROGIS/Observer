@@ -62,22 +62,6 @@ NSMutableArray * _trackLogSegments;
     return _graphicsLayersByName;
 }
 
-- (AGSGraphicsLayer *)graphicsLayerForGpsPoints
-{
-    return self.graphicsLayersByName[kGpsPointEntityName];
-}
-
-- (AGSGraphicsLayer *)graphicsLayerForMissionProperties
-{
-    return self.graphicsLayersByName[kMissionPropertyEntityName];
-}
-
-- (AGSGraphicsLayer *)graphicsLayerForTracksLogObserving:(BOOL)observing
-{
-    NSString *name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, (observing ? kTrackOn : kTrackOff)];
-    return self.graphicsLayersByName[name];
-}
-
 - (AGSGraphicsLayer *)graphicsLayerForObservation:(Observation *)observation
 {
     NSString * name = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
@@ -124,18 +108,26 @@ NSMutableArray * _trackLogSegments;
     return (NSManagedObject *)[results lastObject]; // will return nil if there was an error, or no results
 }
 
-/*
-- (ProtocolFeature *)featureOnLayerNamed:(NSString *)layerName
-{
-    //TODO: implement
-    return nil;
-}
-*/
-
 
 
 
 #pragma mark - Layer Methods - private
+
+- (AGSGraphicsLayer *)graphicsLayerForGpsPoints
+{
+    return self.graphicsLayersByName[kGpsPointEntityName];
+}
+
+- (AGSGraphicsLayer *)graphicsLayerForMissionProperties
+{
+    return self.graphicsLayersByName[kMissionPropertyEntityName];
+}
+
+- (AGSGraphicsLayer *)graphicsLayerForTracksLogObserving:(BOOL)observing
+{
+    NSString *name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, (observing ? kTrackOn : kTrackOff)];
+    return self.graphicsLayersByName[name];
+}
 
 - (NSString *)entityNameFromLayerName:(NSString *)layerName {
     NSString *entityName = nil;
@@ -155,14 +147,9 @@ NSMutableArray * _trackLogSegments;
 
 #pragma mark - State Methods
 
-- (BOOL)isReadyToRecord
-{
-    return self.document.managedObjectContext != nil;
-}
-
 - (void)startRecording
 {
-    if(!self.isReadyToRecord) {
+    if(!self.isReady) {
         return;
     }
     _currentMission = [NSEntityDescription insertNewObjectForEntityForName:kMissionEntityName
@@ -263,11 +250,6 @@ NSMutableArray * _trackLogSegments;
 - (GpsPoint *)lastGpsPoint
 {
     return _lastGpsPoint;
-}
-
-- (BOOL)hasGpsPoint
-{
-    return self.lastGpsPoint != nil;
 }
 
 
@@ -403,7 +385,7 @@ NSMutableArray * _trackLogSegments;
 {
     MissionProperty * template = [self lastTrackLogSegment].missionProperty;
     MissionProperty *missionProperty = nil;
-    if (self.hasGpsPoint) {
+    if (self.lastGpsPoint) {
         //FIXME: when I start recording, there may not be a gpsPoint.  I need to actively request one.
         missionProperty = [self createMissionPropertyAtGpsPoint:self.lastGpsPoint];
     } else {
@@ -663,89 +645,5 @@ NSMutableArray * _trackLogSegments;
     //TODO: implement
 }
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-- (void)drawTrackObserving:(BOOL)observing from:(GpsPoint *)fromPoint to:(GpsPoint *)toPoint
-{
-    //TODO: draw a polyline instead of single lines
-    AGSPoint *point1 = [self mapPointFromGpsPoint:fromPoint];
-    AGSPoint *point2 = [self mapPointFromGpsPoint:toPoint];
-    AGSMutablePolyline *line = [[AGSMutablePolyline alloc] init];
-    [line addPathToPolyline];
-    [line addPointToPath:point1];
-    [line addPointToPath:point2];
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:line symbol:nil attributes:nil];
-    [[self graphicsLayerForTracksLogObserving:observing] addGraphic:graphic];
-}
-*/
-
-/*
-- (BOOL)saveNewMissionPropertyEditAttributes
-{
-    MissionProperty *missionProperty;
-    AGSPoint *mapPoint;
-    GpsPoint *gpsPoint;
-    //do not create a mission property, until I have checked the database (if necessary) for the last mission property
-    MissionProperty * template = [self fetchCurrentMissionProperty];
-    if (self.locationServicesAvailable) {
-        gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
-    }
-    if (gpsPoint) {
-        mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-        missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
-    } else {
-        mapPoint = self.mapView.mapAnchor;
-        missionProperty = [self createMissionPropertyAtMapLocation:mapPoint];
-    }
-    if (!missionProperty) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create a new Mission Property." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-        return NO;
-    }
-    missionProperty.observing = self.isObserving;
-    AGSGraphic *graphic = [self drawMissionProperty:missionProperty atPoint:mapPoint];
-    [self copyAttributesForFeature:self.survey.protocol.missionFeature fromEntity:template toEntity:missionProperty];
-    self.currentMissionProperty = missionProperty;
-    return YES;
-}
-
-- (MissionProperty *)fetchCurrentMissionProperty
-{
-    if (!_currentMissionProperty) {
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
-        request.fetchLimit = 1;
-        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"adhocLocation.timestamp" ascending:NO]];
-        request.predicate = [NSPredicate predicateWithFormat:@"adhocLocation != NULL"];
-        NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-        MissionProperty *withMap = [results firstObject];
-        if (withMap) {
-            request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"gpsPoint.timestamp" ascending:NO]];
-            request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint != NULL AND gpsPoint.timestamp > %@", withMap.adhocLocation.timestamp];
-        } else {
-            request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"gpsPoint.timestamp" ascending:NO]];
-            request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint != NULL"];
-        }
-        results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-        MissionProperty *withGPS = [results firstObject];
-        _currentMissionProperty = withGPS ? withGPS : withMap;
-    }
-    return _currentMissionProperty;
-}
-*/
-
-
-
 
 @end

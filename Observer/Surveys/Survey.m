@@ -215,6 +215,11 @@
     return self.protocol != nil;
 }
 
+- (BOOL)isReady
+{
+    return self.document.managedObjectContext != nil && self.document.documentState == UIDocumentStateNormal;
+}
+
 //TODO: figure out error handling.
 //TODO: this public method isn't used - justify the API or remove
 - (void)readPropertiesWithCompletionHandler:(void (^)(NSError*))handler

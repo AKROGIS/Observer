@@ -51,7 +51,10 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (BOOL)isEqualToSurvey:(Survey *)survey;
 
 //YES if the survey is valid
-- (BOOL) isValid;
+- (BOOL)isValid;
+
+//YES if the core data context is loaded and normal
+- (BOOL)isReady;
 
 //other actions
 //load all properties
