@@ -21,6 +21,8 @@
 #import "MissionProperty+Location.h"
 #import "MapReference.h"
 
+#import "TrackLogSegment.h"
+
 #import "AGSPoint+AKRAdditions.h"
 #import "NSArray+map.h"
 
@@ -32,7 +34,6 @@
 
 #import "Map.h"
 #import "SProtocol.h"
-#import "TrackLogSegment.h"
 
 #define kAttributePrefix                 @"A_"
 #define kObservationPrefix               @"O_"

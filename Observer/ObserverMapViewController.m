@@ -1208,7 +1208,7 @@
 
 
 
-#pragma mark - Private Methods - support for data model - observations
+#pragma mark - Private Methods - support for creating features
 
 //Called by bar buttons
 - (void)addFeature:(ProtocolFeature *)feature withNonTouchLocationMethod:(WaysToLocateFeature)locationMethod
@@ -1274,20 +1274,11 @@
 }
 
 
-- (AGSGraphic *)drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
-{
-    //AKRLog(@"    Drawing observation type %@",observation.entity.name);
-    NSDate *timestamp = [observation timestamp];
-    NSAssert(timestamp, @"An observation in %@ has no timestamp", observation.entity.name);
-    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
-    [[self.survey graphicsLayerForObservation:observation] addGraphic:graphic];
-    return graphic;
-}
 
 
 #pragma mark - Private Methods to Support Feature Selection/Presentation
 
+//called by map touch
 - (void)presentProtocolFeatureSelector:(NSArray *)features atPoint:(CGPoint)screenpoint mapPoint:(AGSPoint *)mapPoint
 {
     self.mapPointAtAddSelectedFeature = mapPoint;
@@ -1306,6 +1297,7 @@
     [sheet showFromRect:rect inView:self.mapView animated:NO];
 }
 
+//called by map touch and action sheet
 - (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mapPoint
 {
     Observation *observation = [self.survey createObservation:feature AtMapLocation:mapPoint];
@@ -1313,6 +1305,7 @@
     [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint  isNew:YES isEditing:YES];
 }
 
+//called by map touch
 - (void)presentAGSFeatureSelector:(NSDictionary *)features atMapPoint:(AGSPoint *)mapPoint
 {
     FeatureSelectorTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"FeatureSelectorTableViewController"];
@@ -1327,6 +1320,7 @@
     self.popoverMapPoint = mapPoint;
 }
 
+//called by map touch and feature selector popover
 - (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atMapPoint:(AGSPoint *)mapPoint
 {
     NSDate *timestamp = (NSDate *)[agsFeature safeAttributeForKey:kTimestampKey];
@@ -1543,7 +1537,7 @@
 
 
 
-#pragma mark - Private Methods - misc support
+#pragma mark - Private Methods - support for setAttributesForFeatureType:...
 
 - (BOOL)isKindOfObservation:(NSManagedObject *)entity
 {
@@ -1582,7 +1576,14 @@
     return nil;
 }
 
-- (BOOL) shouldPerformAngleDistanceSequeWithFeature:(ProtocolFeature *)feature
+
+
+
+#pragma mark - AngleDistance popover for feature editing
+
+//Called programatically by feature bar button
+//could be combined with following method to eliminate two properties
+- (BOOL)shouldPerformAngleDistanceSequeWithFeature:(ProtocolFeature *)feature
 {
     if (self.angleDistancePopoverController) {
         //TODO: is this code path possible?
@@ -1612,6 +1613,7 @@
     return self.angleDistanceOrientation && self.angleDistanceLocation;
 }
 
+//Called programatically by feature bar button
 - (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature button:(UIBarButtonItem *)button
 {
     LocationAngleDistance *location = self.angleDistanceOrientation;
@@ -1644,6 +1646,7 @@
 // This will be callled from the feature editor (setAttributesForFeatureType:), when it is finished.
 - (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic
 {
+    //FIXME: this is not finished
     //TODO need entities gps origin and course/heading
     GpsPoint *gpsPoint = nil; //entity.gpsPoint;
     AGSPoint *mapPoint = (AGSPoint *)graphic.geometry;
@@ -1675,6 +1678,12 @@
 }
 
 
+
+
+
+
+
+
 #pragma mark - Private Methods - support for data model - gps points
 
 - (AGSPoint *)mapPointFromGpsPoint:(GpsPoint *)gpsPoint
@@ -1682,6 +1691,16 @@
     return [gpsPoint pointOfGpsWithSpatialReference:self.mapView.spatialReference];
 }
 
+- (AGSGraphic *)drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
+{
+    //AKRLog(@"    Drawing observation type %@",observation.entity.name);
+    NSDate *timestamp = [observation timestamp];
+    NSAssert(timestamp, @"An observation in %@ has no timestamp", observation.entity.name);
+    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
+    [[self.survey graphicsLayerForObservation:observation] addGraphic:graphic];
+    return graphic;
+}
 
 
 
