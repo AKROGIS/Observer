@@ -9,6 +9,14 @@
 #import "Survey.h"
 #import "ObserverModel.h"
 
+@protocol SurveyLocationDelegate <NSObject>
+
+- (CLLocation *)locationOfGPS;
+- (AGSPoint *)locationOfTarget;
+
+@end
+
+
 @interface Survey (Mapping)
 
 // Layer Methods
@@ -27,6 +35,9 @@
 
 - (void)setMap:(Map *)map;
 - (void)clearMap;
+
+- (void)setLocationDelegate:(id<SurveyLocationDelegate>)locationDelegate;
+- (id<SurveyLocationDelegate>)locationDelegate;
 
 //FIXME: This smells ad. maybe I shouldn't do the drawing.
 //FIXME: I am also drawing the observation in the VC, need to combine

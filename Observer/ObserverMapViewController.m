@@ -810,6 +810,22 @@
 
 
 
+#pragma mark = Delegate Methods - SurveyLocationDelegate
+
+- (CLLocation *)locationOfGPS
+{
+    return self.locationManager.location;
+}
+
+- (AGSPoint *)locationOfTarget
+{
+    return self.mapView.mapAnchor;
+}
+
+
+
+
+
 #pragma mark - Private Properties
 
 - (CLLocationManager *)locationManager
@@ -1117,6 +1133,7 @@
     }
     [self.survey setMap:self.map];
     [self.survey setMapViewSpatialReference:self.mapView.spatialReference];
+    [self.survey setLocationDelegate:self];
     [self initializeGraphicsLayer];
     [self.survey loadGraphics];
 }
@@ -1587,6 +1604,7 @@
 {
     if (self.angleDistancePopoverController) {
         //TODO: is this code path possible?
+        //I tried invoking it with a second click on the birds button when the AD popover was presented, but it did not get here, so I would say no
         [self.angleDistancePopoverController dismissPopoverAnimated:YES];
         self.angleDistancePopoverController = nil;
         return NO;

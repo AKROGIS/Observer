@@ -10,12 +10,17 @@
 
 @implementation Survey (Mapping)
 
+//while these look like instance variables, since we are in a category, they are actually class variables,
+// i.e. there is only one value for the entire class.
+//This actually works, since there is only one active survey at a time.
+
 MapReference *_currentMapEntity;
 Mission *_currentMission;
 GpsPoint *_lastGpsPoint;
 AGSSpatialReference *_mapViewSpatialReference;
 BOOL _isObserving;
 NSMutableArray * _trackLogSegments;
+id<SurveyLocationDelegate> _locationDelegate;
 
 #pragma mark - Layer Methods
 
@@ -209,6 +214,17 @@ NSMutableArray * _trackLogSegments;
     _mapViewSpatialReference = nil;
 }
 
+- (void)setLocationDelegate:(id<SurveyLocationDelegate>)locationDelegate
+{
+    _locationDelegate = locationDelegate;
+}
+
+- (id<SurveyLocationDelegate>)locationDelegate
+{
+    return _locationDelegate;
+}
+
+
 
 
 #pragma mark - State Methods - private
@@ -380,16 +396,15 @@ NSMutableArray * _trackLogSegments;
 
 #pragma mark - TrackLog Methods - private
 
-//TODO: finish implementation
 - (MissionProperty *)createMissionProperty
 {
     MissionProperty * template = [self lastTrackLogSegment].missionProperty;
     MissionProperty *missionProperty = nil;
-    if (self.lastGpsPoint) {
-        //FIXME: when I start recording, there may not be a gpsPoint.  I need to actively request one.
-        missionProperty = [self createMissionPropertyAtGpsPoint:self.lastGpsPoint];
+    GpsPoint *gpsPoint = [self addGpsPointAtLocation:[self.locationDelegate locationOfGPS]];
+    if (gpsPoint) {
+        missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
     } else {
-        //missionProperty = [self createMissionPropertyAtMapLocation:[self getMapLocation]];
+        missionProperty = [self createMissionPropertyAtMapLocation:[self.locationDelegate locationOfTarget]];
     }
     [self copyAttributesForFeature:self.protocol.missionFeature fromEntity:template toEntity:missionProperty];
     [self drawMissionProperty:missionProperty];
