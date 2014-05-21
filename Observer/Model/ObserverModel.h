@@ -30,7 +30,6 @@
 #import "Settings.h"
 
 #import "Survey.h"
-#import "Survey+Mapping.h"
 
 #import "Map.h"
 #import "SProtocol.h"

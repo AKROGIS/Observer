@@ -60,7 +60,6 @@
 		3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989086B1857F399007B3F67 /* AKRDownloadView.m */; };
 		39890DA31858C99E007B3F67 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39890DA21858C99E007B3F67 /* Images.xcassets */; };
 		39946AB0191DA0EA00875D90 /* Observation+CsvExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */; };
-		39946AB519240C5800875D90 /* Survey+Mapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AB419240C5800875D90 /* Survey+Mapping.m */; };
 		39946AB91925473A00875D90 /* TrackLogSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AB81925473A00875D90 /* TrackLogSegment.m */; };
 		39955E4B178334BF00D225D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
 		39955E4D178334BF00D225D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4C178334BF00D225D7 /* Foundation.framework */; };
@@ -245,8 +244,6 @@
 		39890DA21858C99E007B3F67 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		39946AAE191DA0EA00875D90 /* Observation+CsvExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Observation+CsvExport.h"; path = "Model/Observation+CsvExport.h"; sourceTree = "<group>"; };
 		39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Observation+CsvExport.m"; path = "Model/Observation+CsvExport.m"; sourceTree = "<group>"; };
-		39946AB319240C5800875D90 /* Survey+Mapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Survey+Mapping.h"; path = "Surveys/Survey+Mapping.h"; sourceTree = "<group>"; };
-		39946AB419240C5800875D90 /* Survey+Mapping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Survey+Mapping.m"; path = "Surveys/Survey+Mapping.m"; sourceTree = "<group>"; };
 		39946AB71925473A00875D90 /* TrackLogSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackLogSegment.h; sourceTree = "<group>"; };
 		39946AB81925473A00875D90 /* TrackLogSegment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackLogSegment.m; sourceTree = "<group>"; };
 		39955E47178334BF00D225D7 /* Park Observer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Park Observer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -450,8 +447,6 @@
 				3989084C1857ED00007B3F67 /* SurveySelectViewController.m */,
 				394BDD15191D33C4000C8A4B /* Survey+CsvExport.h */,
 				394BDD16191D33C4000C8A4B /* Survey+CsvExport.m */,
-				39946AB319240C5800875D90 /* Survey+Mapping.h */,
-				39946AB419240C5800875D90 /* Survey+Mapping.m */,
 			);
 			name = Surveys;
 			sourceTree = "<group>";
@@ -818,7 +813,6 @@
 				396E1E961899AD2900B735EF /* ProtocolFeature.m in Sources */,
 				3989085F1857EDE1007B3F67 /* NSDate+Formatting.m in Sources */,
 				39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */,
-				39946AB519240C5800875D90 /* Survey+Mapping.m in Sources */,
 				3989084F1857ED00007B3F67 /* SurveyCoreDataDocument.m in Sources */,
 				59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */,
 				39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */,

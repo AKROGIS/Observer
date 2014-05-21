@@ -10,6 +10,7 @@
 #import "AKRTableViewItem.h"
 #import "SProtocol.h"
 #import "SurveyCoreDataDocument.h"
+#import "ObserverModel.h"
 
 #define SURVEY_EXT @"obssurv"
 
@@ -20,6 +21,14 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
     kModified = 3,
     kSaved    = 4
 };
+
+@protocol SurveyLocationDelegate <NSObject>
+
+- (CLLocation *)locationOfGPS;
+- (AGSPoint *)locationOfTarget;
+
+@end
+
 
 @interface Survey : NSObject <AKRTableViewItem>
 
@@ -65,5 +74,62 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 // I am not supporting saveTo
 - (void)closeDocumentWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler;
+
+
+
+
+// Mapping Related Interface
+
+// Layer Methods
+@property (nonatomic, strong, readonly) NSDictionary *graphicsLayersByName;
+- (AGSGraphicsLayer *)graphicsLayerForObservation:(Observation *)observation;
+- (AGSGraphicsLayer *)graphicsLayerForFeature:(ProtocolFeature *)feature;
+
+- (BOOL)isSelectableLayerName:(NSString *)layerName;
+- (NSManagedObject *)entityOnLayerNamed:(NSString *)layerName atTimestamp:(NSDate *)timestamp;
+
+// State Control
+- (void)startRecording;
+- (BOOL)isRecording;
+- (void)stopRecording;
+//@property (nonatomic, strong, readonly) Mission *currentMission;
+
+- (void)setMap:(Map *)map;
+- (void)clearMap;
+
+@property (nonatomic, weak) id<SurveyLocationDelegate>locationDelegate;
+
+//FIXME: This smells bad. maybe I shouldn't do the drawing.
+//FIXME: I am also drawing the observation in the VC, need to combine
+@property (nonatomic, strong) AGSSpatialReference *mapViewSpatialReference;
+- (void)clearMapMapViewSpatialReference;
+
+// GPS Methods
+- (GpsPoint *)addGpsPointAtLocation:(CLLocation *)location;
+//@property (nonatomic, strong, readonly) GpsPoint *lastGpsPoint;
+
+//TrackLogs
+- (TrackLogSegment *)startObserving;
+@property (nonatomic, readonly) BOOL isObserving;
+- (void)stopObserving;
+- (TrackLogSegment *)startNewTrackLogSegment;
+//- (TrackLogSegment *)lastTrackLogSegment;
+//- (NSDictionary *)currentEnvironmentValues;
+//- (void)updateTrackLogSegment:(TrackLogSegment *)trackLogSegment attributes:(NSDictionary *)attributes;
+//- (TrackLogSegment *)trackLogSegmentAtTimestamp:(NSDate *)timestamp;
+- (NSArray *) trackLogSegmentsSince:(NSDate *)timestamp;
+
+// Observations
+- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint;
+- (Observation *)createObservation:(ProtocolFeature *)feature AtMapLocation:(AGSPoint *)mapPoint;
+- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)angleDistance;
+- (void)updateAdhocLocation:(AdhocLocation *)adhocLocation withMapPoint:(AGSPoint *)mapPoint;
+
+
+// Misc - rethink
+
+- (void)loadGraphics;
+
+- (void)deleteObject:(NSManagedObject *)object;
 
 @end

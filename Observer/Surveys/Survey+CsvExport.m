@@ -7,7 +7,6 @@
 //
 
 #import "Survey+CsvExport.h"
-#import "Survey+Mapping.h"
 #import "ObserverModel.h"
 #import "GpsPoint+CsvExport.h"
 #import "Observation+CsvExport.h"
