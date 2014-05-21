@@ -47,7 +47,9 @@
 @property (nonatomic, strong, readwrite) Mission *currentMission;
 @property (nonatomic, strong, readwrite) GpsPoint *lastGpsPoint;
 @property (nonatomic, strong) NSMutableArray * trackLogSegments;
+@property (nonatomic, strong) MissionProperty *lastAdHocMissionProperty;
 @property (nonatomic, readwrite) BOOL isObserving;
+@property (nonatomic, readwrite) BOOL isRecording;
 
 @end
 
@@ -524,20 +526,26 @@
 
 #pragma mark - State Methods
 
-- (void)startRecording
+- (BOOL)startRecording
 {
+    if (self.isRecording) {
+        return YES;
+    }
     if(!self.isReady) {
-        return;
+        return NO;
     }
     self.currentMission = [NSEntityDescription insertNewObjectForEntityForName:kMissionEntityName
                                                         inManagedObjectContext:self.document.managedObjectContext];
     NSAssert(self.currentMission, @"Could not create a Mission in Core Data Context %@", self.document.managedObjectContext);
-    [self.trackLogSegments addObject:[self startNewTrackLogSegment]];
-}
-
-- (BOOL)isRecording
-{
-    return self.currentMission != nil;
+    if (!self.currentMission) {
+        return NO;
+    }
+    TrackLogSegment *newTrackLogSegment = [self startNewTrackLogSegment];
+    if (!newTrackLogSegment) {
+        return NO;
+    }
+    self.isRecording = YES;
+    return YES;
 }
 
 - (void)stopRecording
@@ -547,6 +555,7 @@
     }
     self.lastGpsPoint = nil;
     self.currentMission = nil;
+    self.isRecording = NO;
 }
 
 - (void)setMap:(Map *)map
@@ -664,27 +673,29 @@
 - (TrackLogSegment *)startObserving
 {
     self.isObserving = YES;
-    TrackLogSegment *newTrackLog = [self startNewTrackLogSegment];
-    [self.trackLogSegments addObject:newTrackLog];
-    return newTrackLog;
+    return [self startNewTrackLogSegment];
 }
 
 - (void)stopObserving
 {
     self.isObserving = NO;
-    [self.trackLogSegments addObject:[self startNewTrackLogSegment]];
+    [self startNewTrackLogSegment];
 }
 
 - (TrackLogSegment *)startNewTrackLogSegment
 {
-    MissionProperty *missionProperty = [self createMissionProperty];
-    TrackLogSegment *trackLog = [TrackLogSegment new];
-    trackLog.missionProperty = missionProperty;
-    GpsPoint *firstGpsPoint = missionProperty.gpsPoint;
-    if (firstGpsPoint) {
-        trackLog.gpsPoints = [NSMutableArray arrayWithObject:firstGpsPoint];
+    TrackLogSegment *newTrackLog = nil;
+    MissionProperty *missionProperty = [self createMissionPropertyForTrackLog];
+    if (missionProperty.gpsPoint) {
+        newTrackLog = [TrackLogSegment new];
+        newTrackLog.missionProperty = missionProperty;
+        GpsPoint *firstGpsPoint = missionProperty.gpsPoint;
+        if (firstGpsPoint) {
+            newTrackLog.gpsPoints = [NSMutableArray arrayWithObject:firstGpsPoint];
+        }
+        [self.trackLogSegments addObject:newTrackLog];
     }
-    return trackLog;
+    return newTrackLog;
 }
 
 - (TrackLogSegment *)lastTrackLogSegment
@@ -735,20 +746,35 @@
 
 
 
-#pragma mark - TrackLog Methods - private
+#pragma mark - Non-TrackLogging Mission Property
 
-- (MissionProperty *)createMissionProperty
+- (MissionProperty *)createMissionPropertyAtMapLocation:(AGSPoint *)mapPoint
 {
-    MissionProperty *template = [self lastTrackLogSegment].missionProperty;
-    MissionProperty *missionProperty = nil;
-    GpsPoint *gpsPoint = [self addGpsPointAtLocation:[self.locationDelegate locationOfGPS]];
-    if (gpsPoint) {
-        missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
-    } else {
-        missionProperty = [self createMissionPropertyAtMapLocation:[self.locationDelegate locationOfTarget]];
-    }
+    MissionProperty *template = self.lastAdHocMissionProperty;
+    MissionProperty *missionProperty = [self privateCreateMissionPropertyAtMapLocation:mapPoint];
     [self copyAttributesForFeature:self.protocol.missionFeature fromEntity:template toEntity:missionProperty];
     [self drawMissionProperty:missionProperty];
+    if (missionProperty) {
+        self.lastAdHocMissionProperty = missionProperty;
+    }
+    return missionProperty;
+}
+
+
+
+
+#pragma mark - TrackLog Methods - private
+
+- (MissionProperty *)createMissionPropertyForTrackLog
+{
+    MissionProperty *missionProperty = nil;
+    GpsPoint *gpsPoint = [self addGpsPointAtLocation:[self.locationDelegate locationOfGPS]];
+    if (gpsPoint.timestamp) {
+        missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
+        MissionProperty *template = [self lastTrackLogSegment].missionProperty;
+        [self copyAttributesForFeature:self.protocol.missionFeature fromEntity:template toEntity:missionProperty];
+        [self drawMissionProperty:missionProperty];
+    }
     return missionProperty;
 }
 
@@ -764,7 +790,7 @@
     return missionProperty;
 }
 
-- (MissionProperty *)createMissionPropertyAtMapLocation:(AGSPoint *)mapPoint
+- (MissionProperty *)privateCreateMissionPropertyAtMapLocation:(AGSPoint *)mapPoint
 {
     //AKRLog(@"Creating MissionProperty at Map point");
     AdhocLocation *adhocLocation = [self createAdhocLocationWithMapPoint:mapPoint];
@@ -775,6 +801,7 @@
     }
     MissionProperty *missionProperty = [self createSimpleMissionProperty];
     missionProperty.adhocLocation = adhocLocation;
+    missionProperty.observing = YES;
     return missionProperty;
 }
 
@@ -797,6 +824,7 @@
         }
     }
 }
+
 
 
 
@@ -914,6 +942,7 @@
             //  A track log starts at a gpsPoint with a related mission property
             //  The first point of a tracklog might also be the last point of the prior track log (if the mission is the same)
             if (gpsPoint.missionProperty) {
+                AKRLog(@"TrackLog: MissionProperty %@",gpsPoint.missionProperty);
                 if (mission == gpsPoint.mission) {
                     [[self lastTrackLogSegment].gpsPoints addObject:gpsPoint];
                 }
@@ -951,6 +980,7 @@
     } else {
         AKRLog(@"  Drawing %d Mission Properties", results.count);
         for (MissionProperty *missionProperty in results) {
+            AKRLog(@"Drawing MissionProperty %@",missionProperty);
             [self drawMissionProperty:missionProperty];
         }
     }

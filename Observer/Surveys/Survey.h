@@ -25,7 +25,6 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 @protocol SurveyLocationDelegate <NSObject>
 
 - (CLLocation *)locationOfGPS;
-- (AGSPoint *)locationOfTarget;
 
 @end
 
@@ -89,8 +88,8 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (NSManagedObject *)entityOnLayerNamed:(NSString *)layerName atTimestamp:(NSDate *)timestamp;
 
 // State Control
-- (void)startRecording;
-- (BOOL)isRecording;
+- (BOOL)startRecording;
+@property (nonatomic, readonly) BOOL isRecording;
 - (void)stopRecording;
 //@property (nonatomic, strong, readonly) Mission *currentMission;
 
@@ -118,6 +117,9 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 //- (void)updateTrackLogSegment:(TrackLogSegment *)trackLogSegment attributes:(NSDictionary *)attributes;
 //- (TrackLogSegment *)trackLogSegmentAtTimestamp:(NSDate *)timestamp;
 - (NSArray *) trackLogSegmentsSince:(NSDate *)timestamp;
+
+//Non-TrackLogging Mission Property
+- (MissionProperty *)createMissionPropertyAtMapLocation:(AGSPoint *)mapPoint;
 
 // Observations
 - (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint;

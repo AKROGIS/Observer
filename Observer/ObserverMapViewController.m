@@ -282,7 +282,10 @@
     if (self.survey.isRecording) {
         return;
     }
-    [self.survey startRecording];
+    if(![self.survey startRecording]) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to start recording.  GPS may not be ready." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+        return;
+    }
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(stopRecording:) ToPlay:NO];
     [self enableControls];
     [self startLocationUpdates];
@@ -302,8 +305,13 @@
 
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
-    TrackLogSegment *tracklog = [self.survey startNewTrackLogSegment];
-    [self showTrackLogAttributeEditor:tracklog];
+    if (self.survey.isRecording) {
+        TrackLogSegment *tracklog = [self.survey startNewTrackLogSegment];
+        [self showTrackLogAttributeEditor:tracklog];
+    } else {
+        MissionProperty *missionProperty = [self.survey createMissionPropertyAtMapLocation:self.mapView.mapAnchor];
+        [self showMissionPropertyAttributeEditor:missionProperty];
+    }
 }
 
 
@@ -817,12 +825,6 @@
     return self.locationManager.location;
 }
 
-- (AGSPoint *)locationOfTarget
-{
-    return self.mapView.mapAnchor;
-}
-
-
 
 
 
@@ -859,7 +861,14 @@
 - (BOOL)locationServicesAvailable
 {
     //this value is undefined if the there is no locationManager
-    return !self.locationManager ? NO : _locationServicesAvailable;
+#ifdef AKR_DEBUG
+    //In the simulator, I can have location services, but the location is set to NONE
+    //treat NO location as no service available
+    BOOL hasLocation = self.locationManager.location.timestamp != nil;
+    return !self.locationManager ? NO : _locationServicesAvailable && hasLocation;
+#else
+    return !self.locationManager ? NO : _locationServicesAvailable && ;
+#endif
 }
 
 - (NSMutableArray *)addFeatureBarButtonItems
@@ -963,9 +972,8 @@
 
     self.panButton.enabled = self.mapView.loaded;
 
-    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady;
+    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady && self.locationServicesAvailable;
     self.startStopObservingBarButtonItem.enabled = self.survey.isRecording;
-    //TODO: if there are no mission properties, we should remove this button.
     self.editEnvironmentBarButton.enabled = self.survey.isRecording && self.survey.protocol.missionFeature.attributes.count > 0;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
         item.enabled = self.survey.isObserving;
@@ -1387,6 +1395,15 @@
     NSManagedObject *template = tracklog.missionProperty;
     ProtocolFeature *feature = self.survey.protocol.missionFeature;
     AGSPoint *mapPoint = [tracklog.missionProperty pointOfMissionPropertyWithSpatialReference:self.mapView.spatialReference];
+    [self setAttributesForFeatureType:feature entity:entity graphic:nil defaults:template atPoint:mapPoint isNew:YES isEditing:YES];
+}
+
+- (void)showMissionPropertyAttributeEditor:(MissionProperty *)missionProperty
+{
+    NSManagedObject *entity = missionProperty;
+    NSManagedObject *template = missionProperty;
+    ProtocolFeature *feature = self.survey.protocol.missionFeature;
+    AGSPoint *mapPoint = [missionProperty pointOfMissionPropertyWithSpatialReference:self.mapView.spatialReference];
     [self setAttributesForFeatureType:feature entity:entity graphic:nil defaults:template atPoint:mapPoint isNew:YES isEditing:YES];
 }
 
