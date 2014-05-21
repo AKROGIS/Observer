@@ -159,6 +159,7 @@ id<SurveyLocationDelegate> _locationDelegate;
     }
     _currentMission = [NSEntityDescription insertNewObjectForEntityForName:kMissionEntityName
                                                     inManagedObjectContext:self.document.managedObjectContext];
+    NSAssert(_currentMission, @"Could not create a Mission in Core Data Context %@", self.document.managedObjectContext);
     [[self trackLogSegments] addObject:[self startNewTrackLogSegment]];
 }
 
@@ -193,6 +194,7 @@ id<SurveyLocationDelegate> _locationDelegate;
     if(!_currentMapEntity) {
         //AKRLog(@"  Map not found, creating new CoreData Entity");
         _currentMapEntity = [NSEntityDescription insertNewObjectForEntityForName:kMapEntityName inManagedObjectContext:self.document.managedObjectContext];
+        NSAssert(_currentMapEntity, @"Could not create a Map Reference in Core Data Context %@", self.document.managedObjectContext);
         _currentMapEntity.name = map.title;
         _currentMapEntity.author = map.author;
         _currentMapEntity.date = map.date;
@@ -300,6 +302,7 @@ id<SurveyLocationDelegate> _locationDelegate;
     }
     GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:kGpsPointEntityName
                                                        inManagedObjectContext:self.document.managedObjectContext];
+    NSAssert(gpsPoint, @"Could not create a GPS Point in Core Data Context %@", self.document.managedObjectContext);
     if (!gpsPoint) {
         AKRLog(@"Could not create a Gps Point in Core Data");
         return nil;
@@ -382,6 +385,19 @@ id<SurveyLocationDelegate> _locationDelegate;
 }
 */
 
+- (NSArray *)trackLogSegmentsSince:(NSDate *)timestamp
+{
+    if (timestamp) {
+        return [[self trackLogSegments] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id obj, NSDictionary *bindings) {
+            TrackLogSegment *tracklog = (TrackLogSegment *)obj;
+            NSComparisonResult ordering = [tracklog.missionProperty.gpsPoint.timestamp compare:timestamp];
+            return ordering != NSOrderedAscending;
+        }]];
+    } else {
+        return [self trackLogSegments];
+    }
+ }
+
 - (NSMutableArray *)trackLogSegments
 {
     if (!_trackLogSegments) {
@@ -393,12 +409,11 @@ id<SurveyLocationDelegate> _locationDelegate;
 
 
 
-
 #pragma mark - TrackLog Methods - private
 
 - (MissionProperty *)createMissionProperty
 {
-    MissionProperty * template = [self lastTrackLogSegment].missionProperty;
+    MissionProperty *template = [self lastTrackLogSegment].missionProperty;
     MissionProperty *missionProperty = nil;
     GpsPoint *gpsPoint = [self addGpsPointAtLocation:[self.locationDelegate locationOfGPS]];
     if (gpsPoint) {
@@ -441,7 +456,7 @@ id<SurveyLocationDelegate> _locationDelegate;
 {
     //AKRLog(@"Creating MissionProperty managed object");
     MissionProperty *missionProperty = [NSEntityDescription insertNewObjectForEntityForName:kMissionPropertyEntityName inManagedObjectContext:self.document.managedObjectContext];
-    NSAssert(missionProperty, @"%@", @"Could not create a Mission Property in Core Data");
+    NSAssert(missionProperty, @"Could not create a Mission Property in Core Data Context %@", self.document.managedObjectContext);
     missionProperty.mission = self.currentMission;
     missionProperty.observing = self.isObserving;
     return missionProperty;
@@ -508,7 +523,7 @@ id<SurveyLocationDelegate> _locationDelegate;
     NSString *entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,feature.name];
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:entityName
                                                              inManagedObjectContext:self.document.managedObjectContext];
-    NSAssert(observation, @"%@", @"Could not create an Observation in Core Data");
+    NSAssert(observation, @"Could not create an Observation in Core Data Context %@", self.document.managedObjectContext);
     observation.mission = self.currentMission;
     return observation;
 }
@@ -518,7 +533,7 @@ id<SurveyLocationDelegate> _locationDelegate;
     //AKRLog(@"Adding Adhoc Location to Core Data at Map Point %@", mapPoint);
     AdhocLocation *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:kAdhocLocationEntityName
                                                                  inManagedObjectContext:self.document.managedObjectContext];
-    NSAssert(adhocLocation, @"%@", @"Could not create an AdhocLocation in Core Data");
+    NSAssert(adhocLocation, @"Could not create an AdhocLocation in Core Data Context %@", self.document.managedObjectContext);
     [self updateAdhocLocation:adhocLocation withMapPoint:mapPoint];
     adhocLocation.map = self.currentMapEntity;
     return adhocLocation;
@@ -529,7 +544,7 @@ id<SurveyLocationDelegate> _locationDelegate;
     //AKRLog(@"Adding Angle = %f, Distance = %f, Course = %f to CoreData", location.absoluteAngle, location.distanceMeters, location.deadAhead);
     AngleDistanceLocation *angleDistance = [NSEntityDescription insertNewObjectForEntityForName:kAngleDistanceLocationEntityName
                                                                          inManagedObjectContext:self.document.managedObjectContext];
-    NSAssert(angleDistance, @"%@", @"Could not create an AngleDistanceLocation in Core Data");
+    NSAssert(angleDistance, @"Could not create an AngleDistanceLocation in Core Data Context %@", self.document.managedObjectContext);
     angleDistance.angle = location.absoluteAngle;
     angleDistance.distance = location.distanceMeters;
     angleDistance.direction = location.deadAhead;
@@ -549,56 +564,64 @@ id<SurveyLocationDelegate> _locationDelegate;
 - (void)loadGraphics
 {
     AKRLog(@"Loading graphics from coredata");
+
     AKRLog(@"  Fetching gpsPoints");
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
     request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:kTimestampKey ascending:YES]];
     NSError *error = [[NSError alloc] init];
     NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:&error];
-    AKRLog(@"  Drawing %d gpsPoints", results.count);
-    if (!results && error.code)
-        AKRLog(@"Error Fetching GpsPoint %@",error);
-    GpsPoint *previousPoint;
-    MissionProperty *activeMissionProperty = nil;
-    for (GpsPoint *gpsPoint in results) {
-        //draw each individual GPS point
-        [self drawGpsPoint:gpsPoint];
+    if (!results && error.code) {
+        AKRLog(@"  Error Fetching GpsPoint %@",error);
+    } else {
+        AKRLog(@"  Drawing %d gpsPoints", results.count);
+        Mission *mission = nil;
+        _trackLogSegments = nil; //hack to use class variable as an instance variable
+        for (GpsPoint *gpsPoint in results) {
 
-        //Keep track of the previous point to draw tracks
-        if (!previousPoint) {
-            previousPoint = gpsPoint;
-            continue;
-        }
-        if (previousPoint.mission != gpsPoint.mission) {
-            previousPoint = gpsPoint;
-            continue;
-        }
-        if (previousPoint.missionProperty) {
-            activeMissionProperty = previousPoint.missionProperty;
-        }
-        [self drawLineFor:activeMissionProperty from:previousPoint to:gpsPoint];
+            //draw each individual GPS point
+            //[self drawGpsPoint:gpsPoint];
 
-        previousPoint = gpsPoint;
+            //Add point to tracklog
+            if (gpsPoint.missionProperty) {
+                if (mission == gpsPoint.mission) {
+                    [[self lastTrackLogSegment].gpsPoints addObject:gpsPoint];
+                }
+                mission = gpsPoint.mission;
+                TrackLogSegment *newTrackLog = [TrackLogSegment new];
+                newTrackLog.missionProperty = gpsPoint.missionProperty;
+                newTrackLog.gpsPoints = [NSMutableArray new];
+                [[self trackLogSegments] addObject:newTrackLog];
+            }
+            [[self lastTrackLogSegment].gpsPoints addObject:gpsPoint];
+        }
+        for (TrackLogSegment *tracklog in [self trackLogSegments]) {
+            [self drawTrackLogSegment:tracklog];
+        }
     }
-
     //Get Observations
     AKRLog(@"  Fetching observations");
     request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
     results = [self.document.managedObjectContext executeFetchRequest:request error:&error];
-    if (!results && error.code)
-        AKRLog(@"Error Fetching Observations %@",error);
-    AKRLog(@"  Drawing %d observations", results.count);
-    for (Observation *observation in results) {
-        [self drawObservation:observation];
+    if (!results && error.code) {
+        AKRLog(@"  Error Fetching Observations %@",error);
+    } else {
+        AKRLog(@"  Drawing %d observations", results.count);
+        for (Observation *observation in results) {
+            [self drawObservation:observation];
+        }
     }
+
     //Get MissionProperties
     AKRLog(@"  Fetching mission properties");
     request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
     results = [self.document.managedObjectContext executeFetchRequest:request error:&error];
-    if (!results && error.code)
-        AKRLog(@"Error Fetching Mission Properties %@",error);
-    AKRLog(@"  Drawing %d Mission Properties", results.count);
-    for (MissionProperty *missionProperty in results) {
-        [self drawMissionProperty:missionProperty];
+    if (!results && error.code) {
+        AKRLog(@"  Error Fetching Mission Properties %@",error);
+    } else {
+        AKRLog(@"  Drawing %d Mission Properties", results.count);
+        for (MissionProperty *missionProperty in results) {
+            [self drawMissionProperty:missionProperty];
+        }
     }
 
     AKRLog(@"  Done loading graphics");
@@ -611,6 +634,8 @@ id<SurveyLocationDelegate> _locationDelegate;
 
 - (void)drawGpsPoint:(GpsPoint *)gpsPoint
 {
+    NSAssert(gpsPoint.timestamp, @"An gpsPoint has no timestamp: %@", gpsPoint);
+    if (!gpsPoint.timestamp) return; //AKRLog(@"##ERROR## - A gpsPoint has no timestamp %@",gpsPoint);
     AGSPoint *mapPoint = [gpsPoint pointOfGpsWithSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:nil];
     [[self graphicsLayerForGpsPoints] addGraphic:graphic];
@@ -620,7 +645,8 @@ id<SurveyLocationDelegate> _locationDelegate;
 {
     //AKRLog(@"    Drawing observation type %@",observation.entity.name);
     NSDate *timestamp = [observation timestamp];
-    NSAssert(timestamp, @"An observation in %@ has no timestamp", observation.entity.name);
+    NSAssert(timestamp, @"An observation has no timestamp: %@", observation);
+    if (!timestamp) return; //AKRLog(@"##ERROR## - A observation has no timestamp %@",observation);
     AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
     NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
@@ -630,7 +656,8 @@ id<SurveyLocationDelegate> _locationDelegate;
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
 {
     NSDate *timestamp = [missionProperty timestamp];
-    NSAssert(timestamp, @"A mission property has no timestamp");
+    NSAssert(timestamp, @"A mission property has no timestamp: %@",missionProperty);
+    if (!timestamp) return; //AKRLog(@"##ERROR## - A mission property has no timestamp: %@",missionProperty);
     NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
     AGSPoint *mapPoint = [missionProperty pointOfMissionPropertyWithSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
@@ -649,12 +676,19 @@ id<SurveyLocationDelegate> _locationDelegate;
     [[self graphicsLayerForTracksLogObserving:mp.observing] addGraphic:graphic];
 }
 
-/*
-- (void)drawTrackLog:(TrackLogSegment *)trackLog
+
+ - (void)drawTrackLogSegment:(TrackLogSegment *)tracklog
 {
-    //TODO: implement
+    AGSMutablePolyline *pline = [[AGSMutablePolyline alloc] init];
+    [pline addPathToPolyline];
+    for (GpsPoint *gpsPoint in tracklog.gpsPoints) {
+        [pline addPointToPath:[gpsPoint pointOfGpsWithSpatialReference:self.mapViewSpatialReference]];
+    }
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:pline symbol:nil attributes:nil];
+    [[self graphicsLayerForTracksLogObserving:tracklog.missionProperty.observing] addGraphic:graphic];
 }
 
+/*
 - (void)drawLastSegmentOfLastTrackLog
 {
     //TODO: implement

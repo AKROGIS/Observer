@@ -1161,8 +1161,8 @@
             //do any other background work;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
-                    //[self logStats];
                     [self loadGraphics];
+                    [self logStats];
                     [self configureObservationButtons];
                 } else {
                     [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
@@ -1746,7 +1746,7 @@
     AKRLog(@"  %d Maps", results.count);
     //AKRLog(@"  All GPS as CSV:\n%@",[self.survey csvForGpsPointsMatching:nil]);
     AKRLog(@"  GPS (last 7 days) as CSV:\n%@",[self.survey csvForGpsPointsSince:[[NSDate date] dateByAddingTimeInterval:-(60*60*24*7)]]);
-    AKRLog(@"  TrackLog Summary as CSV:\n%@",[self.survey csvForTrackLogMatching:nil]);
+    AKRLog(@"  TrackLog Summary as CSV:\n%@",[self.survey csvForTrackLogsSince:nil]);
     NSDictionary *dict = [self.survey csvForFeaturesMatching:nil];
     for (NSString *key in dict){
         AKRLog(@"\n   Observations of %@\n%@\n",key,dict[key]);

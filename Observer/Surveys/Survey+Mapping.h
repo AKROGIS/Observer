@@ -57,7 +57,7 @@
 //- (NSDictionary *)currentEnvironmentValues;
 //- (void)updateTrackLogSegment:(TrackLogSegment *)trackLogSegment attributes:(NSDictionary *)attributes;
 //- (TrackLogSegment *)trackLogSegmentAtTimestamp:(NSDate *)timestamp;
-//- (NSArray *)trackLogSegments;
+- (NSArray *) trackLogSegmentsSince:(NSDate *)timestamp;
 
 // Observations
 - (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint;
