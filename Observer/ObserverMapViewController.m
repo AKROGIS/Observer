@@ -1468,7 +1468,9 @@
                     updateLocationButton.title = @"Move to GPS Location";
                     updateLocationButton.onSelected = ^(){
                         observation.gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
-                        [graphic setGeometry:[self mapPointFromGpsPoint:observation.gpsPoint]];
+                        if (observation.gpsPoint) {
+                            [graphic setGeometry:[self mapPointFromGpsPoint:observation.gpsPoint]];
+                        }
                         //Note: do not remove the adhoc location as that records the time of the observation
                     };
                     [[root.sections lastObject] addElement:updateLocationButton];
