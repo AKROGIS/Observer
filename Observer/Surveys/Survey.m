@@ -626,7 +626,7 @@
     if (fabs(location.coordinate.longitude - self.lastGpsPoint.longitude) > 0.0001)
         return YES;
     //TODO: is 10 seconds a good default?  do I want a user setting? this gets called a lot, so I don't want to slow down with a lookup
-    if ([location.timestamp timeIntervalSinceDate:self.lastGpsPoint.timestamp] > 10.0)
+    if ([location.timestamp timeIntervalSinceDate:self.lastGpsPoint.timestamp] > 1.0)
         return YES;
     return NO;
 }
@@ -1017,7 +1017,7 @@
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
 {
     NSDate *timestamp = [missionProperty timestamp];
-    //NSAssert(timestamp, @"A mission property has no timestamp: %@",missionProperty);
+    NSAssert(timestamp, @"A mission property has no timestamp: %@",missionProperty);
     if (!timestamp) AKRLog(@"##ERROR## - A mission property has no timestamp: %@",missionProperty); //return;
     NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
     AGSPoint *mapPoint = [missionProperty pointOfMissionPropertyWithSpatialReference:self.mapViewSpatialReference];
