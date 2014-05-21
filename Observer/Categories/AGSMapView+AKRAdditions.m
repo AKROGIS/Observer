@@ -35,7 +35,6 @@
         }
     }
     for (AGSLayer *layer in graphicsLayers) {
-        [(AGSGraphicsLayer *)layer removeAllGraphics];
         [self removeMapLayer:layer];
     }
 }
