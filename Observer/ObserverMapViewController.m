@@ -79,6 +79,7 @@
 @property (nonatomic) BOOL locationServicesAvailable;
 @property (nonatomic) BOOL userWantsLocationUpdates;
 @property (nonatomic) BOOL userWantsHeadingUpdates;
+@property (nonatomic) BOOL gpsFailed;
 
 @property (strong, nonatomic) AutoPanStateMachine *autoPanController;
 @property (strong, nonatomic) CLLocationManager *locationManager;
@@ -529,6 +530,12 @@
     if (0 <= location.speed) {
         [self.autoPanController speedUpdate:location.speed];
     }
+
+    if (self.gpsFailed) {
+        self.gpsFailed = NO;
+        [self enableControls];
+        [[[UIAlertView alloc] initWithTitle:nil message:@"@GPS is back!" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
@@ -540,6 +547,8 @@
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
     [[[UIAlertView alloc] initWithTitle:@"Location Failure" message:error.localizedDescription delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    self.gpsFailed = YES;
+    [self enableControls];
 }
 
 
@@ -870,7 +879,7 @@
     BOOL hasLocation = self.locationManager.location.timestamp != nil;
     return !self.locationManager ? NO : _locationServicesAvailable && hasLocation;
 #else
-    return !self.locationManager ? NO : _locationServicesAvailable && ;
+    return !self.locationManager ? NO : _locationServicesAvailable;
 #endif
 }
 
@@ -975,11 +984,11 @@
 
     self.panButton.enabled = self.mapView.loaded;
 
-    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady && self.locationServicesAvailable;
-    self.startStopObservingBarButtonItem.enabled = self.survey.isRecording;
-    self.editEnvironmentBarButton.enabled = self.survey.isRecording && self.survey.protocol.missionFeature.attributes.count > 0;
+    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady && self.locationServicesAvailable && !self.gpsFailed;
+    self.startStopObservingBarButtonItem.enabled = self.survey.isRecording && !self.gpsFailed;
+    self.editEnvironmentBarButton.enabled = self.survey.isRecording && self.survey.protocol.missionFeature.attributes.count > 0 && !self.gpsFailed;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
-        item.enabled = self.survey.isObserving;
+        item.enabled = self.survey.isObserving && !self.gpsFailed;
     }
 }
 
