@@ -36,12 +36,10 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 @property (nonatomic, strong, readonly) NSString *subtitle;
 
 //title and date will block (reading values from the filessytem) if the state is unborn.
-//To avoid the potential delay, call readPropertiesWithCompletionHandler first
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong, readonly) NSDate *date;
 
 //The following methods will block (reading data from the filessytem)
-//To avoid the potential delay, call openPropertiesWithCompletionHandler first
 @property (nonatomic, strong, readonly) UIImage *thumbnail;
 @property (nonatomic, strong, readonly) SProtocol *protocol;
 
@@ -65,8 +63,6 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (BOOL)isReady;
 
 //other actions
-//load all properties
-- (void)readPropertiesWithCompletionHandler:(void (^)(NSError*))handler;
 - (void)openDocumentWithCompletionHandler:(void (^)(BOOL success))handler;
 // saving is only for "SaveTO", normal saves are handled by UIKit with autosave
 // doing saves as overwrites can work if you get lucky, but may cause conflicts
@@ -91,31 +87,23 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (BOOL)startRecording;
 @property (nonatomic, readonly) BOOL isRecording;
 - (void)stopRecording;
-//@property (nonatomic, strong, readonly) Mission *currentMission;
 
 - (void)setMap:(Map *)map;
 - (void)clearMap;
 
 @property (nonatomic, weak) id<SurveyLocationDelegate>locationDelegate;
 
-//FIXME: This smells bad. maybe I shouldn't do the drawing.
-//FIXME: I am also drawing the observation in the VC, need to combine
 @property (nonatomic, strong) AGSSpatialReference *mapViewSpatialReference;
 - (void)clearMapMapViewSpatialReference;
 
 // GPS Methods
 - (GpsPoint *)addGpsPointAtLocation:(CLLocation *)location;
-//@property (nonatomic, strong, readonly) GpsPoint *lastGpsPoint;
 
 //TrackLogs
 - (TrackLogSegment *)startObserving;
 @property (nonatomic, readonly) BOOL isObserving;
 - (void)stopObserving;
 - (TrackLogSegment *)startNewTrackLogSegment;
-//- (TrackLogSegment *)lastTrackLogSegment;
-//- (NSDictionary *)currentEnvironmentValues;
-//- (void)updateTrackLogSegment:(TrackLogSegment *)trackLogSegment attributes:(NSDictionary *)attributes;
-//- (TrackLogSegment *)trackLogSegmentAtTimestamp:(NSDate *)timestamp;
 - (NSArray *) trackLogSegmentsSince:(NSDate *)timestamp;
 
 //Non-TrackLogging Mission Property
@@ -127,11 +115,8 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)angleDistance;
 - (void)updateAdhocLocation:(AdhocLocation *)adhocLocation withMapPoint:(AGSPoint *)mapPoint;
 
-
-// Misc - rethink
-
+// Miscellaneous
 - (void)loadGraphics;
-
 - (void)deleteObject:(NSManagedObject *)object;
 
 @end

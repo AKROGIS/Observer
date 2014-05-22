@@ -66,7 +66,7 @@
         _url = url;
         _state = state;
         _date = date;
-        _title = title;
+        _title = title != nil ? title : [[url lastPathComponent] stringByDeletingPathExtension] ;
         _protocolIsLoaded = NO;
         _thumbnailIsLoaded = NO;
     }
@@ -89,8 +89,7 @@
     NSString *filename = [NSString stringWithFormat:@"%@.%@", protocol.title, SURVEY_EXT];
     //the trailing slash is added because it is a directory, and this standardizes the URL for comparisons
     NSURL *url = [[[documentsDirectory URLByAppendingPathComponent:filename] URLByUniquingPath] URLByAppendingPathComponent:@"/"];
-    NSString *title = [[url lastPathComponent] stringByDeletingPathExtension];
-    self = [self initWithURL:url title:title state:kCreated date:[NSDate date]];
+    self = [self initWithURL:url title:nil state:kCreated date:[NSDate date]];
     if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nil]) {
         return nil;
     };
@@ -101,6 +100,8 @@
     [self saveProperties];
     return self;
 }
+
+
 
 
 #pragma mark property accessors
@@ -120,7 +121,6 @@
     if (_title != title) {
         _title = title;
         [self saveProperties];
-        //TODO: we should also rename the URL, to simiplify recognition in transfers
     }
 }
 
@@ -211,6 +211,9 @@
     return _documentUrl;
 }
 
+
+
+
 #pragma mark - public methods
 
 - (BOOL)isEqualToSurvey:(Survey *)survey
@@ -223,34 +226,12 @@
 
 - (BOOL) isValid
 {
-    //TODO: improve this method
     return self.protocol != nil;
 }
 
 - (BOOL)isReady
 {
     return self.document.managedObjectContext != nil && self.document.documentState == UIDocumentStateNormal;
-}
-
-//TODO: figure out error handling.
-//TODO: this public method isn't used - justify the API or remove
-- (void)readPropertiesWithCompletionHandler:(void (^)(NSError*))handler
-{
-    dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
-        if (![self loadProperties]) {
-            self.state = kCorrupt;
-        }
-        [self loadProtocol];
-        [self loadThumbnail];
-        NSError *error;
-        if (self.state == kCorrupt) {
-            NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
-            [errorDetails setValue:@"Survey File is corrupt" forKey:NSLocalizedDescriptionKey];
-            // populate the error object with the details
-            error = [NSError errorWithDomain:@"gov.nps.akr.observer" code:1 userInfo:errorDetails];
-        }
-        if (handler) handler(error);
-    });
 }
 
 - (void)openDocumentWithCompletionHandler:(void (^)(BOOL success))handler
@@ -290,7 +271,7 @@
 
 - (void)closeDocumentWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
-#ifdef DEBUG
+#ifdef AKR_DEBUG
     AKRLog(@"Closing document");
     [self logStats];
     [self disconnectFromNotificationCenter];
@@ -302,10 +283,13 @@
 
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler
 {
-    //TODO: Implement
+    AKRLog(@"Sync not implemented yet!");
     self.date = [NSDate date];
     self.state = kSaved;
+    [self saveProperties];
 }
+
+
 
 
 #pragma mark - private methods
@@ -329,7 +313,6 @@
 {
     self.protocolIsLoaded = YES;
     _protocol = [[SProtocol alloc] initWithURL:self.protocolUrl];
-    //TODO: can we delay the validity check which loads and parses the protocol file
     if (!_protocol.isValid) {
         self.state = kCorrupt;
         _protocol = nil;
@@ -352,11 +335,9 @@
     self.state = kModified;
     self.date = [NSDate date];
     [self saveProperties];
-    //TODO: build new thumbnail and save;
 }
 
 - (BOOL)saveProperties {
-    //TODO: omit null values from the dictionary, and then check for missing keys on load
     if (!self.title || !self.date) {
         return NO;
     }
@@ -372,17 +353,6 @@
     return [UIImagePNGRepresentation(self.thumbnail) writeToFile:[self.thumbnailUrl path] atomically:YES];
 }
 
-
-- (void)objectsDidChange:(NSNotification *)notification
-{
-#ifdef DEBUG
-    AKRLog(@"Survey.document.managedObjectContext objects did change.");
-#endif
-    self.date = [NSDate date];
-    self.state = kModified;
-    //do not save properties (write a file to disk) here, since this is called a lot - do it when coredata saves
-}
-
 - (NSString *)description
 {
     if (self.state == kUnborn) {
@@ -390,6 +360,25 @@
     } else {
         return [NSString stringWithFormat:@"%@; %@; %@", self.title, self.subtitle2, self.protocolIsLoaded ? self.subtitle : @"protocol not yet loaded"];
     }
+}
+
+
+
+
+#pragma mark - CoreData Notifications
+
+- (void)objectsDidChange:(NSNotification *)notification
+{
+    //AKRLog(@"Survey.document.managedObjectContext objects did change.");
+    self.date = [NSDate date];
+    self.state = kModified;
+    //do not save properties (write a file to disk) here, since this is called a lot - do it when coredata saves
+}
+
+- (void) dataSaved: (NSNotification *)notification
+{
+    //AKRLog(@"Document (%@) data saved", self.title);
+    [self saveProperties];
 }
 
 
@@ -519,7 +508,6 @@
     }
     return entityName;
 }
-
 
 
 
@@ -716,25 +704,6 @@
 {
     return [self.trackLogSegments lastObject];
 }
-
-/*
- - (NSDictionary *)currentEnvironmentValues
- {
- //TODO: implement or remove
- return nil;
- }
-
- - (void)updateTrackLogSegment:(TrackLogSegment *)trackLogSegment attributes:(NSDictionary *)attributes
- {
- //TODO: implement or remove
- }
-
- - (TrackLogSegment *)trackLogSegmentAtTimestamp:(NSDate *)timestamp
- {
- //TODO: implement or remove
- return nil;
- }
- */
 
 - (NSArray *)trackLogSegmentsSince:(NSDate *)timestamp
 {
@@ -1070,13 +1039,6 @@
     [[self graphicsLayerForTracksLogObserving:tracklog.missionProperty.observing] addGraphic:graphic];
 }
 
-/*
- - (void)drawLastSegmentOfLastTrackLog
- {
- //TODO: implement or remove
- }
- */
-
 
 
 
@@ -1149,17 +1111,6 @@
 
     AKRLog(@"Document (%@) data changed", self.title);
     //AKRLog(@"Data Changed; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
-}
-
-- (void) dataSaved: (NSNotification *)notification
-{
-    //name should always be NSManagedObjectContextDidSaveNotification
-    //object should always be self.document
-    //userinfo has keys NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey which all return arrays of objects
-
-    AKRLog(@"Document (%@) data saved", self.title);
-    //AKRLog(@"Data Saved; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
-    [self saveProperties];
 }
 
 - (void)logStats
