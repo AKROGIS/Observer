@@ -1024,8 +1024,11 @@
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
 {
     NSDate *timestamp = [missionProperty timestamp];
-    NSAssert(timestamp, @"A mission property has no timestamp: %@",missionProperty);
-    if (!timestamp) AKRLog(@"##ERROR## - A mission property has no timestamp: %@",missionProperty); //return;
+    //NSAssert(timestamp, @"A mission property has no timestamp: %@",missionProperty);
+    if (!timestamp) {
+        AKRLog(@"##ERROR## - A mission property has no timestamp: %@",missionProperty);
+        return;
+    }
     NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
     AGSPoint *mapPoint = [missionProperty pointOfMissionPropertyWithSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
