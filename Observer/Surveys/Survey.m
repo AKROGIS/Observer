@@ -1028,7 +1028,7 @@
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
 {
     NSDate *timestamp = [missionProperty timestamp];
-    //NSAssert(timestamp, @"A mission property has no timestamp: %@",missionProperty);
+    NSAssert(timestamp, @"A mission property has no timestamp: %@",missionProperty);
     if (!timestamp) {
         AKRLog(@"##ERROR## - A mission property has no timestamp: %@",missionProperty);
         return;
