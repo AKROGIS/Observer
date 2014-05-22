@@ -692,13 +692,15 @@
     TrackLogSegment *newTrackLog = nil;
     MissionProperty *missionProperty = [self createMissionPropertyForTrackLog];
     if (missionProperty.gpsPoint) {
-        newTrackLog = [TrackLogSegment new];
-        newTrackLog.missionProperty = missionProperty;
-        GpsPoint *firstGpsPoint = missionProperty.gpsPoint;
-        if (firstGpsPoint) {
-            newTrackLog.gpsPoints = [NSMutableArray arrayWithObject:firstGpsPoint];
+        if ([self lastTrackLogSegment].missionProperty == missionProperty) {
+            //happens if the new mission property has the same gps point as the prior mission property
+            newTrackLog = [self lastTrackLogSegment];
+        } else {
+            newTrackLog = [TrackLogSegment new];
+            newTrackLog.missionProperty = missionProperty;
+            newTrackLog.gpsPoints = [NSMutableArray arrayWithObject:missionProperty.gpsPoint];
+            [self.trackLogSegments addObject:newTrackLog];
         }
-        [self.trackLogSegments addObject:newTrackLog];
     }
     return newTrackLog;
 }
@@ -779,6 +781,12 @@
         MissionProperty *template = [self lastTrackLogSegment].missionProperty;
         [self copyAttributesForFeature:self.protocol.missionFeature fromEntity:template toEntity:missionProperty];
         [self drawMissionProperty:missionProperty];
+        if (template && (!template.gpsPoint || template.gpsPoint == gpsPoint)) {
+            //The prior mission property had it's gps point "stolen" by the new mission property (there is a one-to-one relationship)
+            //so replace the prior mission property is replaced by the new mission property
+            [self.document.managedObjectContext deleteObject:template];
+            [self lastTrackLogSegment].missionProperty = missionProperty;
+        }
     }
     return missionProperty;
 }
@@ -947,7 +955,6 @@
             //  A track log starts at a gpsPoint with a related mission property
             //  The first point of a tracklog might also be the last point of the prior track log (if the mission is the same)
             if (gpsPoint.missionProperty) {
-                AKRLog(@"TrackLog: MissionProperty %@",gpsPoint.missionProperty);
                 if (mission == gpsPoint.mission) {
                     [[self lastTrackLogSegment].gpsPoints addObject:gpsPoint];
                 }
@@ -985,7 +992,6 @@
     } else {
         AKRLog(@"  Drawing %d Mission Properties", results.count);
         for (MissionProperty *missionProperty in results) {
-            AKRLog(@"Drawing MissionProperty %@",missionProperty);
             [self drawMissionProperty:missionProperty];
         }
     }
