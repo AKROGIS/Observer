@@ -554,6 +554,14 @@
     self.lastGpsPoint = nil;
     self.currentMission = nil;
     self.isRecording = NO;
+    // Remove Aborted TrackLog
+    // - In normal operations, can only happen with rapid start/stop recording or stop observing/stop recording
+    // In both cases, there is no value in the lost mission property
+    TrackLogSegment *tracklog = [self lastTrackLogSegment];
+    if (tracklog && tracklog.gpsPoints.count == 1) {
+        [self.document.managedObjectContext deleteObject:tracklog.missionProperty];
+        [self.trackLogSegments removeLastObject];
+    }
 }
 
 - (void)setMap:(Map *)map
