@@ -669,7 +669,6 @@
     gpsPoint.altitude = gpsData.altitude;
     gpsPoint.course = gpsData.course;
     gpsPoint.horizontalAccuracy = gpsData.horizontalAccuracy;
-    //TODO: CLLocation only guarantees that lat/long are double.  Our Coredata constraint may fail.
     gpsPoint.latitude = gpsData.coordinate.latitude;
     gpsPoint.longitude = gpsData.coordinate.longitude;
     gpsPoint.speed = gpsData.speed;
