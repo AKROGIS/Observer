@@ -620,14 +620,21 @@
 {
     if (!self.lastGpsPoint)
         return YES;
-    //0.0001 deg in latitude is about 18cm (<1foot) assuming a mean radius of 6371m, and less in longitude away from the equator.
-    if (fabs(location.coordinate.latitude - self.lastGpsPoint.latitude) > 0.0001)
+#ifdef AKR_DEBUG
+    //This is used to reduce the frequency of the 'identical' points recieved on the simulator
+    //need to keep this small, or else we may fail when features try to "share" a gps point
+    if ([location.timestamp timeIntervalSinceDate:self.lastGpsPoint.timestamp] > 2.0)
         return YES;
-    if (fabs(location.coordinate.longitude - self.lastGpsPoint.longitude) > 0.0001)
+    //Using a mean radius of 6371km, each degree at the equator = 111194.9 meters. (pi*D/360).
+    //Therefore .00001 deg is 1.195 meters or less (longitude will be less away from the equator)
+    if (fabs(location.coordinate.latitude - self.lastGpsPoint.latitude) > 0.00001)
         return YES;
-    //TODO: is 10 seconds a good default?  do I want a user setting? this gets called a lot, so I don't want to slow down with a lookup
-    if ([location.timestamp timeIntervalSinceDate:self.lastGpsPoint.timestamp] > 1.0)
+    if (fabs(location.coordinate.longitude - self.lastGpsPoint.longitude) > 0.00001)
         return YES;
+#else
+    if ([location.timestamp timeIntervalSinceDate:self.lastGpsPoint.timestamp] > 0.0)
+        return YES;
+#endif
     return NO;
 }
 
