@@ -324,9 +324,8 @@
     if (!self.survey.isRecording) {
         return;
     }
-    [self stopObserving:nil];
-    [UIApplication sharedApplication].idleTimerDisabled = NO;
     [self stopLocationUpdates];
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
     [self.survey stopRecording];
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(startRecording:) ToPlay:YES];
     [self enableControls];

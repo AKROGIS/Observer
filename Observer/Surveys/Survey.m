@@ -550,9 +550,7 @@
 
 - (void)stopRecording
 {
-    if (self.isObserving) {
-        [self stopObserving];
-    }
+    self.isObserving = NO;
     self.lastGpsPoint = nil;
     self.currentMission = nil;
     self.isRecording = NO;
