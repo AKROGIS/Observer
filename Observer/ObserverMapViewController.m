@@ -1621,6 +1621,10 @@
 // This is called by the feature editor (setAttributesForFeatureType:), when the user wants to edit the Angle/Distance of an observation.
 - (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic
 {
+    UINavigationController *nav = self.navigationController;
+    if (!nav) {
+        nav = (UINavigationController *)[self.editAttributePopoverController contentViewController];
+    }
     AngleDistanceLocation *angleDistance = [self.survey angleDistanceLocationFromEntity:entity];
     LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:angleDistance.direction protocolFeature:feature absoluteAngle:angleDistance.angle distance:angleDistance.distance];;
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
@@ -1631,22 +1635,13 @@
         [self.survey updateAngleDistanceObservation:observation withAngleDistance:controller.location];
         [[graphic layer] removeGraphic:graphic];
         [self.survey drawObservation:observation];
+        [nav popViewControllerAnimated:YES];
     };
     vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
-        self.angleDistancePopoverController = nil;
+        [nav popViewControllerAnimated:YES];
     };
 
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        self.angleDistancePopoverController = [[UIPopoverController alloc] initWithContentViewController:nav];
-        vc.popover = self.angleDistancePopoverController;
-        vc.popover.delegate = self;
-        AGSPoint *mapPoint = (AGSPoint *)graphic.geometry;
-        [self.angleDistancePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-        self.popoverMapPoint = mapPoint;
-    } else {
-        [self.navigationController pushViewController:vc animated:YES];
-    }
+    [nav pushViewController:vc animated:YES];
 }
 
 
