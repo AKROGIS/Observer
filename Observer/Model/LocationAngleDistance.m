@@ -72,6 +72,12 @@
     return [self doubleFromDistance:self.distance];
 }
 
+- (double)perpendicularMeters
+{
+    double radians = (self.absoluteAngle - self.deadAhead) * M_PI / 180.0;
+    return fabs(self.distanceMeters * sin(radians));
+}
+
 - (BOOL) usesProtocol
 {
     return self.feature.allowedLocations.definesAngleDistance;

@@ -75,75 +75,16 @@
     return [self csvForFeaturesMatching:predicate];
 }
 
-- (NSString *)csvForTrackLogMatching:(NSPredicate *)predicate
+
+- (NSString *)csvForTrackLogsSince:(NSDate *)timestamp
 {
-    NSMutableString *csv = [NSMutableString stringWithString:@"start_utc,start_local,start_lat,start_lon,end_local,end_utc,end_lat,end_lon,datum,length_m,year,day_of_year,observing"];
-    for (NSAttributeDescription *attribute in self.protocol.missionFeature.attributes) {
-        [csv appendString:@","];
-        NSString *cleanName = [attribute.name stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
-        [csv appendString:cleanName];
-    }
+    NSMutableString *csv = [NSMutableString stringWithString:[TrackLogSegment csvHeaderForProtocol:self.protocol]];
     [csv appendString:@"\n"];
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
-    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:kTimestampKey ascending:YES]];
-    request.predicate = predicate;
-    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    GpsPoint *firstPoint = nil;
-    GpsPoint *previousPoint = nil;
-    Mission *mission = nil;
-    MissionProperty *missionProperty = nil;
-    for (GpsPoint *gpsPoint in results) {
-        if (!firstPoint) {
-            firstPoint = gpsPoint;
-            missionProperty = gpsPoint.missionProperty;
-            mission = gpsPoint.mission;
-            continue;
-        }
-        if (mission != gpsPoint.mission && previousPoint) {
-            [csv appendString:[self csvFroTrackLogStart:firstPoint end:previousPoint props:firstPoint.missionProperty]];
-            [csv appendString:@"\n"];
-            firstPoint = gpsPoint;
-            missionProperty = gpsPoint.missionProperty;
-            mission = gpsPoint.mission;
-            continue;
-        }
-        if (missionProperty != gpsPoint.missionProperty) {
-            [csv appendString:[self csvFroTrackLogStart:firstPoint end:gpsPoint props:firstPoint.missionProperty]];
-            [csv appendString:@"\n"];
-            firstPoint = gpsPoint;
-            missionProperty = gpsPoint.missionProperty;
-        }
-        previousPoint = gpsPoint;
+    for (TrackLogSegment *tracklog in [self trackLogSegmentsSince:timestamp]) {
+        [csv appendString:[tracklog asCsvForProtocol:self.protocol]];
+        [csv appendString:@"\n"];
     }
     return csv;
-}
-
-- (NSString *)csvFroTrackLogStart:(GpsPoint *)start end:(GpsPoint *)end props:(MissionProperty *)props
-{
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSInteger year = [gregorian components:NSYearCalendarUnit fromDate:start.timestamp].year;
-    NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSDayCalendarUnit inUnit:NSYearCalendarUnit forDate:start.timestamp];
-    NSMutableString *csv;
-    csv = [NSMutableString stringWithFormat:@"%@,%@,%0.6f,%0.6f,%@,%@,%0.6f,%0.6f,WGS84,%g,%d,%u,%@",
-            [AKRFormatter utcIsoStringFromDate:start.timestamp], [AKRFormatter localIsoStringFromDate:start.timestamp], start.latitude, start.longitude,
-            [AKRFormatter utcIsoStringFromDate:end.timestamp], [AKRFormatter localIsoStringFromDate:start.timestamp], end.latitude, end.longitude,
-            0.0, year, dayOfYear, (props.observing ? @"Yes" : @"No")];
-
-    //get the variable attributes based on the feature type
-    for (NSAttributeDescription *attribute in self.protocol.missionFeature.attributes) {
-        [csv appendString:@","];
-        id value = [props valueForKey:attribute.name];
-        if (value) {
-            [csv appendFormat:@"%@",value];
-        }
-    }
-    return csv;
-}
-
-- (NSString *)csvForTrackLogSince:(NSDate *)timestamp
-{
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gpsPoint.timestamp >= %@ || adhocLocation.timestamp >= %@",timestamp];
-    return [self csvForTrackLogMatching:predicate];
 }
 
 

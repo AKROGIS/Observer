@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="MN5-lE-B0i">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="MN5-lE-B0i">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -70,12 +70,12 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="U07-s2-PAu"/>
                                     <barButtonItem enabled="NO" style="plain" systemItem="play" id="c4V-pT-y07">
                                         <connections>
-                                            <action selector="startStopRecording:" destination="xq4-n4-1ok" id="rl6-Jv-oQk"/>
+                                            <action selector="startRecording:" destination="xq4-n4-1ok" id="QDu-N7-2c9"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem enabled="NO" style="plain" systemItem="play" id="Bne-cM-yph">
                                         <connections>
-                                            <action selector="startStopObserving:" destination="xq4-n4-1ok" id="aYX-M5-tVX"/>
+                                            <action selector="startObserving:" destination="xq4-n4-1ok" id="3lQ-Rz-ARA"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem enabled="NO" title="+MP" id="Afo-Bf-zXG">

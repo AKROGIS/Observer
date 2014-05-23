@@ -30,20 +30,17 @@
 #import "MapSelectViewController.h"
 #import "AttributeViewController.h"
 #import "FeatureSelectorTableViewController.h"
-#import "AGSMapView+AKRAdditions.h"
 #import "UIPopoverController+Presenting.h"
 #import "GpsPointTableViewController.h"
-#import "Survey+CsvExport.h"
-#import "GpsPoint+Location.h"
-#import "Observation+Location.h"
-#import "MissionProperty+Location.h"
 
 //Views
 #import "AutoPanButton.h"
 #import "AddFeatureBarButtonItem.h"
+#import "AGSMapView+AKRAdditions.h"
 
 //Support Model Objects
 #import "AutoPanStateMachine.h"
+#import "Survey+CsvExport.h"
 
 //Support sub-system
 #import "QuickDialog.h"
@@ -60,9 +57,6 @@
 @interface ObserverMapViewController () {
     CGFloat _initialRotationOfViewAtGestureStart;
 }
-
-//Model
-@property (weak,   nonatomic, readonly) NSManagedObjectContext *context; //shortcut to self.survey.document.managedObjectContext
 
 //Views
 @property (weak, nonatomic) IBOutlet AGSMapView *mapView;
@@ -85,30 +79,19 @@
 @property (nonatomic) BOOL locationServicesAvailable;
 @property (nonatomic) BOOL userWantsLocationUpdates;
 @property (nonatomic) BOOL userWantsHeadingUpdates;
-@property (nonatomic) BOOL isRecording;
-@property (nonatomic) BOOL isObserving;
+@property (nonatomic) BOOL gpsFailed;
 
 @property (strong, nonatomic) AutoPanStateMachine *autoPanController;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 
-@property (strong, nonatomic) GpsPoint *lastGpsPointSaved;
-@property (strong, nonatomic) MapReference *currentMapEntity;
-@property (strong, nonatomic) Mission *mission;
-@property (strong, nonatomic) MissionProperty *currentMissionProperty;
 @property (strong, nonatomic) id<AGSFeature> movingGraphic;  //maintain state between AGSMapViewTouchDelegate calls
 @property (strong, nonatomic) Observation *movingObservation;  //maintain state between AGSMapViewTouchDelegate calls
 @property (strong, nonatomic) MissionProperty *movingMissionProperty;  //maintain state between AGSMapViewTouchDelegate calls
-
-//Setup for AngleDistance ViewController
-@property (strong, nonatomic) LocationAngleDistance *angleDistanceOrientation;
-@property (strong, nonatomic) GpsPoint *angleDistanceLocation;
 
 //Used to save state for delegate callbacks (alertview, actionsheet and segue)
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
 @property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
 @property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;  //maintain state for UIActionSheetDelegate callback
-
-@property (strong, nonatomic) NSMutableDictionary *graphicsLayers; // of AGSGraphicsLayer
 
 //Must maintain a reference to popover controllers, otherwise they are GC'd after they are presented
 @property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
@@ -133,7 +116,7 @@
 
 - (void)viewDidLoad
 {
-    AKRLog(@"Main view controller view did load");
+    //AKRLog(@"Main view controller view did load");
     [super viewDidLoad];
     [self configureMapView];
     [self configureGpsButton];
@@ -229,28 +212,20 @@
 {
     self.mapView.locationDisplay.interfaceOrientation = toInterfaceOrientation;
     //popovers not presented from a UIBarButtonItem must close and reopen in the new orientation
-    if (self.editAttributePopoverController) {
-        [self.editAttributePopoverController dismissPopoverAnimated:NO];
-    }
-    if (self.reviewAttributePopoverController) {
-        [self.reviewAttributePopoverController dismissPopoverAnimated:NO];
-    }
-    if (self.featureSelectorPopoverController) {
-        [self.featureSelectorPopoverController dismissPopoverAnimated:NO];
-    }
-    if (self.angleDistancePopoverController) {
-        [self.angleDistancePopoverController dismissPopoverAnimated:NO];
-    }
+    [self.editAttributePopoverController dismissPopoverAnimated:NO];
+    [self.reviewAttributePopoverController dismissPopoverAnimated:NO];
+    [self.featureSelectorPopoverController dismissPopoverAnimated:NO];
+    [self.angleDistancePopoverController dismissPopoverAnimated:NO];
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
+    //re-present popovers not presented from a UIBarButtonItem in the new orientation
     [self.editAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.reviewAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.featureSelectorPopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.angleDistancePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
-
 
 
 
@@ -299,33 +274,73 @@
 }
 
 
-- (IBAction)startStopRecording:(UIBarButtonItem *)sender
+- (IBAction)startRecording:(UIBarButtonItem *)sender
 {
-    if (self.isRecording) {
-        [self stopRecording];
-    } else {
-        [self startRecording];
+    if (self.survey.isRecording) {
+        return;
     }
+    if(![self.survey startRecording]) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to start recording.  GPS may not be ready." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+        return;
+    }
+    self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(stopRecording:) ToPlay:NO];
+    [self enableControls];
+    [self startLocationUpdates];
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
 }
 
-- (IBAction)startStopObserving:(UIBarButtonItem *)sender
+- (IBAction)startObserving:(UIBarButtonItem *)sender
 {
-    if (self.isObserving) {
-        [self stopObserving];
-    } else {
-        [self startObserving];
+    if (self.survey.isObserving || !self.survey.isRecording) {
+        return;
     }
+    TrackLogSegment *tracklog = [self.survey startObserving];
+    [self showTrackLogAttributeEditor:tracklog];
+    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(stopObserving:) ToPlay:NO];
+    [self enableControls];
 }
 
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
-    [self saveNewMissionPropertyEditAttributes:YES];
+    if (self.survey.isRecording) {
+        TrackLogSegment *tracklog = [self.survey startNewTrackLogSegment];
+        [self showTrackLogAttributeEditor:tracklog];
+    } else {
+        MissionProperty *missionProperty = [self.survey createMissionPropertyAtMapLocation:self.mapView.mapAnchor];
+        [self showMissionPropertyAttributeEditor:missionProperty];
+    }
 }
 
 
 
 
 #pragma mark - Actions wired up programatically
+
+- (void)stopRecording:(UIBarButtonItem *)sender
+{
+    if (!self.survey.isRecording) {
+        return;
+    }
+    [self stopLocationUpdates];
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
+    if (self.survey.isObserving) {
+        self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startObserving:) ToPlay:YES];
+        [self enableControls];
+    }
+    [self.survey stopRecording];
+    self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(startRecording:) ToPlay:YES];
+    [self enableControls];
+}
+
+- (void)stopObserving:(UIBarButtonItem *)sender
+{
+    if (!self.survey.isObserving) {
+        return;
+    }
+    [self.survey stopObserving];
+    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startObserving:) ToPlay:YES];
+    [self enableControls];
+}
 
 - (void)pleaseAddFeature:(AddFeatureBarButtonItem *)sender
 {
@@ -369,7 +384,7 @@
 
 
 
-#pragma mark - public properties
+#pragma mark - Public Interface
 
 - (void)setSurvey:(Survey *)survey
 {
@@ -401,6 +416,31 @@
     [self openMap];
     [self updateSelectMapViewControllerWithNewMap:map];
 }
+
+- (void)newProtocolAvailable:(SProtocol *)protocol
+{
+    if (protocol) {
+        ProtocolSelectViewController *vc = nil;
+        UINavigationController *nav = nil;
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
+        } else {
+            nav = self.navigationController;
+        }
+        for (UIViewController *vc1 in nav.viewControllers) {
+            if ([vc1 isKindOfClass:[ProtocolSelectViewController class]]) {
+                vc = (ProtocolSelectViewController *)vc1;
+                break;
+            }
+        }
+        [vc addProtocol:protocol];
+    }
+}
+
+
+
+
+#pragma mark - Public Interface = private support
 
 - (void)updateSelectSurveyViewControllerWithNewSurvey:(Survey *)survey
 {
@@ -439,25 +479,7 @@
     }
 }
 
-- (void)newProtocolAvailable:(SProtocol *)protocol
-{
-    if (protocol) {
-        ProtocolSelectViewController *vc = nil;
-        UINavigationController *nav = nil;
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
-        } else {
-            nav = self.navigationController;
-        }
-        for (UIViewController *vc1 in nav.viewControllers) {
-            if ([vc1 isKindOfClass:[ProtocolSelectViewController class]]) {
-                vc = (ProtocolSelectViewController *)vc1;
-                break;
-            }
-        }
-        [vc addProtocol:protocol];
-    }
-}
+
 
 
 #pragma mark - Delegate Methods: CLLocationManagerDelegate
@@ -493,23 +515,9 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     //AKRLog(@"locationManager: didUpdateLocations:%@",locations);
-    if (self.isRecording) {
+    if (self.survey.isRecording) {
         for (CLLocation *location in locations) {
-            //Should probably be something like:
-            //if ([self.survey addGpsPoint:location]) {
-            //    [self.mapView addGpsPoint:location];
-            //}
-
-            if ([self isNewLocation:location]) {
-                GpsPoint *oldPoint = self.lastGpsPointSaved;
-                GpsPoint *gpsPoint = [self createGpsPoint:location];
-                if (gpsPoint) {
-                    [self drawGpsPointAtMapPoint:[self mapPointFromGpsPoint:gpsPoint]];
-                }
-                if (oldPoint && gpsPoint) {
-                    [self drawTrackObserving:self.isObserving from:oldPoint to:gpsPoint];
-                }
-            }
+            [self.survey addGpsPointAtLocation:location];
         }
     }
 
@@ -517,6 +525,12 @@
     CLLocation *location = [locations lastObject];
     if (0 <= location.speed) {
         [self.autoPanController speedUpdate:location.speed];
+    }
+
+    if (self.gpsFailed) {
+        self.gpsFailed = NO;
+        [self enableControls];
+        [[[UIAlertView alloc] initWithTitle:nil message:@"@GPS is back!" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
     }
 }
 
@@ -529,6 +543,8 @@
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
     [[[UIAlertView alloc] initWithTitle:@"Location Failure" message:error.localizedDescription delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    self.gpsFailed = YES;
+    [self enableControls];
 }
 
 
@@ -539,6 +555,8 @@
 - (void)layer:(AGSLayer *)layer didFailToLoadWithError:(NSError *)error
 {
     self.map = nil;
+    [self.survey clearMap];
+    [self.survey clearMapMapViewSpatialReference];
     [self configureObservationButtons];
     [self decrementBusy];
     [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to load map" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
@@ -565,7 +583,7 @@
     //Asks delegate whether to find which graphics in the specified layer intersect the tapped location. Default is YES.
     //This function may or may not be called on the main thread.
     //AKRLog(@"mapView:shouldFindGraphicsInLayer:(%f,%f)=(%@) with graphics Layer:%@", screen.x, screen.y, mapPoint, layer.name);
-    return [self isSelectableLayerName:layer.name];
+    return [self.survey isSelectableLayerName:layer.name];
 }
 
 
@@ -583,7 +601,7 @@
 
     switch (features.count) {  //Number of layers with selected features
         case 0:
-            if (self.isObserving) {
+            if (self.survey.isObserving) {
                 switch (self.survey.protocol.featuresWithLocateByTouch.count) {
                     case 0:
                         break;
@@ -638,12 +656,9 @@
                 case 1: {
                     id<AGSFeature> feature = featureList[0];
                     NSDate *timestamp = (NSDate *)[feature safeAttributeForKey:kTimestampKey];
-                    NSManagedObject *entity = [self entityOnLayerNamed:layerName atTimestamp:timestamp];
-                    if ([entity.entity.name isEqualToString:kMissionPropertyEntityName]) {
-                        self.movingMissionProperty = (MissionProperty *)entity;
-                    } else {
-                        self.movingObservation = (Observation *)entity;
-                    }
+                    NSManagedObject *entity = [self.survey entityOnLayerNamed:layerName atTimestamp:timestamp];
+                    self.movingMissionProperty = [self.survey missionPropertyFromEntity:entity];
+                    self.movingObservation = [self.survey observationFromEntity:entity];
                     if (self.movingMissionProperty) {
                         //TODO: support moving mission properties
                         [[[UIAlertView alloc] initWithTitle:nil message:@"Can't move mission properties yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
@@ -696,16 +711,12 @@
     if (self.movingGraphic) {
         [self.movingGraphic setGeometry:mapPoint];
     }
-    [self updateAdhocLocation:self.movingObservation.adhocLocation withMapPoint:mapPoint];
-    [self updateAdhocLocation:self.movingMissionProperty.adhocLocation withMapPoint:mapPoint];
+    [self.survey updateAdhocLocation:self.movingObservation.adhocLocation withMapPoint:mapPoint];
+    [self.survey updateAdhocLocation:self.movingMissionProperty.adhocLocation withMapPoint:mapPoint];
     self.movingObservation = nil;
     self.movingMissionProperty = nil;
     self.movingGraphic = nil;
 }
-
-
-
-#pragma mark - Delegate Methods: AGSCalloutDelegate (all optional)
 
 
 
@@ -812,6 +823,16 @@
 
 
 
+#pragma mark = Delegate Methods - SurveyLocationDelegate
+
+- (CLLocation *)locationOfGPS
+{
+    return self.locationManager.location;
+}
+
+
+
+
 #pragma mark - Private Properties
 
 - (CLLocationManager *)locationManager
@@ -845,66 +866,14 @@
 - (BOOL)locationServicesAvailable
 {
     //this value is undefined if the there is no locationManager
+#ifdef AKR_DEBUG
+    //In the simulator, I can have location services, but the location is set to NONE
+    //treat NO location as no service available
+    BOOL hasLocation = self.locationManager.location.timestamp != nil;
+    return !self.locationManager ? NO : _locationServicesAvailable && hasLocation;
+#else
     return !self.locationManager ? NO : _locationServicesAvailable;
-}
-
-- (NSMutableDictionary *)graphicsLayers
-{
-    if (!_graphicsLayers)
-        _graphicsLayers = [[NSMutableDictionary alloc] init];
-    return _graphicsLayers;
-}
-
-- (MapReference *)currentMapEntity
-{
-    if (!_currentMapEntity) {
-        // try to fetch it, otherwise create it.
-        AKRLog(@"Looking for %@ in coredata",self.map);
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMapEntityName];
-
-        request.predicate = [NSPredicate predicateWithFormat:@"name == %@ AND author == %@ AND date == %@",
-                             self.map.title, self.map.author, self.map.date];
-        NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-        _currentMapEntity = [results firstObject];
-        if(!_currentMapEntity) {
-            AKRLog(@"  Map not found, creating new CoreData Entity");
-            _currentMapEntity = [NSEntityDescription insertNewObjectForEntityForName:kMapEntityName inManagedObjectContext:self.context];
-            _currentMapEntity.name = self.map.title;
-            _currentMapEntity.author = self.map.author;
-            _currentMapEntity.date = self.map.date;
-        }
-    }
-    return _currentMapEntity;
-}
-
-@synthesize context = _context;
-
-- (NSManagedObjectContext *)context
-{
-    return self.survey.document.managedObjectContext;
-}
-
-- (MissionProperty *)currentMissionProperty
-{
-    if (!_currentMissionProperty) {
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
-        request.fetchLimit = 1;
-        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"adhocLocation.timestamp" ascending:NO]];
-        request.predicate = [NSPredicate predicateWithFormat:@"adhocLocation != NULL"];
-        NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-        MissionProperty *withMap = [results firstObject];
-        if (withMap) {
-            request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"gpsPoint.timestamp" ascending:NO]];
-            request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint != NULL AND gpsPoint.timestamp > %@", withMap.adhocLocation.timestamp];
-        } else {
-            request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"gpsPoint.timestamp" ascending:NO]];
-            request.predicate = [NSPredicate predicateWithFormat:@"gpsPoint != NULL"];
-        }
-        results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-        MissionProperty *withGPS = [results firstObject];
-        _currentMissionProperty = withGPS ? withGPS : withMap;
-    }
-    return _currentMissionProperty;
+#endif
 }
 
 - (NSMutableArray *)addFeatureBarButtonItems
@@ -951,7 +920,7 @@
         for (ProtocolFeature *feature in self.survey.protocol.features) {
             feature.allowedLocations.locationPresenter = self;
             if (feature.allowedLocations.countOfNonTouchChoices > 0) {
-                //TODO: feature names are too long for buttons, use a short name, or an icon
+                //TODO: feature names may be too long for buttons, use a short name, or an icon
                 AddFeatureBarButtonItem *addFeatureButton = [[AddFeatureBarButtonItem alloc] initWithTitle:feature.name style:UIBarButtonItemStylePlain target:self action:@selector(pleaseAddFeature:)];
                 addFeatureButton.feature = feature;
                 if (feature.allowedLocations.countOfNonTouchChoices > 1) {
@@ -983,7 +952,7 @@
 
 -(void)updateTitleBar
 {
-    self.selectSurveyButton.title = (self.context ? self.survey.title : @"Select Survey");
+    self.selectSurveyButton.title = (self.survey.isReady ? self.survey.title : @"Select Survey");
 }
 
 -(void)disableControls
@@ -1008,12 +977,11 @@
 
     self.panButton.enabled = self.mapView.loaded;
 
-    self.startStopRecordingBarButtonItem.enabled = self.context != nil;
-    self.startStopObservingBarButtonItem.enabled = self.isRecording && self.context;
-    //TODO: if there are no mission properties, we should remove this button.
-    self.editEnvironmentBarButton.enabled = self.isRecording && self.context && self.survey.protocol.missionFeature.attributes.count > 0;
+    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady && self.locationServicesAvailable && !self.gpsFailed;
+    self.startStopObservingBarButtonItem.enabled = self.survey.isRecording && !self.gpsFailed;
+    self.editEnvironmentBarButton.enabled = self.survey.isRecording && self.survey.protocol.missionFeature.attributes.count > 0 && !self.gpsFailed;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
-        item.enabled = self.isObserving;
+        item.enabled = self.survey.isObserving && !self.gpsFailed;
     }
 }
 
@@ -1043,15 +1011,6 @@
     //AKRLog(@"Finished decrement busy = %d",self.busyCount);
 }
 
-- (void)setupGPS
-{
-    self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
-    self.mapView.locationDisplay.wanderExtentFactor = 0.0;
-    self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
-    [self.mapView.locationDisplay startDataSource];
-    [self startStopLocationServicesForPanMode];
-}
-
 
 
 
@@ -1075,56 +1034,6 @@
     //angle in radians with positive being counterclockwise (on iOS)
     double radians = -1*degrees * M_PI / 180.0;
     self.compassRoseButton.transform = CGAffineTransformMakeRotation((CGFloat)radians);
-}
-
-- (void)startRecording
-{
-    AKRLog(@"start recording");
-    self.isRecording = YES;
-    self.startStopObservingBarButtonItem.enabled = YES;
-    [self setBarButtonAtIndex:5 action:@selector(startStopRecording:) ToPlay:NO];
-    [self startLocationUpdates];
-    [UIApplication sharedApplication].idleTimerDisabled = YES;
-    self.mission = [NSEntityDescription insertNewObjectForEntityForName:kMissionEntityName
-                                                 inManagedObjectContext:self.context];
-}
-
-- (void)stopRecording
-{
-    AKRLog(@"stop recording");
-    self.isRecording = NO;
-    if (self.isObserving) {
-        [self stopObserving];
-    } else {
-        [self enableControls];
-    }
-    self.startStopObservingBarButtonItem.enabled = NO;
-    [self setBarButtonAtIndex:5 action:@selector(startStopRecording:) ToPlay:YES];
-    [self stopLocationUpdates];
-    [UIApplication sharedApplication].idleTimerDisabled = NO;
-    //[self.survey saveWithCompletionHandler:nil];
-    self.mission = nil;
-}
-
-- (void)startObserving
-{
-    AKRLog(@"start observing");
-    self.isObserving = YES;
-    if ([self saveNewMissionPropertyEditAttributes:YES]){
-        self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:NO];
-        [self enableControls];
-    } else {
-        self.isObserving = NO;
-    }
-}
-
-- (void)stopObserving
-{
-    AKRLog(@"stop observing");
-    self.isObserving = NO;
-    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startStopObserving:) ToPlay:YES];
-    [self saveNewMissionPropertyEditAttributes:NO];
-    [self enableControls];
 }
 
 //Called by bar buttons with play/pause toggle behavior
@@ -1179,28 +1088,13 @@
 - (void)stopLocationUpdates
 {
     //I may try to stop for multiple reasons. Only stop if they all want to stop
-    if (!self.isRecording && !self.mapView.isAutoRotating) {
+    if (!self.survey.isRecording && !self.mapView.isAutoRotating) {
         self.userWantsLocationUpdates = NO;
         if (self.locationServicesAvailable) {
             //AKRLog(@"Stop Updating Location");
             [self.locationManager stopUpdatingLocation];
         }
     }
-}
-
-- (BOOL)isNewLocation:(CLLocation *)location
-{
-    if (!self.lastGpsPointSaved)
-        return YES;
-    //0.0001 deg in latitude is about 18cm (<1foot) assuming a mean radius of 6371m, and less in longitude away from the equator.
-    if (fabs(location.coordinate.latitude - self.lastGpsPointSaved.latitude) > 0.0001)
-        return YES;
-    if (fabs(location.coordinate.longitude - self.lastGpsPointSaved.longitude) > 0.0001)
-        return YES;
-    //TODO: is 10 seconds a good default?  do I want a user setting? this gets called a lot, so I don't want to slow down with a lookup
-    if ([location.timestamp timeIntervalSinceDate:self.lastGpsPointSaved.timestamp] > 10.0)
-        return YES;
-    return NO;
 }
 
 
@@ -1211,7 +1105,8 @@
 - (void)closeMap
 {
     [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
-    self.currentMapEntity = nil;
+    [self.survey clearMap];
+    [self.survey clearMapMapViewSpatialReference];
     self.noMapView.hidden = NO;
     self.panButton.enabled = NO;
 }
@@ -1227,120 +1122,41 @@
             self.map.tileCache.delegate = self;
             AKRLog(@"Loading the basemap %@", self.map);
             [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
-            //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
+            //adding a layer is async. See AGSLayerDelegate layerDidLoad or layerDidFailToLoad for additional action taken when opening a map
         } else {
             [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the map." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         }
     }
 }
 
-- (void)initializeGraphicsLayer
+- (void)setupGPS
 {
-    AKRLog(@"Creating graphics layers");
-
-    //gps points layer
-    AGSGraphicsLayer *graphicsLayer = [[AGSGraphicsLayer alloc] init];
-    AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
-    [symbol setSize:CGSizeMake(6,6)];
-    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
-    [self.mapView addMapLayer:graphicsLayer withName:kGpsPointEntityName];
-    self.graphicsLayers[kGpsPointEntityName] = graphicsLayer;
-
-    //All Features
-    for (ProtocolFeature *feature in self.survey.protocol.features) {
-        graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.symbology.agsMarkerSymbol]];
-        [self.mapView addMapLayer:graphicsLayer withName:feature.name];
-        self.graphicsLayers[feature.name] = graphicsLayer;
-    }
-
-    //Mission Property points
-    ProtocolMissionFeature *feature = self.survey.protocol.missionFeature;
-    graphicsLayer = [[AGSGraphicsLayer alloc] init];
-    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.symbology.agsMarkerSymbol]];
-    [self.mapView addMapLayer:graphicsLayer withName:kMissionPropertyEntityName];
-    self.graphicsLayers[kMissionPropertyEntityName] = graphicsLayer;
-    //Mission Property observing tracks
-    NSString * name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
-    graphicsLayer = [[AGSGraphicsLayer alloc] init];
-    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.observingSymbology.agsLineSymbol]];
-    [self.mapView addMapLayer:graphicsLayer withName:name];
-    self.graphicsLayers[name] = graphicsLayer;
-    //Mission Property not observing track
-    name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
-    graphicsLayer = [[AGSGraphicsLayer alloc] init];
-    [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.notObservingSymbology.agsLineSymbol]];
-    [self.mapView addMapLayer:graphicsLayer withName:name];
-    self.graphicsLayers[name] = graphicsLayer;
+    self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
+    self.mapView.locationDisplay.wanderExtentFactor = 0.0;
+    self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
+    [self.mapView.locationDisplay startDataSource];
+    [self startStopLocationServicesForPanMode];
 }
 
 - (void)loadGraphics
 {
-    BOOL surveyReady = self.survey.document.documentState == UIDocumentStateNormal;
-    if (!surveyReady || !self.mapView.loaded) {
-        AKRLog(@"Loading graphics - can't because %@.", surveyReady ? @"map isn't loaded" : (self.mapView.loaded ? @"survey isn't loaded" : @"map AND survey are null! - how did that happen?"));
+    if (!self.survey.isReady || !self.mapView.loaded) {
+        AKRLog(@"Loading graphics - can't because %@.", self.survey.isReady ? @"map isn't loaded" : (self.mapView.loaded ? @"survey isn't loaded" : @"map AND survey are null! - how did that happen?"));
         return;
     }
+    [self.survey setMap:self.map];
+    [self.survey setMapViewSpatialReference:self.mapView.spatialReference];
+    [self.survey setLocationDelegate:self];
     [self initializeGraphicsLayer];
-    AKRLog(@"Loading graphics from coredata");
-    AKRLog(@"  Fetching gpsPoints");
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
-    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:kTimestampKey ascending:YES]];
-    NSError *error = [[NSError alloc] init];
-    NSArray *results = [self.context executeFetchRequest:request error:&error];
-    AKRLog(@"  Drawing %d gpsPoints", results.count);
-    if (!results && error.code)
-        AKRLog(@"Error Fetching GpsPoint %@",error);
-    GpsPoint *previousPoint;
-    BOOL observing = NO;
-    for (GpsPoint *gpsPoint in results) {
-        //draw each individual GPS point
-        //[self drawGpsPoint:gpsPoint];
-
-        //Keep track of the previous point to draw tracks
-        if (!previousPoint) {
-            previousPoint = gpsPoint;
-            continue;
-        }
-        if (previousPoint.mission != gpsPoint.mission) {
-            previousPoint = gpsPoint;
-            continue;
-        }
-        if (previousPoint.missionProperty) {
-            observing = previousPoint.missionProperty.observing;
-        }
-        [self drawTrackObserving:observing from:previousPoint to:gpsPoint];
-
-        previousPoint = gpsPoint;
-    }
-
-    //Get Observations
-    AKRLog(@"  Fetching observations");
-    request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
-    results = [self.context executeFetchRequest:request error:&error];
-    if (!results && error.code)
-        AKRLog(@"Error Fetching Observations %@",error);
-    AKRLog(@"  Drawing %d observations", results.count);
-    for (Observation *observation in results) {
-        [self loadObservation:observation];
-    }
-    //Get MissionProperties
-    AKRLog(@"  Fetching mission properties");
-    request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
-    results = [self.context executeFetchRequest:request error:&error];
-    if (!results && error.code)
-        AKRLog(@"Error Fetching Mission Properties %@",error);
-    AKRLog(@"  Drawing %d Mission Properties", results.count);
-    for (MissionProperty *missionProperty in results) {
-        [self loadMissionProperty:missionProperty];
-    }
-
-    AKRLog(@"  Done loading graphics");
+    [self.survey loadGraphics];
 }
 
-- (AGSPoint *)mapPointFromGpsPoint:(GpsPoint *)gpsPoint
+- (void)initializeGraphicsLayer
 {
-    return [gpsPoint pointOfGpsWithSpatialReference:self.mapView.spatialReference];
+    NSDictionary *graphicsLayers = [self.survey graphicsLayersByName];
+    for (NSString *name in graphicsLayers) {
+        [self.mapView addMapLayer:graphicsLayers[name] withName:name];
+    }
 }
 
 
@@ -1357,10 +1173,9 @@
         [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
             //do any other background work;
             dispatch_async(dispatch_get_main_queue(), ^{
-                //AKRLog(@"Start OpenSurvey completion handler");
                 if (success) {
-                    [self logStats];
                     [self loadGraphics];
+                    [self.survey logStats];
                     [self configureObservationButtons];
                 } else {
                     [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
@@ -1380,14 +1195,12 @@
             AKRLog(@"Closing survey document (%@)", survey.title);
             [self incrementBusy];  //closing the survey document may block
             self.selectSurveyButton.title = @"Closing survey...";
-            if (self.isRecording) {
-                [self stopRecording];
+            if (self.survey.isRecording) {
+                [self stopRecording:nil];
             }
-            [self clearCachedEntities];
             [self.mapView clearGraphicsLayers];
             [survey closeDocumentWithCompletionHandler:^(BOOL success) {
                 //this completion handler runs on the main queue;
-                //AKRLog(@"Start CloseSurvey completion handler");
                 if (!success) {
                     //This happens if I deleted the active survey (and there are unsaved changes).  Due to the asyncronity
                     //the delete can happen before the close can finish.  But I don't really care, because it is deleted.
@@ -1407,76 +1220,27 @@
     return YES;
 }
 
-- (void)clearCachedEntities
-{
-    //If I switch coredata stores, I need to forget the entities that point to the current coredata store
-    self.currentMapEntity = nil;
-    self.lastGpsPointSaved = nil;
-    self.mission = nil;
-    self.currentMissionProperty = nil;
-}
 
 
 
 
-#pragma mark - Private Methods - support for data model - gps points
 
-- (GpsPoint *)createGpsPoint:(CLLocation *)gpsData
-{
-    //AKRLog(@"Creating GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
-    if (!gpsData.timestamp) {
-        AKRLog(@"Can't save a GPS Point without a timestamp!");
-        return nil; //TODO: added for testing on simulator, remove for production
-    }
-    if (self.lastGpsPointSaved && [self.lastGpsPointSaved.timestamp timeIntervalSinceDate:gpsData.timestamp] == 0) {
-        return self.lastGpsPointSaved;
-    }
-    GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:kGpsPointEntityName
-                                                       inManagedObjectContext:self.context];
-    if (!gpsPoint) {
-        AKRLog(@"Could not create a Gps Point in Core Data");
-        return nil;
-    }
 
-    gpsPoint.mission = self.mission;
-    gpsPoint.altitude = gpsData.altitude;
-    gpsPoint.course = gpsData.course;
-    gpsPoint.horizontalAccuracy = gpsData.horizontalAccuracy;
-    //TODO: CLLocation only guarantees that lat/long are double.  Our Coredata constraint may fail.
-    gpsPoint.latitude = gpsData.coordinate.latitude;
-    gpsPoint.longitude = gpsData.coordinate.longitude;
-    gpsPoint.speed = gpsData.speed;
-    gpsPoint.timestamp = gpsData.timestamp; // ? gpsData.timestamp : [NSDate date]; //TODO: added for testing on simulator, remove for production
-    gpsPoint.verticalAccuracy = gpsData.verticalAccuracy;
-    self.lastGpsPointSaved = gpsPoint;
-    return gpsPoint;
-}
-
-- (void)drawGpsPointAtMapPoint:(AGSPoint *)mapPoint
-{
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:nil];
-    [self.graphicsLayers[kGpsPointEntityName] addGraphic:graphic];
-}
-
-- (void)drawTrackObserving:(BOOL)observing from:(GpsPoint *)fromPoint to:(GpsPoint *)toPoint
-{
-    //TODO: draw a polyline instead of single lines
-    AGSPoint *point1 = [self mapPointFromGpsPoint:fromPoint];
-    AGSPoint *point2 = [self mapPointFromGpsPoint:toPoint];
-    AGSMutablePolyline *line = [[AGSMutablePolyline alloc] init];
-    [line addPathToPolyline];
-    [line addPointToPath:point1];
-    [line addPointToPath:point2];
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:line symbol:nil attributes:nil];
-    NSString *name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, (observing ? kTrackOn : kTrackOff)];
-    [self.graphicsLayers[name] addGraphic:graphic];
-}
+//FIXME: Cleanup the following code
 
 
 
 
-#pragma mark - Private Methods - support for data model - observations
 
+
+
+
+
+
+
+#pragma mark - Private Methods - support for creating features
+
+//Called by bar buttons
 - (void)addFeature:(ProtocolFeature *)feature withNonTouchLocationMethod:(WaysToLocateFeature)locationMethod
 {
     switch (locationMethod) {
@@ -1496,18 +1260,18 @@
 
 - (void)addFeatureAtGps:(ProtocolFeature *)feature
 {
-    GpsPoint *gpsPoint = [self createGpsPoint:self.locationManager.location];
+    GpsPoint *gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
     if (!gpsPoint) {
         [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get GPS point for Feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         return;
     }
-    Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
+    Observation *observation = [self.survey createObservation:feature atGpsPoint:gpsPoint];
     if (!observation) {
         [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         return;
     }
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    AGSGraphic *graphic = [self drawObservation:observation atPoint:mapPoint];
+    AGSGraphic *graphic = [self.survey drawObservation:observation];
     [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
 }
 
@@ -1524,9 +1288,7 @@
     }
     if (button) {
         // It is not possible (AFIK) to set the anchor for a manual popover seque, hence I must do the "segue" with code
-        if ([self shouldPerformAngleDistanceSequeWithFeature:feature]) {
-            [self performAngleDistanceSequeWithFeature:feature button:button];
-        }
+        [self performAngleDistanceSequeWithFeature:feature fromButton:button];
     } else {
         AKRLog(@"Oh No! I couldn't find the calling button for the segue");
     }
@@ -1534,186 +1296,9 @@
 
 - (void)addFeatureAtTarget:(ProtocolFeature *)feature
 {
-    Observation *observation = [self createObservation:feature AtMapLocation:self.mapView.mapAnchor];
-    AGSGraphic *graphic = [self drawObservation:observation atPoint:self.mapView.mapAnchor];
+    Observation *observation = [self.survey createObservation:feature atMapLocation:self.mapView.mapAnchor];
+    AGSGraphic *graphic = [self.survey drawObservation:observation];
     [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:self.mapView.mapAnchor isNew:YES isEditing:YES];
-}
-
-- (Observation *)createObservation:(ProtocolFeature *)feature
-{
-    //AKRLog(@"Creating Observation managed object");
-    NSString *entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,feature.name];
-    Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:entityName
-                                                             inManagedObjectContext:self.context];
-    NSAssert(observation, @"%@", @"Could not create an Observation in Core Data");
-    observation.mission = self.mission;
-    return observation;
-}
-
-- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint
-{
-    Observation *observation = [self createObservation:feature];
-    observation.gpsPoint = gpsPoint;
-    return observation;
-}
-
-- (Observation *)createObservation:(ProtocolFeature *)feature AtMapLocation:(AGSPoint *)mapPoint
-{
-    Observation *observation = [self createObservation:feature];
-    observation.adhocLocation = [self createAdhocLocationWithMapPoint:mapPoint];
-    return observation;
-}
-
-- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)angleDistance
-{
-    Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
-    observation.angleDistanceLocation = [self createAngleDistanceLocationWithAngleDistanceLocation:angleDistance];
-    return observation;
-}
-
-- (void)loadObservation:(Observation *)observation
-{
-    //AKRLog(@"    Loading observation");
-    AGSPoint *point = [observation pointOfFeatureWithSpatialReference:self.mapView.spatialReference];
-    NSAssert(point, @"An observation in %@ has no location", observation.entity.name);
-    [self drawObservation:observation atPoint:point];
-}
-
-- (AGSGraphic *)drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
-{
-    //AKRLog(@"    Drawing observation type %@",observation.entity.name);
-    NSDate *timestamp = [observation timestamp];
-    NSAssert(timestamp, @"An observation in %@ has no timestamp", observation.entity.name);
-    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
-    NSString * name = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
-    [self.graphicsLayers[name] addGraphic:graphic];
-    return graphic;
-}
-
-- (void)updateAdhocLocation:(AdhocLocation *)adhocLocation withMapPoint:(AGSPoint *)mapPoint
-{
-    //mapPoint is in the map coordinates, convert to WGS84
-    AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:[AGSSpatialReference wgs84SpatialReference]];
-    adhocLocation.latitude = wgs84Point.y;
-    adhocLocation.longitude = wgs84Point.x;
-    if (self.lastGpsPointSaved && [self.lastGpsPointSaved.timestamp timeIntervalSinceDate: [NSDate date]] < kStaleInterval) {
-        adhocLocation.timestamp = self.lastGpsPointSaved.timestamp;
-        //Used for relating the adhoc observation to where the observer was when the observation was made
-    } else {
-        adhocLocation.timestamp = [NSDate date];
-    }
-}
-
-- (AdhocLocation *)createAdhocLocationWithMapPoint:(AGSPoint *)mapPoint
-{
-    //AKRLog(@"Adding Adhoc Location to Core Data at Map Point %@", mapPoint);
-    AdhocLocation *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:kAdhocLocationEntityName
-                                                                 inManagedObjectContext:self.context];
-    NSAssert(adhocLocation, @"%@", @"Could not create an AdhocLocation in Core Data");
-    [self updateAdhocLocation:adhocLocation withMapPoint:mapPoint];
-    adhocLocation.map = self.currentMapEntity;
-    return adhocLocation;
-}
-
-- (AngleDistanceLocation *)createAngleDistanceLocationWithAngleDistanceLocation:(LocationAngleDistance *)location
-{
-    //AKRLog(@"Adding Angle = %f, Distance = %f, Course = %f to CoreData", location.absoluteAngle, location.distanceMeters, location.deadAhead);
-    AngleDistanceLocation *angleDistance = [NSEntityDescription insertNewObjectForEntityForName:kAngleDistanceLocationEntityName
-                                                                         inManagedObjectContext:self.context];
-    NSAssert(angleDistance, @"%@", @"Could not create an AngleDistanceLocation in Core Data");
-    angleDistance.angle = location.absoluteAngle;
-    angleDistance.distance = location.distanceMeters;
-    angleDistance.direction = location.deadAhead;
-    return angleDistance;
-}
-
-
-#pragma mark - Private Methods - support for data model - mission properties
-
-- (MissionProperty *)createMissionProperty
-{
-    //AKRLog(@"Creating MissionProperty managed object");
-    MissionProperty *missionProperty = [NSEntityDescription insertNewObjectForEntityForName:kMissionPropertyEntityName inManagedObjectContext:self.context];
-    NSAssert(missionProperty, @"%@", @"Could not create a Mission Property in Core Data");
-    missionProperty.mission = self.mission;
-    return missionProperty;
-}
-
-- (MissionProperty *)createMissionPropertyAtGpsPoint:(GpsPoint *)gpsPoint
-{
-    //AKRLog(@"Creating MissionProperty at GPS point");
-    if (!gpsPoint.timestamp) {
-        AKRLog(@"Unable to create a mission property; timestamp for gps point is nil");
-        return nil;
-    }
-    MissionProperty *missionProperty = [self createMissionProperty];
-    missionProperty.gpsPoint = gpsPoint;
-    return missionProperty;
-}
-
-- (MissionProperty *)createMissionPropertyAtMapLocation:(AGSPoint *)mapPoint
-{
-    //AKRLog(@"Creating MissionProperty at Map point");
-    AdhocLocation *adhocLocation = [self createAdhocLocationWithMapPoint:mapPoint];
-    if (!adhocLocation.timestamp) {
-        AKRLog(@"Unable to create a mission property; timestamp for adhoc location is nil");
-        [self.context deleteObject:adhocLocation];
-        return nil;
-    }
-    MissionProperty *missionProperty = [self createMissionProperty];
-    missionProperty.adhocLocation = adhocLocation;
-    return missionProperty;
-}
-
-- (void)loadMissionProperty:(MissionProperty *)missionProperty
-{
-    //AKRLog(@"    Loading missionProperty");
-    AGSPoint *point = [missionProperty pointOfMissionPropertyWithSpatialReference:self.mapView.spatialReference];
-    NSAssert(point, @"A mission property has no location");
-    [self drawMissionProperty:missionProperty atPoint:point];
-}
-
-- (AGSGraphic *)drawMissionProperty:(MissionProperty *)missionProperty atPoint:(AGSPoint *)mapPoint
-{
-    NSDate *timestamp = [missionProperty timestamp];
-    NSAssert(timestamp, @"A mission property has no timestamp");
-    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
-    [self.graphicsLayers[kMissionPropertyEntityName] addGraphic:graphic];
-    return graphic;
-}
-
-- (BOOL)saveNewMissionPropertyEditAttributes:(BOOL)edit
-{
-    MissionProperty *missionProperty;
-    AGSPoint *mapPoint;
-    GpsPoint *gpsPoint;
-    //do not create a mission property, until I have checked the database (if necessary) for the last mission property
-    MissionProperty * template = self.currentMissionProperty;
-    if (self.locationServicesAvailable) {
-        gpsPoint = [self createGpsPoint:self.locationManager.location];
-    }
-    if (gpsPoint) {
-        mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-        missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
-    } else {
-        mapPoint = self.mapView.mapAnchor;
-        missionProperty = [self createMissionPropertyAtMapLocation:mapPoint];
-    }
-    if (!missionProperty) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create a new Mission Property." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-        return NO;
-    }
-    missionProperty.observing = self.isObserving;
-    AGSGraphic *graphic = [self drawMissionProperty:missionProperty atPoint:mapPoint];
-    if (edit) {
-        [self setAttributesForFeatureType:self.survey.protocol.missionFeature entity:missionProperty graphic:graphic defaults:template atPoint:mapPoint  isNew:YES isEditing:YES];
-    } else {
-        [self copyAttributesForFeature:self.survey.protocol.missionFeature fromEntity:template toEntity:missionProperty];
-    }
-    self.currentMissionProperty = missionProperty;
-    return YES;
 }
 
 
@@ -1721,6 +1306,7 @@
 
 #pragma mark - Private Methods to Support Feature Selection/Presentation
 
+//called by map touch
 - (void)presentProtocolFeatureSelector:(NSArray *)features atPoint:(CGPoint)screenpoint mapPoint:(AGSPoint *)mapPoint
 {
     self.mapPointAtAddSelectedFeature = mapPoint;
@@ -1739,13 +1325,15 @@
     [sheet showFromRect:rect inView:self.mapView animated:NO];
 }
 
+//called by map touch and action sheet
 - (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mapPoint
 {
-    Observation *observation = [self createObservation:feature AtMapLocation:mapPoint];
-    AGSGraphic *graphic = [self drawObservation:observation atPoint:mapPoint];
+    Observation *observation = [self.survey createObservation:feature atMapLocation:mapPoint];
+    AGSGraphic *graphic = [self.survey drawObservation:observation];
     [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint  isNew:YES isEditing:YES];
 }
 
+//called by map touch
 - (void)presentAGSFeatureSelector:(NSDictionary *)features atMapPoint:(AGSPoint *)mapPoint
 {
     FeatureSelectorTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"FeatureSelectorTableViewController"];
@@ -1760,6 +1348,7 @@
     self.popoverMapPoint = mapPoint;
 }
 
+//called by map touch and feature selector popover
 - (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atMapPoint:(AGSPoint *)mapPoint
 {
     NSDate *timestamp = (NSDate *)[agsFeature safeAttributeForKey:kTimestampKey];
@@ -1769,25 +1358,15 @@
     //NOTE: entityNamed:atTimestamp: only works with layers that have a gpspoint or an adhoc, so missionProperties and Observations
     //NOTE: gpsPoints do not have a QuickDialog definition; tracklogs would need to use the related missionProperty
     //TODO: expand to work on gpsPoints and tracklog segments
-    if (![self isSelectableLayerName:layerName]) {
+    if (![self.survey isSelectableLayerName:layerName]) {
         AKRLog(@"  Bailing. layer type is not supported");
     }
 
     //get the feature type from the layername
-    ProtocolFeature * feature = nil;
-    if ([layerName isEqualToString:kMissionPropertyEntityName]) {
-        feature =  self.survey.protocol.missionFeature;
-    } else {
-        for (ProtocolFeature *f in self.survey.protocol.features) {
-            if ([f.name isEqualToString:layerName]) {
-                feature = f;
-                break;
-            }
-        }
-    }
+    ProtocolFeature * feature = [self.survey protocolFeatureFromLayerName:layerName];
 
     //get entity using the timestamp on the layername and the timestamp on the AGS Feature
-    NSManagedObject *entity = [self entityOnLayerNamed:layerName atTimestamp:timestamp];
+    NSManagedObject *entity = [self.survey entityOnLayerNamed:layerName atTimestamp:timestamp];
 
     if (!feature || !entity) {
         AKRLog(@"  Bailing. Could not find the dialog configuration, and/or the feature");
@@ -1803,8 +1382,29 @@
 
 #pragma mark - Private Methods - misc support for data model
 
+- (void)showTrackLogAttributeEditor:(TrackLogSegment *)tracklog
+{
+    NSManagedObject *entity = tracklog.missionProperty;
+    NSManagedObject *template = tracklog.missionProperty;
+    ProtocolFeature *feature = self.survey.protocol.missionFeature;
+    AGSPoint *mapPoint = [tracklog.missionProperty pointOfMissionPropertyWithSpatialReference:self.mapView.spatialReference];
+    [self setAttributesForFeatureType:feature entity:entity graphic:nil defaults:template atPoint:mapPoint isNew:YES isEditing:YES];
+}
+
+- (void)showMissionPropertyAttributeEditor:(MissionProperty *)missionProperty
+{
+    NSManagedObject *entity = missionProperty;
+    NSManagedObject *template = missionProperty;
+    ProtocolFeature *feature = self.survey.protocol.missionFeature;
+    AGSPoint *mapPoint = [missionProperty pointOfMissionPropertyWithSpatialReference:self.mapView.spatialReference];
+    [self setAttributesForFeatureType:feature entity:entity graphic:nil defaults:template atPoint:mapPoint isNew:YES isEditing:YES];
+}
+
+
 - (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint isNew:(BOOL)isNew isEditing:(BOOL)isEditing
 {
+    //TODO: refactor this ugly and overly complicated method
+
     //TODO: can we support observations that have no attributes (no dialog)?
     //TODO: if I can't edit, then I should change the behavior of the controls on the form to reflect that
 
@@ -1832,7 +1432,7 @@
 
     //Show a Location Button only when editing/reviewing
     if (!isNew) {
-        AngleDistanceLocation *angleDistanceLocation = [self angleDistanceLocationFromEntity:entity];
+        AngleDistanceLocation *angleDistanceLocation = [self.survey angleDistanceLocationFromEntity:entity];
         QButtonElement *locationButton = [[QButtonElement alloc] init];
         locationButton.appearance = [[QFlatAppearance alloc] init];
         locationButton.appearance.buttonAlignment = NSTextAlignmentCenter;
@@ -1841,16 +1441,14 @@
         if (angleDistanceLocation) {
             locationButton.title = @"Change Location";
             locationButton.onSelected = ^(){
-                //TODO uncomment this when the method is complete
-                //[self performAngleDistanceSequeWithFeature:feature entity:entity graphic:graphic];
-                [[[UIAlertView alloc] initWithTitle:nil message:@"Feature not implemented yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                [self performAngleDistanceSequeWithFeature:feature entity:entity graphic:graphic];
             };
         } else {
             locationButton.title = @"Review Location";
             locationButton.onSelected = ^(){
                 GpsPointTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"GpsPointTableViewController"];
-                vc.gpsPoint = [self gpsPointFromEntity:entity];
-                vc.adhocLocation = [self adhocLocationFromEntity:entity];
+                vc.gpsPoint = [self.survey gpsPointFromEntity:entity];
+                vc.adhocLocation = [self.survey adhocLocationFromEntity:entity];
                 CGSize contentSize = self.editAttributePopoverController ? self.editAttributePopoverController.popoverContentSize : self.reviewAttributePopoverController.popoverContentSize;
                 vc.preferredContentSize = contentSize;
                 [self.modalAttributeCollector pushViewController:vc animated:YES];
@@ -1864,21 +1462,22 @@
     //  This is an observation feature that:
     //    allows GPS locations
     //    has an ad-hoc location
-    if (self.locationServicesAvailable && self.isRecording && self.lastGpsPointSaved) {
-        if ([self isKindOfObservation:entity]) {
-            Observation *observation = (Observation *)entity;
+    if (self.locationServicesAvailable && self.survey.isRecording) {
+        Observation *observation = [self.survey observationFromEntity:entity];
+        if (observation) {
             WaysToLocateFeature options = feature.allowedLocations.nonTouchChoices;
             if ((options & LocateFeatureWithGPS) == LocateFeatureWithGPS) {
-                AdhocLocation *adhocLocation = [self adhocLocationFromEntity:observation];
-                if (adhocLocation) {
+                if (observation.adhocLocation) {
                     QButtonElement *updateLocationButton = [[QButtonElement alloc] init];
                     updateLocationButton.appearance = [[QFlatAppearance alloc] init];
                     updateLocationButton.appearance.buttonAlignment = NSTextAlignmentCenter;
                     updateLocationButton.appearance.actionColorEnabled = self.view.tintColor;
                     updateLocationButton.title = @"Move to GPS Location";
                     updateLocationButton.onSelected = ^(){
-                        observation.gpsPoint = self.lastGpsPointSaved;
-                        [graphic setGeometry:[self mapPointFromGpsPoint:self.lastGpsPointSaved]];
+                        observation.gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
+                        if (observation.gpsPoint) {
+                            [graphic setGeometry:[self mapPointFromGpsPoint:observation.gpsPoint]];
+                        }
                         //Note: do not remove the adhoc location as that records the time of the observation
                     };
                     [[root.sections lastObject] addElement:updateLocationButton];
@@ -1902,8 +1501,8 @@
             deleteButton.appearance.actionColorEnabled = self.view.tintColor;
         }
         deleteButton.onSelected = ^(){
-            [[self layerForFeatureType:feature] removeGraphic:graphic];
-            [self.context deleteObject:entity];
+            [[self.survey graphicsLayerForFeature:feature] removeGraphic:graphic];
+            [self.survey deleteEntity:entity];
             [self.editAttributePopoverController dismissPopoverAnimated:YES];
             self.editAttributePopoverController = nil;
         };
@@ -1961,150 +1560,47 @@
     self.modalAttributeCollector = nil;
 }
 
-- (void) copyAttributesForFeature:(ProtocolFeature *)feature fromEntity:(NSManagedObject *)fromEntity toEntity:(NSManagedObject *)toEntity
-{
-    for (NSAttributeDescription *attribute in feature.attributes) {
-        id value = [fromEntity valueForKey:attribute.name];
-        if (value) {
-            [toEntity setValue:value forKey:attribute.name];
-        }
-    }
-}
 
 
 
-#pragma mark - Private Methods - misc support
+#pragma mark - AngleDistance popover for feature editing
 
-- (NSManagedObject *)entityOnLayerNamed:(NSString *)layerName atTimestamp:(NSDate *)timestamp
-{
-    if (!layerName || !timestamp) {
-        return nil;
-    }
-    if (![self isSelectableLayerName:layerName]) {
-        return nil;
-    }
-    
-    //Deal with ESRI graphic date bug
-    NSDate *start = [timestamp dateByAddingTimeInterval:-0.01];
-    NSDate *end = [timestamp dateByAddingTimeInterval:+0.01];
-    NSString *name = [self entityNameFromLayerName:layerName];
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:name];
-    request.predicate = [NSPredicate predicateWithFormat:@"(%@ <= gpsPoint.timestamp AND gpsPoint.timestamp <= %@) || (%@ <= adhocLocation.timestamp AND adhocLocation.timestamp <= %@)",start,end,start,end];
-    NSArray *results = [self.context executeFetchRequest:request error:nil];
-    return (NSManagedObject *)[results lastObject]; // will return nil if there was an error, or no results
-}
-
-- (NSString *)entityNameFromLayerName:(NSString *)layerName {
-    NSString *entityName = nil;
-    if ([layerName isEqualToString:kGpsPointEntityName] || [layerName isEqualToString:kMissionPropertyEntityName]) {
-        entityName = layerName;
-    } else if ([layerName hasPrefix:kMissionPropertyEntityName]) {
-        entityName = nil;
-    } else {
-        entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix, layerName];
-    }
-    return entityName;
-}
-
-- (BOOL)isSelectableLayerName:(NSString *)layerName {
-    for (NSString *badName in @[kGpsPointEntityName,
-                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn],
-                                [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]) {
-        if ([layerName isEqualToString:badName]) {
-            return NO;
-        }
-    }
-    return YES;
-}
-
-- (BOOL)isKindOfObservation:(NSManagedObject *)entity
-{
-    return [entity.entity.name hasPrefix:kObservationPrefix];
-}
-
-- (AngleDistanceLocation *)angleDistanceLocationFromEntity:(NSManagedObject *)entity
-{
-    if ([entity.entity.name hasPrefix:kObservationPrefix]) {
-        return ((Observation *)entity).angleDistanceLocation;
-    }
-    return nil;
-}
-
-- (GpsPoint *)gpsPointFromEntity:(NSManagedObject *)entity
-{
-    NSString *entityName = entity.entity.name;
-    if ([entityName hasPrefix:kObservationPrefix]) {
-        return ((Observation *)entity).gpsPoint;
-    }
-    if ([entityName isEqualToString:kMissionPropertyEntityName]) {
-        return ((MissionProperty *)entity).gpsPoint;
-    }
-    return nil;
-}
-
-- (AdhocLocation *)adhocLocationFromEntity:(NSManagedObject *)entity
-{
-    NSString *entityName = entity.entity.name;
-    if ([entityName hasPrefix:kObservationPrefix]) {
-        return ((Observation *)entity).adhocLocation;
-    }
-    if ([entityName isEqualToString:kMissionPropertyEntityName]) {
-        return ((MissionProperty *)entity).adhocLocation;
-    }
-    return nil;
-}
-
-- (AGSGraphicsLayer *)layerForFeatureType:(ProtocolFeature *)feature
-{
-    if ([feature isKindOfClass:[ProtocolMissionFeature class]]) {
-        return self.graphicsLayers[kMissionPropertyEntityName];
-    } else {
-        return self.graphicsLayers[feature.name];
-    }
-}
-
-- (BOOL) shouldPerformAngleDistanceSequeWithFeature:(ProtocolFeature *)feature
+//Called programatically by feature bar button when creating a new Angle/Distance observation
+- (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature fromButton:(UIBarButtonItem *)button
 {
     if (self.angleDistancePopoverController) {
-        //TODO: is this code path possible?
         [self.angleDistancePopoverController dismissPopoverAnimated:YES];
         self.angleDistancePopoverController = nil;
-        return NO;
+        return;
     }
 
-    self.angleDistanceOrientation = nil;
-    self.angleDistanceLocation = [self createGpsPoint:self.locationManager.location];
-
-    double currentCourse = self.angleDistanceLocation.course;
-    if (0 <= currentCourse) {
-        self.angleDistanceOrientation = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocolFeature:feature];
+    GpsPoint *gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
+    if (!gpsPoint) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current location for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        return;
+    }
+    
+    LocationAngleDistance *location = nil;
+    if (0 <= gpsPoint.course) {
+        location = [[LocationAngleDistance alloc] initWithDeadAhead:gpsPoint.course protocolFeature:feature];
     } else {
         double currentHeading = self.locationManager.heading.trueHeading;
         if (0 <= currentHeading) {
-            self.angleDistanceOrientation = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocolFeature:feature];
+            location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocolFeature:feature];
         }
     }
-    if (!self.angleDistanceLocation) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current location for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+    if (!location) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current course/heading for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        return;
     }
-    if (!self.angleDistanceOrientation) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current heading for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-    }
-    return self.angleDistanceOrientation && self.angleDistanceLocation;
-}
-
-- (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature button:(UIBarButtonItem *)button
-{
-    LocationAngleDistance *location = self.angleDistanceOrientation;
-    GpsPoint *gpsPoint = self.angleDistanceLocation;
 
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
     vc.location = location;
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
         self.angleDistancePopoverController = nil;
         AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-        Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
-        AGSGraphic *graphic = [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
+        Observation *observation = [self.survey createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
+        AGSGraphic *graphic = [self.survey drawObservation:observation];
         [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
     };
     vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
@@ -2122,70 +1618,40 @@
     }
 }
 
-// This will be callled from the feature editor (setAttributesForFeatureType:), when it is finished.
+// This is called by the feature editor (setAttributesForFeatureType:), when the user wants to edit the Angle/Distance of an observation.
 - (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic
 {
-    //TODO need entities gps origin and course/heading
-    GpsPoint *gpsPoint = nil; //entity.gpsPoint;
-    AGSPoint *mapPoint = (AGSPoint *)graphic.geometry;
-    double currentCourse = gpsPoint.course; //TODO this may be -1, in which case the heading was used (but I don't have it)
-    LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocolFeature:feature];;
-
+    UINavigationController *nav = self.navigationController;
+    if (!nav) {
+        nav = (UINavigationController *)[self.editAttributePopoverController contentViewController];
+    }
+    AngleDistanceLocation *angleDistance = [self.survey angleDistanceLocationFromEntity:entity];
+    LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:angleDistance.direction protocolFeature:feature absoluteAngle:angleDistance.angle distance:angleDistance.distance];;
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
     vc.location = location;
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
         self.angleDistancePopoverController = nil;
-        //TODO update the entities angleDistance entity
-        [graphic setGeometry:[controller.location pointFromPoint:mapPoint]];
+        Observation *observation = [self.survey observationFromEntity:entity];
+        [self.survey updateAngleDistanceObservation:observation withAngleDistance:controller.location];
+        [[graphic layer] removeGraphic:graphic];
+        [self.survey drawObservation:observation];
+        [nav popViewControllerAnimated:YES];
     };
     vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
-        self.angleDistancePopoverController = nil;
+        [nav popViewControllerAnimated:YES];
     };
 
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        self.angleDistancePopoverController = [[UIPopoverController alloc] initWithContentViewController:nav];
-        vc.popover = self.angleDistancePopoverController;
-        vc.popover.delegate = self;
-        [self.angleDistancePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-        self.popoverMapPoint = mapPoint;
-    } else {
-        [self.navigationController pushViewController:vc animated:YES];
-    }
-    //Setup angle distance form
+    [nav pushViewController:vc animated:YES];
 }
 
 
 
-#pragma mark - Diagnostic Aids - to be removed
 
-- (void)logStats
+#pragma mark - Private Methods - support for data model - gps points
+
+- (AGSPoint *)mapPointFromGpsPoint:(GpsPoint *)gpsPoint
 {
-#ifdef AKR_DEBUG
-    AKRLog(@"Survey document is open. It contains:");
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
-    NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"  %d GpsPoints", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
-    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"  %d Observations", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
-    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"  %d MissionProperties", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:kMissionEntityName];
-    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"  %d Missions", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:kMapEntityName];
-    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"  %d Maps", results.count);
-    //AKRLog(@"  All GPS as CSV:\n%@",[self.survey csvForGpsPointsMatching:nil]);
-    AKRLog(@"  GPS (last 7 days) as CSV:\n%@",[self.survey csvForGpsPointsSince:[[NSDate date] dateByAddingTimeInterval:-(60*60*24*7)]]);
-    AKRLog(@"  TrackLog Summary as CSV:\n%@",[self.survey csvForTrackLogMatching:nil]);
-    NSDictionary *dict = [self.survey csvForFeaturesMatching:nil];
-    for (NSString *key in dict){
-        AKRLog(@"\n   Observations of %@\n%@\n",key,dict[key]);
-    }
-#endif
+    return [gpsPoint pointOfGpsWithSpatialReference:self.mapView.spatialReference];
 }
 
 @end

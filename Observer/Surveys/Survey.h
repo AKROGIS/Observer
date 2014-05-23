@@ -10,6 +10,7 @@
 #import "AKRTableViewItem.h"
 #import "SProtocol.h"
 #import "SurveyCoreDataDocument.h"
+#import "ObserverModel.h"
 
 #define SURVEY_EXT @"obssurv"
 
@@ -21,6 +22,13 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
     kSaved    = 4
 };
 
+@protocol SurveyLocationDelegate <NSObject>
+
+- (CLLocation *)locationOfGPS;
+
+@end
+
+
 @interface Survey : NSObject <AKRTableViewItem>
 
 @property (nonatomic, strong, readonly) NSURL *url;
@@ -28,12 +36,10 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 @property (nonatomic, strong, readonly) NSString *subtitle;
 
 //title and date will block (reading values from the filessytem) if the state is unborn.
-//To avoid the potential delay, call readPropertiesWithCompletionHandler first
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong, readonly) NSDate *date;
 
 //The following methods will block (reading data from the filessytem)
-//To avoid the potential delay, call openPropertiesWithCompletionHandler first
 @property (nonatomic, strong, readonly) UIImage *thumbnail;
 @property (nonatomic, strong, readonly) SProtocol *protocol;
 
@@ -51,11 +57,12 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (BOOL)isEqualToSurvey:(Survey *)survey;
 
 //YES if the survey is valid
-- (BOOL) isValid;
+- (BOOL)isValid;
+
+//YES if the core data context is loaded and normal
+- (BOOL)isReady;
 
 //other actions
-//load all properties
-- (void)readPropertiesWithCompletionHandler:(void (^)(NSError*))handler;
 - (void)openDocumentWithCompletionHandler:(void (^)(BOOL success))handler;
 // saving is only for "SaveTO", normal saves are handled by UIKit with autosave
 // doing saves as overwrites can work if you get lucky, but may cause conflicts
@@ -63,4 +70,63 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (void)closeDocumentWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler;
 
+
+
+
+// Mapping Related Interface
+
+// Layer Methods
+@property (nonatomic, strong, readonly) NSDictionary *graphicsLayersByName;
+- (AGSGraphicsLayer *)graphicsLayerForObservation:(Observation *)observation;
+- (AGSGraphicsLayer *)graphicsLayerForFeature:(ProtocolFeature *)feature;
+
+- (BOOL)isSelectableLayerName:(NSString *)layerName;
+- (NSManagedObject *)entityOnLayerNamed:(NSString *)layerName atTimestamp:(NSDate *)timestamp;
+- (ProtocolFeature *)protocolFeatureFromLayerName:(NSString *)layerName;
+
+//Entity Methods
+- (Observation *)observationFromEntity:(NSManagedObject *)entity;
+- (MissionProperty *)missionPropertyFromEntity:(NSManagedObject *)entity;
+- (AngleDistanceLocation *)angleDistanceLocationFromEntity:(NSManagedObject *)entity;
+- (GpsPoint *)gpsPointFromEntity:(NSManagedObject *)entity;
+- (AdhocLocation *)adhocLocationFromEntity:(NSManagedObject *)entity;
+- (void)deleteEntity:(NSManagedObject *)entity;
+
+// State Control
+- (BOOL)startRecording;
+@property (nonatomic, readonly) BOOL isRecording;
+- (void)stopRecording;
+
+- (void)setMap:(Map *)map;
+- (void)clearMap;
+
+@property (nonatomic, weak) id<SurveyLocationDelegate>locationDelegate;
+
+@property (nonatomic, strong) AGSSpatialReference *mapViewSpatialReference;
+- (void)clearMapMapViewSpatialReference;
+
+// GPS Methods
+- (GpsPoint *)addGpsPointAtLocation:(CLLocation *)location;
+
+//TrackLogs
+- (TrackLogSegment *)startObserving;
+@property (nonatomic, readonly) BOOL isObserving;
+- (void)stopObserving;
+- (TrackLogSegment *)startNewTrackLogSegment;
+- (NSArray *) trackLogSegmentsSince:(NSDate *)timestamp;
+
+//Non-TrackLogging Mission Property
+- (MissionProperty *)createMissionPropertyAtMapLocation:(AGSPoint *)mapPoint;
+
+// Observations
+- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint;
+- (Observation *)createObservation:(ProtocolFeature *)feature atMapLocation:(AGSPoint *)mapPoint;
+- (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)angleDistance;
+- (AGSGraphic *)drawObservation:(Observation *)observation;
+- (void)updateAdhocLocation:(AdhocLocation *)adhocLocation withMapPoint:(AGSPoint *)mapPoint;
+- (void)updateAngleDistanceObservation:(Observation *)observation withAngleDistance:(LocationAngleDistance *)locationAngleDistance;
+
+// Miscellaneous
+- (void)loadGraphics;
+- (void)logStats;
 @end

@@ -65,6 +65,8 @@
 //the current angle provided by the user - a nullable double
 //in the reference frame provided by the protocol, or the NSUserDefaults
 @property (nonatomic,strong) NSNumber *angle;
+//The perpendicular distance from the dead ahead bearing to the feature at angle/distance
+@property (nonatomic,readonly) double perpendicularMeters;
 //the current angle in a neutral reference frame for the database
 //0 is north, and angles increase clockwise to 360 degrees;
 //The value returned is determined by the frame of reference in effect when called.

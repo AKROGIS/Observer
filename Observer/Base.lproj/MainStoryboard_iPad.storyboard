@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C1021" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="TiC-11-YSU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="TiC-11-YSU">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -73,14 +73,16 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="pyp-S6-0zm"/>
                                     <barButtonItem enabled="NO" style="plain" systemItem="play" id="fCO-tO-IRq">
                                         <connections>
-                                            <action selector="startStopRecording:" destination="TiC-11-YSU" id="2Oq-NH-554"/>
+                                            <action selector="startRecording:" destination="TiC-11-YSU" id="ALu-rh-3xw"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem width="20" style="plain" systemItem="fixedSpace" id="IDb-Os-KVC"/>
                                     <barButtonItem enabled="NO" style="plain" systemItem="play" id="faa-Nc-OBV">
                                         <connections>
-                                            <action selector="startStopObserving:" destination="TiC-11-YSU" id="1Ay-IQ-Qfc"/>
+                                            <action selector="startObserving:" destination="TiC-11-YSU" id="Zik-gs-nSQ"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem width="20" style="plain" systemItem="fixedSpace" id="Xjb-al-ogq"/>
                                     <barButtonItem enabled="NO" image="Weather" id="Fdi-yp-sWi">
                                         <connections>
                                             <action selector="changeEnvironment:" destination="TiC-11-YSU" id="ICq-DA-pR3"/>
@@ -722,20 +724,20 @@
                                     <rect key="frame" x="0.0" y="0.0" width="493" height="87"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="377" translatesAutoresizingMaskIntoConstraints="NO" id="wBi-fL-q7A">
-                                            <rect key="frame" x="96" y="48" width="377" height="15"/>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="115" text="Label" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="31" translatesAutoresizingMaskIntoConstraints="NO" id="wBi-fL-q7A">
+                                            <rect key="frame" x="96" y="48" width="31" height="15"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="377" translatesAutoresizingMaskIntoConstraints="NO" id="m1A-Da-w5h">
-                                            <rect key="frame" x="96" y="66" width="377" height="15"/>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="115" text="Label" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="31" translatesAutoresizingMaskIntoConstraints="NO" id="m1A-Da-w5h">
+                                            <rect key="frame" x="96" y="66" width="31" height="15"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="QBS-0U-3rx">
-                                            <rect key="frame" x="96" y="15" width="377" height="30"/>
+                                            <rect key="frame" x="96" y="15" width="27" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                             <textInputTraits key="textInputTraits"/>
@@ -751,19 +753,29 @@
                                                 <constraint firstAttribute="height" constant="80" id="r29-At-Kag"/>
                                             </constraints>
                                         </imageView>
+                                        <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Upload" translatesAutoresizingMaskIntoConstraints="NO" id="oDq-rk-FUK">
+                                            <rect key="frame" x="461" y="31" width="27" height="26"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="27" id="EWC-rQ-DRi"/>
+                                                <constraint firstAttribute="height" constant="26" id="WhM-yQ-bmz"/>
+                                            </constraints>
+                                        </imageView>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="QBS-0U-3rx" secondAttribute="trailing" constant="20" symbolic="YES" id="3XA-H9-2Lc"/>
+                                        <constraint firstAttribute="centerY" secondItem="oDq-rk-FUK" secondAttribute="centerY" id="5Lk-9X-iJI"/>
+                                        <constraint firstItem="oDq-rk-FUK" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="wBi-fL-q7A" secondAttribute="trailing" constant="8" symbolic="YES" id="AkB-Dl-xgp"/>
                                         <constraint firstItem="GYJ-em-L0B" firstAttribute="top" secondItem="A4D-S0-Arc" secondAttribute="top" constant="4" id="BnG-lG-qjh"/>
                                         <constraint firstItem="QBS-0U-3rx" firstAttribute="leading" secondItem="A4D-S0-Arc" secondAttribute="leading" constant="96" id="Ixe-8G-RdI"/>
+                                        <constraint firstItem="oDq-rk-FUK" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="m1A-Da-w5h" secondAttribute="trailing" constant="8" symbolic="YES" id="Klm-Zw-hwe"/>
                                         <constraint firstItem="wBi-fL-q7A" firstAttribute="top" secondItem="QBS-0U-3rx" secondAttribute="bottom" constant="3" id="Kmt-Fa-Pqn"/>
-                                        <constraint firstItem="m1A-Da-w5h" firstAttribute="trailing" secondItem="wBi-fL-q7A" secondAttribute="trailing" id="NXR-o6-K0o"/>
+                                        <constraint firstAttribute="trailing" secondItem="oDq-rk-FUK" secondAttribute="trailing" constant="5" id="NfS-vd-pKG"/>
                                         <constraint firstItem="QBS-0U-3rx" firstAttribute="leading" secondItem="wBi-fL-q7A" secondAttribute="leading" id="WKz-32-Pd8"/>
-                                        <constraint firstItem="QBS-0U-3rx" firstAttribute="trailing" secondItem="wBi-fL-q7A" secondAttribute="trailing" id="Wlz-U4-Ab3"/>
                                         <constraint firstItem="QBS-0U-3rx" firstAttribute="top" secondItem="A4D-S0-Arc" secondAttribute="top" constant="15" id="evj-YI-KYd"/>
                                         <constraint firstItem="GYJ-em-L0B" firstAttribute="leading" secondItem="A4D-S0-Arc" secondAttribute="leading" constant="8" id="kf5-LI-aeu"/>
                                         <constraint firstItem="m1A-Da-w5h" firstAttribute="leading" secondItem="wBi-fL-q7A" secondAttribute="leading" id="ldn-QH-Dff"/>
                                         <constraint firstItem="m1A-Da-w5h" firstAttribute="top" secondItem="wBi-fL-q7A" secondAttribute="bottom" constant="3" id="m4W-2f-7dY"/>
+                                        <constraint firstItem="oDq-rk-FUK" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="QBS-0U-3rx" secondAttribute="trailing" constant="8" symbolic="YES" id="qmu-xM-XH2"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1249,6 +1261,7 @@
         <image name="Crosshairs" width="64" height="64"/>
         <image name="Download" width="27" height="26"/>
         <image name="GpsOff" width="22" height="22"/>
+        <image name="Upload" width="30" height="25"/>
         <image name="Weather" width="22" height="22"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
