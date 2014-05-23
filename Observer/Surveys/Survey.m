@@ -880,7 +880,7 @@
     return observation;
 }
 
-- (Observation *)createObservation:(ProtocolFeature *)feature AtMapLocation:(AGSPoint *)mapPoint
+- (Observation *)createObservation:(ProtocolFeature *)feature atMapLocation:(AGSPoint *)mapPoint
 {
     Observation *observation = [self createObservation:feature];
     observation.adhocLocation = [self createAdhocLocationWithMapPoint:mapPoint];

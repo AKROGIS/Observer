@@ -1302,7 +1302,7 @@
 
 - (void)addFeatureAtTarget:(ProtocolFeature *)feature
 {
-    Observation *observation = [self.survey createObservation:feature AtMapLocation:self.mapView.mapAnchor];
+    Observation *observation = [self.survey createObservation:feature atMapLocation:self.mapView.mapAnchor];
     AGSGraphic *graphic = [self.survey drawObservation:observation];
     [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:self.mapView.mapAnchor isNew:YES isEditing:YES];
 }
@@ -1334,7 +1334,7 @@
 //called by map touch and action sheet
 - (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mapPoint
 {
-    Observation *observation = [self.survey createObservation:feature AtMapLocation:mapPoint];
+    Observation *observation = [self.survey createObservation:feature atMapLocation:mapPoint];
     AGSGraphic *graphic = [self.survey drawObservation:observation];
     [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint  isNew:YES isEditing:YES];
 }
