@@ -74,7 +74,8 @@
 
 - (double)perpendicularMeters
 {
-    return fabs(self.distanceMeters * sin(self.absoluteAngle - self.deadAhead));
+    double radians = (self.absoluteAngle - self.deadAhead) * M_PI / 180.0;
+    return fabs(self.distanceMeters * sin(radians));
 }
 
 - (BOOL) usesProtocol

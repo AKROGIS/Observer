@@ -15,7 +15,7 @@
 
 +(NSString *)csvHeaderForFeature:(ProtocolFeature *)feature
 {
-    NSMutableString *header = [NSMutableString stringWithString:@"timestamp,datum,feature_latitude,feature_longitude,observer_latitude,observer_longitude,map_name,map_author,map_date,angle,distance,course,perp_meters"];
+    NSMutableString *header = [NSMutableString stringWithString:@"timestamp,datum,feature_latitude,feature_longitude,observer_latitude,observer_longitude,map_name,map_author,map_date,angle,distance,perp_meters"];
     for (NSAttributeDescription *attribute in feature.attributes) {
         [header appendString:@","];
         NSString *cleanName = [attribute.name stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
@@ -45,9 +45,9 @@
                                                                                   absoluteAngle:self.angleDistanceLocation.angle
                                                                                        distance:self.angleDistanceLocation.distance];
 
-        [csv appendFormat:@",%@,%@,%g,%g", angleDistance.angle, angleDistance.distance, angleDistance.deadAhead, angleDistance.perpendicularMeters];
+        [csv appendFormat:@",%@,%@,%g", angleDistance.angle, angleDistance.distance, angleDistance.perpendicularMeters];
     } else {
-        [csv appendString:@",,,,"];
+        [csv appendString:@",,,"];
     }
 
     //get the variable attributes based on the feature type
