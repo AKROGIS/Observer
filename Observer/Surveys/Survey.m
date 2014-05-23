@@ -7,6 +7,7 @@
 //
 
 #import "Survey.h"
+#import "Survey+CsvExport.h"
 #import "NSURL+unique.h"
 #import "NSDate+Formatting.h"
 #import "ObserverModel.h"
@@ -476,6 +477,59 @@
     return (NSManagedObject *)[results lastObject]; // will return nil if there was an error, or no results
 }
 
+- (ProtocolFeature *)protocolFeatureFromLayerName:(NSString *)layerName
+{
+    ProtocolFeature * feature = nil;
+    if ([layerName isEqualToString:kMissionPropertyEntityName]) {
+        feature =  self.protocol.missionFeature;
+    } else {
+        for (ProtocolFeature *f in self.protocol.features) {
+            if ([f.name isEqualToString:layerName]) {
+                feature = f;
+                break;
+            }
+        }
+    }
+    return feature;
+}
+
+
+
+
+#pragma mark - Entity Conversion Methods
+
+- (Observation *)observationFromEntity:(NSManagedObject *)entity
+{
+    return [entity.entity.name hasPrefix:kObservationPrefix] ? (Observation *)entity : nil;
+}
+
+- (MissionProperty *)missionPropertyFromEntity:(NSManagedObject *)entity
+{
+    return [entity.entity.name hasPrefix:kMissionPropertyEntityName] ? (MissionProperty *)entity : nil;
+}
+
+- (AngleDistanceLocation *)angleDistanceLocationFromEntity:(NSManagedObject *)entity
+{
+        return [self observationFromEntity:entity].angleDistanceLocation;
+}
+
+- (GpsPoint *)gpsPointFromEntity:(NSManagedObject *)entity
+{
+    GpsPoint *gpsPoint = [self observationFromEntity:entity].gpsPoint;
+    return gpsPoint ? gpsPoint : [self missionPropertyFromEntity:entity].gpsPoint;
+}
+
+- (AdhocLocation *)adhocLocationFromEntity:(NSManagedObject *)entity
+{
+    AdhocLocation *adhocLocation = [self observationFromEntity:entity].adhocLocation;
+    return adhocLocation ? adhocLocation : [self missionPropertyFromEntity:entity].adhocLocation;
+}
+
+- (void)deleteEntity:(NSManagedObject *)entity
+{
+    [self.document.managedObjectContext deleteObject:entity];
+}
+
 
 
 
@@ -899,11 +953,6 @@
 
 #pragma mark - Misc Methods
 
-- (void)deleteObject:(NSManagedObject *)object
-{
-    [self.document.managedObjectContext deleteObject:object];
-}
-
 - (void)loadGraphics
 {
     AKRLog(@"Loading graphics from coredata");
@@ -1044,7 +1093,7 @@
 
 #pragma mark - Diagnostic aids - remove when done -
 
-#ifdef DEBUG
+#ifdef AKR_DEBUG
 
 - (void) connectToNotificationCenter
 {
@@ -1115,24 +1164,40 @@
 
 - (void)logStats
 {
-    AKRLog(@"  Survey (%@) contains:", self.title);
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
-    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"    %d GpsPoints", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
-    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"    %d Observations", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
-    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"    %d MissionProperties", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:kMissionEntityName];
-    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"    %d Missions", results.count);
+#ifdef AKR_DEBUG
+    NSMutableString *contents = [NSMutableString new];
+    NSFetchRequest *request;
+    NSArray *results;
+
     request = [NSFetchRequest fetchRequestWithEntityName:kMapEntityName];
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"    %d Maps", results.count);
-}
+    [contents appendFormat:@"    %d Maps\n", results.count];
 
+    request = [NSFetchRequest fetchRequestWithEntityName:kMissionEntityName];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    [contents appendFormat:@"    %d Missions\n", results.count];
+
+    request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    [contents appendFormat:@"    %d MissionProperties\n", results.count];
+
+    request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    [contents appendFormat:@"    %d Observations\n", results.count];
+
+    request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
+    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    [contents appendFormat:@"    %d GpsPoints\n", results.count];
+
+    [contents appendFormat:@"\n    GPS (last 7 days) as CSV:\n%@",[self csvForGpsPointsSince:[[NSDate date] dateByAddingTimeInterval:-(60*60*24*7)]]];
+    [contents appendFormat:@"\n    TrackLog Summary as CSV:\n%@",[self csvForTrackLogsSince:nil]];
+    NSDictionary *dict = [self csvForFeaturesMatching:nil];
+    for (NSString *key in dict){
+        [contents appendFormat:@"\n     Observations of %@\n%@\n",key,dict[key]];
+    }
+
+    AKRLog(@"\n  Survey (%@) contains:\n%@", self.title, contents);
 #endif
-
+}
+#endif
 @end

@@ -661,11 +661,8 @@
                     id<AGSFeature> feature = featureList[0];
                     NSDate *timestamp = (NSDate *)[feature safeAttributeForKey:kTimestampKey];
                     NSManagedObject *entity = [self.survey entityOnLayerNamed:layerName atTimestamp:timestamp];
-                    if ([entity.entity.name isEqualToString:kMissionPropertyEntityName]) {
-                        self.movingMissionProperty = (MissionProperty *)entity;
-                    } else {
-                        self.movingObservation = (Observation *)entity;
-                    }
+                    self.movingMissionProperty = [self.survey missionPropertyFromEntity:entity];
+                    self.movingObservation = [self.survey observationFromEntity:entity];
                     if (self.movingMissionProperty) {
                         //TODO: support moving mission properties
                         [[[UIAlertView alloc] initWithTitle:nil message:@"Can't move mission properties yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
@@ -1182,7 +1179,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
                     [self loadGraphics];
-                    [self logStats];
+                    [self.survey logStats];
                     [self configureObservationButtons];
                 } else {
                     [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
@@ -1372,17 +1369,7 @@
     }
 
     //get the feature type from the layername
-    ProtocolFeature * feature = nil;
-    if ([layerName isEqualToString:kMissionPropertyEntityName]) {
-        feature =  self.survey.protocol.missionFeature;
-    } else {
-        for (ProtocolFeature *f in self.survey.protocol.features) {
-            if ([f.name isEqualToString:layerName]) {
-                feature = f;
-                break;
-            }
-        }
-    }
+    ProtocolFeature * feature = [self.survey protocolFeatureFromLayerName:layerName];
 
     //get entity using the timestamp on the layername and the timestamp on the AGS Feature
     NSManagedObject *entity = [self.survey entityOnLayerNamed:layerName atTimestamp:timestamp];
@@ -1451,7 +1438,7 @@
 
     //Show a Location Button only when editing/reviewing
     if (!isNew) {
-        AngleDistanceLocation *angleDistanceLocation = [self angleDistanceLocationFromEntity:entity];
+        AngleDistanceLocation *angleDistanceLocation = [self.survey angleDistanceLocationFromEntity:entity];
         QButtonElement *locationButton = [[QButtonElement alloc] init];
         locationButton.appearance = [[QFlatAppearance alloc] init];
         locationButton.appearance.buttonAlignment = NSTextAlignmentCenter;
@@ -1468,8 +1455,8 @@
             locationButton.title = @"Review Location";
             locationButton.onSelected = ^(){
                 GpsPointTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"GpsPointTableViewController"];
-                vc.gpsPoint = [self gpsPointFromEntity:entity];
-                vc.adhocLocation = [self adhocLocationFromEntity:entity];
+                vc.gpsPoint = [self.survey gpsPointFromEntity:entity];
+                vc.adhocLocation = [self.survey adhocLocationFromEntity:entity];
                 CGSize contentSize = self.editAttributePopoverController ? self.editAttributePopoverController.popoverContentSize : self.reviewAttributePopoverController.popoverContentSize;
                 vc.preferredContentSize = contentSize;
                 [self.modalAttributeCollector pushViewController:vc animated:YES];
@@ -1484,12 +1471,11 @@
     //    allows GPS locations
     //    has an ad-hoc location
     if (self.locationServicesAvailable && self.survey.isRecording) {
-        if ([self isKindOfObservation:entity]) {
-            Observation *observation = (Observation *)entity;
+        Observation *observation = [self.survey observationFromEntity:entity];
+        if (observation) {
             WaysToLocateFeature options = feature.allowedLocations.nonTouchChoices;
             if ((options & LocateFeatureWithGPS) == LocateFeatureWithGPS) {
-                AdhocLocation *adhocLocation = [self adhocLocationFromEntity:observation];
-                if (adhocLocation) {
+                if (observation.adhocLocation) {
                     QButtonElement *updateLocationButton = [[QButtonElement alloc] init];
                     updateLocationButton.appearance = [[QFlatAppearance alloc] init];
                     updateLocationButton.appearance.buttonAlignment = NSTextAlignmentCenter;
@@ -1524,7 +1510,7 @@
         }
         deleteButton.onSelected = ^(){
             [[self.survey graphicsLayerForFeature:feature] removeGraphic:graphic];
-            [self.survey deleteObject:entity];
+            [self.survey deleteEntity:entity];
             [self.editAttributePopoverController dismissPopoverAnimated:YES];
             self.editAttributePopoverController = nil;
         };
@@ -1580,48 +1566,6 @@
     //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
     [self dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;
-}
-
-
-
-
-#pragma mark - Private Methods - support for setAttributesForFeatureType:...
-
-- (BOOL)isKindOfObservation:(NSManagedObject *)entity
-{
-    return [entity.entity.name hasPrefix:kObservationPrefix];
-}
-
-- (AngleDistanceLocation *)angleDistanceLocationFromEntity:(NSManagedObject *)entity
-{
-    if ([entity.entity.name hasPrefix:kObservationPrefix]) {
-        return ((Observation *)entity).angleDistanceLocation;
-    }
-    return nil;
-}
-
-- (GpsPoint *)gpsPointFromEntity:(NSManagedObject *)entity
-{
-    NSString *entityName = entity.entity.name;
-    if ([entityName hasPrefix:kObservationPrefix]) {
-        return ((Observation *)entity).gpsPoint;
-    }
-    if ([entityName isEqualToString:kMissionPropertyEntityName]) {
-        return ((MissionProperty *)entity).gpsPoint;
-    }
-    return nil;
-}
-
-- (AdhocLocation *)adhocLocationFromEntity:(NSManagedObject *)entity
-{
-    NSString *entityName = entity.entity.name;
-    if ([entityName hasPrefix:kObservationPrefix]) {
-        return ((Observation *)entity).adhocLocation;
-    }
-    if ([entityName isEqualToString:kMissionPropertyEntityName]) {
-        return ((MissionProperty *)entity).adhocLocation;
-    }
-    return nil;
 }
 
 
@@ -1749,40 +1693,6 @@
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     [[self.survey graphicsLayerForObservation:observation] addGraphic:graphic];
     return graphic;
-}
-
-
-
-
-#pragma mark - Diagnostic Aids - to be removed
-
-- (void)logStats
-{
-#ifdef AKR_DEBUG
-    AKRLog(@"Survey document is open. It contains:");
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
-    NSArray *results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"  %d GpsPoints", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
-    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"  %d Observations", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
-    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"  %d MissionProperties", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:kMissionEntityName];
-    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"  %d Missions", results.count);
-    request = [NSFetchRequest fetchRequestWithEntityName:kMapEntityName];
-    results = [self.survey.document.managedObjectContext executeFetchRequest:request error:nil];
-    AKRLog(@"  %d Maps", results.count);
-    //AKRLog(@"  All GPS as CSV:\n%@",[self.survey csvForGpsPointsMatching:nil]);
-    AKRLog(@"  GPS (last 7 days) as CSV:\n%@",[self.survey csvForGpsPointsSince:[[NSDate date] dateByAddingTimeInterval:-(60*60*24*7)]]);
-    AKRLog(@"  TrackLog Summary as CSV:\n%@",[self.survey csvForTrackLogsSince:nil]);
-    NSDictionary *dict = [self.survey csvForFeaturesMatching:nil];
-    for (NSString *key in dict){
-        AKRLog(@"\n   Observations of %@\n%@\n",key,dict[key]);
-    }
-#endif
 }
 
 @end

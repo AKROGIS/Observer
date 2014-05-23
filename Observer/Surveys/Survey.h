@@ -82,6 +82,15 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 
 - (BOOL)isSelectableLayerName:(NSString *)layerName;
 - (NSManagedObject *)entityOnLayerNamed:(NSString *)layerName atTimestamp:(NSDate *)timestamp;
+- (ProtocolFeature *)protocolFeatureFromLayerName:(NSString *)layerName;
+
+//Entity Methods
+- (Observation *)observationFromEntity:(NSManagedObject *)entity;
+- (MissionProperty *)missionPropertyFromEntity:(NSManagedObject *)entity;
+- (AngleDistanceLocation *)angleDistanceLocationFromEntity:(NSManagedObject *)entity;
+- (GpsPoint *)gpsPointFromEntity:(NSManagedObject *)entity;
+- (AdhocLocation *)adhocLocationFromEntity:(NSManagedObject *)entity;
+- (void)deleteEntity:(NSManagedObject *)entity;
 
 // State Control
 - (BOOL)startRecording;
@@ -117,6 +126,5 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 
 // Miscellaneous
 - (void)loadGraphics;
-- (void)deleteObject:(NSManagedObject *)object;
-
+- (void)logStats;
 @end
