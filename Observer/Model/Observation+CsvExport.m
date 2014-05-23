@@ -15,7 +15,7 @@
 
 +(NSString *)csvHeaderForFeature:(ProtocolFeature *)feature
 {
-    NSMutableString *header = [NSMutableString stringWithString:@"timestamp,datum,feature_latitude,feature_longitude,observer_latitude,observer_longitude,map_name,map_author,map_date,angle,distance,perp_meters"];
+    NSMutableString *header = [NSMutableString stringWithString:@"timestamp,year,day_of_year,datum,feature_latitude,feature_longitude,observer_latitude,observer_longitude,map_name,map_author,map_date,angle,distance,perp_meters"];
     for (NSAttributeDescription *attribute in feature.attributes) {
         [header appendString:@","];
         NSString *cleanName = [attribute.name stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
@@ -28,8 +28,11 @@
 {
     CLLocationCoordinate2D featureLocation = [self locationOfFeature];
     CLLocationCoordinate2D observerLocation = [self locationOfObserver];
-    NSMutableString *csv = [NSMutableString stringWithFormat:@"%@,WGS84,%0.6f,%0.6f,%0.6f,%0.6f",
-                            [AKRFormatter utcIsoStringFromDate:[self timestamp]],
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSInteger year = [gregorian components:NSYearCalendarUnit fromDate:self.timestamp].year;
+    NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSDayCalendarUnit inUnit:NSYearCalendarUnit forDate:self.timestamp];
+    NSMutableString *csv = [NSMutableString stringWithFormat:@"%@,%d,%d,WGS84,%0.6f,%0.6f,%0.6f,%0.6f",
+                            [AKRFormatter utcIsoStringFromDate:self.timestamp],year,dayOfYear,
                             featureLocation.latitude, featureLocation.longitude,
                             observerLocation.latitude, observerLocation.longitude];
 
