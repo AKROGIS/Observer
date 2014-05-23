@@ -871,8 +871,7 @@
 
 
 
-#pragma mark - Observation Methods - private
-
+#pragma mark - Observation Methods
 
 - (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint
 {
@@ -893,6 +892,19 @@
     Observation *observation = [self createObservation:feature atGpsPoint:gpsPoint];
     observation.angleDistanceLocation = [self createAngleDistanceLocationWithAngleDistanceLocation:angleDistance];
     return observation;
+}
+
+- (AGSGraphic *)drawObservation:(Observation *)observation
+{
+    //AKRLog(@"    Drawing observation type %@",observation.entity.name);
+    NSDate *timestamp = [observation timestamp];
+    NSAssert(timestamp, @"An observation has no timestamp: %@", observation);
+    if (!timestamp) return nil; //AKRLog(@"##ERROR## - A observation has no timestamp %@",observation);
+    AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
+    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
+    [[self graphicsLayerForObservation:observation] addGraphic:graphic];
+    return graphic;
 }
 
 - (void)updateAdhocLocation:(AdhocLocation *)adhocLocation withMapPoint:(AGSPoint *)mapPoint
@@ -1038,18 +1050,6 @@
     [[self graphicsLayerForGpsPoints] addGraphic:graphic];
 }
 
-- (void)drawObservation:(Observation *)observation
-{
-    //AKRLog(@"    Drawing observation type %@",observation.entity.name);
-    NSDate *timestamp = [observation timestamp];
-    NSAssert(timestamp, @"An observation has no timestamp: %@", observation);
-    if (!timestamp) return; //AKRLog(@"##ERROR## - A observation has no timestamp %@",observation);
-    AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
-    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
-    [[self graphicsLayerForObservation:observation] addGraphic:graphic];
-}
-
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
 {
     NSDate *timestamp = [missionProperty timestamp];
@@ -1075,7 +1075,6 @@
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:line symbol:nil attributes:nil];
     [[self graphicsLayerForTracksLogObserving:mp.observing] addGraphic:graphic];
 }
-
 
 - (void)drawTrackLogSegment:(TrackLogSegment *)tracklog
 {

@@ -1275,7 +1275,7 @@
         return;
     }
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    AGSGraphic *graphic = [self drawObservation:observation atPoint:mapPoint];
+    AGSGraphic *graphic = [self.survey drawObservation:observation];
     [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
 }
 
@@ -1303,7 +1303,7 @@
 - (void)addFeatureAtTarget:(ProtocolFeature *)feature
 {
     Observation *observation = [self.survey createObservation:feature AtMapLocation:self.mapView.mapAnchor];
-    AGSGraphic *graphic = [self drawObservation:observation atPoint:self.mapView.mapAnchor];
+    AGSGraphic *graphic = [self.survey drawObservation:observation];
     [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:self.mapView.mapAnchor isNew:YES isEditing:YES];
 }
 
@@ -1335,7 +1335,7 @@
 - (void)addFeature:(ProtocolFeature *)feature atMapPoint:(AGSPoint *)mapPoint
 {
     Observation *observation = [self.survey createObservation:feature AtMapLocation:mapPoint];
-    AGSGraphic *graphic = [self drawObservation:observation atPoint:mapPoint];
+    AGSGraphic *graphic = [self.survey drawObservation:observation];
     [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint  isNew:YES isEditing:YES];
 }
 
@@ -1618,7 +1618,7 @@
         self.angleDistancePopoverController = nil;
         AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
         Observation *observation = [self.survey createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
-        AGSGraphic *graphic = [self drawObservation:observation atPoint:[controller.location pointFromPoint:mapPoint]];
+        AGSGraphic *graphic = [self.survey drawObservation:observation];
         [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
     };
     vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
@@ -1673,26 +1673,11 @@
 
 
 
-
-
-
-
 #pragma mark - Private Methods - support for data model - gps points
 
 - (AGSPoint *)mapPointFromGpsPoint:(GpsPoint *)gpsPoint
 {
     return [gpsPoint pointOfGpsWithSpatialReference:self.mapView.spatialReference];
-}
-
-- (AGSGraphic *)drawObservation:(Observation *)observation atPoint:(AGSPoint *)mapPoint
-{
-    //AKRLog(@"    Drawing observation type %@",observation.entity.name);
-    NSDate *timestamp = [observation timestamp];
-    NSAssert(timestamp, @"An observation in %@ has no timestamp", observation.entity.name);
-    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
-    [[self.survey graphicsLayerForObservation:observation] addGraphic:graphic];
-    return graphic;
 }
 
 @end
