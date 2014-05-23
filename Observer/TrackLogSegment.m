@@ -31,11 +31,11 @@
     NSInteger year = [gregorian components:NSYearCalendarUnit fromDate:start.timestamp].year;
     NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSDayCalendarUnit inUnit:NSYearCalendarUnit forDate:start.timestamp];
     NSMutableString *csv;
-    csv = [NSMutableString stringWithFormat:@"%@,%@,%@,%@,%0.6f,%0.6f,%0.6f,%0.6f,WGS84, %0.1f, %g,%d,%u,%@",
+    csv = [NSMutableString stringWithFormat:@"%@,%@,%@,%@,%0.6f,%0.6f,%0.6f,%0.6f,WGS84,%0.1f,%0.2f,%d,%u,%@",
            [AKRFormatter utcIsoStringFromDate:start.timestamp], [AKRFormatter utcIsoStringFromDate:end.timestamp],
            [AKRFormatter localIsoStringFromDate:start.timestamp], [AKRFormatter localIsoStringFromDate:end.timestamp],
            start.latitude, start.longitude, end.latitude, end.longitude,
-           [end.timestamp timeIntervalSinceDate:start.timestamp], 0.0, year, dayOfYear, (self.missionProperty.observing ? @"Yes" : @"No")];
+           [end.timestamp timeIntervalSinceDate:start.timestamp], self.length, year, dayOfYear, (self.missionProperty.observing ? @"Yes" : @"No")];
 
     //get the variable attributes based on the feature type
     for (NSAttributeDescription *attribute in protocol.missionFeature.attributes) {
@@ -46,6 +46,22 @@
         }
     }
     return csv;
+}
+
+- (AGSPolyline *)polyline {
+    AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];
+    AGSMutablePolyline *pline = [[AGSMutablePolyline alloc] initWithSpatialReference:wgs84];
+    [pline addPathToPolyline];
+    for (GpsPoint *gpsPoint in self.gpsPoints) {
+        [pline addPointToPath:[AGSPoint pointFromLocation:gpsPoint.locationOfGps spatialReference:wgs84]];
+    }
+    return (AGSPolyline *)[[AGSGeometryEngine defaultGeometryEngine] simplifyGeometry:pline];
+}
+
+// private methods
+- (double)length
+{
+    return [[AGSGeometryEngine defaultGeometryEngine] shapePreservingLengthOfGeometry:self.polyline inUnit:AGSSRUnitMeter];
 }
 
 @end

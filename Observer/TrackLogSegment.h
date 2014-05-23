@@ -19,4 +19,6 @@
 
 - (NSString *)asCsvForProtocol:(SProtocol *)protocol;
 
+- (AGSPolyline *)polyline;
+
 @end

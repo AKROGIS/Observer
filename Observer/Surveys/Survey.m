@@ -1085,11 +1085,8 @@
 
 - (void)drawTrackLogSegment:(TrackLogSegment *)tracklog
 {
-    AGSMutablePolyline *pline = [[AGSMutablePolyline alloc] init];
-    [pline addPathToPolyline];
-    for (GpsPoint *gpsPoint in tracklog.gpsPoints) {
-        [pline addPointToPath:[gpsPoint pointOfGpsWithSpatialReference:self.mapViewSpatialReference]];
-    }
+    AGSPolyline *pline = (AGSPolyline *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:tracklog.polyline
+                                                                                toSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:pline symbol:nil attributes:nil];
     [[self graphicsLayerForTracksLogObserving:tracklog.missionProperty.observing] addGraphic:graphic];
 }
