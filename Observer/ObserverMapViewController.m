@@ -1583,9 +1583,14 @@
     LocationAngleDistance *location = nil;
     if (0 <= gpsPoint.course) {
         location = [[LocationAngleDistance alloc] initWithDeadAhead:gpsPoint.course protocolFeature:feature];
+    } else {
+        double currentHeading = self.locationManager.heading.trueHeading;
+        if (0 <= currentHeading) {
+            location = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocolFeature:feature];
+        }
     }
     if (!location) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current heading for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current course/heading for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         return;
     }
 
@@ -1616,15 +1621,13 @@
 // This is called by the feature editor (setAttributesForFeatureType:), when the user wants to edit the Angle/Distance of an observation.
 - (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic
 {
-    AGSPoint *mapPoint = (AGSPoint *)graphic.geometry;
-    Observation *observation = [self.survey observationFromEntity:entity];
     AngleDistanceLocation *angleDistance = [self.survey angleDistanceLocationFromEntity:entity];
-    double course = observation.gpsPoint.course; //gps course must be valid, else we could not have created the Angle/Distance we are editing
-    LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:course protocolFeature:feature absoluteAngle:angleDistance.angle distance:angleDistance.distance];;
+    LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:angleDistance.direction protocolFeature:feature absoluteAngle:angleDistance.angle distance:angleDistance.distance];;
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
     vc.location = location;
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
         self.angleDistancePopoverController = nil;
+        Observation *observation = [self.survey observationFromEntity:entity];
         [self.survey updateAngleDistanceObservation:observation withAngleDistance:controller.location];
         [[graphic layer] removeGraphic:graphic];
         [self.survey drawObservation:observation];
@@ -1638,6 +1641,7 @@
         self.angleDistancePopoverController = [[UIPopoverController alloc] initWithContentViewController:nav];
         vc.popover = self.angleDistancePopoverController;
         vc.popover.delegate = self;
+        AGSPoint *mapPoint = (AGSPoint *)graphic.geometry;
         [self.angleDistancePopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         self.popoverMapPoint = mapPoint;
     } else {
