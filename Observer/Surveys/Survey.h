@@ -124,6 +124,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (Observation *)createObservation:(ProtocolFeature *)feature atGpsPoint:(GpsPoint *)gpsPoint withAngleDistanceLocation:(LocationAngleDistance *)angleDistance;
 - (AGSGraphic *)drawObservation:(Observation *)observation;
 - (void)updateAdhocLocation:(AdhocLocation *)adhocLocation withMapPoint:(AGSPoint *)mapPoint;
+- (void)updateAngleDistanceObservation:(Observation *)observation withAngleDistance:(LocationAngleDistance *)locationAngleDistance;
 
 // Miscellaneous
 - (void)loadGraphics;

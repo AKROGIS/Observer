@@ -88,10 +88,6 @@
 @property (strong, nonatomic) Observation *movingObservation;  //maintain state between AGSMapViewTouchDelegate calls
 @property (strong, nonatomic) MissionProperty *movingMissionProperty;  //maintain state between AGSMapViewTouchDelegate calls
 
-//Setup for AngleDistance ViewController
-@property (strong, nonatomic) LocationAngleDistance *angleDistanceOrientation;
-@property (strong, nonatomic) GpsPoint *angleDistanceLocation;
-
 //Used to save state for delegate callbacks (alertview, actionsheet and segue)
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
 @property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
@@ -1292,9 +1288,7 @@
     }
     if (button) {
         // It is not possible (AFIK) to set the anchor for a manual popover seque, hence I must do the "segue" with code
-        if ([self shouldPerformAngleDistanceSequeWithFeature:feature]) {
-            [self performAngleDistanceSequeWithFeature:feature button:button];
-        }
+        [self performAngleDistanceSequeWithFeature:feature fromButton:button];
     } else {
         AKRLog(@"Oh No! I couldn't find the calling button for the segue");
     }
@@ -1447,9 +1441,7 @@
         if (angleDistanceLocation) {
             locationButton.title = @"Change Location";
             locationButton.onSelected = ^(){
-                //TODO uncomment this when the method is complete
-                //[self performAngleDistanceSequeWithFeature:feature entity:entity graphic:graphic];
-                [[[UIAlertView alloc] initWithTitle:nil message:@"Feature not implemented yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                [self performAngleDistanceSequeWithFeature:feature entity:entity graphic:graphic];
             };
         } else {
             locationButton.title = @"Review Location";
@@ -1573,44 +1565,29 @@
 
 #pragma mark - AngleDistance popover for feature editing
 
-//Called programatically by feature bar button
-//could be combined with following method to eliminate two properties
-- (BOOL)shouldPerformAngleDistanceSequeWithFeature:(ProtocolFeature *)feature
+//Called programatically by feature bar button when creating a new Angle/Distance observation
+- (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature fromButton:(UIBarButtonItem *)button
 {
     if (self.angleDistancePopoverController) {
-        //TODO: is this code path possible?
-        //I tried invoking it with a second click on the birds button when the AD popover was presented, but it did not get here, so I would say no
         [self.angleDistancePopoverController dismissPopoverAnimated:YES];
         self.angleDistancePopoverController = nil;
-        return NO;
+        return;
     }
 
-    self.angleDistanceOrientation = nil;
-    self.angleDistanceLocation = [self.survey addGpsPointAtLocation:self.locationManager.location];
-
-    double currentCourse = self.angleDistanceLocation.course;
-    if (0 <= currentCourse) {
-        self.angleDistanceOrientation = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocolFeature:feature];
-    } else {
-        double currentHeading = self.locationManager.heading.trueHeading;
-        if (0 <= currentHeading) {
-            self.angleDistanceOrientation = [[LocationAngleDistance alloc] initWithDeadAhead:currentHeading protocolFeature:feature];
-        }
-    }
-    if (!self.angleDistanceLocation) {
+    GpsPoint *gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
+    if (!gpsPoint) {
         [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current location for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        return;
     }
-    if (!self.angleDistanceOrientation) {
+    
+    LocationAngleDistance *location = nil;
+    if (0 <= gpsPoint.course) {
+        location = [[LocationAngleDistance alloc] initWithDeadAhead:gpsPoint.course protocolFeature:feature];
+    }
+    if (!location) {
         [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current heading for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        return;
     }
-    return self.angleDistanceOrientation && self.angleDistanceLocation;
-}
-
-//Called programatically by feature bar button
-- (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature button:(UIBarButtonItem *)button
-{
-    LocationAngleDistance *location = self.angleDistanceOrientation;
-    GpsPoint *gpsPoint = self.angleDistanceLocation;
 
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
     vc.location = location;
@@ -1636,22 +1613,21 @@
     }
 }
 
-// This will be callled from the feature editor (setAttributesForFeatureType:), when it is finished.
+// This is called by the feature editor (setAttributesForFeatureType:), when the user wants to edit the Angle/Distance of an observation.
 - (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic
 {
-    //FIXME: this is not finished
-    //TODO need entities gps origin and course/heading
-    GpsPoint *gpsPoint = nil; //entity.gpsPoint;
     AGSPoint *mapPoint = (AGSPoint *)graphic.geometry;
-    double currentCourse = gpsPoint.course; //TODO this may be -1, in which case the heading was used (but I don't have it)
-    LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:currentCourse protocolFeature:feature];;
-
+    Observation *observation = [self.survey observationFromEntity:entity];
+    AngleDistanceLocation *angleDistance = [self.survey angleDistanceLocationFromEntity:entity];
+    double course = observation.gpsPoint.course; //gps course must be valid, else we could not have created the Angle/Distance we are editing
+    LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:course protocolFeature:feature absoluteAngle:angleDistance.angle distance:angleDistance.distance];;
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
     vc.location = location;
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
         self.angleDistancePopoverController = nil;
-        //TODO update the entities angleDistance entity
-        [graphic setGeometry:[controller.location pointFromPoint:mapPoint]];
+        [self.survey updateAngleDistanceObservation:observation withAngleDistance:controller.location];
+        [[graphic layer] removeGraphic:graphic];
+        [self.survey drawObservation:observation];
     };
     vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
         self.angleDistancePopoverController = nil;
@@ -1667,7 +1643,6 @@
     } else {
         [self.navigationController pushViewController:vc animated:YES];
     }
-    //Setup angle distance form
 }
 
 

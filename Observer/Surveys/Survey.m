@@ -921,6 +921,13 @@
     }
 }
 
+- (void)updateAngleDistanceObservation:(Observation *)observation withAngleDistance:(LocationAngleDistance *)locationAngleDistance
+{
+    observation.angleDistanceLocation.angle = locationAngleDistance.absoluteAngle;
+    observation.angleDistanceLocation.distance = locationAngleDistance.distanceMeters;
+    observation.angleDistanceLocation.direction = locationAngleDistance.deadAhead;
+}
+
 
 
 
