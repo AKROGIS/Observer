@@ -296,7 +296,7 @@
     }
     TrackLogSegment *tracklog = [self.survey startObserving];
     [self showTrackLogAttributeEditor:tracklog];
-    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(stopObserving:) ToPlay:NO];
+    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(stopObserving:) ToPlay:NO];
     [self enableControls];
 }
 
@@ -324,7 +324,7 @@
     [self stopLocationUpdates];
     [UIApplication sharedApplication].idleTimerDisabled = NO;
     if (self.survey.isObserving) {
-        self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startObserving:) ToPlay:YES];
+        self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startObserving:) ToPlay:YES];
         [self enableControls];
     }
     [self.survey stopRecording];
@@ -338,7 +338,7 @@
         return;
     }
     [self.survey stopObserving];
-    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:6 action:@selector(startObserving:) ToPlay:YES];
+    self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startObserving:) ToPlay:YES];
     [self enableControls];
 }
 
