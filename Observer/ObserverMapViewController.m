@@ -1482,11 +1482,12 @@
                     updateLocationButton.appearance.actionColorEnabled = self.view.tintColor;
                     updateLocationButton.title = @"Move to GPS Location";
                     updateLocationButton.onSelected = ^(){
+                        //Note: add new gps point, but do not remove the adhoc location as that records the time of the observation
                         observation.gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
-                        if (observation.gpsPoint) {
-                            [graphic setGeometry:[self mapPointFromGpsPoint:observation.gpsPoint]];
+                        if (observation.gpsPoint && graphic) {
+                            [[graphic layer] removeGraphic:graphic];
+                            [self.survey drawObservation:observation];
                         }
-                        //Note: do not remove the adhoc location as that records the time of the observation
                     };
                     [[root.sections lastObject] addElement:updateLocationButton];
                 }
