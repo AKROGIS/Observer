@@ -776,6 +776,33 @@
 {
     if (!_trackLogSegments) {
         _trackLogSegments = [NSMutableArray new];
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
+        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:kTimestampKey ascending:YES]];
+        NSError *error = [[NSError alloc] init];
+        NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:&error];
+        if (!results && error.code) {
+            AKRLog(@"  Error Fetching GpsPoint for tracklogs: %@",error);
+        } else {
+            Mission *mission = nil;
+            TrackLogSegment *lastSegment = nil;
+            for (GpsPoint *gpsPoint in results) {
+                //  A tracklog is an ordered sequence of gpsPoints, and some properties (i.e. the mission properties)
+                //  A track log starts at a gpsPoint with a related mission property
+                //  The first point of a tracklog might also be the last point of the prior track log (if the mission is the same)
+                if (gpsPoint.missionProperty) {
+                    if (mission == gpsPoint.mission) {
+                        [lastSegment.gpsPoints addObject:gpsPoint];
+                    }
+                    mission = gpsPoint.mission;
+                    TrackLogSegment *newTrackLog = [TrackLogSegment new];
+                    newTrackLog.missionProperty = gpsPoint.missionProperty;
+                    newTrackLog.gpsPoints = [NSMutableArray new];
+                    [_trackLogSegments addObject:newTrackLog];
+                    lastSegment = newTrackLog;
+                }
+                [lastSegment.gpsPoints addObject:gpsPoint];
+            }
+        }
     }
     return _trackLogSegments;
 }
@@ -976,44 +1003,29 @@
 {
     AKRLog(@"Loading graphics from coredata");
 
-    AKRLog(@"  Fetching gpsPoints");
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
-    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:kTimestampKey ascending:YES]];
+    NSFetchRequest *request;
     NSError *error = [[NSError alloc] init];
-    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:&error];
-    if (!results && error.code) {
-        AKRLog(@"  Error Fetching GpsPoint %@",error);
-    } else {
-        AKRLog(@"  Drawing %d gpsPoints", results.count);
-        Mission *mission = nil;
+    NSArray *results;
 
-        self.trackLogSegments = nil;  //make sure we clear our tracklogs (maybe we are reloading)
+    //Get GpsPoints
+//    AKRLog(@"  Fetching gpsPoints");
+//    request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
+//    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:kTimestampKey ascending:YES]];
+//    results = [self.document.managedObjectContext executeFetchRequest:request error:&error];
+//    if (!results && error.code) {
+//        AKRLog(@"  Error Fetching GpsPoint %@",error);
+//    } else {
+//        for (GpsPoint *gpsPoint in results) {
+//            [self drawGpsPoint:gpsPoint];
+//        }
+//    }
 
-        for (GpsPoint *gpsPoint in results) {
-
-            //draw each individual GPS point
-            //[self drawGpsPoint:gpsPoint];
-
-            //Create the tracklogs from the gps points
-            //  A tracklog is an ordered sequence of gpsPoints, and some properties (i.e. the mission properties)
-            //  A track log starts at a gpsPoint with a related mission property
-            //  The first point of a tracklog might also be the last point of the prior track log (if the mission is the same)
-            if (gpsPoint.missionProperty) {
-                if (mission == gpsPoint.mission) {
-                    [[self lastTrackLogSegment].gpsPoints addObject:gpsPoint];
-                }
-                mission = gpsPoint.mission;
-                TrackLogSegment *newTrackLog = [TrackLogSegment new];
-                newTrackLog.missionProperty = gpsPoint.missionProperty;
-                newTrackLog.gpsPoints = [NSMutableArray new];
-                [self.trackLogSegments addObject:newTrackLog];
-            }
-            [[self lastTrackLogSegment].gpsPoints addObject:gpsPoint];
-        }
-        for (TrackLogSegment *tracklog in self.trackLogSegments) {
-            [self drawTrackLogSegment:tracklog];
-        }
+    //Get Tracklogs
+    AKRLog(@"  Fetching tracklogs");
+    for (TrackLogSegment *tracklog in self.trackLogSegments) {
+        [self drawTrackLogSegment:tracklog];
     }
+
     //Get Observations
     AKRLog(@"  Fetching observations");
     request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
