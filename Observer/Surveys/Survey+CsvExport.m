@@ -31,7 +31,10 @@
 
 - (NSString *)csvForGpsPointsSince:(NSDate *)timestamp
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"timestamp >= %@",timestamp];
+    NSPredicate *predicate = nil;
+    if (timestamp) {
+        predicate = [NSPredicate predicateWithFormat:@"timestamp >= %@",timestamp];
+    }
     return [self csvForGpsPointsMatching:predicate];
 }
 
@@ -55,7 +58,10 @@
 
 - (NSString *)csvForFeature:(ProtocolFeature *)feature since:(NSDate *)timestamp
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gpsPoint.timestamp >= %@ || adhocLocation.timestamp >= %@",timestamp];
+    NSPredicate *predicate = nil;
+    if (timestamp) {
+        predicate = [NSPredicate predicateWithFormat:@"gpsPoint.timestamp >= %@ || adhocLocation.timestamp >= %@",timestamp, timestamp];
+    }
     return [self csvForFeature:feature matching:predicate];
 }
 
@@ -71,7 +77,10 @@
 
 - (NSDictionary *)csvForFeaturesSince:(NSDate *)timestamp
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gpsPoint.timestamp >= %@ || adhocLocation.timestamp >= %@",timestamp];
+    NSPredicate *predicate = nil;
+    if (timestamp) {
+        predicate = [NSPredicate predicateWithFormat:@"gpsPoint.timestamp >= %@ || adhocLocation.timestamp >= %@",timestamp, timestamp];
+    }
     return [self csvForFeaturesMatching:predicate];
 }
 
