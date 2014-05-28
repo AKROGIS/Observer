@@ -284,10 +284,21 @@
 
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler
 {
-    AKRLog(@"Sync not implemented yet!");
     self.date = [NSDate date];
     self.state = kSaved;
     [self saveProperties];
+    if (handler) {
+        //sleep for 2 seconds
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+            [errorDetails setValue:@"Sync not implemented yet!" forKey:NSLocalizedDescriptionKey];
+            NSError *error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+            handler(error);
+                });
+    } else {
+        AKRLog(@"Sync not implemented yet!");
+    }
 }
 
 

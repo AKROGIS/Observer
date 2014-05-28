@@ -11,6 +11,7 @@
 #import "SurveyDetailViewController.h"
 #import "SurveyTableViewCell.h"
 #import "ProtocolSelectViewController.h"
+#import "SurveyUploadTableViewController.h"
 #import "SProtocol.h"
 #import "Survey.h"
 #import "NSIndexPath+unsignedAccessors.h"
@@ -212,6 +213,13 @@
         id<AKRTableViewItem> item = [self.items surveyAtIndex:indexPath.urow];
         [[segue destinationViewController] setDetailItem:item];
         //if we are in a popover, we want the new vc to stay the same size.
+        [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
+    }
+    if ([[segue identifier] isEqualToString:@"Upload Survey"]) {
+        //superview^3 hack to get the UITableViewCell from the upload button
+        NSIndexPath *indexPath = [self.tableView indexPathForCell:(UITableViewCell *)[[[sender superview] superview] superview]];
+        Survey *survey = [self.items surveyAtIndex:indexPath.urow];
+        ((SurveyUploadTableViewController *)segue.destinationViewController).survey = survey;
         [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
     }
     if ([[segue identifier] isEqualToString:@"Select Protocol"]) {

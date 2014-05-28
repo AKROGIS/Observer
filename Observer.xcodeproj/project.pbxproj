@@ -28,6 +28,7 @@
 		394CC24D1858F11800FA859C /* Mission.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC24C1858F11800FA859C /* Mission.m */; };
 		394CC2501858F11800FA859C /* AngleDistanceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC24F1858F11800FA859C /* AngleDistanceLocation.m */; };
 		394CC2531858F11800FA859C /* Observation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CC2521858F11800FA859C /* Observation.m */; };
+		395ACFAC1935325800D04563 /* SurveyUploadTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 395ACFAB1935325800D04563 /* SurveyUploadTableViewController.m */; };
 		396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */; };
 		396E1E90189864AE00B735EF /* NSIndexPath+unsignedAccessors.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E8F189864AE00B735EF /* NSIndexPath+unsignedAccessors.m */; };
 		396E1E961899AD2900B735EF /* ProtocolFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E951899AD2900B735EF /* ProtocolFeature.m */; };
@@ -178,6 +179,8 @@
 		394CC24F1858F11800FA859C /* AngleDistanceLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AngleDistanceLocation.m; path = Model/AngleDistanceLocation.m; sourceTree = "<group>"; };
 		394CC2511858F11800FA859C /* Observation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Observation.h; path = Model/Observation.h; sourceTree = "<group>"; };
 		394CC2521858F11800FA859C /* Observation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Observation.m; path = Model/Observation.m; sourceTree = "<group>"; };
+		395ACFAA1935325800D04563 /* SurveyUploadTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurveyUploadTableViewController.h; path = Surveys/SurveyUploadTableViewController.h; sourceTree = "<group>"; };
+		395ACFAB1935325800D04563 /* SurveyUploadTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SurveyUploadTableViewController.m; path = Surveys/SurveyUploadTableViewController.m; sourceTree = "<group>"; };
 		396775C617A1C7B5009ECD34 /* AngleDistanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AngleDistanceViewController.h; sourceTree = "<group>"; };
 		396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AngleDistanceViewController.m; sourceTree = "<group>"; };
 		396E1E8B18984EFF00B735EF /* Warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -447,6 +450,8 @@
 				3989084C1857ED00007B3F67 /* SurveySelectViewController.m */,
 				394BDD15191D33C4000C8A4B /* Survey+CsvExport.h */,
 				394BDD16191D33C4000C8A4B /* Survey+CsvExport.m */,
+				395ACFAA1935325800D04563 /* SurveyUploadTableViewController.h */,
+				395ACFAB1935325800D04563 /* SurveyUploadTableViewController.m */,
 			);
 			name = Surveys;
 			sourceTree = "<group>";
@@ -814,6 +819,7 @@
 				3989085F1857EDE1007B3F67 /* NSDate+Formatting.m in Sources */,
 				39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */,
 				3989084F1857ED00007B3F67 /* SurveyCoreDataDocument.m in Sources */,
+				395ACFAC1935325800D04563 /* SurveyUploadTableViewController.m in Sources */,
 				59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */,
 				39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */,
 				3982F6CA18C00D040081C3F9 /* AGSMapView+AKRAdditions.m in Sources */,
