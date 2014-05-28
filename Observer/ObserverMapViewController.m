@@ -706,13 +706,21 @@
 {
     AKRLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
 
-    //TODO: If the feature is based on a GPS point, then snap to the closest GPS point
-    //TODO: if this was a mission property, then we need to update the tracklogs.
-    if (self.movingGraphic) {
-        [self.movingGraphic setGeometry:mapPoint];
-    }
+    //Move Adhoc location
     [self.survey updateAdhocLocation:self.movingObservation.adhocLocation withMapPoint:mapPoint];
-    [self.survey updateAdhocLocation:self.movingMissionProperty.adhocLocation withMapPoint:mapPoint];
+    if ([self.movingGraphic isKindOfClass:[AGSGraphic class]]) {
+        AGSGraphic *graphic = (AGSGraphic *)self.movingGraphic;
+        [[graphic layer] removeGraphic:graphic];
+        [self.survey drawObservation:self.movingObservation];
+    }
+
+    //Move GPS location
+    //TODO: If the feature is based on a GPS point, then snap to the closest GPS point
+
+    //Move Mission Property
+    //[self.survey updateAdhocLocation:self.movingMissionProperty.adhocLocation withMapPoint:mapPoint];
+    //TODO: if this was a mission property, then we need to update the tracklogs.
+
     self.movingObservation = nil;
     self.movingMissionProperty = nil;
     self.movingGraphic = nil;
