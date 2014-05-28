@@ -13,12 +13,12 @@
 
 + (NSString *)csvHeader
 {
-     return @"altitude,course,datum,horizontalAccuracy,latitude,longitude,speed,timestamp,verticalAccuracy";
+     return @"timestamp,latitude,longitude,datum,error_radius_m,course,speed_mps,altitude_m,vert_error_m";
 }
 
 - (NSString *)asCSV
 {
-    return [NSString stringWithFormat:@"%g,%g,WGS84,%g,%0.6f,%0.6f,%g,%@,%g", self.altitude, self.course, self.horizontalAccuracy, self.latitude, self.longitude, self.speed, [AKRFormatter utcIsoStringFromDate:self.timestamp], self.verticalAccuracy];
+    return [NSString stringWithFormat:@"%@,%0.6f,%0.6f,WGS84,%g,%g,%g,%g,%g", [AKRFormatter utcIsoStringFromDate:self.timestamp], self.latitude, self.longitude, self.horizontalAccuracy, self.course, self.speed, self.altitude, self.verticalAccuracy];
 }
 
 @end

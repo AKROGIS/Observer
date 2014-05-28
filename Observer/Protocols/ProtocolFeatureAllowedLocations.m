@@ -229,8 +229,15 @@
     return 0;
 }
 
+- (BOOL)allowsAngleDistanceLocations
+{
+    return _angleDistance != nil;
+}
 
-
+- (BOOL)allowsMapLocations
+{
+    return (_mapTarget != nil) || (_mapTouch != nil);
+}
 
 #pragma mark - Helper methods
 

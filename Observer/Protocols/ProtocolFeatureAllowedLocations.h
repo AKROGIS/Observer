@@ -43,6 +43,9 @@
 // What is the direction of increasing angles (clockwise or counter-clockwise)
 @property (nonatomic, readonly) AngleDirection angleDirection;
 
+@property (nonatomic, readonly) BOOL allowsAngleDistanceLocations;
+@property (nonatomic, readonly) BOOL allowsMapLocations;
+
 //If I have a location presenter, then I can filter the list based on the presenters capabilities
 @property (nonatomic, weak) id<LocationPresenter> locationPresenter;
 
