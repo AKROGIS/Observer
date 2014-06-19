@@ -1183,7 +1183,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
                     [self loadGraphics];
-                    [self.survey logStats];
+                    //[self.survey logStats];
                     [self configureObservationButtons];
                 } else {
                     [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
