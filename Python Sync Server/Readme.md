@@ -45,6 +45,26 @@ You will need to put Server.py in an appropriate location with (CsvLoader.py and
 You will also need to ensure that port 8080 is open for TCP from any computer on the
 domain (see the Firewall setting in the Administrative part of the Control Panel)
 
+You will need to create a scheduled task.  I set it up to
+
+ * Run whether the user is logged in or not.
+ * do not store password (runs with lower permissions)
+ * Trigger: At system Startup
+ * Trigger: When the task is created or modified
+ * Action: C:\python27\ArcGISx6410.2\python.exe D:\inetApps\observer\syncserver\Server.py
+ * Action: Start in D:\MapData\observer\
+ * Conditions: If the task fails, restart every minute for 3 tries
+ * Conditions: DO NOT stop the task if it has been running for a long time (this taks should run forever)
+ * Conditions: If the task is already running, do not start a new instance.
+
+I created a special local account called Observer to run the task.
+This account is made the owner of D:\MapData\Observer, where databases will be created and updated.
+This account must be configured with permissions to logon as a batch job.
+This is done with Start Menu -> Control Panel -> Administrative Tools -> Local Security Policy.
+In the Table of contents on the left, select Security Settings -> Local Policies -> User Rights Assignment.
+In the main panel, scroll down to Log on as a batch job.
+double click on Log on as a batch job and add the new account to the list of authorized users.
+
 Testing
 -------
 
