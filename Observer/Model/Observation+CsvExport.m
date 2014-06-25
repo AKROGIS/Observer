@@ -21,14 +21,15 @@
         [header appendFormat:@"%@,",cleanName];
     }
     
-    [header appendString:@"timestamp_utc,timestamp_local,year,day_of_year,feature_latitude,feature_longitude,observer_latitude,observer_longitude,datum"];
-    
-    if (feature.allowedLocations.allowsMapLocations) {
-        [header appendString:@",map_name,map_author,map_date"];
-    }
-    if (feature.allowedLocations.allowsAngleDistanceLocations) {
-        [header appendString:@",angle,distance,perp_meters"];
-    }
+    [header appendString:@"Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum"];
+
+    //Always write both map and angle Distance data, to make the server side processing easier
+    //if (feature.allowedLocations.allowsMapLocations) {
+        [header appendString:@",Map_Name,Map_Author,Map_Date"];
+    //}
+    //if (feature.allowedLocations.allowsAngleDistanceLocations) {
+        [header appendString:@",Angle,Distance,Perp_Meters"];
+    //}
     return header;
 }
 
@@ -52,14 +53,14 @@
      featureLocation.latitude, featureLocation.longitude,
      observerLocation.latitude, observerLocation.longitude];
 
-    if (feature.allowedLocations.allowsMapLocations) {
+    //if (feature.allowedLocations.allowsMapLocations) {
         if (!self.gpsPoint && self.adhocLocation.map) {
             [csv appendFormat:@",%@,%@,%@", self.adhocLocation.map.name, self.adhocLocation.map.author, self.adhocLocation.map.date];
         } else {
             [csv appendString:@",,,"];
         }
-    }
-    if (feature.allowedLocations.allowsAngleDistanceLocations) {
+    //}
+    //if (feature.allowedLocations.allowsAngleDistanceLocations) {
         if (self.angleDistanceLocation) {
             LocationAngleDistance *angleDistance = [[LocationAngleDistance alloc] initWithDeadAhead:self.angleDistanceLocation.direction
                                                                                     protocolFeature:feature
@@ -70,7 +71,7 @@
         } else {
             [csv appendString:@",,,"];
         }
-    }
+    //}
     return csv;
 }
 

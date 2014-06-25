@@ -13,7 +13,7 @@
 
 + (NSString *)csvHeader
 {
-     return @"timestamp,latitude,longitude,datum,error_radius_m,course,speed_mps,altitude_m,vert_error_m";
+     return @"Timestamp,Latitude,Longitude,Datum,Error_radius_m,Course,Speed_mps,Altitude_m,Vert_error_m";
 }
 
 - (NSString *)asCSV

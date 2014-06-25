@@ -19,7 +19,7 @@
         NSString *cleanName = [attribute.name stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
         [header appendFormat:@"%@,",cleanName];
     }
-    [header appendString:@"observing,start_utc,start_local,year,day_of_year,end_utc,end_local,duration_sec,start_lat,start_lon,end_lat,end_lon,datum,length_m"];
+    [header appendString:@"Observing,Start_UTC,Start_Local,Year,Day_of_Year,End_UTC,End_Local,Duration_sec,Start_Latitude,Start_Longitude,End_Latitude,End_Longitude,Datum,Length_m"];
     return header;
 }
 
