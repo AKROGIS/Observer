@@ -128,5 +128,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 
 // Miscellaneous
 - (void)loadGraphics;
+#ifdef AKR_DEBUG
 - (void)logStats;
+#endif
 @end
