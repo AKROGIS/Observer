@@ -17,7 +17,7 @@
 
 #define kAlertViewNewProtocol      1
 #define kAlertViewNewVersion       2
-#define kAppDistributionPlist      @"https://akrgis.nps.gov/observer/Park_Observer.plist"
+#define kAppDistributionPlist      @"http://akrgis.nps.gov/observer/Park_Observer.plist"
 
 
 @interface ObserverAppDelegate()
