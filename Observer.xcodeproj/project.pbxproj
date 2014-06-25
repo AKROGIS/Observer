@@ -99,6 +99,7 @@
 		39D947A418BEA79E0069DB31 /* ObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947A318BEA79E0069DB31 /* ObserverTests.m */; };
 		39D947AD18BEA7DF0069DB31 /* AGSPointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947AB18BEA7DF0069DB31 /* AGSPointTests.m */; };
 		39D947AE18BEA7DF0069DB31 /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947AC18BEA7DF0069DB31 /* LocationAngleDistanceTests.m */; };
+		39E921AC195B52E60043DB5E /* Protocol Description.md in Resources */ = {isa = PBXBuildFile; fileRef = 39E921AB195B52E60043DB5E /* Protocol Description.md */; };
 		5980662018D16420004830E7 /* UIPopoverController+Presenting.m in Sources */ = {isa = PBXBuildFile; fileRef = 5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */; };
 		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
 		59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FEE1863FDBF00470791 /* AKRFormatter.m */; };
@@ -298,6 +299,7 @@
 		39D947A518BEA79E0069DB31 /* ObserverTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ObserverTests-Prefix.pch"; sourceTree = "<group>"; };
 		39D947AB18BEA7DF0069DB31 /* AGSPointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGSPointTests.m; sourceTree = "<group>"; };
 		39D947AC18BEA7DF0069DB31 /* LocationAngleDistanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationAngleDistanceTests.m; sourceTree = "<group>"; };
+		39E921AB195B52E60043DB5E /* Protocol Description.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "Protocol Description.md"; path = "Protocols/Protocol Description.md"; sourceTree = "<group>"; };
 		5980661E18D16420004830E7 /* UIPopoverController+Presenting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIPopoverController+Presenting.h"; path = "Categories/UIPopoverController+Presenting.h"; sourceTree = "<group>"; };
 		5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIPopoverController+Presenting.m"; path = "Categories/UIPopoverController+Presenting.m"; sourceTree = "<group>"; };
 		59C60FE6185ABF9400470791 /* AKRDirectionIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDirectionIndicatorView.h; sourceTree = "<group>"; };
@@ -559,6 +561,7 @@
 				393E8AFD17A30012009AD0AC /* Settings.bundle */,
 				3929196617BEB6A8008B0FFC /* Todo.rtf */,
 				39336F4A18AC23DC00620A3A /* Protocol Specification.rtf */,
+				39E921AB195B52E60043DB5E /* Protocol Description.md */,
 				39449F1618ADABCF00A1F8FE /* Localizable.strings */,
 			);
 			name = "Supporting Files";
@@ -743,6 +746,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39E921AC195B52E60043DB5E /* Protocol Description.md in Resources */,
 				39955E55178334C000D225D7 /* InfoPlist.strings in Resources */,
 				39449F1418ADABCF00A1F8FE /* Localizable.strings in Resources */,
 				39890DA31858C99E007B3F67 /* Images.xcassets in Resources */,
