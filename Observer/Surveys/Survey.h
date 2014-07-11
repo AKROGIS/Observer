@@ -12,7 +12,8 @@
 #import "SurveyCoreDataDocument.h"
 #import "ObserverModel.h"
 
-#define SURVEY_EXT @"obssurv"
+#define INTERNAL_SURVEY_EXT @"obssurv"
+#define SURVEY_EXT @"poz"
 
 typedef NS_ENUM(NSUInteger, SurveyState) {
     kUnborn   = 0,
@@ -52,6 +53,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (id)initWithURL:(NSURL *)url;
 //This involve doing IO (to find and create the unused url), it should be called on a background thread
 - (id)initWithProtocol:(SProtocol *)protocol;
+- (id)initWithArchive:(NSURL *)archive;
 
 //YES if two Surveys are the same (same url)
 - (BOOL)isEqualToSurvey:(Survey *)survey;
@@ -70,6 +72,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (void)closeDocumentWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler;
 
++ (NSURL *)privateDocumentsDirectory;
 
 
 

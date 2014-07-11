@@ -8,6 +8,7 @@
 
 #import "SurveyUploadTableViewController.h"
 #import "Survey+CsvExport.h"
+#import "Survey+ZipExport.h"
 
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 
@@ -32,12 +33,15 @@
             [self syncSurvey];
             break;
         case 1:
-            [self mailSurvey];
+            [self shareSurvey];
             break;
         case 2:
-            [self mailCsvSmall];
+            [self mailSurvey];
             break;
         case 3:
+            [self mailCsvSmall];
+            break;
+        case 4:
             [self mailCsvLarge];
             break;
         default:
@@ -81,6 +85,16 @@
         [self.syncActivityIndicator stopAnimating];
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     }];
+}
+
+- (void)shareSurvey
+{
+    if ([self.survey exportToDiskWithForce:NO]) {
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Do you want to replace the existing export file?" delegate:nil cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] show];
+        //TODO: create delegate to respond to YES with [self.survey exportToDiskWithForce:NO]
+    }
 }
 
 - (void)mailSurvey
