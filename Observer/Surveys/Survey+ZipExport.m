@@ -15,30 +15,33 @@
     return [NSString stringWithFormat:@"%@.%@", self.title, SURVEY_EXT];
 }
 
-- (NSData *)exportToNSData
+- (NSData *)exportToNSDataError:(NSError * __autoreleasing *)error
 {
-    NSError *error;
-    NSFileWrapper *dirWrapper = [[NSFileWrapper alloc] initWithURL:self.url options:0 error:&error];
-    if (dirWrapper == nil) {
-        NSLog(@"Error creating directory wrapper: %@", error.localizedDescription);
+    NSFileWrapper *dirWrapper = [[NSFileWrapper alloc] initWithURL:self.url options:0 error:error];
+    if (!dirWrapper) {
         return nil;
     }
-
-    NSData *dirData = [dirWrapper serializedRepresentation];
-    NSData *gzData = [dirData gzipDeflate];
-    return gzData;
+    return [[dirWrapper serializedRepresentation] gzipDeflate];
 }
 
-- (BOOL)exportToDiskWithName:(NSString *)exportPath
+- (BOOL)exportToDiskWithName:(NSString *)exportPath error:(NSError * __autoreleasing *)error
 {
-    NSData *gzData = [self exportToNSData];
-    if (gzData == nil) return FALSE;
-    [gzData writeToFile:exportPath atomically:YES];
-    return TRUE;
-    
+    NSData *gzData = [self exportToNSDataError:error];
+    if (gzData == nil) return NO;
+    if ([gzData writeToFile:exportPath atomically:YES]) {
+        return YES;
+    } else {
+        if (error != NULL) {
+            //User wants error details, lets give it to them.
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"Unable to write to filesystem." forKey:NSLocalizedDescriptionKey];
+             *error = [NSError errorWithDomain:@"observer.nps.gov" code:100 userInfo:details];
+        }
+        return NO;
+    }
 }
 
-- (BOOL)exportToDiskWithForce:(BOOL)force
+- (BOOL)exportToDiskWithForce:(BOOL)force error:(NSError * __autoreleasing *)error
 {
     NSString *name = [self getExportFileName];
     NSString *exportPath = [[self.documentsDirectory URLByAppendingPathComponent:name] path];
@@ -48,7 +51,7 @@
         return FALSE;
     }
 
-    return [self exportToDiskWithName:exportPath];
+    return [self exportToDiskWithName:exportPath error:error];
 }
 
 - (NSURL *)documentsDirectory

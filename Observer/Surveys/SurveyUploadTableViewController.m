@@ -80,10 +80,15 @@
         case kAlertViewReplaceSurvey: {
             //0 = NO - do not replace; 1=YES - replace existing survey
             if (buttonIndex == 1) {
-                if ([self.survey exportToDiskWithForce:YES]) {
+                NSError *error;
+                if ([self.survey exportToDiskWithForce:YES error:&error]) {
                     [self.navigationController popViewControllerAnimated:YES];
                 } else {
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create export file." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                    NSString *msg = @"Unable to create export file.";
+                    if (error) {
+                        msg = [NSString stringWithFormat:@"%@.\n%@", msg, error.localizedDescription];
+                    }
+                    [[[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
                 }
             }
             break;
@@ -114,12 +119,18 @@
 
 - (void)shareSurvey
 {
-    if ([self.survey exportToDiskWithForce:NO]) {
+    NSError *error = nil;
+    if ([self.survey exportToDiskWithForce:NO error:&error]) {
         [self.navigationController popViewControllerAnimated:YES];
     } else {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"Do you want to replace the existing export file?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
-        alertView.tag = kAlertViewReplaceSurvey;
-        [alertView show];
+        if (error) {
+            NSString *msg = [NSString stringWithFormat:@"Unable to zip up the survey.\n%@", error.localizedDescription];
+            [[[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        } else {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"Do you want to replace the existing export file?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+            alertView.tag = kAlertViewReplaceSurvey;
+            [alertView show];
+        }
     }
 }
 
@@ -129,9 +140,14 @@
         [[[UIAlertView alloc] initWithTitle:nil message:@"This device is not configured to send mail" delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         return;
     }
-    NSData *attachmentData = [self.survey exportToNSData];
+    NSError *error = nil;
+    NSData *attachmentData = [self.survey exportToNSDataError:&error];
     if (!attachmentData) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create an email-able export of the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        NSString *msg = @"Unable to create an email-able export of the survey.";
+        if (error) {
+            msg = [NSString stringWithFormat:@"%@.\n%@", msg, error.localizedDescription];
+        }
+        [[[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
     } else {
         MFMailComposeViewController *mailVC = [[MFMailComposeViewController alloc] init];
         NSString *subject = [NSString stringWithFormat:@"Park Observer Survey Data"];
