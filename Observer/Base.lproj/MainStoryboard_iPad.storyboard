@@ -879,7 +879,7 @@
                                             </constraints>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tco-RL-ekD">
-                                            <rect key="frame" x="458" y="34" width="35" height="26"/>
+                                            <rect key="frame" x="458" y="29" width="35" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="35" id="4ls-I1-JiT"/>
@@ -896,7 +896,7 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="Tco-RL-ekD" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="wBi-fL-q7A" secondAttribute="trailing" constant="8" symbolic="YES" id="6jx-ce-taQ"/>
-                                        <constraint firstAttribute="centerY" secondItem="Tco-RL-ekD" secondAttribute="centerY" constant="-3.5" id="7Ic-lH-WcU"/>
+                                        <constraint firstAttribute="centerY" secondItem="Tco-RL-ekD" secondAttribute="centerY" constant="1.5" id="7Ic-lH-WcU"/>
                                         <constraint firstItem="GYJ-em-L0B" firstAttribute="top" secondItem="A4D-S0-Arc" secondAttribute="top" constant="4" id="BnG-lG-qjh"/>
                                         <constraint firstItem="QBS-0U-3rx" firstAttribute="leading" secondItem="A4D-S0-Arc" secondAttribute="leading" constant="96" id="Ixe-8G-RdI"/>
                                         <constraint firstItem="wBi-fL-q7A" firstAttribute="top" secondItem="QBS-0U-3rx" secondAttribute="bottom" constant="3" id="Kmt-Fa-Pqn"/>
@@ -1394,7 +1394,7 @@
         <image name="Crosshairs" width="64" height="64"/>
         <image name="Download" width="27" height="26"/>
         <image name="GpsOff" width="22" height="22"/>
-        <image name="Upload" width="27" height="26"/>
+        <image name="Upload" width="27" height="27"/>
         <image name="Weather" width="22" height="22"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
