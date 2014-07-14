@@ -59,7 +59,7 @@
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
 {
     if (error) {
-        [[[UIAlertView alloc] initWithTitle:@"Send Error" message:error.localizedDescription delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
+        [[[UIAlertView alloc] initWithTitle:@"Send Error" message:error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
     } else {
         [self dismissViewControllerAnimated:YES completion:^{
             if (result == MFMailComposeResultSent) {
@@ -69,6 +69,30 @@
     }
 }
 
+
+
+
+#pragma mark - Delegate Methods: UIAlertViewDelegate
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (alertView.tag) {
+        case kAlertViewReplaceSurvey: {
+            //0 = NO - do not replace; 1=YES - replace existing survey
+            if (buttonIndex == 1) {
+                if ([self.survey exportToDiskWithForce:YES]) {
+                    [self.navigationController popViewControllerAnimated:YES];
+                } else {
+                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create export file." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                }
+            }
+            break;
+        }
+        default:
+            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %d",alertView.tag);
+            break;
+    }
+}
 
 
 
@@ -101,8 +125,24 @@
 
 - (void)mailSurvey
 {
-    [[[UIAlertView alloc] initWithTitle:nil message:@"Feature not implemented yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-    return;
+    if (![MFMailComposeViewController canSendMail]) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"This device is not configured to send mail" delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        return;
+    }
+    NSData *attachmentData = [self.survey exportToNSData];
+    if (!attachmentData) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create an email-able export of the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+    } else {
+        MFMailComposeViewController *mailVC = [[MFMailComposeViewController alloc] init];
+        NSString *subject = [NSString stringWithFormat:@"Park Observer Survey Data"];
+        NSString *body = [NSString stringWithFormat:@"Survey data collected for %@.",self.survey.title];
+        [mailVC setSubject:subject];
+        [mailVC setMessageBody:body isHTML:NO];
+        NSString *attachmentName = [self.survey getExportFileName];
+        [mailVC addAttachmentData:attachmentData mimeType:@"application/octet-stream" fileName:attachmentName];
+        mailVC.mailComposeDelegate = self;
+        [self presentViewController:mailVC animated:YES completion:nil];
+    }
 }
 
 - (void)mailCsvSmall
@@ -151,31 +191,5 @@
         });
     }];
 }
-
-
-
-
-#pragma mark - Delegate Methods: UIAlertViewDelegate
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (alertView.tag) {
-        case kAlertViewReplaceSurvey: {
-            //0 = NO - do not replace; 1=YES - replace existing survey
-            if (buttonIndex == 1) {
-                if ([self.survey exportToDiskWithForce:YES]) {
-                    [self.navigationController popViewControllerAnimated:YES];
-                } else {
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create export file." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-                }
-            }
-            break;
-        }
-        default:
-            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %d",alertView.tag);
-            break;
-    }
-}
-
 
 @end

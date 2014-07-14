@@ -15,7 +15,8 @@
     return [NSString stringWithFormat:@"%@.%@", self.title, SURVEY_EXT];
 }
 
-- (NSData *)exportToNSData {
+- (NSData *)exportToNSData
+{
     NSError *error;
     NSFileWrapper *dirWrapper = [[NSFileWrapper alloc] initWithURL:self.url options:0 error:&error];
     if (dirWrapper == nil) {
@@ -28,24 +29,26 @@
     return gzData;
 }
 
-- (BOOL)exportToDiskWithForce:(BOOL)force {
+- (BOOL)exportToDiskWithName:(NSString *)exportPath
+{
+    NSData *gzData = [self exportToNSData];
+    if (gzData == nil) return FALSE;
+    [gzData writeToFile:exportPath atomically:YES];
+    return TRUE;
+    
+}
 
-    NSString *zippedName = [self getExportFileName];
-    NSString *zippedPath = [[self.documentsDirectory URLByAppendingPathComponent:zippedName] path];
+- (BOOL)exportToDiskWithForce:(BOOL)force
+{
+    NSString *name = [self getExportFileName];
+    NSString *exportPath = [[self.documentsDirectory URLByAppendingPathComponent:name] path];
 
     // Check if file already exists (unless we force the write)
-    if (!force && [[NSFileManager defaultManager] fileExistsAtPath:zippedPath]) {
+    if (!force && [[NSFileManager defaultManager] fileExistsAtPath:exportPath]) {
         return FALSE;
     }
 
-    // Export to data buffer
-    NSData *gzData = [self exportToNSData];
-    if (gzData == nil) return FALSE;
-
-    // Write to disk
-    [gzData writeToFile:zippedPath atomically:YES];
-    return TRUE;
-    
+    return [self exportToDiskWithName:exportPath];
 }
 
 - (NSURL *)documentsDirectory
