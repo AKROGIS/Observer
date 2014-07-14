@@ -306,7 +306,7 @@
 {
 #ifdef AKR_DEBUG
     AKRLog(@"Closing document");
-    [self logStats];
+    //[self logStats];
     [self disconnectFromNotificationCenter];
 #endif
     [self.document closeWithCompletionHandler:completionHandler];
