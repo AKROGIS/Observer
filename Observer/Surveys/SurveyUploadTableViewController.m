@@ -10,6 +10,7 @@
 #import "Survey+CsvExport.h"
 #import "Survey+ZipExport.h"
 
+#define kAlertViewReplaceSurvey    1
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 
 @interface SurveyUploadTableViewController ()
@@ -92,8 +93,9 @@
     if ([self.survey exportToDiskWithForce:NO]) {
         [self.navigationController popViewControllerAnimated:YES];
     } else {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Do you want to replace the existing export file?" delegate:nil cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] show];
-        //TODO: create delegate to respond to YES with [self.survey exportToDiskWithForce:NO]
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"Do you want to replace the existing export file?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+        alertView.tag = kAlertViewReplaceSurvey;
+        [alertView show];
     }
 }
 
@@ -149,5 +151,31 @@
         });
     }];
 }
+
+
+
+
+#pragma mark - Delegate Methods: UIAlertViewDelegate
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (alertView.tag) {
+        case kAlertViewReplaceSurvey: {
+            //0 = NO - do not replace; 1=YES - replace existing survey
+            if (buttonIndex == 1) {
+                if ([self.survey exportToDiskWithForce:YES]) {
+                    [self.navigationController popViewControllerAnimated:YES];
+                } else {
+                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create export file." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                }
+            }
+            break;
+        }
+        default:
+            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %d",alertView.tag);
+            break;
+    }
+}
+
 
 @end
