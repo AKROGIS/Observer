@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3914014119759C450055F2E1 /* libtouchzipkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3914014019759BB70055F2E1 /* libtouchzipkit.a */; };
+		391401451975A03A0055F2E1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 391401441975A03A0055F2E1 /* LICENSE */; };
+		3914014B1975AA1D0055F2E1 /* ACKNOWLEDGEMENTS in Resources */ = {isa = PBXBuildFile; fileRef = 3914014A1975AA1D0055F2E1 /* ACKNOWLEDGEMENTS */; };
 		391C77AA190F270D006E220E /* GpsPointTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 391C77A9190F270D006E220E /* GpsPointTableViewController.m */; };
 		392E8FBD18EF2F030055D312 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 392E8FBC18EF2F030055D312 /* Crashlytics.framework */; };
 		39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */; };
@@ -171,6 +173,8 @@
 
 /* Begin PBXFileReference section */
 		3914013419759BB70055F2E1 /* ZipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZipKit.xcodeproj; path = ZipKit/ZipKit.xcodeproj; sourceTree = "<group>"; };
+		391401441975A03A0055F2E1 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		3914014A1975AA1D0055F2E1 /* ACKNOWLEDGEMENTS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ACKNOWLEDGEMENTS; sourceTree = SOURCE_ROOT; };
 		391C77A8190F270D006E220E /* GpsPointTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GpsPointTableViewController.h; sourceTree = "<group>"; };
 		391C77A9190F270D006E220E /* GpsPointTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GpsPointTableViewController.m; sourceTree = "<group>"; };
 		3929196617BEB6A8008B0FFC /* Todo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Todo.rtf; sourceTree = "<group>"; };
@@ -609,20 +613,22 @@
 		39955E51178334C000D225D7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				396E1E9A189AD87000B735EF /* Sample Protocol.obsprot */,
+				391401441975A03A0055F2E1 /* LICENSE */,
+				3914014A1975AA1D0055F2E1 /* ACKNOWLEDGEMENTS */,
+				39955E56178334C000D225D7 /* main.m */,
+				39955E58178334C000D225D7 /* Observer-Prefix.pch */,
 				396E1E8B18984EFF00B735EF /* Warnings.xcconfig */,
+				39955E52178334C000D225D7 /* Observer-Info.plist */,
+				39955E53178334C000D225D7 /* InfoPlist.strings */,
+				39449F1618ADABCF00A1F8FE /* Localizable.strings */,
 				39C53E661885D96100C0CECE /* Images */,
 				39890DA21858C99E007B3F67 /* Images.xcassets */,
 				398908041857DDFD007B3F67 /* ArcGIS.bundle */,
-				39955E52178334C000D225D7 /* Observer-Info.plist */,
-				39955E53178334C000D225D7 /* InfoPlist.strings */,
-				39955E56178334C000D225D7 /* main.m */,
-				39955E58178334C000D225D7 /* Observer-Prefix.pch */,
 				393E8AFD17A30012009AD0AC /* Settings.bundle */,
 				3929196617BEB6A8008B0FFC /* Todo.rtf */,
+				396E1E9A189AD87000B735EF /* Sample Protocol.obsprot */,
 				39336F4A18AC23DC00620A3A /* Protocol Specification.rtf */,
 				39E921AB195B52E60043DB5E /* Protocol Description.md */,
-				39449F1618ADABCF00A1F8FE /* Localizable.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -837,9 +843,11 @@
 				39E921AC195B52E60043DB5E /* Protocol Description.md in Resources */,
 				39955E55178334C000D225D7 /* InfoPlist.strings in Resources */,
 				39449F1418ADABCF00A1F8FE /* Localizable.strings in Resources */,
+				3914014B1975AA1D0055F2E1 /* ACKNOWLEDGEMENTS in Resources */,
 				39890DA31858C99E007B3F67 /* Images.xcassets in Resources */,
 				39C53E6B1885D98400C0CECE /* SurveyDocumentIcon.png in Resources */,
 				39C53E6E1885D9DF00C0CECE /* ProtocolDocumentIcon.png in Resources */,
+				391401451975A03A0055F2E1 /* LICENSE in Resources */,
 				39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
 				39C53E701885DAB000C0CECE /* TilePackageDocumentIcon.png in Resources */,
