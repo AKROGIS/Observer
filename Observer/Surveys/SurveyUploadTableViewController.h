@@ -10,7 +10,7 @@
 #import <MessageUI/MessageUI.h>
 #import "Survey.h"
 
-@interface SurveyUploadTableViewController : UITableViewController <MFMailComposeViewControllerDelegate>
+@interface SurveyUploadTableViewController : UITableViewController <MFMailComposeViewControllerDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) Survey *survey;
 

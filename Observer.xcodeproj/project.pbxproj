@@ -82,8 +82,12 @@
 		39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ED1178733B900D225D7 /* ObserverMapViewController.m */; };
 		39A836C4185A668D008BF4E3 /* AKRAngleDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */; };
 		39A836CB185FDAB8008BF4E3 /* AttributeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A836CA185FDAB8008BF4E3 /* AttributeViewController.m */; };
+		39A9EF90196F5BD80059FC0F /* Archiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A9EF8F196F5BD80059FC0F /* Archiver.m */; };
+		39A9EF94197066120059FC0F /* NSURL+isEqualToURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A9EF93197066120059FC0F /* NSURL+isEqualToURL.m */; };
 		39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */; };
 		39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */; };
+		39BA8FBE196F2C7100F90A77 /* NSData+CocoaDevUsersAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BA8FBD196F2C7100F90A77 /* NSData+CocoaDevUsersAdditions.m */; };
+		39BA8FC2196F33F800F90A77 /* Survey+ZipExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BA8FC1196F33F800F90A77 /* Survey+ZipExport.m */; };
 		39C3B84B18B816020041FF36 /* FeatureSelectorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C3B84A18B816020041FF36 /* FeatureSelectorTableViewController.m */; };
 		39C53E61187F411B00C0CECE /* AutoPanStateMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */; };
 		39C53E65187F4B5E00C0CECE /* AutoPanButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C53E64187F4B5E00C0CECE /* AutoPanButton.m */; };
@@ -274,10 +278,18 @@
 		39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRAngleDistance.m; sourceTree = "<group>"; };
 		39A836C9185FDAB8008BF4E3 /* AttributeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeViewController.h; sourceTree = "<group>"; };
 		39A836CA185FDAB8008BF4E3 /* AttributeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributeViewController.m; sourceTree = "<group>"; };
+		39A9EF8E196F5BD80059FC0F /* Archiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Archiver.h; path = Model/Archiver.h; sourceTree = "<group>"; };
+		39A9EF8F196F5BD80059FC0F /* Archiver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Archiver.m; path = Model/Archiver.m; sourceTree = "<group>"; };
+		39A9EF92197066120059FC0F /* NSURL+isEqualToURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURL+isEqualToURL.h"; path = "Categories/NSURL+isEqualToURL.h"; sourceTree = "<group>"; };
+		39A9EF93197066120059FC0F /* NSURL+isEqualToURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURL+isEqualToURL.m"; path = "Categories/NSURL+isEqualToURL.m"; sourceTree = "<group>"; };
 		39B92FCE17A73F5700C62145 /* AngleDistanceSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AngleDistanceSettingsTableViewController.h; sourceTree = "<group>"; };
 		39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AngleDistanceSettingsTableViewController.m; sourceTree = "<group>"; };
 		39B92FD117A869B500C62145 /* RadioStyleTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadioStyleTableViewCell.h; sourceTree = "<group>"; };
 		39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RadioStyleTableViewCell.m; sourceTree = "<group>"; };
+		39BA8FBC196F2C7100F90A77 /* NSData+CocoaDevUsersAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+CocoaDevUsersAdditions.h"; sourceTree = "<group>"; };
+		39BA8FBD196F2C7100F90A77 /* NSData+CocoaDevUsersAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+CocoaDevUsersAdditions.m"; sourceTree = "<group>"; };
+		39BA8FC0196F33F800F90A77 /* Survey+ZipExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Survey+ZipExport.h"; path = "Surveys/Survey+ZipExport.h"; sourceTree = "<group>"; };
+		39BA8FC1196F33F800F90A77 /* Survey+ZipExport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Survey+ZipExport.m"; path = "Surveys/Survey+ZipExport.m"; sourceTree = "<group>"; };
 		39C3B84918B816020041FF36 /* FeatureSelectorTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureSelectorTableViewController.h; sourceTree = "<group>"; };
 		39C3B84A18B816020041FF36 /* FeatureSelectorTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeatureSelectorTableViewController.m; sourceTree = "<group>"; };
 		39C3B86A18BE8D770041FF36 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -454,6 +466,8 @@
 				394BDD16191D33C4000C8A4B /* Survey+CsvExport.m */,
 				395ACFAA1935325800D04563 /* SurveyUploadTableViewController.h */,
 				395ACFAB1935325800D04563 /* SurveyUploadTableViewController.m */,
+				39BA8FC0196F33F800F90A77 /* Survey+ZipExport.h */,
+				39BA8FC1196F33F800F90A77 /* Survey+ZipExport.m */,
 			);
 			name = Surveys;
 			sourceTree = "<group>";
@@ -461,6 +475,8 @@
 		398908521857ED27007B3F67 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				39BA8FBC196F2C7100F90A77 /* NSData+CocoaDevUsersAdditions.h */,
+				39BA8FBD196F2C7100F90A77 /* NSData+CocoaDevUsersAdditions.m */,
 				398908531857EDE1007B3F67 /* AGSPoint+AKRAdditions.h */,
 				398908541857EDE1007B3F67 /* AGSPoint+AKRAdditions.m */,
 				3982F6C818C00D040081C3F9 /* AGSMapView+AKRAdditions.h */,
@@ -477,6 +493,8 @@
 				396E1E8F189864AE00B735EF /* NSIndexPath+unsignedAccessors.m */,
 				5980661E18D16420004830E7 /* UIPopoverController+Presenting.h */,
 				5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */,
+				39A9EF92197066120059FC0F /* NSURL+isEqualToURL.h */,
+				39A9EF93197066120059FC0F /* NSURL+isEqualToURL.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -605,6 +623,8 @@
 				39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */,
 				39946AB71925473A00875D90 /* TrackLogSegment.h */,
 				39946AB81925473A00875D90 /* TrackLogSegment.m */,
+				39A9EF8E196F5BD80059FC0F /* Archiver.h */,
+				39A9EF8F196F5BD80059FC0F /* Archiver.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -859,6 +879,8 @@
 				3989085D1857EDE1007B3F67 /* AGSPoint+AKRAdditions.m in Sources */,
 				394CC2531858F11800FA859C /* Observation.m in Sources */,
 				396E1E9D189ADE8F00B735EF /* ProtocolFeatureSymbology.m in Sources */,
+				39A9EF90196F5BD80059FC0F /* Archiver.m in Sources */,
+				39BA8FBE196F2C7100F90A77 /* NSData+CocoaDevUsersAdditions.m in Sources */,
 				39A836CB185FDAB8008BF4E3 /* AttributeViewController.m in Sources */,
 				398908511857ED00007B3F67 /* SurveySelectViewController.m in Sources */,
 				396E1E90189864AE00B735EF /* NSIndexPath+unsignedAccessors.m in Sources */,
@@ -867,6 +889,8 @@
 				398908241857EB2F007B3F67 /* MapDetailViewController.m in Sources */,
 				398908261857EB2F007B3F67 /* MapTableViewCell.m in Sources */,
 				3989083C1857EBF6007B3F67 /* ProtocolDetailViewController.m in Sources */,
+				39A9EF94197066120059FC0F /* NSURL+isEqualToURL.m in Sources */,
+				39BA8FC2196F33F800F90A77 /* Survey+ZipExport.m in Sources */,
 				394BDD20191D6BFE000C8A4B /* GpsPoint+Location.m in Sources */,
 				398908501857ED00007B3F67 /* SurveyObjectModel.m in Sources */,
 			);

@@ -147,6 +147,9 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    //auto-save current survey in case user wants to mail or export it;
+    //ignore the callback; because we can assume the auto-save will be done before the users gets that far
+    [self.survey.document autosaveWithCompletionHandler:nil];
     UIViewController *vc1 = [segue destinationViewController];
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         UINavigationController *nav = [segue destinationViewController];

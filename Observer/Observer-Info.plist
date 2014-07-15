@@ -65,7 +65,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>440</string>
+	<string>465</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>
@@ -155,7 +155,7 @@
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
-				<string>obssurv</string>
+				<string>poz</string>
 				<key>public.mime-type</key>
 				<string>application/octet-stream</string>
 			</dict>

@@ -55,7 +55,17 @@ static BOOL _isLoaded = NO;
 
 + (BOOL)collectsURL:(NSURL *)url
 {
+    return [self isImportURL:url] || [self isPrivateURL:url];
+}
+
++ (BOOL)isImportURL:(NSURL *)url
+{
     return [[url pathExtension] isEqualToString:SURVEY_EXT];
+}
+
++ (BOOL)isPrivateURL:(NSURL *)url
+{
+    return [[url pathExtension] isEqualToString:INTERNAL_SURVEY_EXT];
 }
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
@@ -202,7 +212,7 @@ static BOOL _isLoaded = NO;
     
     // create (in order) surveys from cached urls IFF they are found in the Documents Folder
     [self.items removeAllObjects];
-    NSMutableSet *localSurveyFileNames = [SurveyCollection surveyFileNamesInDocumentsFolder];
+    NSMutableSet *localSurveyFileNames = [SurveyCollection existingPrivateSurveyNames];
     for (NSURL *surveyUrl in surveyUrls) {
         NSString *cachedSurveyFileName = [surveyUrl lastPathComponent];
         if ([localSurveyFileNames containsObject:cachedSurveyFileName]) {
@@ -226,7 +236,28 @@ static BOOL _isLoaded = NO;
     }
 }
 
-+ (NSMutableSet *) /* of NSString */ surveyFileNamesInDocumentsFolder
++ (NSMutableSet *) /* of NSString */ existingPrivateSurveyNames
+{
+    NSError *error = nil;
+    NSArray *documents = [[NSFileManager defaultManager]
+                          contentsOfDirectoryAtURL:[Survey privateDocumentsDirectory]
+                          includingPropertiesForKeys:nil
+                          options:NSDirectoryEnumerationSkipsHiddenFiles
+                          error:&error];
+    if (documents) {
+        NSMutableArray *localFileNames = [NSMutableArray new];
+        for (NSURL *url in documents) {
+            if ([SurveyCollection isPrivateURL:url]) {
+                [localFileNames addObject:[url lastPathComponent]];
+            }
+        }
+        return [NSMutableSet setWithArray:localFileNames];;
+    }
+    AKRLog(@"Unable to enumerate %@: %@",[self.documentsDirectory lastPathComponent], error.localizedDescription);
+    return nil;
+}
+
++ (NSMutableSet *) /* of NSString */ importableSurveyNames
 {
     NSError *error = nil;
     NSArray *documents = [[NSFileManager defaultManager]
@@ -237,7 +268,7 @@ static BOOL _isLoaded = NO;
     if (documents) {
         NSMutableArray *localFileNames = [NSMutableArray new];
         for (NSURL *url in documents) {
-            if ([SurveyCollection collectsURL:url]) {
+            if ([SurveyCollection isImportURL:url]) {
                 [localFileNames addObject:[url lastPathComponent]];
             }
         }

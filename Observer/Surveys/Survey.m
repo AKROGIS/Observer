@@ -6,9 +6,12 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
+#import "Archiver.h"
 #import "Survey.h"
 #import "Survey+CsvExport.h"
+#import "Survey+ZipExport.h"
 #import "NSURL+unique.h"
+#import "NSURL+isEqualToURL.h"
 #import "NSDate+Formatting.h"
 #import "ObserverModel.h"
 
@@ -60,9 +63,31 @@
 
 - (id)initWithURL:(NSURL *)url title:(NSString *)title state:(SurveyState)state date:(NSDate *)date
 {
-    if (!url) {
+    if (!url || ![url isFileURL]) {
         return nil;
     }
+    if (![url.pathExtension isEqualToString:INTERNAL_SURVEY_EXT]) {
+        return nil;
+    }
+    //If the document is not in our privateDocumentDirectory then move it and use the new url
+    //versions 0.9.2(build 440) and below created the survey docs in the public Documents directory
+    NSURL *folder = [url URLByDeletingLastPathComponent];
+    if (![folder isEqualToURL:[Survey privateDocumentsDirectory]]) {
+        NSURL *newUrl = [[Survey privateDocumentsDirectory] URLByAppendingPathComponent:[url lastPathComponent]];
+        //Check if the url is out of date (cached by SurveyCollection)
+        if (![[NSFileManager defaultManager] fileExistsAtPath:[url path]] && [[NSFileManager defaultManager] fileExistsAtPath:[newUrl path]]) {
+            url = newUrl;
+        } else {
+            AKRLog(@"Moving Survey %@ from %@ to %@",[url lastPathComponent],folder,[Survey privateDocumentsDirectory]);
+            if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:newUrl error:nil]) {
+                AKRLog(@"ERROR! - Move failed");
+                return nil;
+            } else {
+                url = newUrl;
+            }
+        }
+    }
+
     if (self = [super init]) {
         _url = url;
         _state = state;
@@ -85,11 +110,7 @@
     if (!protocol.isValid) {
         return nil;
     }
-    //find a suitable URL (reads filesystem)
-    NSURL *documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
-    NSString *filename = [NSString stringWithFormat:@"%@.%@", protocol.title, SURVEY_EXT];
-    //the trailing slash is added because it is a directory, and this standardizes the URL for comparisons
-    NSURL *url = [[[documentsDirectory URLByAppendingPathComponent:filename] URLByUniquingPath] URLByAppendingPathComponent:@"/"];
+    NSURL *url = [Survey privateDocumentFromName:protocol.title];
     self = [self initWithURL:url title:nil state:kCreated date:[NSDate date]];
     if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nil]) {
         return nil;
@@ -102,6 +123,17 @@
     return self;
 }
 
+
+- (id)initWithArchive:(NSURL *)archive
+{
+    NSString *name = [[archive lastPathComponent] stringByDeletingPathExtension];
+    NSURL *newDocument = [Survey privateDocumentFromName:name];
+    if ([Archiver unpackArchive:archive to:newDocument]) {
+        return [self initWithURL:newDocument];
+    } else {
+        return nil;
+    }
+}
 
 
 
@@ -274,13 +306,12 @@
 {
 #ifdef AKR_DEBUG
     AKRLog(@"Closing document");
-    [self logStats];
+    //[self logStats];
     [self disconnectFromNotificationCenter];
 #endif
     [self.document closeWithCompletionHandler:completionHandler];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
-
 
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler
 {
@@ -302,9 +333,29 @@
 }
 
 
++ (NSURL *)privateDocumentsDirectory {
+
+    static NSURL *_privateDocumentsDirectory = nil;
+    if (!_privateDocumentsDirectory) {
+        NSURL *libraryDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+        _privateDocumentsDirectory = [libraryDirectory URLByAppendingPathComponent:@"Private Documents"];
+        [[NSFileManager defaultManager] createDirectoryAtURL:_privateDocumentsDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    return _privateDocumentsDirectory;
+}
+
+
 
 
 #pragma mark - private methods
+
++ (NSURL *)privateDocumentFromName:(NSString *)name {
+    //find a suitable URL (reads filesystem)
+    NSString *filename = [NSString stringWithFormat:@"%@.%@", name, INTERNAL_SURVEY_EXT];
+    //the trailing slash is added because it is a directory, and this standardizes the URL for comparisons
+    NSURL *url = [[[[Survey privateDocumentsDirectory] URLByAppendingPathComponent:filename] URLByUniquingPath] URLByAppendingPathComponent:@"/"];
+    return url;
+}
 
 - (BOOL)loadProperties
 {

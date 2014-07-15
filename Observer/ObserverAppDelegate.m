@@ -101,7 +101,7 @@
     }
 
     if ([SurveyCollection collectsURL:newUrl]) {
-        Survey *newSurvey = [[Survey alloc] initWithURL:newUrl];
+        Survey *newSurvey = [[Survey alloc] initWithArchive:newUrl];
         if ([newSurvey isValid]) {
             self.observerMapViewController.survey = newSurvey;
             return YES;
