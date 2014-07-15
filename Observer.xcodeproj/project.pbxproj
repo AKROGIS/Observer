@@ -308,8 +308,8 @@
 		39955EA31783388600D225D7 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		39955ED0178733B900D225D7 /* ObserverMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObserverMapViewController.h; sourceTree = "<group>"; };
 		39955ED1178733B900D225D7 /* ObserverMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ObserverMapViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		39A836C2185A668D008BF4E3 /* AKRAngleDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRAngleDistance.h; sourceTree = "<group>"; };
-		39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRAngleDistance.m; sourceTree = "<group>"; };
+		39A836C2185A668D008BF4E3 /* AKRAngleDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AKRAngleDistance.h; path = Maps/AKRAngleDistance.h; sourceTree = "<group>"; };
+		39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AKRAngleDistance.m; path = Maps/AKRAngleDistance.m; sourceTree = "<group>"; };
 		39A836C9185FDAB8008BF4E3 /* AttributeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeViewController.h; sourceTree = "<group>"; };
 		39A836CA185FDAB8008BF4E3 /* AttributeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributeViewController.m; sourceTree = "<group>"; };
 		39A9EF8E196F5BD80059FC0F /* Archiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Archiver.h; path = Model/Archiver.h; sourceTree = "<group>"; };
@@ -401,19 +401,28 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		3914014C1975C37C0055F2E1 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				398908631857F087007B3F67 /* AKRCollectionChanged.h */,
+				398908621857EFF3007B3F67 /* AKRTableViewItem.h */,
+			);
+			name = Protocols;
+			sourceTree = "<group>";
+		};
 		391D0EE017F4F99700D8C5DF /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				3989086A1857F399007B3F67 /* AKRDownloadView.h */,
-				3989086B1857F399007B3F67 /* AKRDownloadView.m */,
-				39B92FD117A869B500C62145 /* RadioStyleTableViewCell.h */,
-				39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */,
-				59C60FE6185ABF9400470791 /* AKRDirectionIndicatorView.h */,
-				59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */,
-				39C53E63187F4B5E00C0CECE /* AutoPanButton.h */,
-				39C53E64187F4B5E00C0CECE /* AutoPanButton.m */,
 				39336F4C18AC25B100620A3A /* AddFeatureBarButtonItem.h */,
 				39336F4D18AC25B100620A3A /* AddFeatureBarButtonItem.m */,
+				59C60FE6185ABF9400470791 /* AKRDirectionIndicatorView.h */,
+				59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */,
+				3989086A1857F399007B3F67 /* AKRDownloadView.h */,
+				3989086B1857F399007B3F67 /* AKRDownloadView.m */,
+				39C53E63187F4B5E00C0CECE /* AutoPanButton.h */,
+				39C53E64187F4B5E00C0CECE /* AutoPanButton.m */,
+				39B92FD117A869B500C62145 /* RadioStyleTableViewCell.h */,
+				39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -421,18 +430,18 @@
 		391D0EE217F4F9A000D8C5DF /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				39955ED0178733B900D225D7 /* ObserverMapViewController.h */,
-				39955ED1178733B900D225D7 /* ObserverMapViewController.m */,
-				396775C617A1C7B5009ECD34 /* AngleDistanceViewController.h */,
-				396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */,
 				39B92FCE17A73F5700C62145 /* AngleDistanceSettingsTableViewController.h */,
 				39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */,
+				396775C617A1C7B5009ECD34 /* AngleDistanceViewController.h */,
+				396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */,
 				39A836C9185FDAB8008BF4E3 /* AttributeViewController.h */,
 				39A836CA185FDAB8008BF4E3 /* AttributeViewController.m */,
 				39C3B84918B816020041FF36 /* FeatureSelectorTableViewController.h */,
 				39C3B84A18B816020041FF36 /* FeatureSelectorTableViewController.m */,
 				391C77A8190F270D006E220E /* GpsPointTableViewController.h */,
 				391C77A9190F270D006E220E /* GpsPointTableViewController.m */,
+				39955ED0178733B900D225D7 /* ObserverMapViewController.h */,
+				39955ED1178733B900D225D7 /* ObserverMapViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -446,7 +455,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		398908071857EA05007B3F67 /* Protocol */ = {
+		398908071857EA05007B3F67 /* Survey Protocol */ = {
 			isa = PBXGroup;
 			children = (
 				3989083F1857ECE4007B3F67 /* SProtocol.h */,
@@ -455,10 +464,6 @@
 				398908341857EBF6007B3F67 /* ProtocolCollection.m */,
 				398908351857EBF6007B3F67 /* ProtocolDetailViewController.h */,
 				398908361857EBF6007B3F67 /* ProtocolDetailViewController.m */,
-				398908371857EBF6007B3F67 /* ProtocolSelectViewController.h */,
-				398908381857EBF6007B3F67 /* ProtocolSelectViewController.m */,
-				398908391857EBF6007B3F67 /* ProtocolTableViewCell.h */,
-				3989083A1857EBF6007B3F67 /* ProtocolTableViewCell.m */,
 				396E1E941899AD2900B735EF /* ProtocolFeature.h */,
 				396E1E951899AD2900B735EF /* ProtocolFeature.m */,
 				396E1E971899AD4B00B735EF /* ProtocolFeatureAllowedLocations.h */,
@@ -467,15 +472,17 @@
 				396E1E9C189ADE8F00B735EF /* ProtocolFeatureSymbology.m */,
 				39336F4418A1BA2100620A3A /* ProtocolMissionFeature.h */,
 				39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */,
+				398908371857EBF6007B3F67 /* ProtocolSelectViewController.h */,
+				398908381857EBF6007B3F67 /* ProtocolSelectViewController.m */,
+				398908391857EBF6007B3F67 /* ProtocolTableViewCell.h */,
+				3989083A1857EBF6007B3F67 /* ProtocolTableViewCell.m */,
 			);
-			name = Protocol;
+			name = "Survey Protocol";
 			sourceTree = "<group>";
 		};
 		398908081857EAB8007B3F67 /* Maps */ = {
 			isa = PBXGroup;
 			children = (
-				39A836C2185A668D008BF4E3 /* AKRAngleDistance.h */,
-				39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */,
 				398908181857EB2F007B3F67 /* Map.h */,
 				398908191857EB2F007B3F67 /* Map.m */,
 				3989081A1857EB2F007B3F67 /* MapCollection.h */,
@@ -493,24 +500,24 @@
 		398908421857ECEB007B3F67 /* Surveys */ = {
 			isa = PBXGroup;
 			children = (
-				398908641857F192007B3F67 /* SurveyDetailViewController.h */,
-				398908651857F192007B3F67 /* SurveyDetailViewController.m */,
-				398908661857F192007B3F67 /* SurveyTableViewCell.h */,
-				398908671857F192007B3F67 /* SurveyTableViewCell.m */,
 				398908431857ED00007B3F67 /* Survey.h */,
 				398908441857ED00007B3F67 /* Survey.m */,
 				398908451857ED00007B3F67 /* SurveyCollection.h */,
 				398908461857ED00007B3F67 /* SurveyCollection.m */,
 				398908471857ED00007B3F67 /* SurveyCoreDataDocument.h */,
 				398908481857ED00007B3F67 /* SurveyCoreDataDocument.m */,
+				398908641857F192007B3F67 /* SurveyDetailViewController.h */,
+				398908651857F192007B3F67 /* SurveyDetailViewController.m */,
 				398908491857ED00007B3F67 /* SurveyObjectModel.h */,
 				3989084A1857ED00007B3F67 /* SurveyObjectModel.m */,
 				3989084B1857ED00007B3F67 /* SurveySelectViewController.h */,
 				3989084C1857ED00007B3F67 /* SurveySelectViewController.m */,
-				394BDD15191D33C4000C8A4B /* Survey+CsvExport.h */,
-				394BDD16191D33C4000C8A4B /* Survey+CsvExport.m */,
+				398908661857F192007B3F67 /* SurveyTableViewCell.h */,
+				398908671857F192007B3F67 /* SurveyTableViewCell.m */,
 				395ACFAA1935325800D04563 /* SurveyUploadTableViewController.h */,
 				395ACFAB1935325800D04563 /* SurveyUploadTableViewController.m */,
+				394BDD15191D33C4000C8A4B /* Survey+CsvExport.h */,
+				394BDD16191D33C4000C8A4B /* Survey+CsvExport.m */,
 				39BA8FC0196F33F800F90A77 /* Survey+ZipExport.h */,
 				39BA8FC1196F33F800F90A77 /* Survey+ZipExport.m */,
 			);
@@ -520,26 +527,26 @@
 		398908521857ED27007B3F67 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				39BA8FBC196F2C7100F90A77 /* NSData+CocoaDevUsersAdditions.h */,
-				39BA8FBD196F2C7100F90A77 /* NSData+CocoaDevUsersAdditions.m */,
-				398908531857EDE1007B3F67 /* AGSPoint+AKRAdditions.h */,
-				398908541857EDE1007B3F67 /* AGSPoint+AKRAdditions.m */,
 				3982F6C818C00D040081C3F9 /* AGSMapView+AKRAdditions.h */,
 				3982F6C918C00D040081C3F9 /* AGSMapView+AKRAdditions.m */,
+				398908531857EDE1007B3F67 /* AGSPoint+AKRAdditions.h */,
+				398908541857EDE1007B3F67 /* AGSPoint+AKRAdditions.m */,
 				398908551857EDE1007B3F67 /* NSArray+map.h */,
 				398908561857EDE1007B3F67 /* NSArray+map.m */,
+				39BA8FBC196F2C7100F90A77 /* NSData+CocoaDevUsersAdditions.h */,
+				39BA8FBD196F2C7100F90A77 /* NSData+CocoaDevUsersAdditions.m */,
 				398908571857EDE1007B3F67 /* NSDate+Formatting.h */,
 				398908581857EDE1007B3F67 /* NSDate+Formatting.m */,
-				398908591857EDE1007B3F67 /* NSIndexSet+indexPath.h */,
-				3989085A1857EDE1007B3F67 /* NSIndexSet+indexPath.m */,
-				3989085B1857EDE1007B3F67 /* NSURL+unique.h */,
-				3989085C1857EDE1007B3F67 /* NSURL+unique.m */,
 				396E1E8E189864AE00B735EF /* NSIndexPath+unsignedAccessors.h */,
 				396E1E8F189864AE00B735EF /* NSIndexPath+unsignedAccessors.m */,
-				5980661E18D16420004830E7 /* UIPopoverController+Presenting.h */,
-				5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */,
+				398908591857EDE1007B3F67 /* NSIndexSet+indexPath.h */,
+				3989085A1857EDE1007B3F67 /* NSIndexSet+indexPath.m */,
 				39A9EF92197066120059FC0F /* NSURL+isEqualToURL.h */,
 				39A9EF93197066120059FC0F /* NSURL+isEqualToURL.m */,
+				3989085B1857EDE1007B3F67 /* NSURL+unique.h */,
+				3989085C1857EDE1007B3F67 /* NSURL+unique.m */,
+				5980661E18D16420004830E7 /* UIPopoverController+Presenting.h */,
+				5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -590,21 +597,18 @@
 		39955E50178334BF00D225D7 /* Observer */ = {
 			isa = PBXGroup;
 			children = (
-				398908631857F087007B3F67 /* AKRCollectionChanged.h */,
-				398908621857EFF3007B3F67 /* AKRTableViewItem.h */,
-				59C60FED1863FDBF00470791 /* AKRFormatter.h */,
-				59C60FEE1863FDBF00470791 /* AKRFormatter.m */,
 				39955E59178334C000D225D7 /* ObserverAppDelegate.h */,
 				39955E5A178334C000D225D7 /* ObserverAppDelegate.m */,
 				39955E62178334C000D225D7 /* MainStoryboard_iPhone.storyboard */,
 				39955E65178334C000D225D7 /* MainStoryboard_iPad.storyboard */,
+				39955EC6178732B500D225D7 /* Models */,
 				398908521857ED27007B3F67 /* Categories */,
+				3914014C1975C37C0055F2E1 /* Protocols */,
 				398908421857ECEB007B3F67 /* Surveys */,
 				398908081857EAB8007B3F67 /* Maps */,
-				398908071857EA05007B3F67 /* Protocol */,
+				398908071857EA05007B3F67 /* Survey Protocol */,
 				391D0EE217F4F9A000D8C5DF /* ViewControllers */,
 				391D0EE017F4F99700D8C5DF /* Views */,
-				39955EC6178732B500D225D7 /* Models */,
 				39955E51178334C000D225D7 /* Supporting Files */,
 			);
 			path = Observer;
@@ -636,43 +640,47 @@
 		39955EC6178732B500D225D7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				394CC23C1858EF5800FA859C /* ObserverModel.xcdatamodeld */,
-				39D1D97B17BC51630014C68F /* ObserverModel.h */,
-				394CC2511858F11800FA859C /* Observation.h */,
-				394CC2521858F11800FA859C /* Observation.m */,
-				394CC24E1858F11800FA859C /* AngleDistanceLocation.h */,
-				394CC24F1858F11800FA859C /* AngleDistanceLocation.m */,
-				394CC24B1858F11800FA859C /* Mission.h */,
-				394CC24C1858F11800FA859C /* Mission.m */,
 				394CC2481858F11800FA859C /* AdhocLocation.h */,
 				394CC2491858F11800FA859C /* AdhocLocation.m */,
-				394CC2451858F11800FA859C /* GpsPoint.h */,
-				394CC2461858F11800FA859C /* GpsPoint.m */,
-				394CC2421858F11800FA859C /* MissionProperty.h */,
-				394CC2431858F11800FA859C /* MissionProperty.m */,
-				394CC23F1858F11700FA859C /* MapReference.h */,
-				394CC2401858F11700FA859C /* MapReference.m */,
-				393E8AFF17A318F5009AD0AC /* Enumerations.h */,
-				39D1D94A17B464B40014C68F /* LocationAngleDistance.h */,
-				39D1D94B17B464B40014C68F /* LocationAngleDistance.m */,
-				393E8AFA17A2E1D8009AD0AC /* Settings.h */,
-				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
-				39C53E5F187F411B00C0CECE /* AutoPanStateMachine.h */,
-				39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */,
-				394BDD11191D2FEC000C8A4B /* GpsPoint+CsvExport.h */,
-				394BDD12191D2FEC000C8A4B /* GpsPoint+CsvExport.m */,
-				394BDD18191D4867000C8A4B /* Observation+Location.h */,
-				394BDD19191D4867000C8A4B /* Observation+Location.m */,
-				394BDD1B191D6802000C8A4B /* MissionProperty+Location.h */,
-				394BDD1C191D6802000C8A4B /* MissionProperty+Location.m */,
-				394BDD1E191D6BFE000C8A4B /* GpsPoint+Location.h */,
-				394BDD1F191D6BFE000C8A4B /* GpsPoint+Location.m */,
-				39946AAE191DA0EA00875D90 /* Observation+CsvExport.h */,
-				39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */,
-				39946AB71925473A00875D90 /* TrackLogSegment.h */,
-				39946AB81925473A00875D90 /* TrackLogSegment.m */,
+				39A836C2185A668D008BF4E3 /* AKRAngleDistance.h */,
+				39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */,
+				59C60FED1863FDBF00470791 /* AKRFormatter.h */,
+				59C60FEE1863FDBF00470791 /* AKRFormatter.m */,
+				394CC24E1858F11800FA859C /* AngleDistanceLocation.h */,
+				394CC24F1858F11800FA859C /* AngleDistanceLocation.m */,
 				39A9EF8E196F5BD80059FC0F /* Archiver.h */,
 				39A9EF8F196F5BD80059FC0F /* Archiver.m */,
+				39C53E5F187F411B00C0CECE /* AutoPanStateMachine.h */,
+				39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */,
+				393E8AFF17A318F5009AD0AC /* Enumerations.h */,
+				394BDD11191D2FEC000C8A4B /* GpsPoint+CsvExport.h */,
+				394BDD12191D2FEC000C8A4B /* GpsPoint+CsvExport.m */,
+				394BDD1E191D6BFE000C8A4B /* GpsPoint+Location.h */,
+				394BDD1F191D6BFE000C8A4B /* GpsPoint+Location.m */,
+				394CC2451858F11800FA859C /* GpsPoint.h */,
+				394CC2461858F11800FA859C /* GpsPoint.m */,
+				39D1D94A17B464B40014C68F /* LocationAngleDistance.h */,
+				39D1D94B17B464B40014C68F /* LocationAngleDistance.m */,
+				394CC23F1858F11700FA859C /* MapReference.h */,
+				394CC2401858F11700FA859C /* MapReference.m */,
+				394CC24B1858F11800FA859C /* Mission.h */,
+				394CC24C1858F11800FA859C /* Mission.m */,
+				394BDD1B191D6802000C8A4B /* MissionProperty+Location.h */,
+				394BDD1C191D6802000C8A4B /* MissionProperty+Location.m */,
+				394CC2421858F11800FA859C /* MissionProperty.h */,
+				394CC2431858F11800FA859C /* MissionProperty.m */,
+				39946AAE191DA0EA00875D90 /* Observation+CsvExport.h */,
+				39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */,
+				394BDD18191D4867000C8A4B /* Observation+Location.h */,
+				394BDD19191D4867000C8A4B /* Observation+Location.m */,
+				394CC2511858F11800FA859C /* Observation.h */,
+				394CC2521858F11800FA859C /* Observation.m */,
+				39D1D97B17BC51630014C68F /* ObserverModel.h */,
+				394CC23C1858EF5800FA859C /* ObserverModel.xcdatamodeld */,
+				393E8AFA17A2E1D8009AD0AC /* Settings.h */,
+				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
+				39946AB71925473A00875D90 /* TrackLogSegment.h */,
+				39946AB81925473A00875D90 /* TrackLogSegment.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
