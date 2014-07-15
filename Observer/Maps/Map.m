@@ -72,8 +72,6 @@
         map.byteCount = [fileAttributes fileSize];
         map.date = [fileAttributes fileCreationDate];  //TODO: Get the date from the esriinfo.xml file in the zipped tpk
         map.description = @"Not available."; //TODO: get the description from the esriinfo.xml file in the zipped tpk
-        map.localThumbnailUrl = [self createThumbnailUrlForMapName:map.title];
-        [UIImagePNGRepresentation(map.tileCache.thumbnail) writeToURL:map.localThumbnailUrl atomically:YES];
         map.thumbnail = map.tileCache.thumbnail;
         map.thumbnailIsLoaded = YES;
         map.extents = map.tileCache.fullEnvelope;
@@ -190,27 +188,32 @@
 
 - (BOOL)hasLoadedThumbnail
 {
-    return _thumbnailIsLoaded;
+    return self.thumbnailIsLoaded;
 }
 
 - (void)loadThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
-    if (_thumbnail || self.thumbnailIsLoaded) {
+    if (self.thumbnail || self.thumbnailIsLoaded) {
         if (completionHandler) {
-            completionHandler(_thumbnail != nil);
+            completionHandler(self.thumbnail != nil);
         }
     }
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
-        self->_thumbnail = [self loadThumbnail];
+        [self loadThumbnail];
         if (completionHandler) {
-            completionHandler(self->_thumbnail != nil);
+            completionHandler(self.thumbnail != nil);
         }
     });
 }
 
-- (UIImage *)thumbnail
+- (void)setThumbnail:(UIImage *)image
 {
-    return _thumbnail;
+    if (!self.localThumbnailUrl || ![[NSFileManager defaultManager] fileExistsAtPath:[self.localThumbnailUrl path]]) {
+        NSString *name = [self.url.lastPathComponent stringByDeletingPathExtension];
+        NSURL *cachedImage = [self cacheThumbnail:image mapName:name];
+        self.localThumbnailUrl = cachedImage;
+    }
+    _thumbnail = image;
 }
 
 - (AGSLocalTiledLayer *)tileCache
@@ -283,37 +286,48 @@
 
 #pragma mark - loaders
 
-- (UIImage *)loadThumbnail
+- (void)loadThumbnail
 {
-    UIImage *thumbnail = nil;
+    NSData *data = nil;
     if (self.localThumbnailUrl && [[NSFileManager defaultManager] fileExistsAtPath:[self.localThumbnailUrl path]]) {
-        NSData *data = [NSData dataWithContentsOfURL:self.localThumbnailUrl];
-        thumbnail = [[UIImage alloc] initWithData:data];
+         data = [NSData dataWithContentsOfURL:self.localThumbnailUrl];
     } else {
-        self.localThumbnailUrl = [self createThumbnailUrlForMapName:self.title];
         //TODO: do this transfer in an NSOperation Queue
         //TODO: need to deal with various network errors
-        NSData *data = [NSData dataWithContentsOfURL:self.remoteThumbnailUrl];
-        if ([data writeToURL:self.localThumbnailUrl atomically:YES]) {
-            thumbnail = [[UIImage alloc] initWithData:data];
-        }
+        data = [NSData dataWithContentsOfURL:self.remoteThumbnailUrl];
     }
+    if (data) {
+        self.thumbnail = [[UIImage alloc] initWithData:data];
+    }
+    self.thumbnailIsLoaded = YES;
     //Update the cache:
     //TODO: Have the map manage it's own cache, so I don't need call the collection to do the save;
     //[[MapCollection sharedCollection] synchronize];
-
-    self.thumbnailIsLoaded = YES;
-    return thumbnail;
 }
 
-- (NSURL *)createThumbnailUrlForMapName:(NSString *)name
+- (NSURL *)cacheThumbnail:(UIImage *)image mapName:(NSString *)name
 {
+    //save the image in a cache folder and return the URL
+    //Use the name to index and name the image.
+    // If there is no cached image with given name, then create it and be done.
+    // If the name exists, and the data is the same, then return the existing URL
+    // If the name exists, and the data is NOT the same, then uniquify the URL and save the image
+
     NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     NSURL *folder = [library URLByAppendingPathComponent:@"mapthumbs" isDirectory:YES];
     if (![[NSFileManager defaultManager] fileExistsAtPath:[folder path]]) {
         [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
     }
-    NSURL *thumb = [[[folder URLByAppendingPathComponent:name] URLByAppendingPathExtension:@"png"] URLByUniquingPath];
+    NSURL *thumb = [[folder URLByAppendingPathComponent:name] URLByAppendingPathExtension:@"png"];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[thumb path]]) {
+        if ([UIImagePNGRepresentation(image) isEqualToData:[NSData dataWithContentsOfURL:thumb]]) {
+            //FIXME: this equality doesn't work remote thumbnail <> tpk thumbnail
+            return thumb;
+        } else {
+            thumb = [thumb URLByUniquingPath];
+        }
+    }
+    [UIImagePNGRepresentation(image) writeToURL:thumb atomically:YES];
     return thumb;
 }
 
