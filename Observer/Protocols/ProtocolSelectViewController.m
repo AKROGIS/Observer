@@ -45,14 +45,11 @@
     self.refreshControl = [UIRefreshControl new];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-}
-
 - (void)viewWillDisappear:(BOOL)animated
 {
     [self.navigationController setToolbarHidden:YES animated:NO];
     [Settings manager].hideRemoteProtocols = !self.showRemoteProtocols;
+    [super viewWillDisappear:animated];
 }
 
 - (void)didReceiveMemoryWarning

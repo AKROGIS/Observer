@@ -71,6 +71,7 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         [self.navigationController setToolbarHidden:NO animated:NO];
     }
@@ -81,6 +82,7 @@
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         [self.navigationController setToolbarHidden:YES animated:NO];
     }
+    [super viewWillDisappear:animated];
 }
 
 - (void)didReceiveMemoryWarning
