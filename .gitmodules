@@ -1,3 +1,6 @@
 [submodule "QuickDialog"]
 	path = QuickDialog
 	url = git@github.com:regan-sarwas/QuickDialog.git
+[submodule "ZipKit"]
+	path = ZipKit
+	url = https://github.com/regan-sarwas/ZipKit.git

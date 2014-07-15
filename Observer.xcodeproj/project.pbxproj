@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3914014119759C450055F2E1 /* libtouchzipkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3914014019759BB70055F2E1 /* libtouchzipkit.a */; };
 		391C77AA190F270D006E220E /* GpsPointTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 391C77A9190F270D006E220E /* GpsPointTableViewController.m */; };
 		392E8FBD18EF2F030055D312 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 392E8FBC18EF2F030055D312 /* Crashlytics.framework */; };
 		39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */; };
@@ -110,6 +111,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3914013B19759BB70055F2E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3914013419759BB70055F2E1 /* ZipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CB6F09CE174838FC00F91524;
+			remoteInfo = ZipKit;
+		};
+		3914013D19759BB70055F2E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3914013419759BB70055F2E1 /* ZipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CB6F0A4617483E5000F91524;
+			remoteInfo = zipkit;
+		};
+		3914013F19759BB70055F2E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3914013419759BB70055F2E1 /* ZipKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CB6F0A9817484BDE00F91524;
+			remoteInfo = touchzipkit;
+		};
+		3914014219759C650055F2E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3914013419759BB70055F2E1 /* ZipKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CB6F0A9717484BDE00F91524;
+			remoteInfo = touchzipkit;
+		};
 		394CC2341858DFFA00FA859C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */;
@@ -141,6 +170,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3914013419759BB70055F2E1 /* ZipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZipKit.xcodeproj; path = ZipKit/ZipKit.xcodeproj; sourceTree = "<group>"; };
 		391C77A8190F270D006E220E /* GpsPointTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GpsPointTableViewController.h; sourceTree = "<group>"; };
 		391C77A9190F270D006E220E /* GpsPointTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GpsPointTableViewController.m; sourceTree = "<group>"; };
 		3929196617BEB6A8008B0FFC /* Todo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Todo.rtf; sourceTree = "<group>"; };
@@ -325,6 +355,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3914014119759C450055F2E1 /* libtouchzipkit.a in Frameworks */,
 				394CC2381858E05F00FA859C /* libQuickDialog.a in Frameworks */,
 				392E8FBD18EF2F030055D312 /* Crashlytics.framework in Frameworks */,
 				39D1D95A17BC21D00014C68F /* CoreData.framework in Frameworks */,
@@ -356,6 +387,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3914013519759BB70055F2E1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3914013C19759BB70055F2E1 /* ZipKit.framework */,
+				3914013E19759BB70055F2E1 /* libzipkit.a */,
+				3914014019759BB70055F2E1 /* libtouchzipkit.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		391D0EE017F4F99700D8C5DF /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -521,6 +562,7 @@
 		39955E49178334BF00D225D7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3914013419759BB70055F2E1 /* ZipKit.xcodeproj */,
 				392E8FBC18EF2F030055D312 /* Crashlytics.framework */,
 				39C3B86A18BE8D770041FF36 /* XCTest.framework */,
 				394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */,
@@ -676,6 +718,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3914014319759C650055F2E1 /* PBXTargetDependency */,
 				394CC2371858E05000FA859C /* PBXTargetDependency */,
 			);
 			name = "Park Observer";
@@ -735,6 +778,10 @@
 					ProductGroup = 394CC2311858DFFA00FA859C /* Products */;
 					ProjectRef = 394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */;
 				},
+				{
+					ProductGroup = 3914013519759BB70055F2E1 /* Products */;
+					ProjectRef = 3914013419759BB70055F2E1 /* ZipKit.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -745,6 +792,27 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		3914013C19759BB70055F2E1 /* ZipKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ZipKit.framework;
+			remoteRef = 3914013B19759BB70055F2E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3914013E19759BB70055F2E1 /* libzipkit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libzipkit.a;
+			remoteRef = 3914013D19759BB70055F2E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3914014019759BB70055F2E1 /* libtouchzipkit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libtouchzipkit.a;
+			remoteRef = 3914013F19759BB70055F2E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		394CC2351858DFFA00FA859C /* libQuickDialog.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -909,6 +977,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3914014319759C650055F2E1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = touchzipkit;
+			targetProxy = 3914014219759C650055F2E1 /* PBXContainerItemProxy */;
+		};
 		394CC2371858E05000FA859C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = QuickDialog;
@@ -999,7 +1072,7 @@
 				PROVISIONING_PROFILE = "93523017-AC5B-4336-B428-38D2A1475767";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/QuickDialog\"/**";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/QuickDialog\"/** ./ZipKit/";
 				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Debug;
@@ -1032,7 +1105,7 @@
 				PROVISIONING_PROFILE = "93523017-AC5B-4336-B428-38D2A1475767";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/QuickDialog\"/**";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/QuickDialog\"/** ./ZipKit/";
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "armv7 armv7s";
 			};

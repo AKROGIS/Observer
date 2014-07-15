@@ -12,6 +12,8 @@
 	<dict>
 		<key>24CBE7CE-54E3-4209-868B-727112CB7041</key>
 		<string>ssh://github.com/regan-sarwas/QuickDialog.git</string>
+		<key>C966AB86-CCE0-4CC8-8F93-275E21E3F8D8</key>
+		<string>https://github.com/regan-sarwas/ZipKit.git</string>
 		<key>EB742802-8704-4F04-BBC5-8154983BBC2D</key>
 		<string>https://github.com/regan-sarwas/Observer.git</string>
 	</dict>
@@ -21,6 +23,8 @@
 	<dict>
 		<key>24CBE7CE-54E3-4209-868B-727112CB7041</key>
 		<string>../../QuickDialog</string>
+		<key>C966AB86-CCE0-4CC8-8F93-275E21E3F8D8</key>
+		<string>../../ZipKit</string>
 		<key>EB742802-8704-4F04-BBC5-8154983BBC2D</key>
 		<string>../..</string>
 	</dict>
@@ -47,6 +51,14 @@
 			<string>24CBE7CE-54E3-4209-868B-727112CB7041</string>
 			<key>IDESourceControlWCCName</key>
 			<string>QuickDialog</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>C966AB86-CCE0-4CC8-8F93-275E21E3F8D8</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ZipKit</string>
 		</dict>
 	</array>
 </dict>
