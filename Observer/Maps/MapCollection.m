@@ -346,14 +346,14 @@ static int _downloadsInProgress = 0;
     NSMutableArray *localMapFileNames = [MapCollection mapFileNamesInDocumentsFolder];
 
     //remove cache items not in filesystem
-    NSMutableIndexSet *itemsToRemove = [NSMutableIndexSet new];
+    NSMutableIndexSet *indexesOfLocalMapsToRemove = [NSMutableIndexSet new];
     for (uint i = 0; i < self.localItems.count; i++) {
         Map *map = self.localItems[i];
         if (map.isLocal) {
             // A local file is the same as a map if the last path component is the same as the maps (local) tilecache URL
             NSUInteger index = [localMapFileNames indexOfObject:[map.tileCacheURL lastPathComponent]];
             if (index == NSNotFound) {
-                [itemsToRemove addIndex:i];
+                [indexesOfLocalMapsToRemove addIndex:i];
                 //make sure any other cached data about the map file is also deleted
                 [map deleteFromFileSystem];
             } else {
@@ -383,9 +383,9 @@ static int _downloadsInProgress = 0;
     id<CollectionChanged> delegate = self.delegate;
     if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (0 < itemsToRemove.count) {
-                [self.localItems removeObjectsAtIndexes:itemsToRemove];
-                [delegate collection:self removedLocalItemsAtIndexes:itemsToRemove];
+            if (0 < indexesOfLocalMapsToRemove.count) {
+                [self.localItems removeObjectsAtIndexes:indexesOfLocalMapsToRemove];
+                [delegate collection:self removedLocalItemsAtIndexes:indexesOfLocalMapsToRemove];
             }
             if (0 < mapsToAdd.count) {
                 NSIndexSet *indexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(self.localItems.count, mapsToAdd.count)];
@@ -394,11 +394,11 @@ static int _downloadsInProgress = 0;
             }
         });
     } else {
-        [self.localItems removeObjectsAtIndexes:itemsToRemove];
+        [self.localItems removeObjectsAtIndexes:indexesOfLocalMapsToRemove];
         [self.localItems addObjectsFromArray:mapsToAdd];
     }
     //update cache
-    if (0 < itemsToRemove.count || 0 < mapsToAdd.count) {
+    if (0 < indexesOfLocalMapsToRemove.count || 0 < mapsToAdd.count) {
         if (self.delegate) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self saveCache];
