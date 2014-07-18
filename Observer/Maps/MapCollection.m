@@ -14,6 +14,7 @@
 @interface MapCollection()
 @property (nonatomic, strong) NSMutableArray *localItems;  // of Map
 @property (nonatomic, strong) NSMutableArray *remoteItems; // of Map
+@property (nonatomic) BOOL isDownloading;
 @end
 
 @implementation MapCollection
@@ -43,10 +44,36 @@ static BOOL _isLoaded = NO;
 }
 
 + (void)releaseSharedCollection {
+    if (self.isDownloading) {
+        //TODO: keep track of request to release, so we can release when downloading is done.
+        return;
+    }
     @synchronized(self) {
         _sharedCollection = nil;
         _isLoaded = NO;
     }
+}
+
+static int _downloadsInProgress = 0;
+
++ (void)startDownloading
+{
+    _downloadsInProgress++;
+}
+
++ (void)finishedDownloading
+{
+    _downloadsInProgress--;
+}
+
++ (void)canceledDownloading
+{
+    _downloadsInProgress--;
+}
+
++ (BOOL)isDownloading
+{
+    return 0 < _downloadsInProgress;
 }
 
 
@@ -108,10 +135,10 @@ static BOOL _isLoaded = NO;
     });
 }
 
--(void)synchronize
-{
-    [self saveCache];
-}
+//-(void)synchronize
+//{
+//    [self saveCache];
+//}
 
 
 
@@ -225,61 +252,87 @@ static BOOL _isLoaded = NO;
 
 #pragma mark - Cache operations
 
-//TODO: - consider NSDefaults as it does memory mapping and defered writes
-//       this also make the class a singleton object
-
-+ (NSURL *)cacheFile
-{
-    static NSURL *_cacheFile = nil;
-    if (!_cacheFile) {
-        _cacheFile = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
-        _cacheFile = [_cacheFile URLByAppendingPathComponent:@"map_list.cache"];
-    }
-    return _cacheFile;
-}
-
-//done on background thread
 - (void)loadCache
 {
-    NSArray *plist = [NSArray arrayWithContentsOfURL:[MapCollection cacheFile]];
-    for (id obj in plist) {
-        if ([obj isKindOfClass:[NSDate class]]) {
-            self.refreshDate = obj;
-        }
-        if ([obj isKindOfClass:[NSData class]]) {
-            id map = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
-            if ([map isKindOfClass:[Map class]]) {
-                if (((Map *)map).isLocal) {
-                    [self.localItems addObject:map];
-                } else {
-                    [self.remoteItems addObject:map];
-                }
-            }
+    NSArray *mapURLs = [Settings manager].maps;
+    [self.localItems removeAllObjects];
+    [self.remoteItems removeAllObjects];
+    for (NSURL *mapURL in mapURLs) {
+        Map *map = [[Map alloc] initWithCachedPropertiesURL:mapURL];
+        if (map.isLocal) {
+            [self.localItems addObject:map];
+        } else {
+            [self.remoteItems addObject:map];
         }
     }
 }
 
-//must be called by the thread that changes the model, after changes are complete.
-//because of the enumeration of the model, it cannot be called while the model might be changed.
 - (void)saveCache
 {
-    //dispatching the creation of the archive data to a background thread could result in an exception
-    //if the UI thread then changed the model while it is being enumerated
-    NSMutableArray *plist = [NSMutableArray new];
-    if (self.refreshDate) {
-        [plist addObject:self.refreshDate];
-    }
-    for (Map *map in self.localItems) {
-        [plist addObject:[NSKeyedArchiver archivedDataWithRootObject:map]];
-    }
-    for (Map *map in self.remoteItems) {
-        [plist addObject:[NSKeyedArchiver archivedDataWithRootObject:map]];
-    }
-    //File save can be safely done on a background thread.
-    dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
-        [plist writeToURL:[MapCollection cacheFile] atomically:YES];
-    });
+    NSArray *items = [NSArray arrayWithArray:self.localItems];
+    items = [items arrayByAddingObjectsFromArray:self.remoteItems];
+    [Settings manager].maps = [items mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
+        return [obj plistURL];
+    }];
 }
+
+//TODO load old cache if we are transitioning
+
+//TODO: - consider NSDefaults as it does memory mapping and defered writes
+//       this also make the class a singleton object
+//
+//+ (NSURL *)cacheFile
+//{
+//    static NSURL *_cacheFile = nil;
+//    if (!_cacheFile) {
+//        _cacheFile = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
+//        _cacheFile = [_cacheFile URLByAppendingPathComponent:@"map_list.cache"];
+//    }
+//    return _cacheFile;
+//}
+//
+////done on background thread
+//- (void)loadCache
+//{
+//    NSArray *plist = [NSArray arrayWithContentsOfURL:[MapCollection cacheFile]];
+//    for (id obj in plist) {
+//        if ([obj isKindOfClass:[NSDate class]]) {
+//            self.refreshDate = obj;
+//        }
+//        if ([obj isKindOfClass:[NSData class]]) {
+//            id map = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
+//            if ([map isKindOfClass:[Map class]]) {
+//                if (((Map *)map).isLocal) {
+//                    [self.localItems addObject:map];
+//                } else {
+//                    [self.remoteItems addObject:map];
+//                }
+//            }
+//        }
+//    }
+//}
+//
+////must be called by the thread that changes the model, after changes are complete.
+////because of the enumeration of the model, it cannot be called while the model might be changed.
+//- (void)saveCache
+//{
+//    //dispatching the creation of the archive data to a background thread could result in an exception
+//    //if the UI thread then changed the model while it is being enumerated
+//    NSMutableArray *plist = [NSMutableArray new];
+//    if (self.refreshDate) {
+//        [plist addObject:self.refreshDate];
+//    }
+//    for (Map *map in self.localItems) {
+//        [plist addObject:[NSKeyedArchiver archivedDataWithRootObject:map]];
+//    }
+//    for (Map *map in self.remoteItems) {
+//        [plist addObject:[NSKeyedArchiver archivedDataWithRootObject:map]];
+//    }
+//    //File save can be safely done on a background thread.
+//    dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
+//        [plist writeToURL:[MapCollection cacheFile] atomically:YES];
+//    });
+//}
 
 
 
@@ -297,7 +350,8 @@ static BOOL _isLoaded = NO;
     for (uint i = 0; i < self.localItems.count; i++) {
         Map *map = self.localItems[i];
         if (map.isLocal) {
-            NSUInteger index = [localMapFileNames indexOfObject:[map.url lastPathComponent]];
+            // A local file is the same as a map if the last path component is the same as the maps (local) tilecache URL
+            NSUInteger index = [localMapFileNames indexOfObject:[map.tileCacheURL lastPathComponent]];
             if (index == NSNotFound) {
                 [itemsToRemove addIndex:i];
                 //make sure any other cached data about the map file is also deleted
@@ -312,8 +366,12 @@ static BOOL _isLoaded = NO;
     NSMutableArray *mapsToAdd = [NSMutableArray new];
     for (NSString *localMapFileName in localMapFileNames) {
         NSURL *mapUrl = [[MapCollection documentsDirectory] URLByAppendingPathComponent:localMapFileName];
-        Map *map = [[Map alloc] initWithLocalTileCache:mapUrl];
-        if (map.isValid) {
+        // TODO: Put up a modal, asking for details on the tile cache, i.e. name, author, date, description
+        //       explain the importance of the attributes in identifying the map for reference for non-gps points
+        //       maybe get the defaults from the esriinfo.xml file in the zipped tpk
+        //       Map *newMap = [[Map alloc] initWithTileCacheURL:newUrl name:name author:author date:date description:description;
+        Map *map = [[Map alloc] initWithTileCacheURL:mapUrl];
+        if (map) {
             [mapsToAdd addObject:map];
         } else {
             AKRLog(@"data at %@ was not a valid map object",localMapFileName);
@@ -399,6 +457,7 @@ static BOOL _isLoaded = NO;
 }
 
 //done on background thread
+//Returns and array of map property dictionaries
 + (NSMutableArray *)fetchMapListFromURL:(NSURL *)url
 {
     NSMutableArray *maps = nil;
@@ -411,11 +470,12 @@ static BOOL _isLoaded = NO;
             NSArray *items = json;
             for (id jsonItem in items) {
                 if ([jsonItem isKindOfClass:[NSDictionary class]]) {
-                    NSDictionary *item = jsonItem;
-                    Map *map = [[Map alloc] initWithDictionary:item];
-                    if (map) {
-                        [maps addObject:map];
-                    }
+                    [maps addObject:jsonItem];
+//                    NSDictionary *item = jsonItem;
+//                    Map *map = [[Map alloc] initWithRemoteProperties:item];
+//                    if (map) {
+//                        [maps addObject:map];
+//                    }
                 }
             }
         }
@@ -424,13 +484,13 @@ static BOOL _isLoaded = NO;
 }
 
 //done on background thread
+//serverMaps is an array of map property dictionaries
 - (void)syncCacheWithServerMaps:(NSMutableArray *)serverMaps
 {
-    // return value of YES means changes were made and the caller should update the cache.
     // we need to remove cached items not on the server,
     // we need to add items on the server not in the cache,
     // Do not add server items that match local items in the cache.
-    // a cached item (on the server) might have an updated URL
+    // a cached item (on the server) might have an updated URL thumbnail, or any other property
 
     BOOL modelChanged = NO;
 
@@ -438,21 +498,21 @@ static BOOL _isLoaded = NO;
     NSMutableDictionary *mapsToUpdate = [NSMutableDictionary new];
 
     //remove maps in remoteItems not in serverMaps
-    NSMutableIndexSet *itemsToRemove = [NSMutableIndexSet new];
+    NSMutableIndexSet *indexesOfRemoteMapsToRemove = [NSMutableIndexSet new];
     for (uint i = 0; i < self.remoteItems.count; i++) {
-        Map *p = self.remoteItems[i];
-        if (!p.isLocal) {
-            NSUInteger index = [serverMaps  indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-                return [p isEqualToMap:obj];
+        Map *map = self.remoteItems[i];
+        if (!map.isLocal) {
+            NSUInteger index = [serverMaps indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+                return [map isEqualToRemoteProperties:(NSDictionary *)obj];
             }];
             if (index == NSNotFound) {
-                [itemsToRemove addIndex:i];
+                [indexesOfRemoteMapsToRemove addIndex:i];
                 modelChanged = YES;
             } else {
                 //update the url of cached server objects
-                Map *serverMap = serverMaps[index];
-                if (![p.url isEqual:serverMap.url]) {
-                    mapsToUpdate[[NSNumber numberWithInt:i]] = serverMap;
+                NSDictionary *remoteMapProperties = serverMaps[index];
+                if ([map shouldUpdateToRemoteProperties:remoteMapProperties]) {
+                    mapsToUpdate[[NSNumber numberWithInt:i]] = remoteMapProperties;
                     modelChanged = YES;
                 }
                 [serverMaps removeObjectAtIndex:index];
@@ -460,30 +520,43 @@ static BOOL _isLoaded = NO;
         }
     }
     //add server maps not in cache (local or server)
-    NSMutableArray *mapsToAdd = [NSMutableArray new];
-    for (Map *map in serverMaps) {
+    NSMutableArray *remotePropertiesToAdd = [NSMutableArray new];
+    for (NSDictionary *properties in serverMaps) {
         NSUInteger localIndex = [self.localItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [map isEqualToMap:obj];
+            return [(Map *)obj isEqualToRemoteProperties:properties];
         }];
         NSUInteger remoteIndex = [self.remoteItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [map isEqualToMap:obj];
+            return [(Map *)obj isEqualToRemoteProperties:properties];
         }];
         if (localIndex == NSNotFound && remoteIndex == NSNotFound) {
-            [mapsToAdd addObject:map];
+            [remotePropertiesToAdd addObject:properties];
             modelChanged = YES;
         }
     }
+
+    //convert remotePropertiesToAdd to mapsToAdd
+    NSMutableArray *mapsToAdd = [NSMutableArray new];
+    for (NSDictionary *properties in remotePropertiesToAdd) {
+        Map *map = [[Map alloc] initWithRemoteProperties:properties];
+        if (map) {
+            [mapsToAdd addObject:map];
+        }
+    }
+
     //update lists and UI synchronosly on UI thread if there is a delegate
     id<CollectionChanged> delegate = self.delegate;
     if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            //ALERT: be sure to do the update before removing maps, since the indexes will change when removing
             for (id key in [mapsToUpdate allKeys]) {
-                self.remoteItems[[key unsignedIntegerValue]] = [mapsToUpdate objectForKey:key];
+                Map *map = self.remoteItems[[key unsignedIntegerValue]];
+                NSDictionary *remoteMapProperties = [mapsToUpdate objectForKey:key];
+                [map updateWithRemoteProperties:remoteMapProperties];
                 [delegate collection:self changedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:[key unsignedIntegerValue]]];
             }
-            if (0 < itemsToRemove.count) {
-                [self.remoteItems removeObjectsAtIndexes:itemsToRemove];
-                [delegate collection:self removedRemoteItemsAtIndexes:itemsToRemove];
+            if (0 < indexesOfRemoteMapsToRemove.count) {
+                [self.remoteItems removeObjectsAtIndexes:indexesOfRemoteMapsToRemove];
+                [delegate collection:self removedRemoteItemsAtIndexes:indexesOfRemoteMapsToRemove];
             }
             if (0 < mapsToAdd.count) {
                 NSIndexSet *indexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(self.remoteItems.count, mapsToAdd.count)];
@@ -492,10 +565,13 @@ static BOOL _isLoaded = NO;
             }
         });
     } else {
+        //ALERT: be sure to do the update before removing maps, since the indexes will change when removing
         for (id key in [mapsToUpdate allKeys]) {
-            self.remoteItems[[key unsignedIntegerValue]] = [mapsToUpdate objectForKey:key];
+            Map *map = self.remoteItems[[key unsignedIntegerValue]];
+            NSDictionary *remoteMapProperties = [mapsToUpdate objectForKey:key];
+            [map updateWithRemoteProperties:remoteMapProperties];
         }
-        [self.remoteItems removeObjectsAtIndexes:itemsToRemove];
+        [self.remoteItems removeObjectsAtIndexes:indexesOfRemoteMapsToRemove];
         [self.remoteItems addObjectsFromArray:mapsToAdd];
     }
     //update cache

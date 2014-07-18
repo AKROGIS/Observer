@@ -415,7 +415,7 @@
     }
     [self closeMap];
     _map = map;
-    [Settings manager].activeMapURL = map.url;
+    [Settings manager].activeMapPropertiesURL = map.plistURL;
     [self openMap];
     [self updateSelectMapViewControllerWithNewMap:map];
 }

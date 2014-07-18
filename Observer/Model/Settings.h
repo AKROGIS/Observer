@@ -27,9 +27,11 @@
 //Views that need to updated thier display based on changes (made by settings app, or
 //other views) need to subscribe to NSUserDefaultsDidChangeNotification
 
-@property (nonatomic) NSURL *activeMapURL;
+@property (nonatomic) NSURL *activeMapURL __deprecated_msg("Use activeMapPropertiesURL");
+@property (nonatomic) NSURL *activeMapPropertiesURL;
 @property (nonatomic) NSURL *activeSurveyURL;
 
+@property (nonatomic, strong) NSArray *maps;    //of NSURL
 @property (nonatomic, strong) NSArray *surveys; //of NSURL
 
 @property (nonatomic) BOOL hideRemoteMaps;

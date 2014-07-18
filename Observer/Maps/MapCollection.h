@@ -61,7 +61,12 @@
 // Throws an exception if either index is out of bounds
 - (void)moveRemoteMapAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
 
-//TODO: I don't like making this public, but I need to save the cache after a map changes it's thumbnail url
-- (void)synchronize;
+// The view controller creates and destroys the Map collection when the map list is presented/closed
+// The map collection holds the only reference to map objects while they are downloading.
+// The map collection should not be destoyed if there are maps downloading.
++ (void)startDownloading;
++ (void)finishedDownloading;
++ (void)canceledDownloading;
++ (BOOL)isDownloading;
 
 @end
