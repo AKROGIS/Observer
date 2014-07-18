@@ -94,10 +94,12 @@
     //kRemoteThumbUrlKey - not available or required
     newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].absoluteString;
     newProperties[kDescriptionKey] = @"Not available."; //TODO: get the description from the esriinfo.xml file in the zipped tpk
-    newProperties[kXminKey] = [NSNumber numberWithDouble:tileCache.fullEnvelope.xmin];
-    newProperties[kYminKey] = [NSNumber numberWithDouble:tileCache.fullEnvelope.ymin];
-    newProperties[kXmaxKey] = [NSNumber numberWithDouble:tileCache.fullEnvelope.xmax];
-    newProperties[kYmaxKey] = [NSNumber numberWithDouble:tileCache.fullEnvelope.ymax];
+    AGSEnvelope *extents = (AGSEnvelope *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:tileCache.fullEnvelope
+                                                                                  toSpatialReference:[AGSSpatialReference wgs84SpatialReference]];
+    newProperties[kXminKey] = [NSNumber numberWithDouble:extents.xmin];
+    newProperties[kYminKey] = [NSNumber numberWithDouble:extents.ymin];
+    newProperties[kXmaxKey] = [NSNumber numberWithDouble:extents.xmax];
+    newProperties[kYmaxKey] = [NSNumber numberWithDouble:extents.ymax];
 
     if (self = [self initWithProperties:[newProperties copy]]) {
         _tileCache = tileCache;
