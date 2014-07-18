@@ -524,6 +524,7 @@ static int _downloadsInProgress = 0;
             }];
             if (index == NSNotFound) {
                 [indexesOfRemoteMapsToRemove addIndex:i];
+                [map deleteFromFileSystem];
                 modelChanged = YES;
             } else {
                 //update the url of cached server objects
