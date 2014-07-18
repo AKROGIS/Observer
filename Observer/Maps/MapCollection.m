@@ -274,10 +274,12 @@ static int _downloadsInProgress = 0;
     [self.remoteItems removeAllObjects];
     for (NSURL *mapURL in mapURLs) {
         Map *map = [[Map alloc] initWithCachedPropertiesURL:mapURL];
-        if (map.isLocal) {
-            [self.localItems addObject:map];
-        } else {
-            [self.remoteItems addObject:map];
+        if (map) {
+            if (map.isLocal) {
+                [self.localItems addObject:map];
+            } else {
+                [self.remoteItems addObject:map];
+            }
         }
     }
 }
