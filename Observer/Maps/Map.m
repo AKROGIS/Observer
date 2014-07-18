@@ -133,6 +133,7 @@
     return self;
 }
 
+//Alert: will block for filesystem IO
 + (NSURL *)generatePlistURL
 {
     NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
@@ -141,8 +142,10 @@
         [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
     }
     return [[folder URLByAppendingPathComponent:@"map.plist"] URLByUniquingPath];
+    //The new URL will be written to right away.
 }
 
+//Alert: will block for filesystem IO
 + (NSURL *)generateThumbnailURL
 {
     NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
@@ -156,7 +159,11 @@
     if (![[NSFileManager defaultManager] fileExistsAtPath:[folder path]]) {
         [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
     }
-    return [[folder URLByAppendingPathComponent:@"thumbnail.png"] URLByUniquingPath];
+    NSURL *newUrl = [[folder URLByAppendingPathComponent:@"thumbnail.png"] URLByUniquingPath];
+    //Since thumbnails will not be written right away, and new maps may get created in between,
+    //we need to write a sentinal to disk at this URL, so another map will not try to us the same URL
+    [[NSFileManager defaultManager] createFileAtPath:newUrl.path contents:nil attributes:nil];
+    return newUrl;
 }
 
 
@@ -448,12 +455,17 @@
 //Alert: Mutating function
 //Alert: will block for IO
 - (void)loadThumbnail {
+    UIImage *thumbnail = nil;
     if ([[NSFileManager defaultManager] fileExistsAtPath:self.cachedThumbnailURL.path]) {
-        _thumbnail = [Map loadThumbnailAtURL:self.cachedThumbnailURL];
-    } else {
-        _thumbnail = [Map loadThumbnailAtURL:self.remoteThumbnailURL];
-        [Map saveImage:_thumbnail toURL:self.cachedThumbnailURL];
+        thumbnail = [Map loadThumbnailAtURL:self.cachedThumbnailURL];
     }
+    if (!thumbnail) {
+        thumbnail = [Map loadThumbnailAtURL:self.remoteThumbnailURL];
+        if (thumbnail) {
+            [Map saveImage:thumbnail toURL:self.cachedThumbnailURL];
+        }
+    }
+    _thumbnail = thumbnail;
     self.isThumbnailLoaded = YES;
 }
 
@@ -473,6 +485,7 @@
 + (void)saveImage:(UIImage *)image toURL:(NSURL *)url
 {
     if (url.isFileURL) {
+        [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         [UIImagePNGRepresentation(image) writeToURL:url atomically:YES];
     }
 }
