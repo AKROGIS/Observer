@@ -41,7 +41,7 @@
     [self updateSizeUI];
     [self setupLocationUI];
     self.descriptionLabel.preferredMaxLayoutWidth = self.preferredContentSize.width - TEXTMARGINS;
-    self.descriptionLabel.text = self.map.description;
+    self.descriptionLabel.text = self.map.mapNotes;
     self.thumbnailImageView.image = self.map.thumbnail;
 }
 
