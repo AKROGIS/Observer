@@ -17,20 +17,11 @@
  * a zero value, as it will always be replaced with your default
  */
 
-#define DEFAULTS_KEY_URL_FOR_ACTIVE_MAP @"url_for_active_map"
-#define DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP nil
-
 #define DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES @"url_for_active_map_properties"
 #define DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP_PROPERTIES nil
 
 #define DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY @"url_for_active_survey"
 #define DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY nil
-
-//#define DEFAULTS_KEY_INDEX_OF_CURRENT_MAP @"index_of_current_map"
-//#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP 0
-//
-//#define DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY @"index_of_current_survey"
-//#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY 0
 
 #define DEFAULTS_KEY_SORTED_MAP_LIST @"sorted_map_list"
 #define DEFAULTS_DEFAULT_SORTED_MAP_LIST nil
@@ -104,29 +95,6 @@
 - (id)copyWithZone:(NSZone *)zone
 {
     return self;
-}
-
-
-
-@synthesize activeMapURL = _activeMapURL;
-
-- (NSURL *)activeMapURL
-{
-    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP];
-    if ([value isKindOfClass:[NSString class]]) {
-        value = [NSURL URLWithString:value];
-    }
-    return value ? value : DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP;
-}
-
-- (void)setActiveMapURL:(NSURL *)activeMapURL
-{
-    NSString *string = activeMapURL.absoluteString;
-    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP]) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP];
-    } else {
-        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP];
-    }
 }
 
 

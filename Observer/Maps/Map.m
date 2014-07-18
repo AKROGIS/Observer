@@ -13,10 +13,6 @@
 #import "NSURL+isEqualToURL.h"
 #import "NSURL+unique.h"
 
-//#define kCodingVersion    1
-//#define kCodingVersionKey @"codingversion"
-//#define kExtentsKey       @"extents"
-
 @interface Map()
 
 //A private dictionary of map properties
@@ -167,152 +163,6 @@
     [[NSFileManager defaultManager] createFileAtPath:newUrl.path contents:nil attributes:nil];
     return newUrl;
 }
-
-
-
-
-
-//- (void)setMapPropertiesFromTpk:(Map *)map
-//{
-//    NSMutableDictionary *properties = [NSMutableDictionary new];
-//    NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:[map.url path] error:nil];
-//    map.thumbnail = map.tileCache.thumbnail;
-//    map.thumbnailIsLoaded = YES;
-//
-//    map.author = @"Unknown"; //TODO: get the author from the esriinfo.xml file in the zipped tpk
-//    map.byteCount = [fileAttributes fileSize];
-//    map.date = [fileAttributes fileCreationDate];  //TODO: Get the date from the esriinfo.xml file in the zipped tpk
-//    map.description = @"Not available."; //TODO: get the description from the esriinfo.xml file in the zipped tpk
-//    map.thumbnail = map.tileCache.thumbnail;
-//    map.thumbnailIsLoaded = YES;
-//    map.extents = map.tileCache.fullEnvelope;
-//
-//    properties[kDateKey] = [fileAttributes fileCreationDate];  //TODO: Get the date from the esriinfo.xml file in the zipped tpk
-//    properties[kAuthorKey] = @"Unknown"; //TODO: get the author from the esriinfo.xml file in the zipped tpk
-//    properties[kSizeKey] = [NSNumber numberWithUnsignedLongLong:[fileAttributes fileSize]];
-//    properties[kDescriptionKey] = @"Not available."; //TODO: get the description from the esriinfo.xml file in the zipped tpk
-//properties[kRemoteThumbnailUrlKey] = map.tileCache.thumbnail;
-//properties[kXminKey] = map.tileCache.fullEnvelope.xmin;
-//properties[kYminKey] = self.tileCache.fullEnvelope.ymin;
-//properties[kXmaxKey] = self.tileCache.fullEnvelope.xmax;
-//    properties[kYmaxKey] = self.tileCache.fullEnvelope.ymax;
-//
-//    self.author = ([item isKindOfClass:[NSString class]] ? item : nil);
-//    item =  properties[kSizeKey];
-//    self.byteCount = [item isKindOfClass:[NSNumber class]] ? [item unsignedLongLongValue] : 0;
-//    item =  properties[kDescriptionKey];
-//    self.description = [item isKindOfClass:[NSString class]] ? item : nil;
-//    item =  properties[kRemoteThumbnailUrlKey];
-//    self.remoteThumbnailUrl = [item isKindOfClass:[NSString class]] ? [NSURL URLWithString:item] : nil;
-//    item =  properties[kXminKey];
-//    CGFloat xmin = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-//    item =  properties[kYminKey];
-//    CGFloat ymin = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-//    item =  properties[kXmaxKey];
-//    CGFloat xmax = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-//    item =  properties[kYmaxKey];
-//    CGFloat ymax = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-//    if (xmin != 0  || ymin != 0 || xmax != 0 || ymax != 0 ) {
-//        self.extents = [[AGSEnvelope alloc] initWithXmin:xmin ymin:ymin xmax:xmax ymax:ymax spatialReference:[AGSSpatialReference wgs84SpatialReference]];
-//    }
-//}
-//
-//- (id)initWithDictionary:(NSDictionary *)dictionary
-//{
-//    id item = dictionary[kUrlKey];
-//    NSURL *url;
-//    if ([item isKindOfClass:[NSString class]]) {
-//        url = [NSURL URLWithString:item];
-//    }
-//    if (!url) {
-//        return nil;
-//    }
-//    Map *map = [self initWithURL:url];
-//    if (map) {
-//        map.properties = dictionary;
-//    }
-//    return map;
-//}
-
-//#pragma mark - NSCoding
-//
-//- (id)initWithCoder:(NSCoder *)aDecoder
-//{
-//    int version = [aDecoder decodeIntForKey:kCodingVersionKey];
-//    switch (version) {
-//        case 1: {
-//            Map *map = [self initWithURL:[aDecoder decodeObjectForKey:kUrlKey]];
-//            if (map) {
-//                map.title = [aDecoder decodeObjectForKey:kTitleKey];
-//                map.author = [aDecoder decodeObjectForKey:kAuthorKey];
-//                map.date = [aDecoder decodeObjectForKey:kDateKey];
-//                map.description = [aDecoder decodeObjectForKey:kDescriptionKey];
-//                NSNumber *bytes = [aDecoder decodeObjectForKey:kSizeKey];
-//                map.byteCount = [bytes unsignedIntegerValue];
-//                map.remoteThumbnailUrl = [aDecoder decodeObjectForKey:kRemoteThumbnailUrlKey];
-//                map.localThumbnailUrl = [aDecoder decodeObjectForKey:kLocalThumbnailUrlKey];
-//                map.extents = [[AGSEnvelope alloc] initWithJSON:[aDecoder decodeObjectForKey:kExtentsKey]];
-//            }
-//            return map;
-//        }
-//        default:
-//            return nil;
-//    }
-//}
-//
-//- (void)encodeWithCoder:(NSCoder *)aCoder
-//{
-//    [aCoder encodeInt:kCodingVersion forKey:kCodingVersionKey];
-//    [aCoder encodeObject:self.url forKey:kUrlKey];
-//    [aCoder encodeObject:self.title forKey:kTitleKey];
-//    [aCoder encodeObject:self.author forKey:kAuthorKey];
-//    [aCoder encodeObject:self.date forKey:kDateKey];
-//    [aCoder encodeObject:self.description forKey:kDescriptionKey];
-//    [aCoder encodeObject:[NSNumber numberWithUnsignedLongLong:self.byteCount] forKey:kSizeKey];
-//    [aCoder encodeObject:self.remoteThumbnailUrl forKey:kRemoteThumbnailUrlKey];
-//    [aCoder encodeObject:self.localThumbnailUrl forKey:kLocalThumbnailUrlKey];
-//    [aCoder encodeObject:[self.extents encodeToJSON] forKey:kExtentsKey];
-//}
-//- (void)setProperties:(NSDictionary *)properties
-//{
-//    id item = properties[kTitleKey];
-//    self.title = ([item isKindOfClass:[NSString class]] ? item : nil);
-//    item = properties[kDateKey];
-//    self.date = [item isKindOfClass:[NSDate class]] ? item : ([item isKindOfClass:[NSString class]] ? [AKRFormatter dateFromISOString:item] : nil);
-//    item = properties[kAuthorKey];
-//    self.author = ([item isKindOfClass:[NSString class]] ? item : nil);
-//    item =  properties[kSizeKey];
-//    self.byteCount = [item isKindOfClass:[NSNumber class]] ? [item unsignedLongLongValue] : 0;
-//    item =  properties[kDescriptionKey];
-//    self.description = [item isKindOfClass:[NSString class]] ? item : nil;
-//    item =  properties[kRemoteThumbnailUrlKey];
-//    self.remoteThumbnailUrl = [item isKindOfClass:[NSString class]] ? [NSURL URLWithString:item] : nil;
-//    item =  properties[kXminKey];
-//    CGFloat xmin = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-//    item =  properties[kYminKey];
-//    CGFloat ymin = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-//    item =  properties[kXmaxKey];
-//    CGFloat xmax = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-//    item =  properties[kYmaxKey];
-//    CGFloat ymax = [item isKindOfClass:[NSNumber class]] ? [item floatValue] : 0.0;
-//    if (xmin != 0  || ymin != 0 || xmax != 0 || ymax != 0 ) {
-//        self.extents = [[AGSEnvelope alloc] initWithXmin:xmin ymin:ymin xmax:xmax ymax:ymax spatialReference:[AGSSpatialReference wgs84SpatialReference]];
-//    }
-//
-//    item = properties[kLocalThumbnailUrlKey];
-//    if (item) {
-//        self.localThumbnailUrl = [item isKindOfClass:[NSString class]] ? [NSURL URLWithString:item] : nil;
-//    } else {
-//        NSMutableDictionary newProps = [NSMutableDictionary dictionaryWithDictionary:properties];
-//        newProps[kLocalThumbnailUrlKey] = self.localThumbnailUrl;
-//        properties = [newProps copy];
-//    }
-//
-//    if (![[NSFileManager defaultManager] fileExistsAtPath:[self.propertiesCacheUrl path]]) {
-//        [properties writeToURL:self.propertiesCacheUrl atomically:YES];
-//    }
-//}
-
 
 
 
@@ -563,11 +413,6 @@
             ((self.date == other.date) || [self.date isEqual:other.date]));
 }
 
-//- (BOOL) isValid
-//{
-//    return !self.isLocal || [[NSFileManager defaultManager] fileExistsAtPath:self.tileCacheURL.path];
-//}
-
 - (BOOL)isEqualToRemoteProperties:(NSDictionary *)remoteMapProperties
 {
     //Equality is not well defined here, but I am trying to answer this question:
@@ -657,113 +502,6 @@
 
 
 
-//#pragma mark - loaders
-//
-//
-//- (BOOL)hasLoadedThumbnail
-//{
-//    return self.thumbnailIsLoaded;
-//}
-//
-//- (void)loadThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler
-//{
-//    if (self.thumbnail || self.thumbnailIsLoaded) {
-//        if (completionHandler) {
-//            completionHandler(self.thumbnail != nil);
-//        }
-//    }
-//    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
-//        [self loadThumbnail];
-//        if (completionHandler) {
-//            completionHandler(self.thumbnail != nil);
-//        }
-//    });
-//}
-//
-//- (void)setThumbnail:(UIImage *)image
-//{
-//    if (!self.localThumbnailUrl || ![[NSFileManager defaultManager] fileExistsAtPath:[self.localThumbnailUrl path]]) {
-//        NSString *name = [self.url.lastPathComponent stringByDeletingPathExtension];
-//        NSURL *cachedImage = [self cacheThumbnail:image mapName:name];
-//        self.localThumbnailUrl = cachedImage;
-//    }
-//    _thumbnail = image;
-//}
-//
-//- (void)loadThumbnail
-//{
-//    NSData *data = nil;
-//    if (self.localThumbnailUrl && [[NSFileManager defaultManager] fileExistsAtPath:[self.localThumbnailUrl path]]) {
-//         data = [NSData dataWithContentsOfURL:self.localThumbnailUrl];
-//    } else {
-//        //TODO: do this transfer in an NSOperation Queue
-//        //TODO: need to deal with various network errors
-//        data = [NSData dataWithContentsOfURL:self.remoteThumbnailUrl];
-//    }
-//    if (data) {
-//        self.thumbnail = [[UIImage alloc] initWithData:data];
-//    }
-//    self.thumbnailIsLoaded = YES;
-//    //Update the cache:
-//    //TODO: Have the map manage it's own cache, so I don't need call the collection to do the save;
-//    //[[MapCollection sharedCollection] synchronize];
-//}
-//
-//- (NSURL *)cacheThumbnail:(UIImage *)image mapName:(NSString *)name
-//{
-//    //save the image in a cache folder and return the URL
-//    //Use the name to index and name the image.
-//    // If there is no cached image with given name, then create it and be done.
-//    // If the name exists, and the data is the same, then return the existing URL
-//    // If the name exists, and the data is NOT the same, then uniquify the URL and save the image
-//
-//    NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
-//    NSURL *folder = [library URLByAppendingPathComponent:@"mapthumbs" isDirectory:YES];
-//    if (![[NSFileManager defaultManager] fileExistsAtPath:[folder path]]) {
-//        [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
-//    }
-//    NSURL *thumb = [[folder URLByAppendingPathComponent:name] URLByAppendingPathExtension:@"png"];
-//    if ([[NSFileManager defaultManager] fileExistsAtPath:[thumb path]]) {
-//        if ([UIImagePNGRepresentation(image) isEqualToData:[NSData dataWithContentsOfURL:thumb]]) {
-//            //FIXME: this equality doesn't work remote thumbnail <> tpk thumbnail
-//            return thumb;
-//        } else {
-//            thumb = [thumb URLByUniquingPath];
-//        }
-//    }
-//    [UIImagePNGRepresentation(image) writeToURL:thumb atomically:YES];
-//    return thumb;
-//}
-//
-//- (NSURL *)cacheProperties:(NSDictionary *)properties mapName:(NSString *)name
-//{
-//    //save the image in a cache folder and return the URL
-//    //Use the name to index and name the image.
-//    // If there is no cached image with given name, then create it and be done.
-//    // If the name exists, and the data is the same, then return the existing URL
-//    // If the name exists, and the data is NOT the same, then uniquify the URL and save the image
-//
-//    NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
-//    NSURL *folder = [library URLByAppendingPathComponent:@"mapprops" isDirectory:YES];
-//    if (![[NSFileManager defaultManager] fileExistsAtPath:[folder path]]) {
-//        [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
-//    }
-//    NSURL *thumb = [[folder URLByAppendingPathComponent:name] URLByAppendingPathExtension:@"png"];
-//    if ([[NSFileManager defaultManager] fileExistsAtPath:[thumb path]]) {
-//        if ([UIImagePNGRepresentation(image) isEqualToData:[NSData dataWithContentsOfURL:thumb]]) {
-//            //FIXME: this equality doesn't work remote thumbnail <> tpk thumbnail
-//            return thumb;
-//        } else {
-//            thumb = [thumb URLByUniquingPath];
-//        }
-//    }
-//    [UIImagePNGRepresentation(image) writeToURL:thumb atomically:YES];
-//    return thumb;
-//}
-
-
-
-
 #pragma mark - download
 //TODO: move this to a NSOperation
 
@@ -843,16 +581,6 @@
         }
     }
     BOOL success = [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];
-//    Map *newMap = nil;
-//    if (success) {
-//        NSURL *savedUrl = self.url;
-//        newMap = self;  //This is a cheat, I should make a copy, but self (the obsolete remote version) will be removed momentarily
-//        newMap.url = self.destinationURL;
-//        if (!newMap.isValid) {
-//            newMap = nil;
-//            self.url = savedUrl;
-//        }
-//    }
     [MapCollection finishedDownloading];
     if (success) {
         self.tileCacheURL = self.destinationURL;

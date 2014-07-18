@@ -88,9 +88,6 @@
 
 
 
-
-
-
 //YES if two Maps are the same (same size, title, author and date)
 //    do not compare urls, because the same Map will have either a local, or a server url
 - (BOOL)isEqualToMap:(Map *)Map;
@@ -100,9 +97,6 @@
 - (BOOL)shouldUpdateToRemoteProperties:(NSDictionary *)remoteMapProperties;
 - (void)updateWithRemoteProperties:(NSDictionary *)remoteMapProperties;
 
-
-//YES if the survey is valid
-//- (BOOL) isValid;
 
 // Additional info for the view controllers
 - (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location;

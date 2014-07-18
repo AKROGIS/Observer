@@ -150,11 +150,6 @@ static int _downloadsInProgress = 0;
     });
 }
 
-//-(void)synchronize
-//{
-//    [self saveCache];
-//}
-
 
 
 
@@ -293,64 +288,6 @@ static int _downloadsInProgress = 0;
     }];
 }
 
-//TODO load old cache if we are transitioning
-
-//TODO: - consider NSDefaults as it does memory mapping and defered writes
-//       this also make the class a singleton object
-//
-//+ (NSURL *)cacheFile
-//{
-//    static NSURL *_cacheFile = nil;
-//    if (!_cacheFile) {
-//        _cacheFile = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
-//        _cacheFile = [_cacheFile URLByAppendingPathComponent:@"map_list.cache"];
-//    }
-//    return _cacheFile;
-//}
-//
-////done on background thread
-//- (void)loadCache
-//{
-//    NSArray *plist = [NSArray arrayWithContentsOfURL:[MapCollection cacheFile]];
-//    for (id obj in plist) {
-//        if ([obj isKindOfClass:[NSDate class]]) {
-//            self.refreshDate = obj;
-//        }
-//        if ([obj isKindOfClass:[NSData class]]) {
-//            id map = [NSKeyedUnarchiver unarchiveObjectWithData:obj];
-//            if ([map isKindOfClass:[Map class]]) {
-//                if (((Map *)map).isLocal) {
-//                    [self.localItems addObject:map];
-//                } else {
-//                    [self.remoteItems addObject:map];
-//                }
-//            }
-//        }
-//    }
-//}
-//
-////must be called by the thread that changes the model, after changes are complete.
-////because of the enumeration of the model, it cannot be called while the model might be changed.
-//- (void)saveCache
-//{
-//    //dispatching the creation of the archive data to a background thread could result in an exception
-//    //if the UI thread then changed the model while it is being enumerated
-//    NSMutableArray *plist = [NSMutableArray new];
-//    if (self.refreshDate) {
-//        [plist addObject:self.refreshDate];
-//    }
-//    for (Map *map in self.localItems) {
-//        [plist addObject:[NSKeyedArchiver archivedDataWithRootObject:map]];
-//    }
-//    for (Map *map in self.remoteItems) {
-//        [plist addObject:[NSKeyedArchiver archivedDataWithRootObject:map]];
-//    }
-//    //File save can be safely done on a background thread.
-//    dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
-//        [plist writeToURL:[MapCollection cacheFile] atomically:YES];
-//    });
-//}
-
 
 
 
@@ -488,11 +425,6 @@ static int _downloadsInProgress = 0;
             for (id jsonItem in items) {
                 if ([jsonItem isKindOfClass:[NSDictionary class]]) {
                     [maps addObject:jsonItem];
-//                    NSDictionary *item = jsonItem;
-//                    Map *map = [[Map alloc] initWithRemoteProperties:item];
-//                    if (map) {
-//                        [maps addObject:map];
-//                    }
                 }
             }
         }

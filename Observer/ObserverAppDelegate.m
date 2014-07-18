@@ -35,13 +35,6 @@
     [Crashlytics startWithAPIKey:@"48e51797d0250122096db58d369feab2cac2da33"];
 
     Map *savedMap = [[Map alloc] initWithCachedPropertiesURL:[Settings manager].activeMapPropertiesURL];
-//    if (!savedMap) {
-//        savedMap = [[Map alloc] initWithCachedPropertiesURL:[Settings manager].activeMapURL];
-//        if (savedMap) {
-//            //TODO: We have the old system; upgrade it, and return a new style map
-//            [Settings manager].activeMapURL] = nil;
-//        }
-//    }
     if (savedMap) {
         self.observerMapViewController.map = savedMap;
     }
