@@ -66,7 +66,7 @@
 - (id)initWithRemoteProperties:(NSDictionary *)properties
 {
     NSMutableDictionary *newProperties = [NSMutableDictionary dictionaryWithDictionary:properties];
-    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL];
+    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].absoluteString;
     if (self = [self initWithProperties:[newProperties copy]]) {
         _plistURL = [Map generatePlistURL];
         [newProperties writeToURL:_plistURL atomically:YES];
@@ -90,9 +90,9 @@
     newProperties[kAuthorKey] = @"Unknown";
     newProperties[kDateKey] = [fileAttributes fileCreationDate];  //TODO: Get the date from the esriinfo.xml file in the zipped tpk
     newProperties[kSizeKey] = [NSNumber numberWithUnsignedLongLong:[fileAttributes fileSize]];
-    newProperties[kUrlKey] = url;
+    newProperties[kUrlKey] = url.absoluteString;
     //kRemoteThumbUrlKey - not available or required
-    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL];
+    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].absoluteString;
     newProperties[kDescriptionKey] = @"Not available."; //TODO: get the description from the esriinfo.xml file in the zipped tpk
     newProperties[kXminKey] = [NSNumber numberWithDouble:tileCache.fullEnvelope.xmin];
     newProperties[kYminKey] = [NSNumber numberWithDouble:tileCache.fullEnvelope.ymin];
@@ -346,9 +346,9 @@
 {
     if (![tileCacheURL isEqualToURL:self.tileCacheURL]) {
         NSMutableDictionary *newProperties = [NSMutableDictionary dictionaryWithDictionary:self.properties];
-        newProperties[kUrlKey] = tileCacheURL;
+        newProperties[kUrlKey] = tileCacheURL.absoluteString;
         self.properties = [newProperties copy];
-        [newProperties writeToURL:_plistURL atomically:YES];
+        [newProperties writeToURL:self.plistURL atomically:YES];
     }
 }
 
