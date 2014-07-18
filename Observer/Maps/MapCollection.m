@@ -79,6 +79,21 @@ static int _downloadsInProgress = 0;
 
 
 
+#pragma mark - property accessors
+
+- (NSDate*) refreshDate
+{
+    return [Settings manager].mapRefreshDate;
+}
+
+- (void)setRefreshDate:(NSDate*)newDate
+{
+    [Settings manager].mapRefreshDate = newDate;
+}
+
+
+
+
 #pragma mark - public methods
 
 + (BOOL)collectsURL:(NSURL *)url
@@ -108,7 +123,7 @@ static int _downloadsInProgress = 0;
                 dispatch_async(dispatch_queue_create("gov.nps.akr.observer.mapcollection.open", DISPATCH_QUEUE_SERIAL), ^{
                     [self loadCache];
                     [self refreshLocalMaps];
-                    if (!self.refreshDate) {
+                    if (self.remoteItems.count == 0 || !self.refreshDate) {
                         [self refreshRemoteMaps];
                         self.refreshDate = [NSDate date];
                     }

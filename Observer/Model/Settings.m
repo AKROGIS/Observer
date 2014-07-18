@@ -38,6 +38,9 @@
 #define DEFAULTS_KEY_SORTED_SURVEY_LIST @"sorted_survey_list"
 #define DEFAULTS_DEFAULT_SORTED_SURVEY_LIST nil
 
+#define DEFAULTS_KEY_MAP_REFRESH_DATE @"map_refresh_date"
+#define DEFAULTS_DEFAULT_MAP_REFRESH_DATE nil
+
 #define DEFAULTS_KEY_HIDE_REMOTE_MAPS @"hide_remote_maps"
 #define DEFAULTS_DEFAULT_HIDE_REMOTE_MAPS NO
 
@@ -226,6 +229,24 @@
     } else {
         [[NSUserDefaults standardUserDefaults] setObject:strings forKey:DEFAULTS_KEY_SORTED_SURVEY_LIST];
     }
+}
+
+
+
+@synthesize mapRefreshDate = _mapRefreshDate;
+
+- (NSDate *)mapRefreshDate
+{
+    NSDate *value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_MAP_REFRESH_DATE];
+    return value ? value : DEFAULTS_DEFAULT_MAP_REFRESH_DATE;
+}
+
+- (void)setMapRefreshDate:(NSDate *)mapRefreshDate
+{
+    if (mapRefreshDate == DEFAULTS_DEFAULT_MAP_REFRESH_DATE)
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_MAP_REFRESH_DATE];
+    else
+        [[NSUserDefaults standardUserDefaults] setObject:mapRefreshDate forKey:DEFAULTS_KEY_MAP_REFRESH_DATE];
 }
 
 

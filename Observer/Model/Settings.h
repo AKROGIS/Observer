@@ -34,6 +34,8 @@
 @property (nonatomic, strong) NSArray *maps;    //of NSURL
 @property (nonatomic, strong) NSArray *surveys; //of NSURL
 
+@property (nonatomic, strong) NSDate *mapRefreshDate;
+
 @property (nonatomic) BOOL hideRemoteMaps;
 @property (nonatomic) BOOL hideRemoteProtocols;
 
