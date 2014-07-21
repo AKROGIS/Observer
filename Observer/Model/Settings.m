@@ -17,20 +17,20 @@
  * a zero value, as it will always be replaced with your default
  */
 
-#define DEFAULTS_KEY_URL_FOR_ACTIVE_MAP @"url_for_active_map"
-#define DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP nil
+#define DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES @"url_for_active_map_properties"
+#define DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP_PROPERTIES nil
 
 #define DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY @"url_for_active_survey"
 #define DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY nil
 
-#define DEFAULTS_KEY_INDEX_OF_CURRENT_MAP @"index_of_current_map"
-#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_MAP 0
-
-#define DEFAULTS_KEY_INDEX_OF_CURRENT_SURVEY @"index_of_current_survey"
-#define DEFAULTS_DEFAULT_INDEX_OF_CURRENT_SURVEY 0
+#define DEFAULTS_KEY_SORTED_MAP_LIST @"sorted_map_list"
+#define DEFAULTS_DEFAULT_SORTED_MAP_LIST nil
 
 #define DEFAULTS_KEY_SORTED_SURVEY_LIST @"sorted_survey_list"
 #define DEFAULTS_DEFAULT_SORTED_SURVEY_LIST nil
+
+#define DEFAULTS_KEY_MAP_REFRESH_DATE @"map_refresh_date"
+#define DEFAULTS_DEFAULT_MAP_REFRESH_DATE nil
 
 #define DEFAULTS_KEY_HIDE_REMOTE_MAPS @"hide_remote_maps"
 #define DEFAULTS_DEFAULT_HIDE_REMOTE_MAPS NO
@@ -99,24 +99,24 @@
 
 
 
-@synthesize activeMapURL = _activeMapURL;
+@synthesize activeMapPropertiesURL = _activeMapPropertiesURL;
 
-- (NSURL *)activeMapURL
+- (NSURL *)activeMapPropertiesURL
 {
-    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP];
+    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES];
     if ([value isKindOfClass:[NSString class]]) {
         value = [NSURL URLWithString:value];
     }
-    return value ? value : DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP;
+    return value ? value : DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP_PROPERTIES;
 }
 
-- (void)setActiveMapURL:(NSURL *)activeMapURL
+- (void)setActiveMapPropertiesURL:(NSURL *)activeMapPropertiesURL
 {
-    NSString *string = activeMapURL.absoluteString;
-    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP]) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP];
+    NSString *string = activeMapPropertiesURL.absoluteString;
+    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP_PROPERTIES]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES];
     } else {
-        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP];
+        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES];
     }
 }
 
@@ -140,6 +140,34 @@
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY];
     } else {
         [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY];
+    }
+}
+
+
+
+@synthesize maps = _maps;
+
+- (NSArray *) maps
+{
+    NSArray *value = [[NSUserDefaults standardUserDefaults] arrayForKey:DEFAULTS_KEY_SORTED_MAP_LIST];
+    //NSDefaults returns a NSArray of NSString, convert to a NSArray of NSURL
+    value = [value mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
+        return [NSURL URLWithString:obj];
+    }];
+    return value ? value : DEFAULTS_DEFAULT_SORTED_MAP_LIST;
+}
+
+- (void) setMaps:(NSArray *)maps
+{
+    //NSURL is not a property list type (NSDefaults can't persist an array of NSURL
+    //I need to convert it to and array of NSString
+    NSArray *strings = [maps mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
+        return ((NSURL *)obj).absoluteString;
+    }];
+    if ([strings isEqual:DEFAULTS_DEFAULT_SORTED_MAP_LIST]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SORTED_MAP_LIST];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setObject:strings forKey:DEFAULTS_KEY_SORTED_MAP_LIST];
     }
 }
 
@@ -169,6 +197,24 @@
     } else {
         [[NSUserDefaults standardUserDefaults] setObject:strings forKey:DEFAULTS_KEY_SORTED_SURVEY_LIST];
     }
+}
+
+
+
+@synthesize mapRefreshDate = _mapRefreshDate;
+
+- (NSDate *)mapRefreshDate
+{
+    NSDate *value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_MAP_REFRESH_DATE];
+    return value ? value : DEFAULTS_DEFAULT_MAP_REFRESH_DATE;
+}
+
+- (void)setMapRefreshDate:(NSDate *)mapRefreshDate
+{
+    if (mapRefreshDate == DEFAULTS_DEFAULT_MAP_REFRESH_DATE)
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_MAP_REFRESH_DATE];
+    else
+        [[NSUserDefaults standardUserDefaults] setObject:mapRefreshDate forKey:DEFAULTS_KEY_MAP_REFRESH_DATE];
 }
 
 

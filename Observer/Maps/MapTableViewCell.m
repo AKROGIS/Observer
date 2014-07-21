@@ -25,9 +25,8 @@
 {
     if (downloading != _downloading) {
         _downloading = downloading;
-        self.downloadProgressView.hidden = !downloading;
-        self.startDownloadImageView.hidden = downloading;
         self.downloadProgressView.downloading = downloading;
+        self.startDownloadImageView.hidden = downloading;
     }
 }
 

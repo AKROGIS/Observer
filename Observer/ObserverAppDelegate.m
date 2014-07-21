@@ -34,8 +34,8 @@
     //Activate the Crash reporting system
     [Crashlytics startWithAPIKey:@"48e51797d0250122096db58d369feab2cac2da33"];
 
-    Map *savedMap = [[Map alloc] initWithLocalTileCache:[Settings manager].activeMapURL];
-    if (savedMap.isValid) {
+    Map *savedMap = [[Map alloc] initWithCachedPropertiesURL:[Settings manager].activeMapPropertiesURL];
+    if (savedMap) {
         self.observerMapViewController.map = savedMap;
     }
     Survey *savedSurvey = [[Survey alloc] initWithURL:[Settings manager].activeSurveyURL];
@@ -111,8 +111,12 @@
         }
     }
     if ([MapCollection collectsURL:url]) {
-        Map *newMap = [[Map alloc] initWithLocalTileCache:newUrl];
-        if ([newMap isValid]) {
+        // TODO: Put up a modal, asking for details on the tile cache, i.e. name, author, date, description
+        //       explain the importance of the attributes in identifying the map for reference for non-gps points
+        //       maybe get the defaults from the esriinfo.xml file in the zipped tpk
+        //       Map *newMap = [[Map alloc] initWithTileCacheURL:newUrl name:name author:author date:date description:description;
+        Map *newMap = [[Map alloc] initWithTileCacheURL:newUrl];
+        if (newMap) {
             self.observerMapViewController.map = newMap;
             return YES;
         } else {

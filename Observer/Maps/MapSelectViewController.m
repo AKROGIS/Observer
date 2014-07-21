@@ -209,7 +209,7 @@
         cell.titleLabel.text = map.title;
         cell.subtitle1Label.text = map.subtitle;
         cell.subtitle2Label.text = map.subtitle2;
-        if (map.hasLoadedThumbnail) {
+        if (map.isThumbnailLoaded) {
             cell.thumbnailImageView.image = map.thumbnail;
         } else {
             cell.thumbnailImageView.image = [UIImage imageNamed:@"TilePackage"];
@@ -227,6 +227,12 @@
         map.downloadProgressAction = ^(double bytesWritten, double bytesExpected) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 cell.percentComplete = (float)(bytesWritten/bytesExpected);
+            });
+        };
+        __weak Map *weakMap = map;
+        map.downloadCompletionAction = ^(BOOL success) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self downloadSucceeded:success forMap:weakMap inCollection:self.items atIndex:indexPath];
             });
         };
         return cell;
@@ -373,23 +379,29 @@
         [map cancelDownload];
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     } else {
-        map.downloadCompletionAction = ^(Map *newMap) {
-            //on background thread
+        __weak Map *weakMap = map;
+        map.downloadCompletionAction = ^(BOOL success) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                if (newMap) {
-                    [self.items removeRemoteMapAtIndex:indexPath.urow];
-                    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-                    [self.items insertLocalMap:newMap atIndex:0];
-                    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-                } else {
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Can't download map." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-                    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-                }
+                [self downloadSucceeded:success forMap:weakMap inCollection:self.items atIndex:indexPath];
             });
         };
         [map startDownload];
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
+}
+
+- (void)downloadSucceeded:(BOOL)success forMap:(Map *)map inCollection:items atIndex:(NSIndexPath *)indexPath
+{
+    if (success) {
+        [items removeRemoteMapAtIndex:indexPath.urow];
+        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [items insertLocalMap:map atIndex:0];
+        [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } else {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Can't download map." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+
 }
 
 - (void)setFooterText
