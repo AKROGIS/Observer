@@ -422,7 +422,9 @@
     //Equal if the title, author and date are the same. (even if the content (URL/size) maybe different)
     id item = remoteMapProperties[kDateKey];
     NSDate *remoteDate = [item isKindOfClass:[NSDate class]] ? item : ([item isKindOfClass:[NSString class]] ? [AKRFormatter dateFromISOString:item] : nil);
-    if (self.title == remoteMapProperties[kTitleKey] && self.author == remoteMapProperties[kAuthorKey] && self.date == remoteDate) {
+    if ([self.title isEqualToString:remoteMapProperties[kTitleKey]] &&
+        [self.author isEqualToString:remoteMapProperties[kAuthorKey]] &&
+        [self.date isEqualToDate:remoteDate]) {
         return YES;
     }
     //Content equality
@@ -444,16 +446,14 @@
     //Any of the properties may have changed. to answer this, I would need to check each property
     //In addition the resource at the end of the thumnail URL may have been updated, and I have no way to determine this
     //Unless this is a problem, I will assume the worst.
-    return !self.isLocal;
+    //Also update local items if the author is unknown (probably came from a local tpk file)
+    return !self.isLocal || [self.author isEqualToString:@"Unknown"];
 }
 
 //Alert: Mutating function
 //Alert: will block for IO
 - (void)updateWithRemoteProperties:(NSDictionary *)remoteMapProperties
 {
-    if (self.isLocal) {
-        return;
-    }
     NSMutableDictionary *newProperties = [NSMutableDictionary dictionaryWithDictionary:remoteMapProperties];
     //the cachedThumbnailURL, and the tileCacheURL are the only properties that I might have changed.
     newProperties[kCachedThumbUrlKey] = self.properties[kCachedThumbUrlKey];
@@ -461,8 +461,11 @@
         //save the local URL, so we do not revert to a remote tilecache
         newProperties[kUrlKey] = self.properties[kUrlKey];
     }
-    //remove cached properties
+    //clear the contents of the thumbnail, so it will be reloaded;
+    //do not remove the file, else the saved name may get re-used
     [[NSFileManager defaultManager] removeItemAtURL:self.cachedThumbnailURL error:nil];
+    [[NSFileManager defaultManager] createFileAtPath:self.cachedThumbnailURL.path contents:nil attributes:nil];
+
     _thumbnail = nil;
     self.isThumbnailLoaded = NO;
     _extents = nil;

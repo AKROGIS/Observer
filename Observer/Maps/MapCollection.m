@@ -301,8 +301,9 @@ static int _downloadsInProgress = 0;
 
     //remove cache items not in filesystem
     NSMutableIndexSet *indexesOfLocalMapsToRemove = [NSMutableIndexSet new];
-    for (uint i = 0; i < self.localItems.count; i++) {
+    for (NSUInteger i = 0; i < self.localItems.count; i++) {
         Map *map = self.localItems[i];
+        //This check will remove remote maps from the local items list
         if (map.isLocal) {
             // A local file is the same as a map if the last path component is the same as the maps (local) tilecache URL
             NSUInteger index = [localMapFileNames indexOfObject:[map.tileCacheURL lastPathComponent]];
@@ -436,51 +437,57 @@ static int _downloadsInProgress = 0;
 //serverMaps is an array of map property dictionaries
 - (void)syncCacheWithServerMaps:(NSMutableArray *)serverMaps
 {
-    // we need to remove cached items not on the server,
-    // we need to add items on the server not in the cache,
-    // Do not add server items that match local items in the cache.
-    // a cached item (on the server) might have an updated URL thumbnail, or any other property
+    // we need to ignore server maps that are in our local list
+    //   - maybe update our memorized details if the server map has better/current details
+    // we need to ignore server maps that are in our remote list
+    //   - maybe update our memorized details if the server map has better/current details
+    // we need to add all other server maps to our remote list
+    // we need to remove items in our remote items list that are not found in the server maps
 
-    BOOL modelChanged = NO;
+    //Start by assuming we need to add all the remote descriptions (we will remove those that we find)
+    NSMutableArray *remotePropertiesToAdd = [NSMutableArray arrayWithArray:serverMaps];
 
-    //do not change the list while enumerating
-    NSMutableDictionary *mapsToUpdate = [NSMutableDictionary new];
+    //Remove memorized local maps from the server list (maybe update details on some local maps)
+    NSMutableIndexSet *localMapIndexesToUpdate = [NSMutableIndexSet new];
+    for (NSUInteger i = 0; i < self.localItems.count; i++) {
+        Map *map = self.localItems[i];
+        NSUInteger index = [remotePropertiesToAdd indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            return [map isEqualToRemoteProperties:(NSDictionary *)obj];
+        }];
+        if (index != NSNotFound) {
+            //If there is a local map that matches, see if it could use some updating
+            NSDictionary *remoteMapProperties = remotePropertiesToAdd[index];
+            if ([map shouldUpdateToRemoteProperties:remoteMapProperties]) {
+                [map updateWithRemoteProperties:remoteMapProperties];
+                [localMapIndexesToUpdate addIndex:i];
+            }
+            [remotePropertiesToAdd removeObjectAtIndex:index];
+        }
+    }
 
-    //remove maps in remoteItems not in serverMaps
+    //remove memorized maps (in remoteItems) if they are not in serverMaps
+    NSMutableIndexSet *remoteMapIndexesToUpdate = [NSMutableIndexSet new];
     NSMutableIndexSet *indexesOfRemoteMapsToRemove = [NSMutableIndexSet new];
-    for (uint i = 0; i < self.remoteItems.count; i++) {
+    for (NSUInteger i = 0; i < self.remoteItems.count; i++) {
         Map *map = self.remoteItems[i];
+        //This check will remove local maps from the remote items list
         if (!map.isLocal) {
-            NSUInteger index = [serverMaps indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            NSUInteger index = [remotePropertiesToAdd indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
                 return [map isEqualToRemoteProperties:(NSDictionary *)obj];
             }];
             if (index == NSNotFound) {
                 [indexesOfRemoteMapsToRemove addIndex:i];
                 [map deleteFromFileSystem];
-                modelChanged = YES;
             } else {
-                //update the url of cached server objects
-                NSDictionary *remoteMapProperties = serverMaps[index];
+                //update the memorized remote map with the current properties on the server
+                NSDictionary *remoteMapProperties = remotePropertiesToAdd[index];
                 if ([map shouldUpdateToRemoteProperties:remoteMapProperties]) {
-                    mapsToUpdate[[NSNumber numberWithInt:i]] = remoteMapProperties;
-                    modelChanged = YES;
+                    [remoteMapIndexesToUpdate addIndex:i];
+                    [map updateWithRemoteProperties:remoteMapProperties];
                 }
-                [serverMaps removeObjectAtIndex:index];
+                //If I found a memorized map, then I can ignore it (unless it is a local map
+                [remotePropertiesToAdd removeObjectAtIndex:index];
             }
-        }
-    }
-    //add server maps not in cache (local or server)
-    NSMutableArray *remotePropertiesToAdd = [NSMutableArray new];
-    for (NSDictionary *properties in serverMaps) {
-        NSUInteger localIndex = [self.localItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [(Map *)obj isEqualToRemoteProperties:properties];
-        }];
-        NSUInteger remoteIndex = [self.remoteItems indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [(Map *)obj isEqualToRemoteProperties:properties];
-        }];
-        if (localIndex == NSNotFound && remoteIndex == NSNotFound) {
-            [remotePropertiesToAdd addObject:properties];
-            modelChanged = YES;
         }
     }
 
@@ -498,11 +505,11 @@ static int _downloadsInProgress = 0;
     if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             //ALERT: be sure to do the update before removing maps, since the indexes will change when removing
-            for (id key in [mapsToUpdate allKeys]) {
-                Map *map = self.remoteItems[[key unsignedIntegerValue]];
-                NSDictionary *remoteMapProperties = [mapsToUpdate objectForKey:key];
-                [map updateWithRemoteProperties:remoteMapProperties];
-                [delegate collection:self changedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:[key unsignedIntegerValue]]];
+            if (0 < remoteMapIndexesToUpdate.count) {
+                [delegate collection:self changedRemoteItemsAtIndexes:remoteMapIndexesToUpdate];
+            }
+            if (0 < localMapIndexesToUpdate.count) {
+                [delegate collection:self changedLocalItemsAtIndexes:localMapIndexesToUpdate];
             }
             if (0 < indexesOfRemoteMapsToRemove.count) {
                 [self.remoteItems removeObjectsAtIndexes:indexesOfRemoteMapsToRemove];
@@ -515,17 +522,11 @@ static int _downloadsInProgress = 0;
             }
         });
     } else {
-        //ALERT: be sure to do the update before removing maps, since the indexes will change when removing
-        for (id key in [mapsToUpdate allKeys]) {
-            Map *map = self.remoteItems[[key unsignedIntegerValue]];
-            NSDictionary *remoteMapProperties = [mapsToUpdate objectForKey:key];
-            [map updateWithRemoteProperties:remoteMapProperties];
-        }
         [self.remoteItems removeObjectsAtIndexes:indexesOfRemoteMapsToRemove];
         [self.remoteItems addObjectsFromArray:mapsToAdd];
     }
     //update cache
-    if (modelChanged) {
+    if (0 < indexesOfRemoteMapsToRemove.count || 0 < mapsToAdd.count ) {
         if (self.delegate) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self saveCache];
