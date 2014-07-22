@@ -14,6 +14,7 @@
 #import "NSURL+isEqualToURL.h"
 #import "NSDate+Formatting.h"
 #import "ObserverModel.h"
+#import <ZipKit/ZipKit.h>
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -315,22 +316,103 @@
 
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler
 {
-    self.date = [NSDate date];
-    self.state = kSaved;
-    [self saveProperties];
-    if (handler) {
-        //sleep for 2 seconds
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC);
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-            NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
-            [errorDetails setValue:@"Sync not implemented yet!" forKey:NSLocalizedDescriptionKey];
-            NSError *error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
-            handler(error);
-                });
+    if ([self isReady]) {
+        dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
+            [self trySyncWithCompletionHandler:handler];
+        });
     } else {
-        AKRLog(@"Sync not implemented yet!");
+        [self openDocumentWithCompletionHandler:^(BOOL success) {
+            if (success) {
+                [self trySyncWithCompletionHandler:handler];
+            } else {
+                NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+                [errorDetails setValue:@"Unable to open the survey." forKey:NSLocalizedDescriptionKey];
+                NSError *error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+                handler(error);
+                if (handler) {
+                    handler(error);
+                }
+            }
+        }];
     }
 }
+
+//on background thread
+- (void)trySyncWithCompletionHandler:(void (^)(NSError*))handler
+{
+    ZKDataArchive *archive = [self buildZipArchive];
+
+    //save a copy of the survey in the documents directory
+//    NSURL *url = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+//    url = [url URLByAppendingPathComponent:@"survey.zip"];
+//    [archive.data writeToURL:url options:0 error:nil];
+
+    //send the survey to the server
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    NSURL *syncURL = [NSURL URLWithString:@"http://akrgis.nps.gov:8080/sync"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:syncURL];
+    request.HTTPMethod = @"POST";
+    NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
+                                                               fromData:archive.data
+                                                      completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                                                          if (!error && httpResponse.statusCode == 200) {
+                                                              self.date = [NSDate date];
+                                                              self.state = kSaved;
+                                                              [self saveProperties];
+                                                          }
+                                                          if (!error) {
+                                                              //response code was not 200; report it as an error.
+                                                              if (httpResponse.statusCode == 500) {
+                                                                  NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+                                                                  NSString* errorString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                                                                  NSString *errorMsg = [NSString stringWithFormat:@"Internal Server Error: %@.",errorString];
+                                                                  [errorDetails setValue:errorMsg forKey:NSLocalizedDescriptionKey];
+                                                                  error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+                                                              } else {
+                                                                  NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+                                                                  NSString *errorMsg = [NSString stringWithFormat:@"Unexpected Server response: %d.",httpResponse.statusCode];
+                                                                  [errorDetails setValue:errorMsg forKey:NSLocalizedDescriptionKey];
+                                                                  error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+                                                              }
+                                                          }
+                                                          if (handler) {
+                                                              handler(error);
+                                                          }
+                                                      }];
+    [uploadTask resume];
+}
+
+- (ZKDataArchive *)buildZipArchive
+{
+    ZKDataArchive *archive = [ZKDataArchive new];
+
+    NSDate *startDate = nil;
+
+    NSData *csvData = nil;
+    //features
+    NSDictionary *features = [self csvForFeaturesSince:startDate];
+    for (NSString *featureName in features){
+        csvData = [features[featureName] dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *csvName = [NSString stringWithFormat:@"%@.csv",featureName];
+        [archive deflateData:csvData withFilename:csvName andAttributes:nil];
+    }
+    //gps points
+    csvData = [[self csvForTrackLogsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
+    [archive deflateData:csvData withFilename:@"all_gps_points.csv" andAttributes:nil];
+
+    //tracklog
+    csvData = [[self csvForGpsPointsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
+    [archive deflateData:csvData withFilename:@"track_log_summary.csv" andAttributes:nil];
+
+    //protocol
+    NSString *protocolPath = self.protocolUrl.path;
+    NSString *protocolFolder = [self.protocolUrl URLByDeletingLastPathComponent].path;
+    [archive deflateFile:protocolPath relativeToPath:protocolFolder usingResourceFork:NO];
+
+    return archive;
+}
+
 
 
 + (NSURL *)privateDocumentsDirectory {
