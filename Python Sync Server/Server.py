@@ -10,7 +10,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 
 class SyncHandler(BaseHTTPRequestHandler):
-    root_folder = r"C:\tmp\obs"
+    root_folder = r"D:\MapData\Observer"
     upload_folder = os.path.join(root_folder, "upload")
     error_log = os.path.join(root_folder, "error.log")
     name = "Park Observer Sync Tool"
