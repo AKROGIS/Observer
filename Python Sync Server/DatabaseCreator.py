@@ -12,6 +12,8 @@ def database_for_protocol_file(protocol_path, fgdb_folder):
     if protocol['meta-name'] == 'NPS-Protocol-Specification':
         version = protocol['meta-version']
         if version == 1:
+            if not protocol.has_key('csv'):
+                add_missing_csv_section(protocol)
             database = database_for_version1(protocol, fgdb_folder)
             return database, protocol
         else:
@@ -20,6 +22,14 @@ def database_for_protocol_file(protocol_path, fgdb_folder):
     else:
         print("File {0} is not a valid protocol file".format(protocol_path))
     return None, None
+
+def add_missing_csv_section(protocol):
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    csv_path = os.path.join(script_dir,'csv.json')
+    with open(csv_path, 'r') as f:
+        csv = json.load(f)
+        protocol['csv'] = csv
+    return protocol
 
 
 def database_for_version1(protocol, workspace):
