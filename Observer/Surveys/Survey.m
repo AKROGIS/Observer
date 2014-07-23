@@ -22,6 +22,7 @@
 #define kSTitleKey        @"title"
 #define kStateKey         @"state"
 #define kDateKey          @"date"
+#define kSyncDateKey      @"syncdate"
 
 #define kPropertiesFilename @"properties.plist"
 #define kProtocolFilename   @"protocol.obsprot"
@@ -36,6 +37,7 @@
 @property (nonatomic, strong, readwrite) NSURL *url;
 @property (nonatomic, readwrite) SurveyState state;
 @property (nonatomic, strong, readwrite) NSDate *date;
+@property (nonatomic, strong, readwrite) NSDate *syncDate;
 @property (nonatomic, strong, readwrite) UIImage *thumbnail;
 @property (nonatomic, strong, readwrite) SProtocol *protocol;
 @property (nonatomic, strong, readwrite) UIManagedDocument *document;
@@ -174,6 +176,7 @@
 - (NSString *)subtitle2
 {
     NSString *status = nil;
+    NSString *dateString = [self.date stringWithMediumDateTimeFormat];
     switch (self.state) {
         case kUnborn:
             status = @"Unborn";
@@ -189,12 +192,13 @@
             break;
         case kSaved:
             status = @"Saved";
+            dateString = [self.syncDate stringWithMediumDateTimeFormat];
             break;
         default:
             status = @"Unknown State";
             break;
     }
-    return [NSString stringWithFormat:@"%@: %@",status, [self.date stringWithMediumDateTimeFormat]];
+    return [NSString stringWithFormat:@"%@: %@",status, dateString];
 }
 
 - (UIImage *)thumbnail
@@ -343,9 +347,9 @@
     ZKDataArchive *archive = [self buildZipArchive];
 
     //save a copy of the survey in the documents directory
-//    NSURL *url = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
-//    url = [url URLByAppendingPathComponent:@"survey.zip"];
-//    [archive.data writeToURL:url options:0 error:nil];
+    NSURL *url = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+    url = [url URLByAppendingPathComponent:@"survey.zip"];
+    [archive.data writeToURL:url options:0 error:nil];
 
     //send the survey to the server
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
@@ -357,7 +361,7 @@
                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                           NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
                                                           if (!error && httpResponse.statusCode == 200) {
-                                                              self.date = [NSDate date];
+                                                              self.syncDate = [NSDate date];
                                                               self.state = kSaved;
                                                               [self saveProperties];
                                                           }
@@ -387,7 +391,7 @@
 {
     ZKDataArchive *archive = [ZKDataArchive new];
 
-    NSDate *startDate = nil;
+    NSDate *startDate = self.syncDate;
 
     NSData *csvData = nil;
     //features
@@ -448,6 +452,7 @@
             _title = plist[kSTitleKey];
             _state = [plist[kStateKey] unsignedIntegerValue];
             _date = plist[kDateKey];
+            _syncDate = plist[kSyncDateKey];
             return YES;
         default:
             return NO;
@@ -489,7 +494,8 @@
     NSDictionary *plist = @{kCodingVersionKey:@kCodingVersion,
                             kSTitleKey:self.title,
                             kStateKey:@(self.state),
-                            kDateKey:self.date};
+                            kDateKey:self.date,
+                            kSyncDateKey:self.syncDate};
     return [plist writeToURL:self.propertiesUrl atomically:YES];
 }
 
