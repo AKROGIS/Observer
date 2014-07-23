@@ -365,7 +365,7 @@
                                                               self.state = kSaved;
                                                               [self saveProperties];
                                                           }
-                                                          if (!error) {
+                                                          if (httpResponse.statusCode != 200) {
                                                               //response code was not 200; report it as an error.
                                                               if (httpResponse.statusCode == 500) {
                                                                   NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
@@ -394,20 +394,23 @@
     NSDate *startDate = self.syncDate;
 
     NSData *csvData = nil;
+    NSString *csvName = nil;
     //features
     NSDictionary *features = [self csvForFeaturesSince:startDate];
     for (NSString *featureName in features){
         csvData = [features[featureName] dataUsingEncoding:NSUTF8StringEncoding];
-        NSString *csvName = [NSString stringWithFormat:@"%@.csv",featureName];
+        csvName = [NSString stringWithFormat:@"%@.csv",featureName];
         [archive deflateData:csvData withFilename:csvName andAttributes:nil];
     }
     //gps points
     csvData = [[self csvForTrackLogsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
-    [archive deflateData:csvData withFilename:@"all_gps_points.csv" andAttributes:nil];
+    csvName = @"GpsPoints.csv"; //TODO: get this from the survey protocol
+    [archive deflateData:csvData withFilename:csvName andAttributes:nil];
 
     //tracklog
     csvData = [[self csvForGpsPointsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
-    [archive deflateData:csvData withFilename:@"track_log_summary.csv" andAttributes:nil];
+    csvName = @"TrackLogs.csv"; //TODO: get this from the survey protocol
+    [archive deflateData:csvData withFilename:csvName andAttributes:nil];
 
     //protocol
     NSString *protocolPath = self.protocolUrl.path;
