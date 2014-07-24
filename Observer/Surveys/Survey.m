@@ -494,11 +494,19 @@
     if (!self.title || !self.date) {
         return NO;
     }
-    NSDictionary *plist = @{kCodingVersionKey:@kCodingVersion,
-                            kSTitleKey:self.title,
-                            kStateKey:@(self.state),
-                            kDateKey:self.date,
-                            kSyncDateKey:self.syncDate};
+    NSDictionary *plist;
+    if (self.syncDate) {
+        plist = @{kCodingVersionKey:@kCodingVersion,
+                  kSTitleKey:self.title,
+                  kStateKey:@(self.state),
+                  kDateKey:self.date,
+                  kSyncDateKey:self.syncDate};
+    } else {
+        plist = @{kCodingVersionKey:@kCodingVersion,
+                  kSTitleKey:self.title,
+                  kStateKey:@(self.state),
+                  kDateKey:self.date};
+    }
     return [plist writeToURL:self.propertiesUrl atomically:YES];
 }
 
