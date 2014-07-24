@@ -82,7 +82,7 @@ class SyncHandler(BaseHTTPRequestHandler):
                     try:
                         self.process(fname, csv_folder)
                     finally:
-                        shutil.rmtree(csv_folder)
+                        pass  # shutil.rmtree(csv_folder)
                     self.std_response()
                     self.wfile.write("\tSuccessfully applied the uploaded file")
                 except Exception as ex:
@@ -93,7 +93,7 @@ class SyncHandler(BaseHTTPRequestHandler):
                          eh.write(msg)
                 finally:
                     os.close(fd)
-                    os.remove(fname)
+                    #os.remove(fname)
             except Exception as ex:
                 self.err_response()
                 self.wfile.write("Unable to create/open temporary file on server:\n\t{0} - {1}".format(type(ex).__name__, ex))
