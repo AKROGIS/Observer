@@ -403,12 +403,12 @@
         [archive deflateData:csvData withFilename:csvName andAttributes:nil];
     }
     //gps points
-    csvData = [[self csvForTrackLogsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
+    csvData = [[self csvForGpsPointsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
     csvName = @"GpsPoints.csv"; //TODO: get this from the survey protocol
     [archive deflateData:csvData withFilename:csvName andAttributes:nil];
 
     //tracklog
-    csvData = [[self csvForGpsPointsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
+    csvData = [[self csvForTrackLogsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
     csvName = @"TrackLogs.csv"; //TODO: get this from the survey protocol
     [archive deflateData:csvData withFilename:csvName andAttributes:nil];
 
