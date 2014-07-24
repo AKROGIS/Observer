@@ -110,11 +110,13 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [self.survey syncWithCompletionHandler:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (error) {
-                [[[UIAlertView alloc] initWithTitle:@"Sync Failed" message:error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-            }
             [self.syncActivityIndicator stopAnimating];
             [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+            if (error) {
+                [[[UIAlertView alloc] initWithTitle:@"Sync Failed" message:error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            } else {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
         });
     }];
 }
