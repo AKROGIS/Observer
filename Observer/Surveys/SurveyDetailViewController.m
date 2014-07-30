@@ -37,9 +37,12 @@
     if (_survey) {
         [_survey closeDocumentWithCompletionHandler:nil];
     }
-    _survey = survey;
+    _survey = nil;
     [survey openDocumentWithCompletionHandler:^(BOOL success) {
-        [self.tableView reloadData];
+        if (success) {
+            self->_survey = survey;
+            [self.tableView reloadData];
+        }
     }];
 }
 
