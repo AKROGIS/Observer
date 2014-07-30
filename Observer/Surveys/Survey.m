@@ -1279,6 +1279,73 @@
 
 
 
+#pragma mark - Info for details view
+- (NSUInteger)observationCount
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    return results.count;
+}
+
+- (NSUInteger)segmentCount
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    return results.count;
+}
+
+- (NSUInteger)gpsCount
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    return results.count;
+}
+
+- (NSUInteger)gpsCountSinceSync
+{
+    if (!self.syncDate) {
+        return self.gpsCount;
+    }
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%@ < timestamp", self.syncDate];
+    request.predicate = predicate;
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    return results.count;
+}
+
+- (NSDate *)firstGpsDate
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
+    NSSortDescriptor * sort = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:YES];
+    request.sortDescriptors = @[sort];
+    request.fetchLimit = 1;
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    if (results.count) {
+        GpsPoint *gpsPoint = results[0];
+        return gpsPoint.timestamp;
+    } else {
+        return nil;
+    }
+}
+
+- (NSDate *)lastGpsDate
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
+    NSSortDescriptor * sort = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:NO];
+    request.sortDescriptors = @[sort];
+    request.fetchLimit = 1;
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    if (results.count) {
+        GpsPoint *gpsPoint = results[0];
+        return gpsPoint.timestamp;
+    } else {
+        return nil;
+    }
+}
+
+
+
+
 #pragma mark - Diagnostic aids - remove when done -
 
 #ifdef AKR_DEBUG
@@ -1365,17 +1432,9 @@
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
     [contents appendFormat:@"    %d Missions\n", results.count];
 
-    request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
-    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    [contents appendFormat:@"    %d MissionProperties\n", results.count];
-
-    request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
-    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    [contents appendFormat:@"    %d Observations\n", results.count];
-
-    request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
-    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    [contents appendFormat:@"    %d GpsPoints\n", results.count];
+    [contents appendFormat:@"    %d MissionProperties\n", self.segmentCount];
+    [contents appendFormat:@"    %d Observations\n", self.observationCount];
+    [contents appendFormat:@"    %d GpsPoints\n", self.gpsCount];
 
     [contents appendFormat:@"\n    GPS (last 7 days) as CSV:\n%@",[self csvForGpsPointsSince:[[NSDate date] dateByAddingTimeInterval:-(60*60*24*7)]]];
     [contents appendFormat:@"\n    TrackLog Summary as CSV:\n%@",[self csvForTrackLogsSince:nil]];

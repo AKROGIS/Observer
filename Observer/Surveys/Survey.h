@@ -75,6 +75,14 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 
 + (NSURL *)privateDocumentsDirectory;
 
+// Info for details view
+- (NSUInteger)observationCount;
+- (NSUInteger)segmentCount;
+- (NSUInteger)gpsCount;
+- (NSUInteger)gpsCountSinceSync;
+- (NSDate *)firstGpsDate;
+- (NSDate *)lastGpsDate;
+
 
 
 // Mapping Related Interface
