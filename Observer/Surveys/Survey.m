@@ -360,24 +360,36 @@
                                                                fromData:archive.data
                                                       completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                           NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-                                                          if (!error && httpResponse.statusCode == 200) {
-                                                              self.syncDate = [NSDate date];
-                                                              self.state = kSaved;
-                                                              [self saveProperties];
-                                                          }
-                                                          if (httpResponse.statusCode != 200) {
-                                                              //response code was not 200; report it as an error.
-                                                              if (httpResponse.statusCode == 500) {
-                                                                  NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
-                                                                  NSString* errorString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                                                                  NSString *errorMsg = [NSString stringWithFormat:@"Internal Server Error: %@.",errorString];
-                                                                  [errorDetails setValue:errorMsg forKey:NSLocalizedDescriptionKey];
-                                                                  error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
-                                                              } else {
-                                                                  NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
-                                                                  NSString *errorMsg = [NSString stringWithFormat:@"Unexpected Server response: %d.",httpResponse.statusCode];
-                                                                  [errorDetails setValue:errorMsg forKey:NSLocalizedDescriptionKey];
-                                                                  error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+                                                          if (!error) {
+                                                              switch (httpResponse.statusCode) {
+                                                                  case 0: {
+                                                                      NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+                                                                      NSString *errorMsg = [NSString stringWithFormat:@"Network Unavailable"];
+                                                                      [errorDetails setValue:errorMsg forKey:NSLocalizedDescriptionKey];
+                                                                      error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+                                                                      break;
+                                                                  }
+                                                                  case 200: {
+                                                                      self.syncDate = [NSDate date];
+                                                                      self.state = kSaved;
+                                                                      [self saveProperties];
+                                                                      break;
+                                                                  }
+                                                                  case 500: {
+                                                                      NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+                                                                      NSString* errorString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                                                                      NSString *errorMsg = [NSString stringWithFormat:@"Internal Server Error: %@.",errorString];
+                                                                      [errorDetails setValue:errorMsg forKey:NSLocalizedDescriptionKey];
+                                                                      error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+                                                                      break;
+                                                                  }
+                                                                  default: {
+                                                                      NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+                                                                      NSString *errorMsg = [NSString stringWithFormat:@"Unexpected Server Response: %d.",httpResponse.statusCode];
+                                                                      [errorDetails setValue:errorMsg forKey:NSLocalizedDescriptionKey];
+                                                                      error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+                                                                      break;
+                                                                  }
                                                               }
                                                           }
                                                           if (handler) {
