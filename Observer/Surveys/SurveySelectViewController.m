@@ -212,8 +212,8 @@
 {
     if ([[segue identifier] isEqualToString:@"Show Detail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-        id<AKRTableViewItem> item = [self.items surveyAtIndex:indexPath.urow];
-        [[segue destinationViewController] setDetailItem:item];
+        Survey *survey = [self.items surveyAtIndex:indexPath.urow];
+        ((SurveyDetailViewController *)segue.destinationViewController).survey = survey;
         //if we are in a popover, we want the new vc to stay the same size.
         [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
     }

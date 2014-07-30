@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "Survey.h"
 
-@interface SurveyDetailViewController : UIViewController <UISplitViewControllerDelegate>
+@interface SurveyDetailViewController : UITableViewController
 
-@property (strong, nonatomic) Survey *detailItem;
+@property (strong, nonatomic) Survey *survey;
 
 @end
