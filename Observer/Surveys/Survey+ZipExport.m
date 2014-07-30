@@ -7,7 +7,7 @@
 //
 
 #import "Survey+ZipExport.h"
-#import "NSData+CocoaDevUsersAdditions.h"
+#import "Archiver.h"
 
 @implementation Survey (ZipExport)
 
@@ -17,28 +17,7 @@
 
 - (NSData *)exportToNSDataError:(NSError * __autoreleasing *)error
 {
-    NSFileWrapper *dirWrapper = [[NSFileWrapper alloc] initWithURL:self.url options:0 error:error];
-    if (!dirWrapper) {
-        return nil;
-    }
-    return [[dirWrapper serializedRepresentation] gzipDeflate];
-}
-
-- (BOOL)exportToDiskWithName:(NSString *)exportPath error:(NSError * __autoreleasing *)error
-{
-    NSData *gzData = [self exportToNSDataError:error];
-    if (gzData == nil) return NO;
-    if ([gzData writeToFile:exportPath atomically:YES]) {
-        return YES;
-    } else {
-        if (error != NULL) {
-            //User wants error details, lets give it to them.
-            NSMutableDictionary* details = [NSMutableDictionary dictionary];
-            [details setValue:@"Unable to write to filesystem." forKey:NSLocalizedDescriptionKey];
-             *error = [NSError errorWithDomain:@"observer.nps.gov" code:100 userInfo:details];
-        }
-        return NO;
-    }
+    return [Archiver exportURL:self.url toNSDataError:error];
 }
 
 - (BOOL)exportToDiskWithForce:(BOOL)force error:(NSError * __autoreleasing *)error
@@ -51,7 +30,7 @@
         return FALSE;
     }
 
-    return [self exportToDiskWithName:exportPath error:error];
+    return [Archiver exportURL:self.url toDiskWithName:exportPath error:error];
 }
 
 - (NSURL *)documentsDirectory

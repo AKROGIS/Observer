@@ -8,6 +8,7 @@
 
 #import "Archiver.h"
 #import "NSData+CocoaDevUsersAdditions.h"
+#import <ZipKit/ZipKit.h>
 
 @implementation Archiver
 
@@ -32,6 +33,32 @@
 
     return TRUE;
     
+}
+
++ (NSData *)exportURL:(NSURL *)url toNSDataError:(NSError * __autoreleasing *)error
+{
+    NSFileWrapper *dirWrapper = [[NSFileWrapper alloc] initWithURL:url options:0 error:error];
+    if (!dirWrapper) {
+        return nil;
+    }
+    return [[dirWrapper serializedRepresentation] gzipDeflate];
+}
+
++ (BOOL)exportURL:(NSURL *)url toDiskWithName:(NSString *)exportPath error:(NSError * __autoreleasing *)error
+{
+    NSData *gzData = [self exportURL:url toNSDataError:error];
+    if (gzData == nil) return NO;
+    if ([gzData writeToFile:exportPath atomically:YES]) {
+        return YES;
+    } else {
+        if (error != NULL) {
+            //User wants error details, lets give it to them.
+            NSMutableDictionary* details = [NSMutableDictionary dictionary];
+            [details setValue:@"Unable to write to filesystem." forKey:NSLocalizedDescriptionKey];
+            *error = [NSError errorWithDomain:@"observer.nps.gov" code:100 userInfo:details];
+        }
+        return NO;
+    }
 }
 
 
