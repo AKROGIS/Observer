@@ -138,6 +138,12 @@
     }
 }
 
+- (void)dealloc
+{
+    [self closeDocumentWithCompletionHandler:nil];
+}
+
+
 
 
 #pragma mark property accessors
