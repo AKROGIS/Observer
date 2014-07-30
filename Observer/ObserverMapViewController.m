@@ -170,6 +170,7 @@
         };
         vc.surveyUpdatedAction = ^(Survey *survey){
             if ([survey isEqualToSurvey:self.survey]) {
+                self.survey.title = survey.title;
                 [self updateTitleBar];
             }
         };
