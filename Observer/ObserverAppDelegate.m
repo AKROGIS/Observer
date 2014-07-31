@@ -109,6 +109,7 @@
             [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Not a Valid Survey." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
             return NO;
         }
+        [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
     }
     if ([MapCollection collectsURL:url]) {
         // TODO: Put up a modal, asking for details on the tile cache, i.e. name, author, date, description
