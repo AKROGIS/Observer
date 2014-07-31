@@ -7,48 +7,49 @@
 //
 
 #import "Archiver.h"
-#import "NSData+CocoaDevUsersAdditions.h"
 #import <ZipKit/ZipKit.h>
 
 @implementation Archiver
 
 + (BOOL)unpackArchive:(NSURL *)importUrl to:(NSURL *)outputUrl {
 
-    NSData *zippedData = [NSData dataWithContentsOfURL:importUrl];
-
-    // Read data into a File/directory Wrapper
-    NSData *unzippedData = [zippedData gzipInflate];
-    NSFileWrapper *dirWrapper = [[NSFileWrapper alloc] initWithSerializedRepresentation:unzippedData];
-    if (dirWrapper == nil) {
-        NSLog(@"Error creating dir wrapper from unzipped data");
-        return FALSE;
-    }
-
-    NSError *error;
-    BOOL success = [dirWrapper writeToURL:outputUrl options:NSFileWrapperWritingAtomic originalContentsURL:nil error:&error];
-    if (!success) {
-        NSLog(@"Error importing file: %@", error.localizedDescription);
-        return FALSE;
-    }
-
-    return TRUE;
-    
+    ZKDataArchive *archive = [ZKDataArchive archiveWithArchivePath:importUrl.path];
+    NSString *parentFolder = [[[outputUrl URLByDeletingLastPathComponent] filePathURL] path];
+    NSString *folder = outputUrl.lastPathComponent;
+    NSUInteger errorCode = [archive inflateInFolder:parentFolder withFolderName:folder usingResourceFork:NO];
+    if (errorCode == (NSUInteger)zkSucceeded) {
+        return YES;
+    } else {
+        NSLog(@"Error inflating zip at:%@ to %@", importUrl, outputUrl);
+        return NO;
+    };
 }
 
 + (NSData *)exportURL:(NSURL *)url toNSDataError:(NSError * __autoreleasing *)error
 {
-    NSFileWrapper *dirWrapper = [[NSFileWrapper alloc] initWithURL:url options:0 error:error];
-    if (!dirWrapper) {
-        return nil;
+    NSData *data = nil;
+    if ([url isFileURL]) {
+        NSString *path = url.path;
+        BOOL isDir;
+        BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
+        if (exists) {
+            ZKDataArchive *archive = [ZKDataArchive new];
+            if (isDir) {
+                [archive deflateDirectory:path relativeToPath:[path stringByDeletingLastPathComponent] usingResourceFork:NO];
+            } else {
+                [archive deflateFile:path relativeToPath:[path stringByDeletingLastPathComponent] usingResourceFork:NO];
+            }
+            data = archive.data;
+        }
     }
-    return [[dirWrapper serializedRepresentation] gzipDeflate];
+    return data;
 }
 
 + (BOOL)exportURL:(NSURL *)url toDiskWithName:(NSString *)exportPath error:(NSError * __autoreleasing *)error
 {
-    NSData *gzData = [self exportURL:url toNSDataError:error];
-    if (gzData == nil) return NO;
-    if ([gzData writeToFile:exportPath atomically:YES]) {
+    NSData *data = [self exportURL:url toNSDataError:error];
+    if (data == nil) return NO;
+    if ([data writeToFile:exportPath atomically:YES]) {
         return YES;
     } else {
         if (error != NULL) {
@@ -60,6 +61,5 @@
         return NO;
     }
 }
-
 
 @end
