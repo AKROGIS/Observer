@@ -351,10 +351,10 @@
 {
     ZKDataArchive *archive = [self buildZipArchive];
 
-    //save a copy of the survey in the documents directory
-    NSURL *url = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
-    url = [url URLByAppendingPathComponent:@"survey.zip"];
-    [archive.data writeToURL:url options:0 error:nil];
+    //save a copy of the survey in the documents directory (only needed for testing
+    //NSURL *url = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+    //url = [url URLByAppendingPathComponent:@"survey.zip"];
+    //[archive.data writeToURL:url options:0 error:nil];
 
     //send the survey to the server
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
