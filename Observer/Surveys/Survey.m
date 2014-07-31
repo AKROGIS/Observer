@@ -309,7 +309,7 @@
                                                  name:NSManagedObjectContextObjectsDidChangeNotification
                                                object:self.document.managedObjectContext];
 #ifdef AKR_DEBUG
-    [self connectToNotificationCenter];
+    //[self connectToNotificationCenter];
 #endif
 }
 
@@ -318,10 +318,9 @@
 #ifdef AKR_DEBUG
     AKRLog(@"Closing document");
     //[self logStats];
-    [self disconnectFromNotificationCenter];
 #endif
-    [self.document closeWithCompletionHandler:completionHandler];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.document closeWithCompletionHandler:completionHandler];
 }
 
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler
