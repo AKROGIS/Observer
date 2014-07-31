@@ -102,6 +102,7 @@
 
     if ([SurveyCollection collectsURL:newUrl]) {
         Survey *newSurvey = [[Survey alloc] initWithArchive:newUrl];
+        [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
         if ([newSurvey isValid]) {
             self.observerMapViewController.survey = newSurvey;
             return YES;
@@ -109,7 +110,6 @@
             [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Not a Valid Survey." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
             return NO;
         }
-        [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
     }
     if ([MapCollection collectsURL:url]) {
         // TODO: Put up a modal, asking for details on the tile cache, i.e. name, author, date, description
