@@ -12,4 +12,9 @@
 
 + (BOOL)unpackArchive:(NSURL *)importUrl to:(NSURL *)outputUrl;
 
+// returns a zip data stream of the survey document at URL; used by the email client for the attachment
++ (NSData *)exportURL:(NSURL *)url toNSDataError:(NSError **)error;
+
++ (BOOL)exportURL:(NSURL *)url toDiskWithName:(NSString *)exportPath error:(NSError * __autoreleasing *)error;
+
 @end

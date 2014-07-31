@@ -38,7 +38,8 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 
 //title and date will block (reading values from the filessytem) if the state is unborn.
 @property (nonatomic, strong) NSString *title;
-@property (nonatomic, strong, readonly) NSDate *date;
+@property (nonatomic, strong, readonly) NSDate *date;   //Date of last change (create/edit)
+@property (nonatomic, strong, readonly) NSDate *syncDate;
 
 //The following methods will block (reading data from the filessytem)
 @property (nonatomic, strong, readonly) UIImage *thumbnail;
@@ -73,6 +74,14 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler;
 
 + (NSURL *)privateDocumentsDirectory;
+
+// Info for details view
+- (NSUInteger)observationCount;
+- (NSUInteger)segmentCount;
+- (NSUInteger)gpsCount;
+- (NSUInteger)gpsCountSinceSync;
+- (NSDate *)firstGpsDate;
+- (NSDate *)lastGpsDate;
 
 
 

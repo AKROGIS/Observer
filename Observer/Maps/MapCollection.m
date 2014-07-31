@@ -44,14 +44,20 @@ static BOOL _isLoaded = NO;
 }
 
 + (void)releaseSharedCollection {
-    if (self.isDownloading) {
-        //TODO: keep track of request to release, so we can release when downloading is done.
-        return;
-    }
-    @synchronized(self) {
-        _sharedCollection = nil;
-        _isLoaded = NO;
-    }
+    //TODO: setting _sharedCollection to nil, only releases the class' copy of the instance.
+    //The instance will remain alive if something (i.e. a callback block) has retained a copy.
+    //if _sharedCollection is nil, I might end up creating a second collection (leading to chaos)
+    //for now, it is safer to just prohibit releasing, especially with a async downloading.
+    return;
+
+//    if (self.isDownloading) {
+//        //TODO: keep track of request to release, so we can release when downloading is done.
+//        return;
+//    }
+//    @synchronized(self) {
+//        _sharedCollection = nil;
+//        _isLoaded = NO;
+//    }
 }
 
 static int _downloadsInProgress = 0;

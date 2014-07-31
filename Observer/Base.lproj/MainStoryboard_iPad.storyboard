@@ -519,41 +519,6 @@
             </objects>
             <point key="canvasLocation" x="2578" y="-1846"/>
         </scene>
-        <!--Survey Detail View Controller - Detail-->
-        <scene sceneID="u3Z-vx-4mf">
-            <objects>
-                <viewController id="P39-Sp-hx9" customClass="SurveyDetailViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="M0T-Pr-u7M"/>
-                        <viewControllerLayoutGuide type="bottom" id="3NV-M6-p4u"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="eJr-1A-1Ac">
-                        <rect key="frame" x="0.0" y="64" width="540" height="556"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Detail view content goes here" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="5c8-9C-flZ">
-                                <rect key="frame" x="175" y="269" width="191" height="17"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" size="system"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="5c8-9C-flZ" firstAttribute="centerX" secondItem="eJr-1A-1Ac" secondAttribute="centerX" id="4x6-cb-efy"/>
-                            <constraint firstAttribute="centerY" secondItem="5c8-9C-flZ" secondAttribute="centerY" constant="0.5" id="lWF-1o-BnL"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" title="Detail" id="cXH-U1-3Zk"/>
-                    <connections>
-                        <outlet property="detailDescriptionLabel" destination="5c8-9C-flZ" id="LT3-He-l9f"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="oWt-JQ-8xE" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3473" y="-121"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="xrT-1z-NPs">
             <objects>
@@ -917,7 +882,7 @@
                                     <outlet property="protocolLabel" destination="wBi-fL-q7A" id="Vka-tX-EyI"/>
                                     <outlet property="thumbnailImageView" destination="GYJ-em-L0B" id="BuO-UO-1iL"/>
                                     <outlet property="titleTextField" destination="QBS-0U-3rx" id="r5N-gO-wgH"/>
-                                    <segue destination="P39-Sp-hx9" kind="push" identifier="Show Detail" trigger="accessoryAction" id="kjX-pl-7PI"/>
+                                    <segue destination="h58-GV-tC6" kind="push" identifier="Show Detail" trigger="accessoryAction" id="rSb-yd-8vd"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1135,6 +1100,71 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TFL-Tg-kUs" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1740" y="-1001"/>
+        </scene>
+        <!--Survey Detail View Controller-->
+        <scene sceneID="p8h-0A-7xi">
+            <objects>
+                <tableViewController id="h58-GV-tC6" customClass="SurveyDetailViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="KsO-RG-ZVL">
+                        <rect key="frame" x="0.0" y="64" width="540" height="556"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SurveyDetailCell" textLabel="UON-w7-cfa" detailTextLabel="MGY-m6-jFC" style="IBUITableViewCellStyleValue2" id="Eya-cn-ld5">
+                                <rect key="frame" x="0.0" y="22" width="540" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Eya-cn-ld5" id="Wfb-e4-X7D">
+                                    <rect key="frame" x="0.0" y="0.0" width="540" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UON-w7-cfa">
+                                            <rect key="frame" x="15" y="13" width="91" height="17"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Detail" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MGY-m6-jFC">
+                                            <rect key="frame" x="112" y="13" width="37" height="17"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SurveyDetailProtocolDetailsCell" textLabel="MEh-26-1AI" style="IBUITableViewCellStyleDefault" id="59W-Ts-vif">
+                                <rect key="frame" x="0.0" y="66" width="540" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="59W-Ts-vif" id="sUR-U4-hhn">
+                                    <rect key="frame" x="0.0" y="0.0" width="507" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Protocol Details" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MEh-26-1AI">
+                                            <rect key="frame" x="15" y="0.0" width="490" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="9U9-rX-WUq" kind="push" identifier="Show Protocol Detail" id="77v-we-3TU"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="h58-GV-tC6" id="Edl-m7-4xs"/>
+                            <outlet property="delegate" destination="h58-GV-tC6" id="Ig5-H3-j7n"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="8rW-oo-P0y"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OOb-vZ-15g" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3473" y="-121"/>
         </scene>
         <!--Protocol Detail View Controller-->
         <scene sceneID="thS-7j-wdW">
@@ -1404,6 +1434,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="oVE-mF-eJP"/>
-        <segue reference="vKc-cb-JIv"/>
+        <segue reference="77v-we-3TU"/>
     </inferredMetricsTieBreakers>
 </document>

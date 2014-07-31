@@ -109,11 +109,15 @@
     [self.syncActivityIndicator startAnimating];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [self.survey syncWithCompletionHandler:^(NSError *error) {
-        if (error) {
-            [[[UIAlertView alloc] initWithTitle:@"Sync Failed" message:error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-        }
-        [self.syncActivityIndicator stopAnimating];
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.syncActivityIndicator stopAnimating];
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+            if (error) {
+                [[[UIAlertView alloc] initWithTitle:@"Sync Failed" message:error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            } else {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+        });
     }];
 }
 
@@ -193,10 +197,12 @@
                     [mailVC addAttachmentData:data mimeType:@"text/csv" fileName:fileName];
                 }
                 NSData *data = [[self.survey csvForTrackLogsSince:nil] dataUsingEncoding:NSUTF8StringEncoding];
-                [mailVC addAttachmentData:data mimeType:@"text/csv" fileName:@"track_log_summary.csv"];
+                NSString *csvName = @"TrackLogs.csv"; //TODO: get this from the survey protocol
+                [mailVC addAttachmentData:data mimeType:@"text/csv" fileName:csvName];
                 if (includeGps) {
                     data = [[self.survey csvForGpsPointsSince:nil] dataUsingEncoding:NSUTF8StringEncoding];
-                    [mailVC addAttachmentData:data mimeType:@"text/csv" fileName:@"all_gps_points.csv"];
+                    csvName = @"GpsPoints.csv"; //TODO: get this from the survey protocol
+                    [mailVC addAttachmentData:data mimeType:@"text/csv" fileName:csvName];
                 }
                 mailVC.mailComposeDelegate = self;
                 [self presentViewController:mailVC animated:YES completion:nil];

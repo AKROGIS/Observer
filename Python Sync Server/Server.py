@@ -10,7 +10,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 
 class SyncHandler(BaseHTTPRequestHandler):
-    root_folder = r"C:\tmp\obs"
+    root_folder = r"D:\MapData\Observer"
     upload_folder = os.path.join(root_folder, "upload")
     error_log = os.path.join(root_folder, "error.log")
     name = "Park Observer Sync Tool"
@@ -64,6 +64,11 @@ class SyncHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write("{0}\n".format(self.name))
 
+    def err_response(self):
+        self.send_response(500)
+        self.send_header('Content-type', 'text')
+        self.end_headers()
+
     def do_POST(self):
         if self.path == '/sync':
             try:
@@ -73,22 +78,25 @@ class SyncHandler(BaseHTTPRequestHandler):
                 try:
                     with open(fname, 'wb') as fh:
                         fh.write(data)
-                    self.std_response()
-                    self.wfile.write("\tProcessing request...")
                     csv_folder = tempfile.mkdtemp(dir=self.upload_folder)
                     try:
                         self.process(fname, csv_folder)
                     finally:
-                            shutil.rmtree(csv_folder)
+                        pass  # shutil.rmtree(csv_folder)
+                    self.std_response()
+                    self.wfile.write("\tSuccessfully applied the uploaded file")
                 except Exception as ex:
+                    self.err_response()
+                    msg = "{0}:{1} - {2}\n".format(self.log_date_time_string(), type(ex).__name__, ex)
+                    self.wfile.write(msg)
                     with open(self.error_log, 'a') as eh:
-                        eh.write("{0}:{1} - {2}\n".format(self.log_date_time_string(), type(ex).__name__, ex))
+                         eh.write(msg)
                 finally:
                     os.close(fd)
-                    os.remove(fname)
+                    #os.remove(fname)
             except Exception as ex:
-                self.std_response()
-                self.wfile.write("\tUnable to upload file:\n\t{0}".format(ex))
+                self.err_response()
+                self.wfile.write("Unable to create/open temporary file on server:\n\t{0} - {1}".format(type(ex).__name__, ex))
 
     def process(self, filename, csv_folder):
         #unzip file

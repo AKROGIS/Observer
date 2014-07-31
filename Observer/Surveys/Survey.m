@@ -14,6 +14,7 @@
 #import "NSURL+isEqualToURL.h"
 #import "NSDate+Formatting.h"
 #import "ObserverModel.h"
+#import <ZipKit/ZipKit.h>
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -21,6 +22,7 @@
 #define kSTitleKey        @"title"
 #define kStateKey         @"state"
 #define kDateKey          @"date"
+#define kSyncDateKey      @"syncdate"
 
 #define kPropertiesFilename @"properties.plist"
 #define kProtocolFilename   @"protocol.obsprot"
@@ -35,6 +37,7 @@
 @property (nonatomic, strong, readwrite) NSURL *url;
 @property (nonatomic, readwrite) SurveyState state;
 @property (nonatomic, strong, readwrite) NSDate *date;
+@property (nonatomic, strong, readwrite) NSDate *syncDate;
 @property (nonatomic, strong, readwrite) UIImage *thumbnail;
 @property (nonatomic, strong, readwrite) SProtocol *protocol;
 @property (nonatomic, strong, readwrite) UIManagedDocument *document;
@@ -135,6 +138,12 @@
     }
 }
 
+- (void)dealloc
+{
+    [self closeDocumentWithCompletionHandler:nil];
+}
+
+
 
 
 #pragma mark property accessors
@@ -173,6 +182,7 @@
 - (NSString *)subtitle2
 {
     NSString *status = nil;
+    NSString *dateString = [self.date stringWithMediumDateTimeFormat];
     switch (self.state) {
         case kUnborn:
             status = @"Unborn";
@@ -188,12 +198,13 @@
             break;
         case kSaved:
             status = @"Saved";
+            dateString = [self.syncDate stringWithMediumDateTimeFormat];
             break;
         default:
             status = @"Unknown State";
             break;
     }
-    return [NSString stringWithFormat:@"%@: %@",status, [self.date stringWithMediumDateTimeFormat]];
+    return [NSString stringWithFormat:@"%@: %@",status, dateString];
 }
 
 - (UIImage *)thumbnail
@@ -315,22 +326,118 @@
 
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler
 {
-    self.date = [NSDate date];
-    self.state = kSaved;
-    [self saveProperties];
-    if (handler) {
-        //sleep for 2 seconds
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC);
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-            NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
-            [errorDetails setValue:@"Sync not implemented yet!" forKey:NSLocalizedDescriptionKey];
-            NSError *error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
-            handler(error);
-                });
+    if ([self isReady]) {
+        dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
+            [self trySyncWithCompletionHandler:handler];
+        });
     } else {
-        AKRLog(@"Sync not implemented yet!");
+        [self openDocumentWithCompletionHandler:^(BOOL success) {
+            if (success) {
+                [self trySyncWithCompletionHandler:handler];
+            } else {
+                NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+                [errorDetails setValue:@"Unable to open the survey." forKey:NSLocalizedDescriptionKey];
+                NSError *error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+                handler(error);
+                if (handler) {
+                    handler(error);
+                }
+            }
+        }];
     }
 }
+
+//on background thread
+- (void)trySyncWithCompletionHandler:(void (^)(NSError*))handler
+{
+    ZKDataArchive *archive = [self buildZipArchive];
+
+    //save a copy of the survey in the documents directory
+    NSURL *url = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+    url = [url URLByAppendingPathComponent:@"survey.zip"];
+    [archive.data writeToURL:url options:0 error:nil];
+
+    //send the survey to the server
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    NSURL *syncURL = [NSURL URLWithString:@"http://akrgis.nps.gov:8080/sync"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:syncURL];
+    request.HTTPMethod = @"POST";
+    NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
+                                                               fromData:archive.data
+                                                      completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                                                          if (!error) {
+                                                              switch (httpResponse.statusCode) {
+                                                                  case 0: {
+                                                                      NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+                                                                      NSString *errorMsg = [NSString stringWithFormat:@"Network Unavailable"];
+                                                                      [errorDetails setValue:errorMsg forKey:NSLocalizedDescriptionKey];
+                                                                      error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+                                                                      break;
+                                                                  }
+                                                                  case 200: {
+                                                                      self.syncDate = [NSDate date];
+                                                                      self.state = kSaved;
+                                                                      [self saveProperties];
+                                                                      break;
+                                                                  }
+                                                                  case 500: {
+                                                                      NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+                                                                      NSString* errorString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                                                                      NSString *errorMsg = [NSString stringWithFormat:@"Internal Server Error: %@.",errorString];
+                                                                      [errorDetails setValue:errorMsg forKey:NSLocalizedDescriptionKey];
+                                                                      error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+                                                                      break;
+                                                                  }
+                                                                  default: {
+                                                                      NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+                                                                      NSString *errorMsg = [NSString stringWithFormat:@"Unexpected Server Response: %d.",httpResponse.statusCode];
+                                                                      [errorDetails setValue:errorMsg forKey:NSLocalizedDescriptionKey];
+                                                                      error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+                                                                      break;
+                                                                  }
+                                                              }
+                                                          }
+                                                          if (handler) {
+                                                              handler(error);
+                                                          }
+                                                      }];
+    [uploadTask resume];
+}
+
+- (ZKDataArchive *)buildZipArchive
+{
+    ZKDataArchive *archive = [ZKDataArchive new];
+
+    NSDate *startDate = self.syncDate;
+
+    NSData *csvData = nil;
+    NSString *csvName = nil;
+    //features
+    NSDictionary *features = [self csvForFeaturesSince:startDate];
+    for (NSString *featureName in features){
+        csvData = [features[featureName] dataUsingEncoding:NSUTF8StringEncoding];
+        csvName = [NSString stringWithFormat:@"%@.csv",featureName];
+        [archive deflateData:csvData withFilename:csvName andAttributes:nil];
+    }
+    //gps points
+    csvData = [[self csvForGpsPointsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
+    csvName = @"GpsPoints.csv"; //TODO: get this from the survey protocol
+    [archive deflateData:csvData withFilename:csvName andAttributes:nil];
+
+    //tracklog
+    csvData = [[self csvForTrackLogsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
+    csvName = @"TrackLogs.csv"; //TODO: get this from the survey protocol
+    [archive deflateData:csvData withFilename:csvName andAttributes:nil];
+
+    //protocol
+    NSString *protocolPath = self.protocolUrl.path;
+    NSString *protocolFolder = [self.protocolUrl URLByDeletingLastPathComponent].path;
+    [archive deflateFile:protocolPath relativeToPath:protocolFolder usingResourceFork:NO];
+
+    return archive;
+}
+
 
 
 + (NSURL *)privateDocumentsDirectory {
@@ -366,6 +473,7 @@
             _title = plist[kSTitleKey];
             _state = [plist[kStateKey] unsignedIntegerValue];
             _date = plist[kDateKey];
+            _syncDate = plist[kSyncDateKey];
             return YES;
         default:
             return NO;
@@ -404,10 +512,19 @@
     if (!self.title || !self.date) {
         return NO;
     }
-    NSDictionary *plist = @{kCodingVersionKey:@kCodingVersion,
-                            kSTitleKey:self.title,
-                            kStateKey:@(self.state),
-                            kDateKey:self.date};
+    NSDictionary *plist;
+    if (self.syncDate) {
+        plist = @{kCodingVersionKey:@kCodingVersion,
+                  kSTitleKey:self.title,
+                  kStateKey:@(self.state),
+                  kDateKey:self.date,
+                  kSyncDateKey:self.syncDate};
+    } else {
+        plist = @{kCodingVersionKey:@kCodingVersion,
+                  kSTitleKey:self.title,
+                  kStateKey:@(self.state),
+                  kDateKey:self.date};
+    }
     return [plist writeToURL:self.propertiesUrl atomically:YES];
 }
 
@@ -1168,6 +1285,73 @@
 
 
 
+#pragma mark - Info for details view
+- (NSUInteger)observationCount
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    return results.count;
+}
+
+- (NSUInteger)segmentCount
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    return results.count;
+}
+
+- (NSUInteger)gpsCount
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    return results.count;
+}
+
+- (NSUInteger)gpsCountSinceSync
+{
+    if (!self.syncDate) {
+        return self.gpsCount;
+    }
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%@ < timestamp", self.syncDate];
+    request.predicate = predicate;
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    return results.count;
+}
+
+- (NSDate *)firstGpsDate
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
+    NSSortDescriptor * sort = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:YES];
+    request.sortDescriptors = @[sort];
+    request.fetchLimit = 1;
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    if (results.count) {
+        GpsPoint *gpsPoint = results[0];
+        return gpsPoint.timestamp;
+    } else {
+        return nil;
+    }
+}
+
+- (NSDate *)lastGpsDate
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
+    NSSortDescriptor * sort = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:NO];
+    request.sortDescriptors = @[sort];
+    request.fetchLimit = 1;
+    NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
+    if (results.count) {
+        GpsPoint *gpsPoint = results[0];
+        return gpsPoint.timestamp;
+    } else {
+        return nil;
+    }
+}
+
+
+
+
 #pragma mark - Diagnostic aids - remove when done -
 
 #ifdef AKR_DEBUG
@@ -1254,17 +1438,9 @@
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
     [contents appendFormat:@"    %d Missions\n", results.count];
 
-    request = [NSFetchRequest fetchRequestWithEntityName:kMissionPropertyEntityName];
-    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    [contents appendFormat:@"    %d MissionProperties\n", results.count];
-
-    request = [NSFetchRequest fetchRequestWithEntityName:kObservationEntityName];
-    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    [contents appendFormat:@"    %d Observations\n", results.count];
-
-    request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
-    results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    [contents appendFormat:@"    %d GpsPoints\n", results.count];
+    [contents appendFormat:@"    %d MissionProperties\n", self.segmentCount];
+    [contents appendFormat:@"    %d Observations\n", self.observationCount];
+    [contents appendFormat:@"    %d GpsPoints\n", self.gpsCount];
 
     [contents appendFormat:@"\n    GPS (last 7 days) as CSV:\n%@",[self csvForGpsPointsSince:[[NSDate date] dateByAddingTimeInterval:-(60*60*24*7)]]];
     [contents appendFormat:@"\n    TrackLog Summary as CSV:\n%@",[self csvForTrackLogsSince:nil]];

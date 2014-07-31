@@ -7,69 +7,102 @@
 //
 
 #import "SurveyDetailViewController.h"
-
-@interface SurveyDetailViewController ()
-@property (strong, nonatomic) UIPopoverController *masterPopoverController;
-@property (weak, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
-- (void)configureView;
-@end
+#import "NSIndexPath+unsignedAccessors.h"
+#import "SProtocol.h"
+#import "AKRFormatter.h"
+#import "ProtocolDetailViewController.h"
+#import "GpsPointTableViewController.h"
 
 @implementation SurveyDetailViewController
 
-#pragma mark - Managing the detail item
-
-- (void)setDetailItem:(id)newDetailItem
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if (_detailItem != newDetailItem) {
-        _detailItem = newDetailItem;
-        
-        // Update the view.
-        [self configureView];
+    if ([[segue identifier] isEqualToString:@"Show Protocol Detail"]) {
+        ((ProtocolDetailViewController *)segue.destinationViewController).protocol = self.survey.protocol;
+        [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
     }
-
-    if (self.masterPopoverController != nil) {
-        [self.masterPopoverController dismissPopoverAnimated:YES];
-    }        
+//    if ([[segue identifier] isEqualToString:@"Show GpsPoint Detail"]) {
+//        ((GpsPointTableViewController *)segue.destinationViewController).gpsPoint = self.???;
+//        [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
+//    }
 }
 
-- (void)configureView
+- (void) dealloc
 {
-    // Update the user interface for the detail item.
+    self.survey = nil;
+}
 
-    if (self.detailItem) {
-        self.title = self.detailItem.title;
-        self.detailDescriptionLabel.text = [self.detailItem description];
+- (void)setSurvey:(Survey *)survey
+{
+    if (_survey) {
+        [_survey closeDocumentWithCompletionHandler:nil];
     }
+    _survey = nil;
+    [survey openDocumentWithCompletionHandler:^(BOOL success) {
+        if (success) {
+            self->_survey = survey;
+            [self.tableView reloadData];
+        }
+    }];
 }
 
-- (void)viewDidLoad
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-    [self configureView];
+    return 1;
 }
 
-- (void)didReceiveMemoryWarning
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    return self.survey ? 7 : 0;
 }
 
-#pragma mark - Split view
-
-- (void)splitViewController:(UISplitViewController *)splitController willHideViewController:(UIViewController *)viewController withBarButtonItem:(UIBarButtonItem *)barButtonItem forPopoverController:(UIPopoverController *)popoverController
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    //AKRLog (@"svc changed orientation to portrait");
-    barButtonItem.title = NSLocalizedString(@"Master", @"Master");
-    [self.navigationItem setLeftBarButtonItem:barButtonItem animated:YES];
-    self.masterPopoverController = popoverController;
+    return self.survey ? self.survey.title : nil;
 }
 
-- (void)splitViewController:(UISplitViewController *)splitController willShowViewController:(UIViewController *)viewController invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //AKRLog (@"svc changed orientation to landscape");
-    [self.navigationItem setLeftBarButtonItem:nil animated:YES];
-    self.masterPopoverController = nil;
+    UITableViewCell *cell;
+    if (indexPath.row == 6) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"SurveyDetailProtocolDetailsCell" forIndexPath:indexPath];
+    } else {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"SurveyDetailCell" forIndexPath:indexPath];
+        //cell.accessoryType = UITableViewCellAccessoryNone;
+        switch (indexPath.row) {
+            case 0:
+                cell.textLabel.text = @"Observations";
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%u",self.survey.observationCount];
+                break;
+            case 1:
+                cell.textLabel.text = @"Tracks";
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%u",self.survey.segmentCount];
+                break;
+            case 2:
+                cell.textLabel.text = @"Gps Points";
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%u",self.survey.gpsCount];
+                break;
+            case 3:
+                cell.textLabel.text = @"..Since Sync";
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%u",self.survey.gpsCountSinceSync];
+                break;
+            case 4:
+                cell.textLabel.text = @"First Point";
+                cell.detailTextLabel.text = [AKRFormatter descriptiveStringFromDate:self.survey.firstGpsDate];
+//                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                break;
+            case 5:
+                cell.textLabel.text = @"last Point";
+                cell.detailTextLabel.text = [AKRFormatter descriptiveStringFromDate:self.survey.lastGpsDate];
+//                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                break;
+            default:
+                break;
+        }
+    }
+    return cell;
 }
 
 @end
