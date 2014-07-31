@@ -308,7 +308,7 @@
                                              selector:@selector(objectsDidChange:)
                                                  name:NSManagedObjectContextObjectsDidChangeNotification
                                                object:self.document.managedObjectContext];
-#ifdef DEBUG
+#ifdef AKR_DEBUG
     [self connectToNotificationCenter];
 #endif
 }
@@ -553,12 +553,6 @@
     self.date = [NSDate date];
     self.state = kModified;
     //do not save properties (write a file to disk) here, since this is called a lot - do it when coredata saves
-}
-
-- (void) dataSaved: (NSNotification *)notification
-{
-    //AKRLog(@"Document (%@) data saved", self.title);
-    [self saveProperties];
 }
 
 
@@ -1423,9 +1417,15 @@
     //AKRLog(@"Data Changed; \nname:%@ \nobject:%@ \nuserinfo:%@", notification.name, notification.object, notification.userInfo);
 }
 
+- (void) dataSaved: (NSNotification *)notification
+{
+    //AKRLog(@"Document (%@) data saved", self.title);
+    [self saveProperties];
+}
+
+
 - (void)logStats
 {
-#ifdef AKR_DEBUG
     NSMutableString *contents = [NSMutableString new];
     NSFetchRequest *request;
     NSArray *results;
@@ -1450,7 +1450,7 @@
     }
 
     AKRLog(@"\n  Survey (%@) contains:\n%@", self.title, contents);
-#endif
 }
 #endif
+
 @end
