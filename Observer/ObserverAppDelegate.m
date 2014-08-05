@@ -17,7 +17,7 @@
 
 #define kAlertViewNewProtocol      1
 #define kAlertViewNewVersion       2
-#define kAppDistributionPlist      @"http://akrgis.nps.gov/observer/Park_Observer.plist"
+#define kAppDistributionPlist      @"https://akrgis.nps.gov/observer/Park_Observer.plist"
 
 
 @interface ObserverAppDelegate()
@@ -163,7 +163,7 @@
 {
     [self checkForUpdateWithCallback:^(BOOL found) {
         if (found) {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"New Version" message:@"During the Beta Program you must upgrade." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"New Version Waiting" message:@"Are you ready to upgrade?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes",nil];
             alertView.tag = kAlertViewNewVersion;
             [alertView show];
         }
@@ -186,7 +186,7 @@
 
         NSDictionary *metaData = [itemDict objectForKey:@"metadata"];
         NSString *newversion = [metaData valueForKey:@"bundle-version"];
-        NSString *currentversion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+        NSString *currentversion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 
         updateAvailable = [newversion compare:currentversion options:NSNumericSearch] == NSOrderedDescending;
     }
@@ -213,7 +213,7 @@
             break;
         }
         case kAlertViewNewVersion: {
-            if (buttonIndex != 99) {  //During the Beta Program you must upgrade.
+            if (buttonIndex == 1) {
                 NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@",kAppDistributionPlist]];
                 [[UIApplication sharedApplication] openURL:url];
             }
