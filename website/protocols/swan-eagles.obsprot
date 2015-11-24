@@ -1,0 +1,143 @@
+{
+	"meta-name":"NPS-Protocol-Specification",
+	"meta-version":1,
+	"name":"SWAN Eagle Occupancy",
+	"version":1.21,
+	"date":"2015-05-29",
+	"description":"This protocol is for SWAN Bald Eagle Occupancy Surveys.  Contact Tammy Wilson (tammy_wilson@nps.gov for more details.",
+    "mission":{
+		"attributes":[
+			{"name":"Location",   "type":700},
+			{"name":"Transect",   "type":700},
+			{"name":"Recorder",   "type":700},
+			{"name":"Observer1",  "type":700},
+			{"name":"Obs1Right",  "type":800},
+			{"name":"Observer2",  "type":700},
+			{"name":"Obs2Right",  "type":800},
+			{"name":"Pilot",      "type":700},
+			{"name":"Aircraft",   "type":700},
+			{"name":"Weather",    "type":100},
+			{"name":"Visibility", "type":100}
+		],
+		"dialog":{
+			"title":"Mission Properties",
+			"grouped":true,
+			"sections":[
+				{
+					"elements":[
+						{"type":"QEntryElement",   "key":"l",   "bind":"textValue:Location",    "title":"Location",    "placeholder":"Unit Code", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",   "key":"t",   "bind":"textValue:Transect",    "title":"Transect",    "placeholder":"Transect ID", "autocorrectionType":"No"},
+						{"type":"QEntryElement",   "key":"r",   "bind":"textValue:Recorder",    "title":"Recorder",    "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",   "key":"o1",  "bind":"textValue:Observer1",   "title":"Front Observer", "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QBooleanElement", "key":"o1r", "bind":"boolValue:Obs1Right",   "title":"Front Observer on Right"},
+						{"type":"QEntryElement",   "key":"o2",  "bind":"textValue:Observer2",   "title":"Rear Observer", "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QBooleanElement", "key":"o2r", "bind":"boolValue:Obs2Right",   "title":"Rear Observer on Right"},
+						{"type":"QEntryElement",   "key":"p",   "bind":"textValue:Pilot",       "title":"Pilot",       "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",   "key":"a",   "bind":"textValue:Aircraft",    "title":"Aircraft",    "placeholder":"Tail Number", "autocorrectionType":"No"},
+						{"type":"QRadioElement",   "key":"w",   "bind":"selected:Weather",      "title":"Weather",     "items":["<50% clouds", ">50% clouds", "Fog", "Mist", "Rain"]},
+						{"type":"QRadioElement",   "key":"v2",  "bind":"selected:Visibility",   "title":"Visibility",  "items":["<250m", "250-500m", ">500m"]}
+				  	]
+				}
+			]
+		},
+		"symbology":{
+			"color":"#00FF00",
+			"size":11
+		},
+		"on-symbology":{
+			"color":"#FF0000",
+			"size":2
+		},
+		"off-symbology":{
+			"color":"#DDDDDD",
+			"size":1.5
+		}
+	},
+    "features":[
+		{
+    		"name":"Nest",
+    		"attributes":[
+				{"name":"AdultCount",     "type":100},
+				{"name":"Behavior",       "type":700},
+				{"name":"Occupancy",      "type":700},
+				{"name":"NestId",         "type":700},
+				{"name":"NestSubstrate",  "type":700},
+				{"name":"NestTreeStatus", "type":700},
+				{"name":"NestTreeForm",   "type":700},
+				{"name":"NestVisibility", "type":100},
+				{"name":"ObservedBy1",    "type":800},
+				{"name":"ObservedBy2",    "type":800},
+				{"name":"Comments",       "type":700}
+ 			],
+			"locations":[
+				{"type":"gps",           "default":false, "allow":true},
+				{"type":"adhocTarget",   "default":false, "allow":true},
+				{"type":"adhocTouch",    "default":false, "allow":true},
+				{"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+			],
+			"dialog":{
+				"title":"Eagle Nest",
+				"grouped":true,
+				"sections":[
+					{
+						"title":"Eagles",
+					    "elements":[
+							{"type":"QIntegerElement", "key":"e1", "bind":"numberValue:AdultCount", "title":"Number of Adults"},
+							{"type":"QRadioElement",   "key":"e2", "bind":"selectedItem:Behavior",  "title":"Behavior",   "items":["Nothing Selected", "Nesting", "Flying", "Perching", "Nesting and Flying", "Nesting and Perching", "Flying and Perching"], "selected":0},
+							{"type":"QRadioElement",   "key":"e3", "bind":"selectedItem:Occupancy", "title":"Occupancy",   "items":["Nothing Selected", "Empty", "Incubating"], "selected":0}
+					    ]
+					},
+					{
+						"title":"Nest",
+					    "elements":[
+							{"type":"QEntryElement", "key":"n0", "bind":"textValue:NestId",            "title":"Nest",        "placeholder":"ID #", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+							{"type":"QRadioElement", "key":"n1", "bind":"selectedItem:NestSubstrate",  "title":"Substrate",   "items":["Nothing Selected", "Spruce", "Hemlock", "Cottonwood", "Ground"], "selected":0},
+							{"type":"QRadioElement", "key":"n2", "bind":"selectedItem:NestTreeStatus", "title":"Tree Status", "items":["Nothing Selected", "Live", "Dead", "Live w/ Large Dead Branches"], "selected":0},
+							{"type":"QRadioElement", "key":"n3", "bind":"selectedItem:NestTreeForm",   "title":"Tree Form",   "items":["Nothing Selected", "Normal Complete Top", "Abnormal Complete Top", "Broken Live Top", "Broken Dead Top"], "selected":0},
+							{"type":"QRadioElement", "key":"n4", "bind":"selected:NestVisibility",     "title":"Visibility",  "items":["Nothing Selected", "High Visibility", "Medium Visibility", "Low Visibility"], "selected":0}
+					  	]
+					},
+					{
+						"title":"Observation",
+					    "elements":[
+							{"type":"QBooleanElement", "key":"o1s",  "bind":"boolValue:ObservedBy1",  "title":"Seen by Observer 1"},
+							{"type":"QBooleanElement", "key":"o2s",  "bind":"boolValue:ObservedBy2",  "title":"Seen by Observer 2"},
+							{"type":"QEntryElement",   "key":"c",    "bind":"textValue:Comments",     "title":"Comments"}
+					  	]
+					}
+				]
+			},
+			"symbology":{
+				"color":"#BBBB00",
+				"size":15
+			}
+		}
+ 	],
+	"csv":{
+		"gps_points":{
+			"name":"GpsPoints",
+			"field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+			"field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+			"key_indexes":[0,2,1]
+		},
+		"track_logs":{
+			"name":"TrackLogs",
+			"field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+			"field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+			"start_key_indexes":[1,9,8],
+			"end_key_indexes":[5,11,10]
+		},
+		"features":{
+			"header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+			"feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+			"feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+			"feature_field_map":[0,1,2,3,4,5,8],
+			"feature_key_indexes":[0,5,4],
+			"obs_name":"Observations",
+			"obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+			"obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+			"obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+			"obs_key_indexes":[0,11,10]
+		}
+	}
+}

@@ -1,0 +1,139 @@
+{
+	"meta-name":"NPS-Protocol-Specification",
+	"meta-version":1,
+	"name":"LACL Moose Surveys",
+	"version":1.0,
+	"date":"2014-10-24",
+	"description":"Data Protocol for Lake Clark Moose Surveys.  Contact buck_mangipane@nps.gov for more details.",
+    "mission":{
+		"attributes":[
+			{"name":"Pilot",         "type":700},
+			{"name":"Observer",      "type":700},
+			{"name":"Clouds",        "type":100},
+			{"name":"Precipitation", "type":100},
+			{"name":"WindSpeed",     "type":100},
+			{"name":"Turbulence",    "type":100}
+		],
+		"dialog":{
+			"title":"Mission Properties",
+			"grouped":true,
+			"sections":[
+				{
+					"elements":[
+						{"type":"QEntryElement",   "key":"p",  "bind":"textValue:Pilot",        "title":"Pilot",            "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",   "key":"o",  "bind":"textValue:Observer",     "title":"Observer",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QRadioElement",   "key":"sc", "bind":"selected:Clouds",        "title":"Clouds",           "items":["Clear", "Scattered", "Broken", "Overcast"]},
+						{"type":"QRadioElement",   "key":"sc", "bind":"selected:Precipitation", "title":"Precipitation",    "items":["None", "Rain", "Snow", "Other"]},
+						{"type":"QDecimalElement", "key":"tp", "bind":"numberValue:WindSpeed",  "title":"Wind Speed (MPH)", "fractionDigits":0},
+						{"type":"QRadioElement",   "key":"tb", "bind":"selected:Turbulence",    "title":"Turbulence",       "items":["None", "Light", "Moderate", "Severe"]}
+				  	]
+				}
+			]
+		},
+		"symbology":{
+			"color":"#00FF00",
+			"size":11
+		},
+		"on-symbology":{
+			"color":"#FF0000",
+			"size":2
+		},
+		"off-symbology":{
+			"color":"#C0C0C0",
+			"size":1.5
+		}
+	},
+    "features":[
+		{
+    		"name":"Moose",
+    		"attributes":[
+				{"name":"CountBullYearling",  "type":100},
+				{"name":"CountBullMedium",    "type":100},
+				{"name":"CountBullLarge",     "type":100},
+				{"name":"CountCowNoCalf",     "type":100},
+				{"name":"CountCowOneCalf",    "type":100},
+				{"name":"CountCowTwoCalfs",   "type":100},
+				{"name":"CountLoneCalfs",     "type":100},
+				{"name":"CountUnknown",       "type":100},
+				{"name":"SnowCover",          "type":100},
+				{"name":"VegetationCover",    "type":100},
+				{"name":"Photo",              "type":800},
+				{"name":"Notes",              "type":700}
+ 			],
+			"locations":[
+				{"type":"gps",           "default":false, "allow":true},
+				{"type":"adhocTarget",   "default":false, "allow":true},
+				{"type":"adhocTouch",    "default":false, "allow":true},
+				{"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+			],
+			"dialog":{
+				"title":"Moose",
+				"grouped":true,
+				"sections":[
+					{
+					    "title":"Bull Count",
+					    "elements":[
+							{"type":"QIntegerElement",   "key":"c1", "bind":"numberValue:CountBullYearling", "title":"Yearling"},
+							{"type":"QIntegerElement",   "key":"c2", "bind":"numberValue:CountBullMedium",   "title":"Medium"},
+							{"type":"QIntegerElement",   "key":"c3", "bind":"numberValue:CountBullLarge",    "title":"Large"}
+					    ]
+					},
+					{
+					    "title":"Cow Count",
+					    "elements":[
+							{"type":"QIntegerElement",   "key":"c4", "bind":"numberValue:CountCowNoCalf",    "title":"No Calf"},
+							{"type":"QIntegerElement",   "key":"c5", "bind":"numberValue:CountCowOneCalf",   "title":"One Calf"},
+							{"type":"QIntegerElement",   "key":"c6", "bind":"numberValue:CountCowTwoCalfs",  "title":"Two Calfs"}
+					    ]
+					},
+					{
+					    "title":"Other Count",
+					    "elements":[
+							{"type":"QIntegerElement",   "key":"c7", "bind":"numberValue:CountLoneCalfs",    "title":"Lone Calf"},
+							{"type":"QIntegerElement",   "key":"c8", "bind":"numberValue:CountUnknown",      "title":"Unknown"}
+					    ]
+					},
+					{
+					    "elements":[
+							{"type":"QRadioElement",     "key":"sc", "bind":"selected:SnowCover",            "title":"Snow Cover",       "items":["1(0-33%)", "2(34-66%)", "3(>66%)", "4(100%)"]},
+							{"type":"QRadioElement",     "key":"vc", "bind":"selected:VegetationCover",      "title":"Vegetation Cover", "items":["1(0-33%)", "2(34-66%)", "3(>66%)"]},
+							{"type":"QBooleanElement",   "key":"p",  "bind":"boolValue:Photo",               "title":"Photo"},
+							{"type":"QMultilineElement", "key":"n",  "bind":"textValue:Notes",               "title":"Notes"}
+					    ]
+					}
+				]
+			},
+			"symbology":{
+				"color":"#00BBBB",
+				"size":15
+			}
+		}
+ 	],
+	"csv":{
+		"gps_points":{
+			"name":"GpsPoints",
+			"field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+			"field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+			"key_indexes":[0,2,1]
+		},
+		"track_logs":{
+			"name":"TrackLogs",
+			"field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+			"field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+			"start_key_indexes":[1,9,8],
+			"end_key_indexes":[5,11,10]
+		},
+		"features":{
+			"header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+			"feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+			"feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+			"feature_field_map":[0,1,2,3,4,5,8],
+			"feature_key_indexes":[0,5,4],
+			"obs_name":"Observations",
+			"obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+			"obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+			"obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+			"obs_key_indexes":[0,11,10]
+		}
+	}
+}

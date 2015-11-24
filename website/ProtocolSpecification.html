@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.19">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    li.li3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    li.li4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Menlo}
+    span.s1 {text-decoration: underline}
+    span.s2 {font: 11.0px Menlo}
+    span.s3 {font: 12.0px Helvetica}
+    span.Apple-tab-span {white-space:pre}
+    ul.ul1 {list-style-type: disc}
+    ul.ul2 {list-style-type: hyphen}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>Protocol Specifications, version 1</b></span></p>
+<p class="p2"><br></p>
+<p class="p3">The protocol file (*.obsprot) is just a text file in JSON (javascript object notation).<span class="Apple-converted-space">  </span>The root of the file is a Javascript Object (dictionary) with the following properties (keys)</p>
+<ul class="ul1">
+  <li class="li4">meta-name</li>
+  <li class="li4">meta-version</li>
+  <li class="li4">name</li>
+  <li class="li4">version</li>
+  <li class="li4">date</li>
+  <li class="li4">description</li>
+  <li class="li4">mission</li>
+</ul>
+<ul class="ul1">
+  <li class="li4">features</li>
+</ul>
+<p class="p3">Each of these properties is define in the following sections. Complete details on JSON file format the can be found at <a href="http://www.json.org/">http://www.json.org/</a></p>
+<p class="p2"><br></p>
+<ul class="ul1">
+  <li class="li4">meta-name</li>
+  <ul class="ul2">
+    <li class="li3"><span class="s2"></span>Must be <span class="s2">"NPS-Protocol-Specification"</span>.<span class="Apple-converted-space">  </span>This designates the file as subscribing to this file format.</li>
+  </ul>
+  <li class="li4">meta-version</li>
+  <ul class="ul2">
+    <li class="li3"><span class="s2"></span>Must be a integer that defines the version of the specification.<span class="Apple-converted-space">  </span>This is version 1.</li>
+  </ul>
+  <li class="li4">name</li>
+  <ul class="ul2">
+    <li class="li3"><span class="s2"></span>A user defined name (string) for this protocol.<span class="Apple-converted-space">  </span>Names do not need to be unique, but try to use a unique name to avoid confusion.</li>
+    <li class="li3">Protocols can evolve (see version and date).<span class="Apple-converted-space">  </span>The same name can and should be used for different version of the same protocol.<span class="Apple-converted-space"> </span></li>
+  </ul>
+  <li class="li4">version</li>
+  <ul class="ul2">
+    <li class="li3"><span class="s2"></span>The version of this named protocol.<span class="Apple-converted-space">  </span>The version number looks like a floating point number but is actually two integers separated by a decimal point.</li>
+    <li class="li3"><span class="s2"></span>The first number is the major version number the second number is the minor version number</li>
+    <li class="li3">A change in the major version number represents a change in the database structure of the protocol.</li>
+    <ul class="ul2">
+      <li class="li3">Two protocol files with the same name that differ in the major version number cannot share the same feature class without some data manipulation.<span class="Apple-converted-space"> </span></li>
+    </ul>
+    <li class="li3">A change in the minor version number can change symbology, location methods, and default or picklist values.<span class="Apple-converted-space"> </span></li>
+    <ul class="ul2">
+      <li class="li3"><span class="s2"></span>It is assumed that two protocol files with the same name that differ only in the minor version number can and will share the same feature class on the server.</li>
+    </ul>
+  </ul>
+  <li class="li4">date</li>
+  <ul class="ul2">
+    <li class="li3"><span class="s2"></span>The publication date of the protocol file.<span class="Apple-converted-space">  </span>The date is a string in iso format, i.e. YYYY-MM-DD</li>
+  </ul>
+  <li class="li4">description</li>
+  <ul class="ul2">
+    <li class="li3"><span class="s2"></span>A user defined description (string) for this protocol</li>
+  </ul>
+  <li class="li4">mission</li>
+  <ul class="ul2">
+    <li class="li3"><span class="s2"></span>An objects with the similar properties to the features described below.<span class="Apple-converted-space">  </span>For now, refer to that section for details</li>
+    <li class="li3"><span class="s2"></span>The mission describes the attributes and symbology of the mission.</li>
+    <li class="li3">The mission does not have a locations property (defined for features)</li>
+    <li class="li3">The mission has two additional properties <span class="s2">on-symbology</span> and <span class="s2">off-symbology</span> that are the same as the <span class="s2">symbology </span>property defined for features</li>
+    <ul class="ul2">
+      <li class="li3">These symbology properties define the look of the track log when observing (on or on-transect), and not observing (off).</li>
+    </ul>
+    <li class="li3">The mission attributes are often things like the names of the observers, and the weather.</li>
+  </ul>
+  <li class="li4">features</li>
+  <ul class="ul2">
+    <li class="li3"><span class="s2"><span class="Apple-tab-span">	</span></span>An Array of objects with the following properties</li>
+    <li class="li4">name</li>
+    <ul class="ul2">
+      <li class="li3">Each feature must have a unique name.</li>
+      <li class="li3">The name can be any sequence of characters, and must be enclosed in quotes</li>
+      <li class="li3">The name is used in the interface to let the user choose among different feature types</li>
+      <ul class="ul2">
+        <li class="li3">It should be short and descriptive.</li>
+      </ul>
+    </ul>
+    <li class="li4"><span class="s3"></span>attributes</li>
+    <ul class="ul2">
+      <li class="li3">A feature type can have an optional list of attributes to be collected for each feature</li>
+      <li class="li3">A feature with no attributes, only collects a location (and the type of the feature)</li>
+      <li class="li3">Each attribute must have a "<span class="s2">name</span>" element</li>
+      <ul class="ul2">
+        <li class="li3">The name element must be unique</li>
+        <li class="li3">It will be used as a database column name, so it should be a simple ASCII name without spaces or special characters</li>
+        <ul class="ul2">
+          <li class="li3">It will be prefixed internally to avoid clashes with reserved words</li>
+        </ul>
+      </ul>
+      <li class="li3">Each attribute must have a "<span class="s2">type</span>" element</li>
+      <ul class="ul2">
+        <li class="li3">The type is an integer code with the following definitions (from NSAttributeType)</li>
+        <ul class="ul2">
+          <li class="li3">100 -&gt; 16bit integer</li>
+          <li class="li3">200 -&gt; 32bit integer</li>
+          <li class="li3">300 -&gt; 64bit integer</li>
+          <li class="li3">400 -&gt; NSDecimal (currently not supported by ESRI)</li>
+          <li class="li3">500 -&gt; double precision floating point number</li>
+          <li class="li3">600 -&gt; single precision floating point number</li>
+          <li class="li3">700 -&gt; string</li>
+          <li class="li3">800 -&gt; boolean (converts to an ESRI integer 0 = NO, 1 = YES)</li>
+          <li class="li3">900 -&gt; datetime</li>
+          <li class="li3">1000 -&gt; binary blob (? no UI support, check on ESRI support)</li>
+        </ul>
+      </ul>
+    </ul>
+    <li class="li4"><span class="s3"></span>locations</li>
+    <ul class="ul2">
+      <li class="li3">Each feature must have a <span class="s2">"locations" </span>element with a non-empty list of location methods (a technique for locating a feature).</li>
+      <li class="li3">Each location method must have a <span class="s2">"type"</span> element</li>
+      <ul class="ul2">
+        <li class="li4"><span class="s3">The value must be one of </span>"gps", "mapTarget", "mapTouch", "angleDistance"</li>
+        <li class="li3">Any location type containing the text "Touch" is a touch location, the others are non-touch locations.</li>
+        <li class="li3">Providing multiple methods with the same type is allowed but discouraged as the behavior is undefined.</li>
+      </ul>
+      <li class="li3">A location method can have an optional<span class="Apple-converted-space"> </span><span class="s2"> "allow" </span>element with a value of either <span class="s2">true</span> or <span class="s2">false</span>.<span class="Apple-converted-space"> </span></li>
+      <ul class="ul2">
+        <li class="li3">The value of <span class="s2">true</span> is assumed if this element is absent.</li>
+        <li class="li3">If the value is <span class="s2">false</span>, this type of location method is not allowed.<span class="Apple-converted-space">  </span>This is equivalent to not providing the location method in the list.</li>
+      </ul>
+      <li class="li3">A location method can have an optional default element with a value of either <span class="s2">true</span> or <span class="s2">false</span>.</li>
+      <ul class="ul2">
+        <li class="li3">A value of <span class="s2">false</span> is assumed if this element is absent</li>
+        <li class="li3">Only one non-touch locations should have a <span class="s2">true</span> value, otherwise the behavior is undefined.</li>
+      </ul>
+      <li class="li3">A location method of <span class="s2">"type":"angleDistance"</span> has the following requirements</li>
+      <ul class="ul2">
+        <li class="li3">An optional element <span class="s2">"deadAhead"</span> with a numeric value between <span class="s2">0.0</span> and <span class="s2">360.0</span></li>
+        <ul class="ul2">
+          <li class="li3">The numeric value provided is the angle measurement in degrees that means the feature is dead ahead</li>
+          <li class="li3">The default is <span class="s2">0.0</span></li>
+        </ul>
+        <li class="li3"><span class="s2"></span>An optional element <span class="s2">"direction"</span> with a value of <span class="s2">"cw"</span> or <span class="s2">"ccw"</span></li>
+        <ul class="ul2">
+          <li class="li3">Angles increase in the clockwise (<span class="s2">"cw"</span>) or counter-clockwise (<span class="s2">"ccw"</span>) direction</li>
+          <li class="li3">The default is <span class="s2">"cw"</span></li>
+        </ul>
+        <li class="li3">An optional element <span class="s2">"units"</span> with value of <span class="s2">"feet"</span> or <span class="s2">"meters"</span> or <span class="s2">"yards"</span></li>
+        <ul class="ul2">
+          <li class="li3">Distance measurements to the feature are reported in these units</li>
+          <li class="li3">The default is <span class="s2">"meters"</span></li>
+        </ul>
+        <li class="li3">If all these elements are omitted</li>
+        <ul class="ul2">
+          <li class="li3">Then the user is free to set their own preferences for these parameters in the user interface</li>
+        </ul>
+        <li class="li3">If any of these elements is provided</li>
+        <ul class="ul2">
+          <li class="li3">The user interface locks the user into using the parameters (or their defaults) as provided</li>
+        </ul>
+      </ul>
+      <li class="li3">If a touch location method is allowed</li>
+      <ul class="ul2">
+        <li class="li3">A feature will be created when the user touches the map without selecting an existing feature</li>
+        <li class="li3">If one or more non-touch location methods allowed</li>
+        <li class="li3">Then an Add Feature button is added to the user interface</li>
+      </ul>
+      <li class="li3">The Add Feature button has the following behavior if more than one non-touch location method is allowed</li>
+      <ul class="ul2">
+        <li class="li3">Tap:</li>
+        <ul class="ul2">
+          <li class="li3">If there is a location method with <span class="s2">"default":true</span></li>
+          <ul class="ul2">
+            <li class="li3">Use that location method to add a new feature</li>
+          </ul>
+          <li class="li3">If there is no location method with <span class="s2">"default":true</span></li>
+          <ul class="ul2">
+            <li class="li3">If the feature's preferred location method (see Long Press) is not set</li>
+            <ul class="ul2">
+              <li class="li3">Set the feature's preferred method to the first of the following types to be allowed</li>
+              <ul class="ul2">
+                <li class="li4"><span class="s3"></span>"gps", "adhocTarget", "angleDistance"</li>
+              </ul>
+            </ul>
+            <li class="li3">Use the user's preferred location method to add a new feature</li>
+          </ul>
+        </ul>
+        <li class="li3">Long Press:</li>
+        <ul class="ul2">
+          <li class="li3">Provide the user with a selection list of all the allowed non-touch location methods</li>
+          <li class="li3">If the user selects one</li>
+          <ul class="ul2">
+            <li class="li3">A feature is added using the selected location method</li>
+            <li class="li3">Set the feature's preferred location method to the selected location method</li>
+          </ul>
+        </ul>
+      </ul>
+    </ul>
+    <li class="li4"><span class="s3"></span>dialog</li>
+    <ul class="ul2">
+      <li class="li3">Provides the look and feel of the attribute input form presented to the user</li>
+      <li class="li3">Only<span class="Apple-converted-space">  </span>required if the feature has attributes</li>
+      <li class="li3">See the QuickDialog documentation for details</li>
+    </ul>
+    <li class="li4"><span class="s3"></span>symbology</li>
+    <ul class="ul2">
+      <li class="li3">Defines how the feature will be displayed on the map</li>
+      <li class="li3">The symbology may have an optional "color" element</li>
+      <ul class="ul2">
+        <li class="li3">The color element is a string in the form "#FFFFFF"</li>
+        <ul class="ul2">
+          <li class="li3">where F is a hexadecimal digit</li>
+          <li class="li3">The Hex pairs represent the Red, Green, and Blue respectively.</li>
+        </ul>
+        <li class="li3">The default if not provided, or malformed is "#000000" (black)</li>
+      </ul>
+      <li class="li3">The symbology may have an optional "size" element</li>
+      <ul class="ul2">
+        <li class="li3">The size is an integer number for the size in points of the simple circle marker symbol</li>
+        <li class="li3">The default is 12 if not provided.</li>
+      </ul>
+    </ul>
+  </ul>
+</ul>
+<p class="p2"><br></p>
+</body>
+</html>

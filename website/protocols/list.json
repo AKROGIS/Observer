@@ -1,0 +1,90 @@
+[
+{
+	"name":"ARCN Loon Survey",
+	"version":1.01,
+	"date":"2015-07-16",
+	"url":"http://akrgis.nps.gov/observer/protocols/arcn_loons.obsprot"
+}
+,
+{
+	"name":"CAKN Sheep Short Form",
+	"version":1.1,
+	"date":"2015-07-16",
+	"url":"http://akrgis.nps.gov/observer/protocols/cakn_sheep.obsprot"
+}
+,
+{
+	"name":"CAKN Long Form",
+	"version":1.1,
+	"date":"2015-07-16",
+	"url":"http://akrgis.nps.gov/observer/protocols/cakn_long.obsprot"
+}
+,
+{
+	"name":"GLBA Whales",
+	"version":1.1,
+	"date":"2014-07-01",
+	"url":"http://akrgis.nps.gov/observer/protocols/glba_whales.obsprot"
+}
+,
+{
+	"name":"LACL Bear Trends",
+	"version":1.01,
+	"date":"2014-07-01",
+	"url":"http://akrgis.nps.gov/observer/protocols/lacl_bears.obsprot"
+}
+,
+{
+	"name":"LACL Moose Surveys",
+	"version":1.00,
+	"date":"2014-10-24",
+	"url":"http://akrgis.nps.gov/observer/protocols/lacl_moose.obsprot"
+}
+,
+{
+	"name":"LACL Radio Tacking",
+	"version":1.00,
+	"date":"2015-04-09",
+	"url":"http://akrgis.nps.gov/observer/protocols/lacl_radio_tracking.obsprot"
+}
+,
+{
+	"name":"LACL Sheep",
+	"version":1.01,
+	"date":"2014-07-01",
+	"url":"http://akrgis.nps.gov/observer/protocols/lacl_sheep.obsprot"
+}
+,
+{
+	"name":"SEAN KIMU Protocol",
+	"version":1.2,
+	"date":"2015-06-15",
+	"url":"http://akrgis.nps.gov/observer/protocols/sean_kimu.obsprot"
+}
+,
+{	"name":"SWAN Eagle Occupancy",
+	"version":1.21,
+	"date":"2015-05-29",
+	"url":"http://akrgis.nps.gov/observer/protocols/swan-eagles.obsprot"
+}
+,
+{	"name":"SWAN Marine Survey",
+	"version":1.01,
+	"date":"2014-06-30",
+	"url":"http://akrgis.nps.gov/observer/protocols/swan-mbm.obsprot"
+}
+,
+{
+	"name":"YUC Moose Surveys",
+	"version":1.00,
+	"date":"2015-11-05",
+	"url":"http://akrgis.nps.gov/observer/protocols/yuch_moose.obsprot"
+}
+,
+{
+	"name":"Test Protocol",
+	"version":1.3,
+	"date":"2014-07-01",
+	"url":"http://akrgis.nps.gov/observer/protocols/sample.obsprot"
+}
+]

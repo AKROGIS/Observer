@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Park Observer</title>
+<script>
+window.onload = function() {
+  // For use within normal web clients 
+  var isiPad = navigator.userAgent.match(/iPad/i) != null;
+
+  // For use within iPad developer UIWebView
+  // Thanks to Andrew Hedges!
+  var ua = navigator.userAgent;
+  var isiPad = /iPad/i.test(ua) || /iPhone OS 3_1_2/i.test(ua) || /iPhone OS 3_2_2/i.test(ua);
+  if (isiPad) {
+    window.location.replace("index-ipad.htm");
+  } else {
+    window.location.replace("index-other.htm");
+  }
+}
+</script>
+</head>
+<body>
+</body>
+</html>

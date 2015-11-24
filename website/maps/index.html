@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+    <head>
+        <title>Park Observer | Map List</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="Map List">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+        <link rel="stylesheet" href="../akr.css">
+    <style type="text/css">
+        #mapTable {padding:20px;margin-left:auto;margin-right:auto;}
+        td.attName {font-weight:bold}
+        .caption {font-size:smaller; color:grey; font-style: italic; text-align: center}
+        .simple-table {border-style:none}
+        <!--img.thumb {border:1px solid grey;}-->
+        img.thumb {-moz-box-shadow: 0 0 3px 3px #cccccc;
+            -webkit-box-shadow: 0 0 3px 3px #cccccc;
+            box-shadow: 0 0 3px 3px #cccccc;}
+    </style>
+</head>
+    <body>
+        <div id="top">
+	<img style="float:left; padding-right:10px; padding-top:8px" src="../app_icon_small.png">
+            <h1>Park Observer Basemaps</h1>
+            <h2>Tile Packages for the Park Observer iPad Data Collection App</h2>
+            <br>
+        </div>
+
+        <div id="content">
+            <table id="mapTable" class="pure-table pure-table-bordered">
+                <thead>
+                <tr>
+                    <th>Map</th>
+                    <th>Description</th>
+                    <th>Details</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+            <script>
+                $.getJSON( "maplist.json", function( data ) {
+                    var items = [];
+                    $.each( data, function( index, item ) {
+                        var img = "<div><img class='thumb' src='"+ item.thumbnail +"'><p class='caption'>"+ item.name + "</p></div>";
+                        var size = Math.round(item.size / 1024.0 / 1024.0) + "MB";
+                        var details = "<table class='simple-table'></tr><tr><td class='attName'>Author</td><td class='attValue'>" + item.author + "</td></tr>";
+                        details = details + "<tr><td class='attName'>Date</td><td class='attValue'>" + item.date + "</td></tr>";
+                        details = details + "<tr><td class='attName'>Size</td><td class='attValue'>" + size + "</td></tr></table>";
+                        items.push( '<tr><td><a href="'+item.url + '">'+ img + '</a></td><td>'+ item.description +'</td><td>'+ details +'</td></tr>' );
+                    });
+                    $('#mapTable').find('tbody:last').append(items.join( "" ))
+                });
+            </script>
+        </div>
+
+        <div id="footer">
+            Questions? Contact Regan Sarwas at <a href="mailto:regan_sarwas@nps.gov">regan_sarwas@nps.gov</a>.
+        </div>
+    </body>
+</html>

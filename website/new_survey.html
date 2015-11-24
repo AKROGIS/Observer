@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Park Observer | New Survey</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="akr.css">
+</head>
+<body>
+    <div id="top">
+	<img style="float:left; padding-right:10px; padding-top:8px" src="app_icon_small.png">
+	<h1>Park Observer</h1>
+	<h2>An iPad application for offline data collection</h2>
+	<h2>Brought to you by the Alaska Regional Office GIS Team</h2>
+	<br>
+    </div>
+	
+	
+    <div id="content">
+	<br/>
+	<h3>Adding Maps and Protocols</h3>
+	    <p>Instructions on what to do if there is no protocol or basemap for your survey.</p>
+		<ol>
+			  <li>
+	    <strong>Contact <a href="mailto:regan_sarwas@nps.gov">AKR GIS</a></strong>.
+		<p>We are happy to help.
+		Creating a new map or survey protocol is fast and efficient for us as long as you can communicate your needs.</p>
+	  </li>
+	  <li>
+	    <strong>Thanks, but I want to do it myself.</strong>
+		
+				<h4><a href="protocols/">Protocols</a></h4>
+
+	    <p>Protocols define your survey - you must have a protocol to collect data.  The
+	    protocol defines the features that you can collect, and the attributes of those features.</p>
+		
+		<p>The easiest way to create a new protocol is to copy one of the <a href="protocols/">existing protocols</a>
+		and then edit it in a text editor like notepad.  If you get stuck,
+		try reading the <a href="ProtocolSpecification.html">specification for the protocol file</a></p>
+		
+		<p>A Protocol should have a unique name and version.  To avoid confusion, the file name should match the name attribute
+		inside the file, but this is not required.
+		Protocols have a major and minor version number.  Both are integers separated by a decimal point.
+		A change in the major version number indicates a change in the database schema.  Use the minor version number for all other changes.</p>
+		
+		<p>Protocols create a FGDB on the server the first time a new major version is synced with the server.
+		The name of the database is determined by the protocol name and the major version number.  The world will end
+		if you try to sync a protocol with the same name and major version but different schema as an existing protocol.
+		Please don't do that.</p>
+
+		<p>The protocol must be a valid <a href="http://json.org/">JSON</a> file, or it will fail to load in the app.
+		You should validate it first by using an <a href="http://jsonlint.com/">online validator</a>.</p>
+		
+		<p>Once you have a valid protocol, you can use iTunes to load it onto your device.
+		It will then appear in the list of local protocols in your app.
+		If you want your protocol to appear in the list of protocols available to all users
+		<a href="mailto:regan_sarwas@nps.gov">contact me</a> and I will load it on the server.
+
+		<p>While a database for the protocol is created automatically, the associated layer file, mxd, map service and web map, are not.
+		<a href="mailto:regan_sarwas@nps.gov">Contact us</a> if you would like those created for your protocol.  Until then, you can
+		go to \\akrgis.nps.gob\MapData\Observer to make a copy of the FGDB.</p>
+	    <p/>
+	<h4><a href="maps/">Maps</a></h4>
+	<p>Basemaps can be created in ArcMap 10.1 or greater.
+	The map is converted into a collection of small images at various scales for rapid
+	rendering on the device.  You can use any image or vector datasets that you like in your map,
+	however you can <strong>not</strong> use proprietary online basemaps (like Google, Bing, or ArcGIS).</p>
+	<p>To create a basemap (aka tilecache) in ArcMap:
+	<ol><li>Turn on the tool: Select ArcMap Options... in the Customize menu item.  Then select the Sharing tab,
+	and check the <em>Enable ArcGIS Runtime Tools</em></li>
+	<li>Assemble your map - set symbology, labeling, scale dependencies, etc. to your liking.</li>
+	<li>Zoom to the full extents of the area you would like to have in the tile cache.
+	To minimize file size you should make the area as small as necessary.</li>
+	</li>
+	<li>Export the map by selecting File->Share As->Tile Package from the ArcMap menu
+	<ol type="a">
+	  <li>Tile Package Tab<br>You will want to save the package to a file.  Give it any name you want.
+	  When done, this file can be loaded into the app via iTunes.</li>
+	  <li>Tile Format Tab<br>You will want to leave the Tile scheme as
+	  <em>ArcGIS Online / Bing Maps / Google Maps </em> and Tile Format as <em>PNG</em>.
+	  You will want to leave this at 17 or lower, unless you have a very small survey are, and need a very high
+	  resolution of data. 5m resolution imagery will generally not look any better at more detail than level 17.
+	  The higher the number, the longer the tile cache will take to generate, and the larger the tile package will be.
+	  Generating an entire park at level 17 may take several hours or more. I would experiment with small areas and
+	  low zoom levels to get a feel for how long it takes, and what zoom level gives you adequate resolution.
+	  Be aware each increase in zoom level will quadruple the size and time it take to generate the tile cache.
+	  <li>Item Description Tab<br>As a minimum, you are required to provide a Summary and Tags.</li>
+	  </ol>
+	  </li>
+	  <li>Load the tile cache you just created on to your device with iTunes.
+	  If you want the tile cache to appear in the list of basemaps available to all users <a href="mailto:regan_sarwas@nps.gov">contact me</a>.
+	</li>
+	</ol>
+
+		
+	    </li>
+	  </ol>
+    </div>
+	
+    <div id="footer">
+	Questions? Contact Regan Sarwas at <a href="mailto:regan_sarwas@nps.gov">regan_sarwas@nps.gov</a>.
+    </div>	
+</body>
+</html>

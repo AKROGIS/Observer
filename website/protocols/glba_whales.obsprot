@@ -1,0 +1,122 @@
+{
+	"meta-name":"NPS-Protocol-Specification",
+	"meta-version":1,
+	"name":"GLBA Whales",
+	"version":1.1,
+	"date":"2014-07-01",
+	"description":"This survey protocol is for whale surveys in Glacier Bay NPP.  Contact regan_sarwas@nps.gov (907)-644-3548 for more details.",
+    "mission":{
+		"attributes":[
+			{"name":"Vessel",        "type":700},
+			{"name":"Driver",        "type":700},
+			{"name":"Crew",          "type":700},
+			{"name":"Miles",         "type":600},
+			{"name":"StartLocation", "type":700},
+			{"name":"EndLocation",   "type":700},
+			{"name":"ResearchGroup", "type":700},
+			{"name":"CruiseType",    "type":700},
+			{"name":"Region",        "type":700},
+			{"name":"StudyArea",     "type":700},
+			{"name":"StudyYear",     "type":700},
+			{"name":"Sounder",       "type":700}
+		],
+		"dialog":{
+			"title":"Mission Properties",
+			"grouped":true,
+			"sections":[
+				{
+					"elements":[
+						{"type":"QRadioElement",   "key":"v",  "bind":"selectedItem:Vessel",        "title":"Vessel",         "items":["Not Specified", "SA", "Other"]},
+						{"type":"QEntryElement",   "key":"d",  "bind":"textValue:Driver",           "title":"Boat Driver",    "placeholder":"Name", "autocorrectionType":"No"},
+						{"type":"QEntryElement",   "key":"c",  "bind":"textValue:Crew",             "title":"Other Crew",     "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QDecimalElement", "key":"m",  "bind":"numberValue:Miles",          "title":"Nautical Miles", "fractionDigits":1},
+						{"type":"QRadioElement",   "key":"sl", "bind":"selectedItem:StartLocation", "title":"Start Location", "items":["Not Specified", "Bartlett Cove", "Other"]},
+						{"type":"QRadioElement",   "key":"el", "bind":"selectedItem:EndLocation",   "title":"End Location",   "items":["Not Specified", "Bartlett Cove", "Other"]},
+						{"type":"QRadioElement",   "key":"g",  "bind":"selectedItem:ResearchGroup", "title":"Research Group", "items":["Not Specified", "GBNP", "Other"]},
+						{"type":"QRadioElement",   "key":"t",  "bind":"selectedItem:CruiseType",    "title":"Cruise Type",    "items":["Not Specified", "GBNP Whale Monitoring", "Other"]},
+						{"type":"QRadioElement",   "key":"r",  "bind":"selectedItem:Region",        "title":"Region",         "items":["Not Specified", "EGOA", "Other"]},
+						{"type":"QRadioElement",   "key":"a",  "bind":"selectedItem:StudyArea",     "title":"Study Area",     "items":["Not Specified", "SEAK", "Other"]},
+						{"type":"QRadioElement",   "key":"y",  "bind":"selectedItem:StudyYear",     "title":"Survey Year",    "items":["Not Specified", "2014", "2015", "2016"], "selected":1},
+						{"type":"QRadioElement",   "key":"s",  "bind":"selectedItem:Sounder",       "title":"Depth Sounder",  "items":["Not Specified", "Garmin 172C", "Other"]}
+				  	]
+				}
+			]
+		},
+		"symbology":{
+			"color":"#00FF00",
+			"size":11
+		},
+		"on-symbology":{
+			"color":"#FF0000",
+			"size":3
+		},
+		"off-symbology":{
+			"color":"#FFFFC2",
+			"size":2
+		}
+	},
+    "features":[
+		{
+    		"name":"Whales",
+    		"attributes":[
+				{"name":"Depth",       "type":100},
+				{"name":"Temperature", "type":600},
+				{"name":"CalfPresent", "type":800},
+				{"name":"CountBest",   "type":100},
+				{"name":"CountMin",    "type":100},
+				{"name":"CountMax",    "type":100}
+ 			],
+			"locations":[
+				{"type":"adhocTouch",    "default":false, "allow":true},
+				{"type":"angleDistance", "default":true,  "allow":true, "baseline":180.0, "units":"meters", "direction":"cw" }
+			],
+			"dialog":{
+				"title":"Whale Pod",
+				"grouped":true,
+				"sections":[
+					{
+					    "elements":[
+						    {"type":"QDecimalElement", "key":"d",  "bind":"numberValue:Depth",       "title":"Depth (m)", "fractionDigits":0},
+						    {"type":"QDecimalElement", "key":"t",  "bind":"numberValue:Temperature", "title":"Temperature (C)", "fractionDigits":1},
+							{"type":"QBooleanElement", "key":"cp", "bind":"boolValue:CalfPresent",   "title":"Calf Present"},
+							{"type":"QIntegerElement", "key":"cb", "bind":"numberValue:CountBest",   "title":"Group Count", "maximumValue":100},
+							{"type":"QIntegerElement", "key":"c1", "bind":"numberValue:CountMin",    "title":"- for Min", "minimumValue":-100, "maximumValue":0},
+							{"type":"QIntegerElement", "key":"c2", "bind":"numberValue:CountMax",    "title":"+ for Max", "minimumValue":0, "maximumValue":100}
+					  	]
+					}
+				]
+			},
+			"symbology":{
+				"color":"#CC00CC",
+				"size":13
+			}
+		}
+ 	],
+	"csv":{
+		"gps_points":{
+			"name":"GpsPoints",
+			"field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+			"field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+			"key_indexes":[0,2,1]
+		},
+		"track_logs":{
+			"name":"TrackLogs",
+			"field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+			"field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+			"start_key_indexes":[1,9,8],
+			"end_key_indexes":[5,11,10]
+		},
+		"features":{
+			"header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+			"feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+			"feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+			"feature_field_map":[0,1,2,3,4,5,8],
+			"feature_key_indexes":[0,5,4],
+			"obs_name":"Observations",
+			"obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+			"obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+			"obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+			"obs_key_indexes":[0,11,10]
+		}
+	}
+}

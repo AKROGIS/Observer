@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+    <head>
+        <title>Park Observer | Protocol List</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="Protocol List">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+        <link rel="stylesheet" href="../akr.css">
+</head>
+    <body>
+        <div id="top">
+	<img style="float:left; padding-right:10px; padding-top:8px" src="../app_icon_small.png">
+            <h1>Park Observer Protocols</h1>
+            <h2>Survey definition files for the Park Observer iPad Data Collection App</h2>
+            <br>
+        </div>
+
+        <div id="content">
+            <table id="protocolTable" class="pure-table">
+                <thead>
+                <tr>
+                    <th>Protocol</th>
+                    <th>Version</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+            <script>
+                $.getJSON( "list.json", function( data ) {
+                    var items = [];
+                    $.each( data, function( index, item ) {
+                        items.push( '<tr><td><a href="'+item.url + '">'+item.name + '</a></td><td>'+ item.version +'</td><td>'+ item.date +'</td></tr>' );
+                    });
+                    $('#protocolTable').find('tbody:last').append(items.join( "" ))
+                });
+            </script>
+        </div>
+
+        <div id="footer">
+            Questions? Contact Regan Sarwas at <a href="mailto:regan_sarwas@nps.gov">regan_sarwas@nps.gov</a>.
+        </div>
+    </body>
+</html>
