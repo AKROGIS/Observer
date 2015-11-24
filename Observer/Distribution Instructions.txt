@@ -1,8 +1,8 @@
 Create an Archive: Xcode->Product->Archive
 Select the new archive in XCode organizer
-Click the Distribute... button
+Click the Export… button
 Select "Save for Enterprise or Ad Hoc Deployment"
-Verify the provisioning profile (NPS Distribution) in the pick list, then click Export
+Verify the provisioning profile (National Park Service) in the pick list, then click Choose
 Change the Save As Name to Park_Observer (Note the underscore)
 Click the Save for Enterprise Distribution, and fill out the form as follows:
   Application URL: http://akrgis.nps.gov/Observer/Park_Observer.ipa
