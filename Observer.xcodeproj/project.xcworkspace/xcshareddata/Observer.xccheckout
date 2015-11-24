@@ -7,40 +7,40 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>FF632E8A-BE4D-4F30-BAA0-71D76C1CCA0D</string>
 	<key>IDESourceControlProjectName</key>
-	<string>Observer</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>24CBE7CE-54E3-4209-868B-727112CB7041</key>
-		<string>ssh://github.com/regan-sarwas/QuickDialog.git</string>
-		<key>C966AB86-CCE0-4CC8-8F93-275E21E3F8D8</key>
+		<key>940F78D5F98A404F0CE03A452F2871238905218C</key>
 		<string>https://github.com/regan-sarwas/ZipKit.git</string>
-		<key>EB742802-8704-4F04-BBC5-8154983BBC2D</key>
+		<key>AA4213F7208C61C97E25420A251A855B7CADF8E3</key>
+		<string>github.com:regan-sarwas/QuickDialog.git</string>
+		<key>CF5F2ADE59885AB5634F065FEF282B3D4006B7F2</key>
 		<string>https://github.com/regan-sarwas/Observer.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Observer.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>24CBE7CE-54E3-4209-868B-727112CB7041</key>
-		<string>../../QuickDialog</string>
-		<key>C966AB86-CCE0-4CC8-8F93-275E21E3F8D8</key>
-		<string>../../ZipKit</string>
-		<key>EB742802-8704-4F04-BBC5-8154983BBC2D</key>
+		<key>940F78D5F98A404F0CE03A452F2871238905218C</key>
+		<string>../..ZipKit/</string>
+		<key>AA4213F7208C61C97E25420A251A855B7CADF8E3</key>
+		<string>../..QuickDialog/</string>
+		<key>CF5F2ADE59885AB5634F065FEF282B3D4006B7F2</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/regan-sarwas/Observer.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>EB742802-8704-4F04-BBC5-8154983BBC2D</string>
+	<string>CF5F2ADE59885AB5634F065FEF282B3D4006B7F2</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>EB742802-8704-4F04-BBC5-8154983BBC2D</string>
+			<string>CF5F2ADE59885AB5634F065FEF282B3D4006B7F2</string>
 			<key>IDESourceControlWCCName</key>
 			<string>Observer</string>
 		</dict>
@@ -48,7 +48,7 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>24CBE7CE-54E3-4209-868B-727112CB7041</string>
+			<string>AA4213F7208C61C97E25420A251A855B7CADF8E3</string>
 			<key>IDESourceControlWCCName</key>
 			<string>QuickDialog</string>
 		</dict>
@@ -56,7 +56,7 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>C966AB86-CCE0-4CC8-8F93-275E21E3F8D8</string>
+			<string>940F78D5F98A404F0CE03A452F2871238905218C</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ZipKit</string>
 		</dict>
