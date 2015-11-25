@@ -10,6 +10,7 @@
 #import <CoreData/CoreData.h>
 
 //CoreData entities
+#import "Mission.h"
 #import "AdhocLocation.h"
 #import "AngleDistanceLocation.h"
 #import "GpsPoint.h"
