@@ -53,6 +53,8 @@
 #define kCancelButtonText          NSLocalizedString(@"Cancel", @"Cancel button text")
 
 
+#include <tgmath.h>  //replaces math.h with Type Generic Math, allows parameters/returns to be CGFloat (float or double)
+
 
 @interface ObserverMapViewController () {
     CGFloat _initialRotationOfViewAtGestureStart;
@@ -243,7 +245,7 @@
 {
     if (sender.state == UIGestureRecognizerStateBegan) {
         [self.autoPanController userRotatedMap];
-        _initialRotationOfViewAtGestureStart = atan2f(self.compassRoseButton.transform.b, self.compassRoseButton.transform.a);
+        _initialRotationOfViewAtGestureStart = atan2(self.compassRoseButton.transform.b, self.compassRoseButton.transform.a);
     }
     CGFloat radians = _initialRotationOfViewAtGestureStart + sender.rotation;
     CGFloat degrees = (CGFloat)(radians * (180 / M_PI));

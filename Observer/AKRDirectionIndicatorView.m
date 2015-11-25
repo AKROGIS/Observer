@@ -23,7 +23,7 @@
 {
     if (fabs(azimuth - _azimuth) < 0.02)
         return;
-    float oldAzimuth = _azimuth;
+    CGFloat oldAzimuth = _azimuth;
     _azimuth = azimuth;
     if (2.0 < (fabs(azimuth - oldAzimuth))) {
         [self setNeedsDisplay];

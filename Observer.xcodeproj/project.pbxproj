@@ -84,7 +84,7 @@
 		39955EA0178337F700D225D7 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E9F178337F700D225D7 /* libc++.dylib */; };
 		39955EA21783382200D225D7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA11783382200D225D7 /* libz.dylib */; };
 		39955EA41783388600D225D7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955EA31783388600D225D7 /* OpenGLES.framework */; };
-		39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ED1178733B900D225D7 /* ObserverMapViewController.m */; };
+		39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955ED1178733B900D225D7 /* ObserverMapViewController.m */; settings = {COMPILER_FLAGS = "-fno-modules"; }; };
 		39A836C4185A668D008BF4E3 /* AKRAngleDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A836C3185A668D008BF4E3 /* AKRAngleDistance.m */; };
 		39A836CB185FDAB8008BF4E3 /* AttributeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A836CA185FDAB8008BF4E3 /* AttributeViewController.m */; };
 		39A9EF90196F5BD80059FC0F /* Archiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A9EF8F196F5BD80059FC0F /* Archiver.m */; };
