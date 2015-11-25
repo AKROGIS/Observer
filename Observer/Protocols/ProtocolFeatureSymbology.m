@@ -20,7 +20,7 @@
                     [self defineReadonlyProperties:json];
                     break;
                 default:
-                    AKRLog(@"Unsupported version (%d) of the NPS-Protocol-Specification", version);
+                    AKRLog(@"Unsupported version (%ld) of the NPS-Protocol-Specification", (long)version);
                     break;
             }
         }

@@ -37,9 +37,9 @@
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSInteger year = [gregorian components:NSYearCalendarUnit fromDate:start.timestamp].year;
     NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSDayCalendarUnit inUnit:NSYearCalendarUnit forDate:start.timestamp];
-    [csv appendFormat:@"%@,%@,%@,%d,%u,%@,%@,%0.2f,%0.6f,%0.6f,%0.6f,%0.6f,WGS84,%0.1f",
+    [csv appendFormat:@"%@,%@,%@,%ld,%lu,%@,%@,%0.2f,%0.6f,%0.6f,%0.6f,%0.6f,WGS84,%0.1f",
      (self.missionProperty.observing ? @"Yes" : @"No"),
-     [AKRFormatter utcIsoStringFromDate:start.timestamp], [AKRFormatter localIsoStringFromDate:start.timestamp], year, dayOfYear,
+     [AKRFormatter utcIsoStringFromDate:start.timestamp], [AKRFormatter localIsoStringFromDate:start.timestamp], (long)year, (unsigned long)dayOfYear,
      [AKRFormatter utcIsoStringFromDate:end.timestamp], [AKRFormatter localIsoStringFromDate:end.timestamp], [end.timestamp timeIntervalSinceDate:start.timestamp],
      start.latitude, start.longitude, end.latitude, end.longitude, self.length];
 
