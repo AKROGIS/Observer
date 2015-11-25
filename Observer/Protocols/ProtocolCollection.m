@@ -147,7 +147,7 @@ static BOOL _isLoaded = NO;
 - (SProtocol *)localProtocolAtIndex:(NSUInteger)index
 {
     if (self.localItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [ProtocolCollection localProtocolAtIndex:%d]; size = %d",index,self.localItems.count);
+        AKRLog(@"Array index out of bounds in [ProtocolCollection localProtocolAtIndex:%lu]; size = %lu",(unsigned long)index,(unsigned long)self.localItems.count);
         return nil;
     }
     return self.localItems[index];
@@ -156,7 +156,7 @@ static BOOL _isLoaded = NO;
 - (SProtocol *)remoteProtocolAtIndex:(NSUInteger)index
 {
     if (self.remoteItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [ProtocolCollection remoteProtocolAtIndex:%d]; size = %d",index,self.remoteItems.count);
+        AKRLog(@"Array index out of bounds in [ProtocolCollection remoteProtocolAtIndex:%lu]; size = %lu",(unsigned long)index,(unsigned long)self.remoteItems.count);
         return nil;
     }
     return self.remoteItems[index];
@@ -164,7 +164,7 @@ static BOOL _isLoaded = NO;
 
 - (void)insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index
 {
-    NSAssert(index <= self.localItems.count, @"Array index out of bounds in [ProtocolCollection insertLocalProtocolAtIndex:%d]; size = %d",index,self.localItems.count);
+    NSAssert(index <= self.localItems.count, @"Array index out of bounds in [ProtocolCollection insertLocalProtocolAtIndex:%lu]; size = %lu",(unsigned long)index,(unsigned long)self.localItems.count);
     [self.localItems insertObject:protocol atIndex:index];
     [self saveCache];
 }
@@ -172,7 +172,7 @@ static BOOL _isLoaded = NO;
 -(void)removeLocalProtocolAtIndex:(NSUInteger)index
 {
     if (self.localItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [ProtocolCollection removeLocalProtocolAtIndex:%d] size = %d",index,self.localItems.count);
+        AKRLog(@"Array index out of bounds in [ProtocolCollection removeLocalProtocolAtIndex:%lu] size = %lu",(unsigned long)index,(unsigned long)self.localItems.count);
         return;
     }
     SProtocol *item = [self localProtocolAtIndex:index];
@@ -184,7 +184,7 @@ static BOOL _isLoaded = NO;
 - (void)removeRemoteProtocolAtIndex:(NSUInteger)index
 {
     if (self.remoteItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [ProtocolCollection removeRemoteProtocolAtIndex:%d] size = %d",index,self.remoteItems.count);
+        AKRLog(@"Array index out of bounds in [ProtocolCollection removeRemoteProtocolAtIndex:%lu] size = %lu",(unsigned long)index,(unsigned long)self.remoteItems.count);
         return;
     }
     [self.remoteItems removeObjectAtIndex:index];
@@ -195,7 +195,7 @@ static BOOL _isLoaded = NO;
 {
     if (fromIndex == toIndex)
         return;
-    NSAssert(fromIndex < self.localItems.count && toIndex < self.localItems.count, @"Array index out of bounds in [ProtocolCollection moveLocalProtocolAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.localItems.count);
+    NSAssert(fromIndex < self.localItems.count && toIndex < self.localItems.count, @"Array index out of bounds in [ProtocolCollection moveLocalProtocolAtIndex:%lu toIndex:%lu] size = %lu",(unsigned long)fromIndex,(unsigned long)toIndex,(unsigned long)self.localItems.count);
     id temp = self.localItems[fromIndex];
     [self.localItems removeObjectAtIndex:fromIndex];
     [self.localItems insertObject:temp atIndex:toIndex];
@@ -206,7 +206,7 @@ static BOOL _isLoaded = NO;
 {
     if (fromIndex == toIndex)
         return;
-    NSAssert(fromIndex < self.remoteItems.count && toIndex < self.remoteItems.count, @"Array index out of bounds in [ProtocolCollection moveRemoteProtocolAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.remoteItems.count);
+    NSAssert(fromIndex < self.remoteItems.count && toIndex < self.remoteItems.count, @"Array index out of bounds in [ProtocolCollection moveRemoteProtocolAtIndex:%lu toIndex:%lu] size = %lu",(unsigned long)fromIndex,(unsigned long)toIndex,(unsigned long)self.remoteItems.count);
     id temp = self.remoteItems[fromIndex];
     [self.remoteItems removeObjectAtIndex:fromIndex];
     [self.remoteItems insertObject:temp atIndex:toIndex];

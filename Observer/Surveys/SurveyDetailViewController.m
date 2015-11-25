@@ -74,19 +74,19 @@
         switch (indexPath.row) {
             case 0:
                 cell.textLabel.text = @"Observations";
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"%u",self.survey.observationCount];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.survey.observationCount];
                 break;
             case 1:
                 cell.textLabel.text = @"Tracks";
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"%u",self.survey.segmentCount];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.survey.segmentCount];
                 break;
             case 2:
                 cell.textLabel.text = @"Gps Points";
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"%u",self.survey.gpsCount];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.survey.gpsCount];
                 break;
             case 3:
                 cell.textLabel.text = @"..Since Sync";
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"%u",self.survey.gpsCountSinceSync];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.survey.gpsCountSinceSync];
                 break;
             case 4:
                 cell.textLabel.text = @"First Point";

@@ -174,7 +174,7 @@ static int _downloadsInProgress = 0;
 - (Map *)localMapAtIndex:(NSUInteger)index
 {
     if (self.localItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [MapCollection localMapAtIndex:%d]; size = %d",index,self.localItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection localMapAtIndex:%lu]; size = %lu",(unsigned long)index,(unsigned long)self.localItems.count);
         return nil;
     }
     return self.localItems[index];
@@ -183,7 +183,7 @@ static int _downloadsInProgress = 0;
 - (Map *)remoteMapAtIndex:(NSUInteger)index
 {
     if (self.remoteItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [MapCollection remoteMapAtIndex:%d]; size = %d",index,self.remoteItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection remoteMapAtIndex:%lu]; size = %lu",(unsigned long)index,(unsigned long)self.remoteItems.count);
         return nil;
     }
     return self.remoteItems[index];
@@ -191,7 +191,7 @@ static int _downloadsInProgress = 0;
 
 - (void)insertLocalMap:(Map *)map atIndex:(NSUInteger)index
 {
-    NSAssert(index <= self.localItems.count, @"Array index out of bounds in [MapCollection insertLocalMapAtIndex:%d]; size = %d",index,self.localItems.count);
+    NSAssert(index <= self.localItems.count, @"Array index out of bounds in [MapCollection insertLocalMapAtIndex:%lu]; size = %lu",(unsigned long)index,(unsigned long)self.localItems.count);
     [self.localItems insertObject:map atIndex:index];
     [self saveCache];
 }
@@ -199,7 +199,7 @@ static int _downloadsInProgress = 0;
 - (void)removeLocalMapAtIndex:(NSUInteger)index
 {
     if (self.localItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [MapCollection removeLocalMapAtIndex:%d] size = %d",index,self.localItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection removeLocalMapAtIndex:%lu] size = %lu",(unsigned long)index,(unsigned long)self.localItems.count);
         return;
     }
     Map *item = [self localMapAtIndex:index];
@@ -211,7 +211,7 @@ static int _downloadsInProgress = 0;
 - (void)removeRemoteMapAtIndex:(NSUInteger)index
 {
     if (self.remoteItems.count <= index) {
-        AKRLog(@"Array index out of bounds in [MapCollection removeRemoteMapAtIndex:%d] size = %d",index,self.remoteItems.count);
+        AKRLog(@"Array index out of bounds in [MapCollection removeRemoteMapAtIndex:%lu] size = %lu",(unsigned long)index,(unsigned long)self.remoteItems.count);
         return;
     }
     [self.remoteItems removeObjectAtIndex:index];
@@ -222,7 +222,7 @@ static int _downloadsInProgress = 0;
 {
     if (fromIndex == toIndex)
         return;
-    NSAssert(fromIndex < self.localItems.count && toIndex < self.localItems.count, @"Array index out of bounds in [MapCollection moveLocalMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.localItems.count);
+    NSAssert(fromIndex < self.localItems.count && toIndex < self.localItems.count, @"Array index out of bounds in [MapCollection moveLocalMapAtIndex:%lu toIndex:%lu] size = %lu",(unsigned long)fromIndex,(unsigned long)toIndex,(unsigned long)self.localItems.count);
     id temp = self.localItems[fromIndex];
     [self.localItems removeObjectAtIndex:fromIndex];
     [self.localItems insertObject:temp atIndex:toIndex];
@@ -233,7 +233,7 @@ static int _downloadsInProgress = 0;
 {
     if (fromIndex == toIndex)
         return;
-    NSAssert(fromIndex < self.remoteItems.count && toIndex < self.remoteItems.count, @"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.remoteItems.count);
+    NSAssert(fromIndex < self.remoteItems.count && toIndex < self.remoteItems.count, @"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%lu toIndex:%lu] size = %lu",(unsigned long)fromIndex,(unsigned long)toIndex,(unsigned long)self.remoteItems.count);
     id temp = self.remoteItems[fromIndex];
     [self.remoteItems removeObjectAtIndex:fromIndex];
     [self.remoteItems insertObject:temp atIndex:toIndex];

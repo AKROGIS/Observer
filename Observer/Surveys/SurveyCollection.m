@@ -124,7 +124,7 @@ static BOOL _isLoaded = NO;
 - (Survey *)surveyAtIndex:(NSUInteger)index
 {
     if (self.items.count <= index) {
-        AKRLog(@"Array index out of bounds in [SurveyCollection survey:atIndex:%d]; size = %d",index,self.items.count);
+        AKRLog(@"Array index out of bounds in [SurveyCollection survey:atIndex:%lu]; size = %lu",(unsigned long)index,(unsigned long)self.items.count);
         return nil;
     }
     return self.items[index];
@@ -132,7 +132,7 @@ static BOOL _isLoaded = NO;
 
 - (void)insertSurvey:(Survey *)survey atIndex:(NSUInteger)index
 {
-    NSAssert(index <= self.items.count, @"Array index out of bounds in [SurveyCollection insertSurvey:atIndex:%d]; size = %d",index,self.items.count);
+    NSAssert(index <= self.items.count, @"Array index out of bounds in [SurveyCollection insertSurvey:atIndex:%lu]; size = %lu",(unsigned long)index,(unsigned long)self.items.count);
     [self.items insertObject:survey atIndex:index];
     [self saveCache];
 }
@@ -140,7 +140,7 @@ static BOOL _isLoaded = NO;
 -(void)removeSurveyAtIndex:(NSUInteger)index
 {
     if (self.items.count <= index) {
-        AKRLog(@"Array index out of bounds in [SurveyCollection removeSurveyAtIndex:%d] size = %d",index,self.items.count);
+        AKRLog(@"Array index out of bounds in [SurveyCollection removeSurveyAtIndex:%lu] size = %lu",(unsigned long)index,(unsigned long)self.items.count);
         return;
     }
     Survey *item = [self surveyAtIndex:index];
@@ -153,7 +153,7 @@ static BOOL _isLoaded = NO;
 {
     if (fromIndex == toIndex)
         return;
-    NSAssert(fromIndex < self.items.count && toIndex < self.items.count, @"Array index out of bounds in [SurveyCollection moveSurveyAtIndex:%d toIndex:%d] size = %d",fromIndex,toIndex,self.items.count);
+    NSAssert(fromIndex < self.items.count && toIndex < self.items.count, @"Array index out of bounds in [SurveyCollection moveSurveyAtIndex:%lu toIndex:%lu] size = %lu",(unsigned long)fromIndex,(unsigned long)toIndex,(unsigned long)self.items.count);
     id temp = self.items[fromIndex];
     [self.items removeObjectAtIndex:fromIndex];
     [self.items insertObject:temp atIndex:toIndex];

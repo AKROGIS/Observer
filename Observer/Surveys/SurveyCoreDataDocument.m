@@ -27,7 +27,7 @@
 
 - (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
     AKRLog(@"SurveyCoreDataDocument %@ has error.", self.fileURL);
-    AKRLog(@"    State: %d", self.documentState);
+    AKRLog(@"    State: %lu", (unsigned long)self.documentState);
     AKRLog(@"    Error: %@", error);
     [super handleError:error userInteractionPermitted:userInteractionPermitted];
 }

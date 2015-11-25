@@ -390,7 +390,7 @@
                                                                   }
                                                                   default: {
                                                                       NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
-                                                                      NSString *errorMsg = [NSString stringWithFormat:@"Unexpected Server Response: %d.",httpResponse.statusCode];
+                                                                      NSString *errorMsg = [NSString stringWithFormat:@"Unexpected Server Response: %ld.",(long)httpResponse.statusCode];
                                                                       [errorDetails setValue:errorMsg forKey:NSLocalizedDescriptionKey];
                                                                       error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
                                                                       break;
@@ -1205,7 +1205,7 @@
     if (!results && error.code) {
         AKRLog(@"  Error Fetching Observations %@",error);
     } else {
-        AKRLog(@"  Drawing %d observations", results.count);
+        AKRLog(@"  Drawing %lu observations", (unsigned long)results.count);
         for (Observation *observation in results) {
             [self drawObservation:observation];
         }
@@ -1218,7 +1218,7 @@
     if (!results && error.code) {
         AKRLog(@"  Error Fetching Mission Properties %@",error);
     } else {
-        AKRLog(@"  Drawing %d Mission Properties", results.count);
+        AKRLog(@"  Drawing %lu Mission Properties", (unsigned long)results.count);
         for (MissionProperty *missionProperty in results) {
             [self drawMissionProperty:missionProperty];
         }
@@ -1402,7 +1402,7 @@
             AKRLog(@"  Document has an error saving state");
             break;
         default:
-            AKRLog(@"  Document has an unexpected state: %d",self.document.documentState);
+            AKRLog(@"  Document has an unexpected state: %lu",(unsigned long)self.document.documentState);
     }
 }
 
@@ -1431,15 +1431,15 @@
 
     request = [NSFetchRequest fetchRequestWithEntityName:kMapEntityName];
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    [contents appendFormat:@"    %d Maps\n", results.count];
+    [contents appendFormat:@"    %lu Maps\n", (unsigned long)results.count];
 
     request = [NSFetchRequest fetchRequestWithEntityName:kMissionEntityName];
     results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    [contents appendFormat:@"    %d Missions\n", results.count];
+    [contents appendFormat:@"    %lu Missions\n", (unsigned long)results.count];
 
-    [contents appendFormat:@"    %d MissionProperties\n", self.segmentCount];
-    [contents appendFormat:@"    %d Observations\n", self.observationCount];
-    [contents appendFormat:@"    %d GpsPoints\n", self.gpsCount];
+    [contents appendFormat:@"    %lu MissionProperties\n", (unsigned long)self.segmentCount];
+    [contents appendFormat:@"    %lu Observations\n", (unsigned long)self.observationCount];
+    [contents appendFormat:@"    %lu GpsPoints\n", (unsigned long)self.gpsCount];
 
     [contents appendFormat:@"\n    GPS (last 7 days) as CSV:\n%@",[self csvForGpsPointsSince:[[NSDate date] dateByAddingTimeInterval:-(60*60*24*7)]]];
     [contents appendFormat:@"\n    TrackLog Summary as CSV:\n%@",[self csvForTrackLogsSince:nil]];

@@ -765,7 +765,7 @@
 {
     switch (alertView.tag) {
         default:
-            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %d",alertView.tag);
+            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %ld",(long)alertView.tag);
             break;
     }
 }
@@ -777,7 +777,7 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    AKRLog(@"ActionSheet %d was dismissed with Button %d click", actionSheet.tag, buttonIndex);
+    AKRLog(@"ActionSheet %ld was dismissed with Button %ld click", (long)actionSheet.tag, (long)buttonIndex);
     if (buttonIndex < 0) {
         return;
     }
@@ -807,7 +807,7 @@
             break;
         }
         default:
-            AKRLog(@"Oh No!, Action sheet delegate called for an unknown action sheet (tag = %d",actionSheet.tag);
+            AKRLog(@"Oh No!, Action sheet delegate called for an unknown action sheet (tag = %ld",(long)actionSheet.tag);
             break;
     }
 }
@@ -1224,7 +1224,7 @@
                 [self decrementBusy];
             }];
         } else if (survey.document.documentState != UIDocumentStateClosed) {
-            AKRLog(@"Survey (%@) is in an abnormal state: %d", survey.title, survey.document.documentState);
+            AKRLog(@"Survey (%@) is in an abnormal state: %lu", survey.title, (unsigned long)survey.document.documentState);
             [[[UIAlertView alloc] initWithTitle:nil message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
             return NO;
         }
@@ -1266,7 +1266,7 @@
             [self addFeatureAtAngleDistance:feature];
             break;
         default:
-            AKRLog(@"Location method (%u) specified is not valid",locationMethod);
+            AKRLog(@"Location method (%lu) specified is not valid",(unsigned long)locationMethod);
     }
 }
 
