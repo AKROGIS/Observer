@@ -113,7 +113,7 @@
 - (void)setActiveMapPropertiesURL:(NSURL *)activeMapPropertiesURL
 {
     NSString *string = activeMapPropertiesURL.absoluteString;
-    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP_PROPERTIES]) {
+    if ([string isEqual:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP_PROPERTIES]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES];
     } else {
         [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES];
@@ -136,7 +136,7 @@
 - (void)setActiveSurveyURL:(NSURL *)activeSurveyURL
 {
     NSString *string = activeSurveyURL.absoluteString;
-    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY]) {
+    if ([string isEqual:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY];
     } else {
         [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY];
@@ -269,7 +269,7 @@
 - (void)setUrlForMaps:(NSURL *)urlForMaps
 {
     NSString *string = urlForMaps.absoluteString;
-    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_MAPS]) {
+    if ([string isEqual:DEFAULTS_DEFAULT_URL_FOR_MAPS]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_MAPS];
     } else {
         [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_MAPS];
@@ -292,7 +292,7 @@
 - (void)setUrlForProtocols:(NSURL *)urlForProtocols
 {
     NSString *string = urlForProtocols.absoluteString;
-    if ([string isEqualToString:DEFAULTS_DEFAULT_URL_FOR_PROTOCOLS]) {
+    if ([string isEqual:DEFAULTS_DEFAULT_URL_FOR_PROTOCOLS]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_PROTOCOLS];
     } else {
         [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_PROTOCOLS];
