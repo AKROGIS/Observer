@@ -49,6 +49,8 @@
 #define kActionSheetSelectLocation 1
 #define kActionSheetSelectFeature  2
 
+#define kAlertViewLocationServices 1
+
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 #define kCancelButtonText          NSLocalizedString(@"Cancel", @"Cancel button text")
 
@@ -121,10 +123,18 @@
     //AKRLog(@"Main view controller view did load");
     [super viewDidLoad];
     [self configureMapView];
+    [self requestLocationServices];
     [self configureGpsButton];
     [self configureObservationButtons];
     [self openMap];
     [self openSurvey];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    //Always check when view did appear, user may have changed the settings
+    [self requestAuthorizationForAlwaysOnLocationServices];
 }
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
@@ -490,34 +500,6 @@
 
 #pragma mark - Delegate Methods: CLLocationManagerDelegate
 
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
-{
-    if (status == kCLAuthorizationStatusAuthorized)
-    {
-        if (!self.locationServicesAvailable) {
-            AKRLog(@"Location manager did change status: authorized");
-            self.locationServicesAvailable = YES;
-            if (self.userWantsHeadingUpdates) {
-                [self.locationManager startUpdatingHeading];
-            }
-            if (self.userWantsLocationUpdates) {
-                [self.locationManager startUpdatingLocation];
-            }
-        }
-    } else {
-        if (self.locationServicesAvailable) {
-            AKRLog(@"Location manager did change status: deauthorized");
-            self.locationServicesAvailable = NO;
-            if (self.userWantsHeadingUpdates) {
-                [self.locationManager stopUpdatingHeading];
-            }
-            if (self.userWantsLocationUpdates) {
-                [self.locationManager stopUpdatingLocation];
-            }
-        }
-    }
-}
-
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     //AKRLog(@"locationManager: didUpdateLocations:%@",locations);
@@ -766,6 +748,12 @@
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
+        case kAlertViewLocationServices:
+            if (buttonIndex == 1) {
+                // Send the user to the Settings for this app
+                NSURL *settingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+                [[UIApplication sharedApplication] openURL:settingsURL];
+            }
         default:
             AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %ld",(long)alertView.tag);
             break;
@@ -849,45 +837,14 @@
 
 #pragma mark - Private Properties
 
-- (CLLocationManager *)locationManager
-{
-    if (!_locationManager) {
-        self.locationServicesAvailable = NO;
-        //create manager and register as a delegate even if service are unavailable to get changes in authorization (via settings)
-        _locationManager = [[CLLocationManager alloc] init];
-        _locationManager.delegate = self;
-
-        if (![CLLocationManager locationServicesEnabled]) {
-            AKRLog(@"Location Services Not Enabled");
-        } else {
-            if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
-                AKRLog(@"Triggering a request for permission to use Location Services.");
-                [_locationManager startUpdatingLocation];
-                [_locationManager stopUpdatingLocation];
-            }
-            if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
-            {
-                self.locationServicesAvailable = YES;
-                AKRLog(@"Location Services Available and Authorized");
-            } else {
-                AKRLog(@"Location Services NOT Authorized");
-            }
-        }
-    }
-    return _locationManager;
-}
-
 - (BOOL)locationServicesAvailable
 {
-    //this value is undefined if the there is no locationManager
-#ifdef AKR_DEBUG
-    //In the simulator, I can have location services, but the location is set to NONE
-    //treat NO location as no service available
-    BOOL hasLocation = self.locationManager.location.timestamp != nil;
-    return !self.locationManager ? NO : _locationServicesAvailable && hasLocation;
-#else
-    return !self.locationManager ? NO : _locationServicesAvailable;
-#endif
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    BOOL authorized = (status == kCLAuthorizationStatusAuthorizedWhenInUse ||
+                       status == kCLAuthorizationStatusAuthorized ||
+                       status == kCLAuthorizationStatusAuthorizedAlways);
+
+    return authorized;
 }
 
 - (NSMutableArray *)addFeatureBarButtonItems
@@ -913,6 +870,12 @@
         [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
         //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
     }
+}
+
+- (void)requestLocationServices
+{
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
 }
 
 - (void)configureGpsButton
@@ -1029,6 +992,39 @@
 
 
 #pragma mark - Private Methods - support for UI actions
+
+- (void)requestAuthorizationForAlwaysOnLocationServices
+{
+    // Good reference: http://nevan.net/2014/09/core-location-manager-changes-in-ios-8/
+
+    // ** Don't forget to add NSLocationAlwaysUsageDescription in Observer-Info.plist and give it a string
+
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+
+    //Ignore kCLAuthorizationStatusRestricted - location services turned off with Parental Restrictions; nothing we can do.
+
+    // If the status is denied or only granted for when in use, display an alert
+    if (status == kCLAuthorizationStatusAuthorizedWhenInUse || status == kCLAuthorizationStatusDenied) {
+        NSString *title;
+        title = (status == kCLAuthorizationStatusDenied) ? @"Location services are off" : @"Background location is not enabled";
+        NSString *message = @"To make observations you must turn on 'Always' in the Location Services Settings";
+
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title
+                                                            message:message
+                                                           delegate:self
+                                                  cancelButtonTitle:@"Cancel"
+                                                  otherButtonTitles:@"Settings", nil];
+        alertView.tag = kAlertViewLocationServices;
+        [alertView show];
+    }
+    // The user has not enabled any location services. Request background authorization.
+    else if (status == kCLAuthorizationStatusNotDetermined) {
+        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+            [self.locationManager requestAlwaysAuthorization];
+        }
+    }
+}
 
 - (void)startStopLocationServicesForPanMode
 {
