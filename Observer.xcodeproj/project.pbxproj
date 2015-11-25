@@ -14,6 +14,8 @@
 		392E8FBD18EF2F030055D312 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 392E8FBC18EF2F030055D312 /* Crashlytics.framework */; };
 		39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */; };
 		39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4D18AC25B100620A3A /* AddFeatureBarButtonItem.m */; };
+		393412C11C0524DD002A1551 /* ArcGIS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393412C01C0524DD002A1551 /* ArcGIS.framework */; };
+		393412C81C052BC7002A1551 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393412C71C052BC7002A1551 /* Fabric.framework */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
 		39449F1418ADABCF00A1F8FE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39449F1618ADABCF00A1F8FE /* Localizable.strings */; };
@@ -183,6 +185,8 @@
 		39336F4A18AC23DC00620A3A /* Protocol Specification.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = "Protocol Specification.rtf"; sourceTree = "<group>"; };
 		39336F4C18AC25B100620A3A /* AddFeatureBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddFeatureBarButtonItem.h; sourceTree = "<group>"; };
 		39336F4D18AC25B100620A3A /* AddFeatureBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddFeatureBarButtonItem.m; sourceTree = "<group>"; };
+		393412C01C0524DD002A1551 /* ArcGIS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ArcGIS.framework; path = ../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework; sourceTree = "<group>"; };
+		393412C71C052BC7002A1551 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		393E8AFA17A2E1D8009AD0AC /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = Model/Settings.h; sourceTree = "<group>"; };
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
 		393E8AFD17A30012009AD0AC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -357,10 +361,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				393412C11C0524DD002A1551 /* ArcGIS.framework in Frameworks */,
 				3914014119759C450055F2E1 /* libtouchzipkit.a in Frameworks */,
 				394CC2381858E05F00FA859C /* libQuickDialog.a in Frameworks */,
 				392E8FBD18EF2F030055D312 /* Crashlytics.framework in Frameworks */,
 				39D1D95A17BC21D00014C68F /* CoreData.framework in Frameworks */,
+				393412C81C052BC7002A1551 /* Fabric.framework in Frameworks */,
 				39955EA41783388600D225D7 /* OpenGLES.framework in Frameworks */,
 				39955EA21783382200D225D7 /* libz.dylib in Frameworks */,
 				39955EA0178337F700D225D7 /* libc++.dylib in Frameworks */,
@@ -569,10 +575,12 @@
 		39955E49178334BF00D225D7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				393412C01C0524DD002A1551 /* ArcGIS.framework */,
 				3914013419759BB70055F2E1 /* ZipKit.xcodeproj */,
 				392E8FBC18EF2F030055D312 /* Crashlytics.framework */,
 				39C3B86A18BE8D770041FF36 /* XCTest.framework */,
 				394CC2301858DFFA00FA859C /* QuickDialog.xcodeproj */,
+				393412C71C052BC7002A1551 /* Fabric.framework */,
 				39D1D95917BC21D00014C68F /* CoreData.framework */,
 				39955EA31783388600D225D7 /* OpenGLES.framework */,
 				39955EA11783382200D225D7 /* libz.dylib */,
@@ -1054,6 +1062,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */;
 			buildSettings = {
+				ARCHS = armv7;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1061,6 +1070,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/SDKs/ArcGIS/iOS/**";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1094,6 +1104,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */;
 			buildSettings = {
+				ARCHS = armv7;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1101,6 +1112,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/SDKs/ArcGIS/iOS/**";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1136,6 +1148,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(USER_LIBRARY_DIR)/SDKs/ArcGIS/iOS",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
@@ -1156,6 +1169,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(USER_LIBRARY_DIR)/SDKs/ArcGIS/iOS",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
