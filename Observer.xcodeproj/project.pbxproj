@@ -1062,6 +1062,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */;
 			buildSettings = {
+				ARCHS = (
+					armv7,
+					i386,
+				);
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1104,6 +1108,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */;
 			buildSettings = {
+				ARCHS = (
+					armv7,
+					i386,
+				);
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
