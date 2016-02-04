@@ -110,7 +110,9 @@
     height = self.tableView.sectionHeaderHeight * sections;
     for (NSInteger i = 0; i < sections; i++) {
         NSInteger rows = [self tableView:self.tableView numberOfRowsInSection:i];
-        height += self.tableView.rowHeight * rows;
+        //height += self.tableView.rowHeight * rows;
+        //despite row height being set in IB, it is coming back as -1
+        height += 44 * rows;
     }
     return kPopoverMaxHeight < height ? kPopoverMaxHeight : height;
 }
