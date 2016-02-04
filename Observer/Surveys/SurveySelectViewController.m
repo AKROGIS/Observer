@@ -218,8 +218,8 @@
         [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
     }
     if ([[segue identifier] isEqualToString:@"Upload Survey"]) {
-        //superview^3 hack to get the UITableViewCell from the upload button
-        NSIndexPath *indexPath = [self.tableView indexPathForCell:(UITableViewCell *)[[[sender superview] superview] superview]];
+        //superview^2 hack to get the UITableViewCell from the upload button
+        NSIndexPath *indexPath = [self.tableView indexPathForCell:(UITableViewCell *)[[sender superview] superview]];
         Survey *survey = [self.items surveyAtIndex:indexPath.urow];
         ((SurveyUploadTableViewController *)segue.destinationViewController).survey = survey;
         [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
