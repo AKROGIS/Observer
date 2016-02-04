@@ -83,17 +83,17 @@
 #pragma mark - IBActions
 
 - (IBAction)done:(UIBarButtonItem *)sender {
+    [self.popover dismissPopoverAnimated:YES];
     if (self.completionBlock) {
         self.completionBlock(self);
     }
-    [self.popover dismissPopoverAnimated:YES];
 }
 
 - (IBAction)cancel:(id)sender {
+    [self.popover dismissPopoverAnimated:YES];
     if (self.cancellationBlock) {
         self.cancellationBlock(self);
     }
-    [self.popover dismissPopoverAnimated:YES];
 }
 
 - (IBAction)textFieldEditingDidChange:(UITextField *)sender {

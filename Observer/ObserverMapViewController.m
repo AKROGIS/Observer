@@ -1349,8 +1349,11 @@
     FeatureSelectorTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"FeatureSelectorTableViewController"];
     vc.features = features;
     vc.featureSelectedCallback = ^(NSString *layerName, id<AGSFeature> graphic) {
+        //New in iOS 8, popover on top of popover is not allowed (it was bad form anyway)
+        //now we need to dismiss the FeatureSelectorTableView (if it is visible) before presenting this feature
+        //FIXME: a better solution would be to put this inside a navigation view controller inside the popover
+        [self.featureSelectorPopoverController dismissPopoverAnimated:FALSE];
         [self presentFeature:graphic fromLayer:layerName atMapPoint:mapPoint];
-        //dismiss popover?
     };
     //TODO: reduce popover size
     self.featureSelectorPopoverController = [[UIPopoverController alloc] initWithContentViewController:vc];
