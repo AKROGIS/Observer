@@ -950,7 +950,7 @@
         _trackLogSegments = [NSMutableArray new];
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
         request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:kTimestampKey ascending:YES]];
-        NSError *error = [[NSError alloc] init];
+        NSError *error = nil;
         NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:&error];
         if (!results && error.code) {
             AKRLog(@"  Error Fetching GpsPoint for tracklogs: %@",error);
@@ -1176,7 +1176,7 @@
     AKRLog(@"Loading graphics from coredata");
 
     NSFetchRequest *request;
-    NSError *error = [[NSError alloc] init];
+    NSError *error = nil;
     NSArray *results;
 
     //Get GpsPoints
