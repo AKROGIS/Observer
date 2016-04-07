@@ -291,6 +291,9 @@
         } else {
             self.document = [[SurveyCoreDataDocument alloc] initWithFileURL:self.documentUrl];
             BOOL documentExists = [[NSFileManager defaultManager] fileExistsAtPath:[self.documentUrl path]];
+            //FIXME:  The following block craches the app.
+            // https://fabric.io/national-park-service-alaska-region/ios/apps/gov.nps.akr.park-observer/issues/56b4f83ef5d3a7f76b9c5c05
+            // __44-[Survey openDocumentWithCompletionHandler:]_block_invoke
             if (documentExists) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.document openWithCompletionHandler:handler];  //fails unless executed on UI thread

@@ -243,6 +243,9 @@
 {
     if (indexPath.section == 2) {
         self.showRemoteMaps = ! self.showRemoteMaps;
+        //FIXME: the following line crashed the app.
+        //https://fabric.io/national-park-service-alaska-region/ios/apps/gov.nps.akr.park-observer/issues/570423f4ffcdc042507411f0
+        //when the show download button was pressed, while the list of local maps was still being generated
         [tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:UITableViewRowAnimationAutomatic];
         return;
     }
