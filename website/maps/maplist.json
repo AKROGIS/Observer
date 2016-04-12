@@ -193,5 +193,18 @@
         "ymin":64.8395249220015,
         "xmax":-147.792806733275,
         "ymax":64.8683340610818
+    },
+    {
+        "name":"Indian Point Test",
+        "author":"Regan Sarwas",
+        "date":"2016-02-02",
+        "size":17345714,
+        "url":"http://akrgis.nps.gov/observer/maps/IndianPoint.tpk",
+        "thumbnail":"http://akrgis.nps.gov/observer/maps/thumbnails/IndianPoint.png",
+        "description":"South East Alaska Network (SEAN) Offices at Indian Point (Juneau)",
+        "xmin":-134.704096503427,
+        "ymin":58.3767389840603,
+        "xmax":-134.697614977255,
+        "ymax":58.3798344836539
     }
 ]
