@@ -26,7 +26,7 @@
 @property (strong, nonatomic, readonly) ProtocolFeatureAllowedLocations *allowedLocations;
 
 // How should these features be drawn on the map
-@property (strong, nonatomic, readonly) ProtocolFeatureSymbology *symbology;
+@property (strong, nonatomic, readonly) AGSRenderer *pointRenderer;
 
 // The CoreData attributes used to augment the generic Observation entity
 @property (strong, nonatomic, readonly) NSArray *attributes;  //of NSAttributeDescription
@@ -39,5 +39,8 @@
 
 // The default (default or initial or preferred) location method
 - (WaysToLocateFeature) locationMethod;
+
+// Only for sub classes
+- (AGSRenderer *)AGSRendererFromJSON:(NSDictionary *)json;
 
 @end
