@@ -14,7 +14,6 @@
 #import "NSURL+isEqualToURL.h"
 #import "NSDate+Formatting.h"
 #import "ObserverModel.h"
-#import <ZipKit/ZipKit.h>
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -131,7 +130,7 @@
 {
     NSString *name = [[archive lastPathComponent] stringByDeletingPathExtension];
     NSURL *newDocument = [Survey privateDocumentFromName:name];
-    if ([Archiver unpackArchive:archive to:newDocument]) {
+    if ([Archiver unpackSurvey:newDocument fromArchive:archive]) {
         return [self initWithURL:newDocument];
     } else {
         return nil;
@@ -352,7 +351,8 @@
 //on background thread
 - (void)trySyncWithCompletionHandler:(void (^)(NSError*))handler
 {
-    ZKDataArchive *archive = [self buildZipArchive];
+    ZKDataArchive *archive = [ZKDataArchive new];
+    [self addCSVtoArchive:archive since:self.syncDate];
 
     //save a copy of the survey in the documents directory (only needed for testing
     //NSURL *url = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
@@ -407,12 +407,8 @@
     [uploadTask resume];
 }
 
-- (ZKDataArchive *)buildZipArchive
+- (void)addCSVtoArchive:(ZKDataArchive *)archive since:(NSDate *)startDate
 {
-    ZKDataArchive *archive = [ZKDataArchive new];
-
-    NSDate *startDate = self.syncDate;
-
     NSData *csvData = nil;
     NSString *csvName = nil;
     //features
@@ -436,8 +432,6 @@
     NSString *protocolPath = self.protocolUrl.path;
     NSString *protocolFolder = [self.protocolUrl URLByDeletingLastPathComponent].path;
     [archive deflateFile:protocolPath relativeToPath:protocolFolder usingResourceFork:NO];
-
-    return archive;
 }
 
 

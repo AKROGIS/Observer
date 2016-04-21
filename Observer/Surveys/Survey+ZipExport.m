@@ -17,7 +17,7 @@
 
 - (NSData *)exportToNSDataError:(NSError * __autoreleasing *)error
 {
-    return [Archiver exportURL:self.url toNSDataError:error];
+    return [Archiver exportURL:self.url withCSVfromSurvey:self toNSDataError:error];
 }
 
 - (BOOL)exportToDiskWithForce:(BOOL)force error:(NSError * __autoreleasing *)error
@@ -30,7 +30,7 @@
         return FALSE;
     }
 
-    return [Archiver exportURL:self.url toDiskWithName:exportPath error:error];
+    return [Archiver exportURL:self.url withCSVfromSurvey:self toDiskWithName:exportPath error:error];
 }
 
 - (NSURL *)documentsDirectory

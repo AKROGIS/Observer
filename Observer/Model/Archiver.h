@@ -7,14 +7,21 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Survey.h"
 
 @interface Archiver : NSObject
 
 + (BOOL)unpackArchive:(NSURL *)importUrl to:(NSURL *)outputUrl;
 
++ (BOOL)unpackSurvey:(NSURL *)outputUrl fromArchive:(NSURL *)importUrl;
+
 // returns a zip data stream of the survey document at URL; used by the email client for the attachment
 + (NSData *)exportURL:(NSURL *)url toNSDataError:(NSError **)error;
 
 + (BOOL)exportURL:(NSURL *)url toDiskWithName:(NSString *)exportPath error:(NSError * __autoreleasing *)error;
+
++ (NSData *)exportURL:(NSURL *)url withCSVfromSurvey:(Survey *)survey toNSDataError:(NSError **)error;
+
++ (BOOL)exportURL:(NSURL *)url withCSVfromSurvey:(Survey *)survey toDiskWithName:(NSString *)exportPath error:(NSError * __autoreleasing *)error;
 
 @end
