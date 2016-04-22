@@ -23,7 +23,7 @@ def process(archive):
         fgdb_folder = os.path.dirname(archive)
         database, protocol_json = CsvLoader.DatabaseCreator.database_for_protocol_file(protocol_path, fgdb_folder)
         #CSVLoad file
-        CsvLoader.process_csv_folder(csv_folder, protocol_json, database)
+        CsvLoader.process_csv_folder(extraction_folder, protocol_json, database)
     finally:
         shutil.rmtree(extraction_folder)
 
