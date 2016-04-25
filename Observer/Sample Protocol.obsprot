@@ -2,12 +2,12 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":1,
 	"name":"Test Protocol",
-	"version":1.3,
-	"date":"2014-07-01",
+	"version":1.4,
+	"date":"2016-04-23",
 	"description":"This survey protocol is for for testing various features of the protocol specification",
     "mission":{
 		"attributes":[
-			{"name":"Transect",   "type":700},
+            {"name":"Transect",   "type":700},
 			{"name":"Vessel",     "type":700},
 			{"name":"Recorder",   "type":700},
 			{"name":"Observer1",  "type":700},
@@ -98,7 +98,7 @@
 		{
     		"name":"Nests",
     		"attributes":[
-				{"name":"nestid",   "type":700},
+				{"name":"nestid",   "type":700, "required":true},
 				{"name":"occupied", "type":800},
 				{"name":"chicks",   "type":100}
  			],

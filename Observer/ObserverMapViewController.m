@@ -1557,21 +1557,32 @@
     AttributeViewController *dialog = [self.modalAttributeCollector.viewControllers firstObject];
     [dialog.root fetchValueUsingBindingsIntoObject:dict];
     NSManagedObject *obj = dialog.managedObject;
+    BOOL formIsValid = YES;
     @try {
         for (NSString *aKey in dict){
             //This will throw an exception if the key is not valid. This will only happen with a bad protocol file - catch problem in testing, or protocol load
             NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,aKey];
-            //AKRLog(@"Saving Attributes from Dialog key:%@ (%@) Value:%@", aKey, obscuredKey, [dict valueForKey:aKey]);
-            [obj setValue:[dict valueForKey:aKey] forKey:obscuredKey];
+            AKRLog(@"Saving Attributes from Dialog key:%@ (%@) Value:%@", aKey, obscuredKey, [dict valueForKey:aKey]);
+            id value = [dict valueForKey:aKey];
+            NSError *error;
+            if ([obj validateValue:&value forKey:obscuredKey error:&error]) {
+                formIsValid = NO;
+                NSString *msg = [NSString stringWithFormat:@"Field: %@\nError: %@", aKey, error.description];
+                [[[UIAlertView alloc] initWithTitle:@"Invalid Form Input" message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            } else {
+                [obj setValue:value forKey:obscuredKey];
+            }
         }
     }
     @catch (NSException *ex) {
         NSString *msg = [NSString stringWithFormat:@"%@\nCheck the protocol file.", ex.description];
         [[[UIAlertView alloc] initWithTitle:@"Save Failed" message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
     }
-    //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
-    [self dismissViewControllerAnimated:YES completion:nil];
-    self.modalAttributeCollector = nil;
+    if (formIsValid) {
+        //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
+        [self dismissViewControllerAnimated:YES completion:nil];
+        self.modalAttributeCollector = nil;
+    }
 }
 
 
