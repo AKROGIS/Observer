@@ -1,29 +1,22 @@
 [
-	{
-		"name":"ARCN RTLO Survey",
-		"version":1.00,
-		"date":"2016-03-25",
-		"url":"http://akrgis.nps.gov/observer/protocols/arcn_rtlo.obsprot"
-	}
-	,
-	{
-		"name":"ARCN YBLO Survey",
-		"version":1.00,
-		"date":"2016-03-25",
-		"url":"http://akrgis.nps.gov/observer/protocols/arcn_yblo.obsprot"
-	}
-	,
+{
+	"name":"ARCN Loon Survey",
+	"version":1.01,
+	"date":"2015-07-16",
+	"url":"http://akrgis.nps.gov/observer/protocols/arcn_loons.obsprot"
+}
+,
 {
 	"name":"CAKN Sheep Short Form",
-	"version":1.1,
-	"date":"2015-07-16",
+	"version":1.2,
+	"date":"2016-04-25",
 	"url":"http://akrgis.nps.gov/observer/protocols/cakn_sheep.obsprot"
 }
 ,
 {
 	"name":"CAKN Long Form",
-	"version":1.1,
-	"date":"2015-07-16",
+	"version":1.2,
+	"date":"2016-04-25",
 	"url":"http://akrgis.nps.gov/observer/protocols/cakn_long.obsprot"
 }
 ,
