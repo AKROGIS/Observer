@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>Park Observer | No WiFi</title>
-    <link rel="stylesheet" href="akr.css">
+	<link rel="stylesheet" href="akr.css">
 </head>
 
 <body>
@@ -11,34 +11,82 @@
 	<h1>Park Observer</h1>
 	<h2>An iPad application for offline data collection</h2>
 	<h2>Brought to you by the Alaska Regional Office GIS Team</h2>
-	<br>
-    </div>
-	
-	
-    <div id="content">
 	<br/>
-	<h3>Installing without wireless</h3>
-	This is tedious, so avoid it if you can.
-	<ol>
-	<li>Download the <a href="Park_Observer.ipa">application package</a> to a PC or Mac with iTunes</li>
-	<li>Connect the iPad to the PC or Mac, and start iTunes</li>
-	<li>Select Apps under Library in the left sidebar in iTunes, a page of app icons should appear on the right</li>
-	<li>Drag the download from step 1 onto the app page in iTunes; or select File->Add to Library... and browse to the download/</li>
-	<li>Start Park Observer, by tapping the icon on the iPad</li>
-	<li>Download <a href="maps/">maps</a> and <a href="protocols/">protocols</a> from the server</li>
-	<li>In iTunes, click on your iPad under Devices in the left sidebar in iTunes</li>
-	<li>In iTunes, click on Apps, in the list of options along the top of the iTunes window, you should see a list of apps on your device.</li>
-	<li>Scroll down the list of apps, and select Park Observer.</li>
-	<li>At the bottom right of the page is a button to add files to park observer.  Click the button and select the maps and protocols downloaded in the previous step</li>
-	<li>Open Park Observer on the iPad and tap Map or Survey to select and use the new files</li>
-	<li>Consult the <a href="images/AppIntro.png">getting started screenshot</a> for help.</li>
-	</ol>
-	
-	
     </div>
-	
+
+
+    <div id="content">
+			<section id="intro">
+				<h3>Getting Started without Wifi</h3>
+				<p>These instructions are for those who cannot connect their iPad to the NPS wireless network.
+					This process is a lot more tedious (and no better) than the over air solution.
+					It is recommended that you only use this if you have no other option.</p>
+				<p>These instructions are also for those with custom basemaps or protocols that are not in the list of
+					<a href="maps/">existing basemap</a> or <a href="protocols/">existing protocol</a>.
+					In this case, you only need to use <a href="#installing-basemaps">installing basemaps</a>
+					or <a href="#installing-protocols">installing protocols</a>
+					as necessary.
+					<a href="#footer">Contact us</a> if you would like your custom basemap or protocol in the server list.</p>
+			</section>
+		<section id="installing-app">
+			<h3>Installing the App</h3>
+			<ol>
+				<li>Download the <a href="Park_Observer.ipa">application package</a> to your computer.</li>
+				<li>Connect your iPad to your computer with a USB cable. The iPad can only be synced with one computer at a time, so always try to use the same computer.</li>
+				<li>Open iTunes on the computer.</li>
+				<li>Click "Allow" in iTunes when prompted to allow access to the connected iPad.</li>
+				<li>Click the "Trust" alert on your iPad.</li>
+				<li>Select the iPad icon at the top left of the iTunes window to see the details of your iPad.</li>
+				<li>Click on Apps in the list on the left of the iTunes window.</li>
+				<li>Click the small icon at the very top left and select Add File to Library... (or press Control-O).</li>
+				<li>Browse to and open the file downloaded in the first step.</li>
+				<li>Click the Install button next to Park Observer in the list of Apps.</li>
+				<li>Click on the Apply button at the bottom left of the iTunes window.</li>
+				<li>Installation progress will be reported in the banner at the top of the iTunes window.</li>
+				<li>When done, click the eject button next to the name of your iPad.</li>
+				<li>Tap the Park Observer App icon on the iPad.</li>
+				<li>An "Untrusted Enterprise Developer" alert will appear, tap Cancel.</li>
+				<li>Tap on the Settings App icon and navigate to General -> Profiles&Device Management -> National Park Service and tap on Trust National Park Service.</li>
+				<li>Press the Home button.</li>
+				<li>Tap the Park Observer App icon on the iPad.</li>
+				<li>Tap Allow when asked if Park Observer can access your location.</li>
+			</ol>
+		</section>
+		<section id="installing-basemaps">
+			<h3>Installing Basemaps</h3>
+			<ol>
+				<li>Download an <a href="maps/">existing basemap</a> to your computer, or build your own with ArcMap (<a href="new_survey.html">instructions</a>).</li>
+				<li>Follow steps 2-7 from <a href="#installing-app">Installing the App</a></li>
+				<li>Scroll down to the File Sharing section at the bottom of the page.</li>
+				<li>Click on Park Observer in the File Sharing list.  The panel to the right shows the Park Observer files.</li>
+				<li>Drag and Drop the maps from step one to the list of Park Observer files, or use the Add button to browse to you maps.</li>
+				<li>Some maps are quite large and may take a few moments to copy onto the iPad, monitor the progress at the top of the iTunes window.</li>
+				<li>When done, click the eject button next to the name of your iPad.</li>
+				<li>Tap the Park Observer App icon on the iPad.</li>
+				<li>Tap the Maps button at the lower left of the Park Observer screen.</li>
+				<li>If your new map does not appear, refresh the map list by pulling down on the list (press on the list and drag your finger down before releasing.)</li>
+				<li>To use a basemap, tap on the map in the list.</li>
+			</ol>
+		</section>
+		<section id="installing-protocols">
+			<h3>Installing Protocols</h3>
+			<ol>
+				<li>Download an <a href="protocols/">existing protocol</a> to your computer, or build your own with a text editor (<a href="new_survey.html">instructions</a>).</li>
+				<li>Follow steps 2-8 from <a href="#installing-basemaps">installing basemaps</a></li>
+				<li>Tap the Survey button at the bottom middle of the Park Observer screen. (The survey button may be labeled 'Select Survey' or with the name of the current survey.)</li>
+				<li>A protocol is used to create a new survey, so tap the '+' icon at the top left of the survey list to see the list of protocols.</li>
+				<li>If your new protocol does not appear, refresh the protocol list by pulling down on the list (press on the list and drag your finger down before releasing.)</li>
+				<li>To use a protocol, tap on the protocol in the list, and a new survey will be created from the selected protocol.</li>
+			</ol>
+		</section>
+		<section id="using-app">
+			<h3>Using Park Observer</h3>
+			<img src="images/AppIntro.png" alt="getting started screenshot">
+		</section>
+    </div>
+
     <div id="footer">
 	Questions? Contact Regan Sarwas at <a href="mailto:regan_sarwas@nps.gov">regan_sarwas@nps.gov</a>.
-    </div>	
+    </div>
 </body>
 </html>
