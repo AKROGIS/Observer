@@ -57,6 +57,7 @@
 @property (nonatomic, strong) MissionProperty *lastAdHocMissionProperty;
 @property (nonatomic, readwrite) BOOL isObserving;
 @property (nonatomic, readwrite) BOOL isRecording;
+@property (nonatomic, strong, readwrite) MissionTotalizer *totalizer;
 
 @end
 
@@ -255,6 +256,20 @@
     return _documentUrl;
 }
 
+- (NSString *)statusMessage
+{
+    if (self.isObserving) return self.protocol.observingMessage;
+    if (self.isRecording) return self.protocol.notObservingMessage;
+    return nil;
+}
+
+- (MissionTotalizer *)totalizer
+{
+    if (!_totalizer) {
+        _totalizer = [[MissionTotalizer alloc] initWithProtocol:self.protocol];
+    }
+    return _totalizer;
+}
 
 
 
@@ -827,6 +842,7 @@
                 [self drawLineFor:[self lastTrackLogSegment].missionProperty from:self.lastGpsPoint to:gpsPoint];
             }
             self.lastGpsPoint = gpsPoint;
+            [self.totalizer updateWithLocation:location forMissionProperties:[self lastTrackLogSegment].missionProperty];
         }
         return gpsPoint;
     } else {

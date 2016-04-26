@@ -219,6 +219,7 @@
                     NSInteger version = [(NSNumber *)item integerValue];
                     switch (version) {
                         case 1:
+                        case 2:
                             [self processProtocolJSON:json version:version];
                             break;
                         default:
@@ -244,6 +245,16 @@
 
     id details = json[@"description"];
     _details = [details isKindOfClass:[NSString class]] ? details : @"";
+
+    id observingMessage = json[@"observing"];
+    _observingMessage = [observingMessage isKindOfClass:[NSString class]] ? observingMessage : nil;
+    _observingMessage = [_observingMessage stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    _observingMessage = [_observingMessage length] == 0 ? nil : _observingMessage;
+
+    id notObservingMessage = json[@"notobserving"];
+    _notObservingMessage = [notObservingMessage isKindOfClass:[NSString class]] ? notObservingMessage : nil;
+    _notObservingMessage = [_notObservingMessage stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    _notObservingMessage = [_notObservingMessage length] == 0 ? nil : _notObservingMessage;
 
     _missionFeature = [[ProtocolMissionFeature alloc] initWithJSON:json[@"mission"] version:jsonVersion];
     _features = [self buildFeaturelist:json[@"features"] version:jsonVersion];
