@@ -2,14 +2,15 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":1,
 	"name":"ARCN YBLO Survey",
-	"version":1.0,
-	"date":"2016-03-25",
+	"version":1.1,
+	"date":"2016-04-26",
 	"description":"This survey protocol is for Yellow-billed Loon Surveys on the North Slope of Alaska",
     "mission":{
 		"attributes":[
 			{"name":"Vessel",     "type":700},
 			{"name":"Recorder",   "type":700},
-			{"name":"Weather",    "type":700}
+			{"name":"Weather",    "type":700},
+			{"name":"Wind",       "type":700}
 		],
 		"dialog":{
 			"title":"Mission Properties",
@@ -19,7 +20,8 @@
 					"elements":[
 						{"type":"QEntryElement", "key":"v1", "bind":"textValue:Vessel",      "title":"Vessel",      "placeholder":"Name", "autocorrectionType":"No"},
 						{"type":"QEntryElement", "key":"r",  "bind":"textValue:Recorder",    "title":"Recorder",    "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QRadioElement", "key":"w",  "bind":"selectedItem:Weather",  "title":"Weather",     "items":["<50% clouds", ">50% clouds", "Fog", "Mist", "Rain"]}
+						{"type":"QRadioElement", "key":"w",  "bind":"selectedItem:Weather",  "title":"Weather",     "items":["<50% clouds", ">50% clouds", "Fog", "Mist", "Rain"]},
+						{"type":"QRadioElement", "key":"ws", "bind":"selectedItem:Wind",     "title":"Wind Speed",  "items":[">15 knots", "10-14 knots", "9-5 knots", "<5 knots"]}
 				  	]
 				}
 			]
@@ -58,7 +60,7 @@
 					{
 					    "elements":[
 							{"type":"QIntegerElement", "key":"c", "bind":"numberValue:count",    "title":"Count"},
-							{"type":"QRadioElement",   "key":"s", "bind":"selectedItem:species", "title":"Species",    "items":["YBLO", "YBLOP", "YBLON", "RTLO", "RTLOP", "RTLON", "PALO", "PALOP", "PALON", "UNLO", "UNLOP", "UNLON"]},
+							{"type":"QRadioElement",   "key":"s", "bind":"selectedItem:species", "title":"Species",    "items":["YBLO", "YBLOP", "YBLON", "RTLO", "RTLOP", "RTLON", "PALO", "PALOP", "PALON", "COLO", "COLOP", "COLON", "ARLO", "ARLOP", "ARLON", "RNGR", "RNGRP", "RNGRN", "UNLO", "UNLOP", "UNLON"]},
 							{"type":"QRadioElement",   "key":"l", "bind":"selectedItem:location", "title":"Location of Nest",    "items":["Island", "Shoreline"]}
 					  	]
 					}
