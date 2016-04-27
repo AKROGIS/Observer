@@ -351,6 +351,7 @@
     [self.survey stopRecording];
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(startRecording:) ToPlay:YES];
     [self enableControls];
+    self.totalizerMessage.text = nil;
 }
 
 - (void)stopObserving:(UIBarButtonItem *)sender
@@ -1592,7 +1593,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;
     if ([obj isKindOfClass:[MissionProperty class]]) {
-        [self.survey.totalizer updateWithMissionProperties:(MissionProperty *)obj];
+        [self.survey.totalizer missionPropertyChanged:(MissionProperty *)obj];
         self.totalizerMessage.text = self.survey.totalizer.message;
     }
 }

@@ -266,7 +266,7 @@
 - (MissionTotalizer *)totalizer
 {
     if (!_totalizer) {
-        _totalizer = [[MissionTotalizer alloc] initWithProtocol:self.protocol];
+        _totalizer = [[MissionTotalizer alloc] initWithProtocol:self.protocol trackLogSegments:self.trackLogSegments];
     }
     return _totalizer;
 }
@@ -793,6 +793,7 @@
     if (tracklog && tracklog.gpsPoints.count == 1) {
         [self.document.managedObjectContext deleteObject:tracklog.missionProperty];
         [self.trackLogSegments removeLastObject];
+        [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
     }
 }
 
@@ -940,6 +941,7 @@
             newTrackLog.missionProperty = missionProperty;
             newTrackLog.gpsPoints = [NSMutableArray arrayWithObject:missionProperty.gpsPoint];
             [self.trackLogSegments addObject:newTrackLog];
+            [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
         }
     }
     return newTrackLog;

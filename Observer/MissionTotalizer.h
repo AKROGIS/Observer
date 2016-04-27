@@ -12,12 +12,14 @@
 
 @interface MissionTotalizer : NSObject
 
-- (id)initWithProtocol:(SProtocol *)protocol;
+- (id)initWithProtocol:(SProtocol *)protocol trackLogSegments:(NSMutableArray *)trackLogSegments ;
 
 @property (nonatomic, strong, readonly) SProtocol *protocol;
+@property (nonatomic, strong, readonly) NSMutableArray *trackLogSegments;
 @property (nonatomic, strong, readonly) NSString *message;
 
 - (void)updateWithLocation:(CLLocation *)location forMissionProperties:(MissionProperty *)missionProperty;
-- (void)updateWithMissionProperties:(MissionProperty *)missionProperty;
+- (void)trackLogSegmentsChanged:(NSMutableArray *)trackLogSegments;
+- (void)missionPropertyChanged:(MissionProperty *)missionProperty;
 
 @end
