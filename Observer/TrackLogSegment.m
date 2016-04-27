@@ -56,10 +56,16 @@
     return (AGSPolyline *)[[AGSGeometryEngine defaultGeometryEngine] simplifyGeometry:pline];
 }
 
-// private methods
 - (double)length
 {
     return [[AGSGeometryEngine defaultGeometryEngine] shapePreservingLengthOfGeometry:self.polyline inUnit:AGSSRUnitMeter];
+}
+
+- (NSTimeInterval)duration
+{
+    GpsPoint *start = (GpsPoint *)[self.gpsPoints firstObject];
+    GpsPoint *end = (GpsPoint *)[self.gpsPoints lastObject];
+    return [end.timestamp timeIntervalSinceDate:start.timestamp];
 }
 
 @end
