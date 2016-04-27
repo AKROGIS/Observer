@@ -2,19 +2,16 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":1,
 	"name":"CAKN Long Form",
-	"version":1.2,
-	"date":"2016-04-25",
+	"version":2.0,
+	"date":"2016-04-27",
 	"description":"This protocol is for sheep and bear surveys in the Central Alaska I&M Network.  Contact kumi_rattenbury@nps.gov for more details.",
     "mission":{
 		"attributes":[
 			{"name":"Transect",      "type":700},
 			{"name":"Survey",        "type":700},
 			{"name":"Pilot",         "type":700},
-			{"name":"PilotRight",    "type":800},
-			{"name":"Observer1",     "type":700},
-			{"name":"Obs1Right",     "type":800},
-			{"name":"Observer2",     "type":700},
-			{"name":"Obs2Right",     "type":800},
+			{"name":"Observer",      "type":700},
+			{"name":"Direction",     "type":800},
 			{"name":"Aircraft",      "type":700},
 			{"name":"CloudCover",    "type":700},
 			{"name":"Precipitation", "type":700},
@@ -31,11 +28,8 @@
 						{"type":"QEntryElement",   "key":"t",   "bind":"textValue:Transect",    "title":"Transect",    "placeholder":"ID", "autocorrectionType":"No"},
 						{"type":"QEntryElement",   "key":"s",   "bind":"textValue:Survey",      "title":"Survey",      "placeholder":"Number"},
 						{"type":"QEntryElement",   "key":"p",   "bind":"textValue:Pilot",       "title":"Pilot",       "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QBooleanElement", "key":"pr",  "bind":"boolValue:PilotRight",  "title":"Pilot Looking Right"},
-						{"type":"QEntryElement",   "key":"o1",  "bind":"textValue:Observer1",   "title":"Observer #1", "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QBooleanElement", "key":"o1r", "bind":"boolValue:Obs1Right",   "title":"Obs #1 Looking Right"},
-						{"type":"QEntryElement",   "key":"o2",  "bind":"textValue:Observer2",   "title":"Observer #2", "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QBooleanElement", "key":"o2r", "bind":"boolValue:Obs2Right",   "title":"Obs #2 Looking Right"},
+						{"type":"QEntryElement",   "key":"o2",  "bind":"textValue:Observer",    "title":"Observer",    "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QBooleanElement", "key":"o2r", "bind":"boolValue:Direction",   "title":"Looking Right"},
 						{"type":"QEntryElement",   "key":"a",   "bind":"textValue:Aircraft",    "title":"Aircraft",    "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
 						{"type":"QRadioElement",   "key":"cc",  "bind":"selectedItem:CloudCover",   "title":"Cloud Cover",         "items":["None", "<50% scattered", "> 50% broken", "Overcase"]},
 						{"type":"QRadioElement",   "key":"pp",  "bind":"selectedItem:Precipitation","title":"Precipitation",       "items":["None", "Rain", "Snow"]},
@@ -63,19 +57,18 @@
 		{
     		"name":"Sheep",
     		"attributes":[
-				{"name":"countEwes",      "type":100},
-				{"name":"countEwelike",   "type":100},
-				{"name":"countYearlings", "type":100},
-				{"name":"countLambs",     "type":100},
+				{"name":"Subunit",        "type":700},
+				{"name":"CountEwes",      "type":100},
+				{"name":"CountLambs",     "type":100},
+				{"name":"CountYearlings", "type":100},
+				{"name":"CountEweLike",   "type":100},
+				{"name":"countUnknown",   "type":100},
+				{"name":"countRamsSmall", "type":100},
 				{"name":"countRams025",   "type":100},
 				{"name":"countRams050",   "type":100},
 				{"name":"countRams075",   "type":100},
-				{"name":"countRams088",   "type":100},
-				{"name":"countRams099",   "type":100},
-				{"name":"countRams101",   "type":100},
-				{"name":"countRamsOther", "type":100},
-				{"name":"countUnknown",   "type":100},
-				{"name":"activity",       "type":700}
+				{"name":"countRamsFull",  "type":100},
+				{"name":"Activity",       "type":700}
  			],
 			"locations":[
 				{"type":"gps",           "default":false, "allow":true},
@@ -88,31 +81,20 @@
 				"grouped":true,
 				"sections":[
 					{
-						"title":"Number of Rams",
-					    "elements":[
-							{"type":"QIntegerElement", "key":"r1", "bind":"numberValue:countRams025", "title":"< Half Curl"},
-							{"type":"QIntegerElement", "key":"r2", "bind":"numberValue:countRams050", "title":"Half Curl"},
-							{"type":"QIntegerElement", "key":"r3", "bind":"numberValue:countRams075", "title":"3/4 Curl"},
-							{"type":"QIntegerElement", "key":"r4", "bind":"numberValue:countRams088", "title":"7/8 Curl"},
-							{"type":"QIntegerElement", "key":"r5", "bind":"numberValue:countRams099", "title":"< Full Curl"},
-							{"type":"QIntegerElement", "key":"r6", "bind":"numberValue:countRams101", "title":"Full Curl(+)"},
-							{"type":"QIntegerElement", "key":"r7", "bind":"numberValue:countRamsOther", "title":"Other Rams"}
-					    ]
-					},
-					{
-						"title":"Number of others",
-					    "elements":[
-							{"type":"QIntegerElement", "key":"e1", "bind":"numberValue:countEwes",      "title":"Ewes"},
-							{"type":"QIntegerElement", "key":"e2", "bind":"numberValue:countEwelike",   "title":"Ewe-like"},
-							{"type":"QIntegerElement", "key":"e3", "bind":"numberValue:countYearlings", "title":"Yearlings"},
-							{"type":"QIntegerElement", "key":"e4", "bind":"numberValue:countLambs",     "title":"Lambs"},
-							{"type":"QIntegerElement", "key":"e5", "bind":"numberValue:countUnknown",   "title":"Unclassified"}
-					  	]
-					},
-					{
-					    "elements":[
-							{"type":"QRadioElement",   "key":"a", "bind":"selectedItem:activity",    "title":"Activity",   "items":["Running", "Walking", "Stationary"]}
-					  	]
+					  "elements":[
+					    {"type":"QEntryElement",     "key":"s", "bind":"textValue:Subunit",          "title":"Sub-unit",    "placeholder":"ADF&G GMU"},
+					    {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountEwes",      "title":"Ewes"},
+					    {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountLambs",     "title":"Lambs"},
+					    {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountYearlings", "title":"Yearlings"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountEweLike",   "title":"Ewe-like"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countUnknown",   "title":"Unknown"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRamsSmall", "title":"Rams <1/4 Curl"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams025",   "title":"Rams 1/4 Curl"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams050",   "title":"Rams 1/2 Curl"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams075",   "title":"Rams 3/4 Curl"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRamsFull",  "title":"Rams Full Curl"},
+							{"type":"QRadioElement",     "key":"a", "bind":"selectedItem:Activity",      "title":"Activity",    "items":["Standing", "Feeding", "Bedded", "Running", "Walking"]}
+						]
 					}
 				]
 			},
