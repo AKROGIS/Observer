@@ -49,7 +49,7 @@ The protocol file (*.obsprot) is just a text file in JSON (javascript object not
 \ls3\ilvl1\cf0 \CocoaLigature1 {\listtext	
 \f2 \uc0\u8259 
 \f1 	}
-\f0\fs24 Must be a integer that defines the version of the specification.  This is version 1.
+\f0\fs24 Must be a integer that defines the version of the specification.  This is version 2.
 \f1\fs22 \CocoaLigature0 \
 \pard\tx220\tx720\tx1120\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
 \ls3\ilvl0\cf0 \CocoaLigature1 {\listtext	\'95	}name\CocoaLigature0 \
@@ -103,6 +103,22 @@ The protocol file (*.obsprot) is just a text file in JSON (javascript object not
 \f0\fs24 A user defined description (string) for this protocol
 \f1\fs22 \CocoaLigature0 \
 \pard\tx220\tx720\tx1120\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
+\ls3\ilvl0\cf0 \CocoaLigature1 {\listtext	\'95	}\CocoaLigature0 observing\
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls3\ilvl1\cf0 \CocoaLigature1 {\listtext	
+\f2 \uc0\u8259 
+\f1 	}
+\f0\fs24 User defined message to display on screen when observing. The default is nothing.
+\f1\fs22 \CocoaLigature0 \
+\pard\tx220\tx720\tx1120\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
+\ls3\ilvl0\cf0 \CocoaLigature1 {\listtext	\'95	}\CocoaLigature0 notobserving\
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls3\ilvl1\cf0 \CocoaLigature1 {\listtext	
+\f2 \uc0\u8259 
+\f1 	}
+\f0\fs24 User defined message to display on screen when track logging but not observing.  The default is nothing.
+\f1\fs22 \CocoaLigature0 \
+\pard\tx220\tx720\tx1120\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
 \ls3\ilvl0\cf0 \CocoaLigature1 {\listtext	\'95	}\CocoaLigature0 mission
 \f0\fs24 \CocoaLigature1 \
 \pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
@@ -127,8 +143,63 @@ The protocol file (*.obsprot) is just a text file in JSON (javascript object not
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural\partightenfactor0
 \ls3\ilvl2\cf0 {\listtext	\uc0\u8259 	}These symbology properties define the look of the track log when observing (on or on-transect), and not observing (off).\
 \pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
-\ls3\ilvl1\cf0 {\listtext	\uc0\u8259 	}The mission attributes are often things like the names of the observers, and the weather.
-\f1\fs22 \
+\ls3\ilvl1
+\f1\fs22 \cf0 {\listtext	
+\f2 \uc0\u8259 
+\f1 	}The mission attributes are often things like the names of the observers, and the weather.\
+{\listtext	
+\f2 \uc0\u8259 
+\f1 	}totalizer - 
+\f0\fs24 An object used to define the parameters for collecting and displaying a Mission Totalizer.   This is used to provide information on how long the user has been observing for a given set of conditions, usually this is just the transect id.  In this case, the totalizer show how long the user has been observing on a current transect.\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural\partightenfactor0
+\ls3\ilvl2
+\f1\fs22 \cf0 {\listtext	
+\f2 \uc0\u8259 
+\f1 	}fields - 
+\f0\fs24 A required array of field names\
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural\partightenfactor0
+\ls3\ilvl3\cf0 {\listtext	\uc0\u8259 	}when any of the fields change, a different total is displayed.\
+{\listtext	\uc0\u8259 	}There must be at least on field (string) in the array which matches the name of one of the attributes in the mission\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural\partightenfactor0
+\ls3\ilvl2
+\f1\fs22 \cf0 {\listtext	
+\f2 \uc0\u8259 
+\f1 	}units - 
+\f0\fs24 An optional element with a value of 
+\f1\fs22 \CocoaLigature0 "kilometers"
+\f0\fs24 \CocoaLigature1  or 
+\f1\fs22 \CocoaLigature0 "miles"
+\f0\fs24 \CocoaLigature1  or 
+\f1\fs22 \CocoaLigature0 "minutes". 
+\f0\fs24 \CocoaLigature1 Default is 
+\f1\fs22 \CocoaLigature0 "kilometers"\
+\ls3\ilvl2\CocoaLigature1 {\listtext	
+\f2 \uc0\u8259 
+\f1 	}includeon - 
+\f0\fs24 A boolean value (
+\f1\fs22 \CocoaLigature0 true
+\f0\fs24 \CocoaLigature1 /
+\f1\fs22 \CocoaLigature0 false
+\f0\fs24 \CocoaLigature1 ), that indicate is the total while "observing" is true should be displayed.  The default is  
+\f1\fs22 \CocoaLigature0 true\CocoaLigature1 \
+{\listtext	
+\f2 \uc0\u8259 
+\f1 	}includeoff - 
+\f0\fs24 A boolean value (
+\f1\fs22 \CocoaLigature0 true
+\f0\fs24 \CocoaLigature1 /
+\f1\fs22 \CocoaLigature0 false
+\f0\fs24 \CocoaLigature1 ), that indicate if the total while "observing" is false should be displayed.  The default is  
+\f1\fs22 \CocoaLigature0 false\CocoaLigature1 \
+{\listtext	
+\f2 \uc0\u8259 
+\f1 	}includetotal - 
+\f0\fs24 A boolean value (
+\f1\fs22 \CocoaLigature0 true
+\f0\fs24 \CocoaLigature1 /
+\f1\fs22 \CocoaLigature0 false
+\f0\fs24 \CocoaLigature1 ), that indicate if the total regardless of "observing" status should be displayed.  The default is  
+\f1\fs22 \CocoaLigature0 false\CocoaLigature1 \
 \pard\tx220\tx720\tx1120\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
 \ls3\ilvl0\cf0 {\listtext	\'95	}\CocoaLigature0 features
 \f0\fs24 \CocoaLigature1 \
@@ -355,14 +426,12 @@ The protocol file (*.obsprot) is just a text file in JSON (javascript object not
 \pard\tx2380\tx2880\tx3360\tx3920\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural\partightenfactor0
 \ls3\ilvl3\cf0 {\listtext	\uc0\u8259 	}The size is an integer number for the size in points of the simple circle marker symbol\
 {\listtext	\uc0\u8259 	}The default is 12 if not provided.\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
-Notes on Version 2\
+\pard\tx560\tx1120\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 Notes on Version 2\
 \
 Added gps-symbology under mission\
 \
-\pard\tx560\tx1120\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 The value of the symbology tags are full ESRI Renderer JSON as defined in {\field{\*\fldinst{HYPERLINK "http://resources.arcgis.com/en/help/rest/apiref/renderer.html"}}{\fldrslt http://resources.arcgis.com/en/help/rest/apiref/renderer.html}}\
+The value of the symbology tags are full ESRI Renderer JSON as defined in {\field{\*\fldinst{HYPERLINK "http://resources.arcgis.com/en/help/rest/apiref/renderer.html"}}{\fldrslt http://resources.arcgis.com/en/help/rest/apiref/renderer.html}}\
 \
 Not all fields in the ESRI rest API need to be provided, when defaults are obvious ; i.e. "label":"" and "angle":0 (I have not tested everything)\
 the type is required and must be one of simple, uniqueValue, classBreak\

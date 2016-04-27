@@ -78,6 +78,9 @@
 
 @property (strong, nonatomic) NSMutableArray *addFeatureBarButtonItems;  //NSArray of AddFeatureBarButtonItem
 
+@property (weak, nonatomic) IBOutlet UILabel *statusMessage;
+@property (weak, nonatomic) IBOutlet UILabel *totalizerMessage;
+
 //Support
 @property (nonatomic) int  busyCount;
 @property (nonatomic) BOOL locationServicesAvailable;
@@ -128,6 +131,8 @@
     [self configureObservationButtons];
     [self openMap];
     [self openSurvey];
+    self.statusMessage.text = nil;
+    self.totalizerMessage.text = nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -346,6 +351,7 @@
     [self.survey stopRecording];
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(startRecording:) ToPlay:YES];
     [self enableControls];
+    self.totalizerMessage.text = nil;
 }
 
 - (void)stopObserving:(UIBarButtonItem *)sender
@@ -507,6 +513,7 @@
         for (CLLocation *location in locations) {
             [self.survey addGpsPointAtLocation:location];
         }
+        self.totalizerMessage.text = self.survey.totalizer.message;
     }
 
     //use the speed of the last location to update the autorotation behavior
@@ -959,6 +966,19 @@
     self.editEnvironmentBarButton.enabled = self.survey.isRecording && self.survey.protocol.missionFeature.attributes.count > 0 && !self.gpsFailed;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
         item.enabled = self.survey.isObserving && !self.gpsFailed;
+    }
+    [self updateStatusMessage];
+}
+
+- (void)updateStatusMessage
+{
+    //call this from map load; start/stop recording/observing  gps fail/recover (all the cases when enableControls is called)
+    self.statusMessage.text = self.gpsFailed ? @"GPS Failed" : self.survey.statusMessage;
+    if (self.survey.isRecording) {
+        self.statusMessage.textColor = [UIColor colorWithWhite:(CGFloat)0.7 alpha:1];
+    }
+    if (self.survey.isObserving) {
+        self.statusMessage.textColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.5 alpha:1.0];
     }
 }
 
@@ -1572,6 +1592,10 @@
     //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
     [self dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;
+    if ([obj isKindOfClass:[MissionProperty class]]) {
+        [self.survey.totalizer missionPropertyChanged:(MissionProperty *)obj];
+        self.totalizerMessage.text = self.survey.totalizer.message;
+    }
 }
 
 

@@ -246,6 +246,19 @@
     id details = json[@"description"];
     _details = [details isKindOfClass:[NSString class]] ? details : @"";
 
+    id observingMessage = json[@"observing"];
+    _observingMessage = [observingMessage isKindOfClass:[NSString class]] ? observingMessage : nil;
+    _observingMessage = [_observingMessage stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    _observingMessage = [_observingMessage length] == 0 ? nil : _observingMessage;
+
+    id notObservingMessage = json[@"notobserving"];
+    _notObservingMessage = [notObservingMessage isKindOfClass:[NSString class]] ? notObservingMessage : nil;
+    _notObservingMessage = [_notObservingMessage stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    _notObservingMessage = [_notObservingMessage length] == 0 ? nil : _notObservingMessage;
+
+    id totalizerConfig = json[@"mission"][@"totalizer"];
+    _totalizerConfig = [totalizerConfig isKindOfClass:[NSDictionary class]] ? totalizerConfig : nil;
+
     _missionFeature = [[ProtocolMissionFeature alloc] initWithJSON:json[@"mission"] version:jsonVersion];
     _features = [self buildFeaturelist:json[@"features"] version:jsonVersion];
     _featuresWithLocateByTouch = [self buildFeaturesWithLocateByTouch:_features];

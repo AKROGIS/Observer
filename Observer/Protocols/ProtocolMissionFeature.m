@@ -16,6 +16,7 @@
         if ([json isKindOfClass:[NSDictionary class]]) {
             switch (version) {
                 case 1:
+                case 2:
                     [self defineMissionReadonlyProperties:json version:version];
                     break;
                 case 2:

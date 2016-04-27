@@ -3,9 +3,11 @@
 	"meta-version":2,
 	"name":"Test Protocol",
 	"version":2.0,
-	"date":"2016-04-18",
+	"date":"2016-04-27",
 	"description":"This survey protocol is for for testing various features of the protocol specification",
-  "mission":{
+	"observing": "ON Transect",
+	"notobserving": "OFF Transect",
+    "mission":{
 		"attributes":[
 			{"name":"Transect",   "type":700},
 			{"name":"Vessel",     "type":700},

@@ -12,6 +12,7 @@
 #import "SProtocol.h"
 #import "SurveyCoreDataDocument.h"
 #import "ObserverModel.h"
+#import "MissionTotalizer.h"
 
 #define INTERNAL_SURVEY_EXT @"obssurv"
 #define SURVEY_EXT @"poz"
@@ -30,12 +31,17 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 
 @end
 
+//This line should not be required (for some unknown reason this file and only this file
+//refuses to acknowledge the class definition in the included MissionTotalizer.h file.)
+//It is included to keep the compiler for complaining about the definition of the totalizer property
+@class MissionTotalizer;
 
 @interface Survey : NSObject <AKRTableViewItem>
 
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, readonly) SurveyState state;
 @property (nonatomic, strong, readonly) NSString *subtitle;
+@property (nonatomic, strong, readonly) NSString *statusMessage;
 
 //title and date will block (reading values from the filessytem) if the state is unborn.
 @property (nonatomic, strong) NSString *title;
@@ -48,6 +54,9 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 
 //document will return nil until openDocumentWithCompletionHandler is called with success
 @property (nonatomic, strong, readonly) UIManagedDocument *document;
+
+// Totalizes the time/distance observing on a mission
+@property (nonatomic, strong, readonly) MissionTotalizer *totalizer;
 
 //Initializers
 // NOTE: The Designated Initializer is not public, THIS CLASS CANNOT BE SUB-CLASSED

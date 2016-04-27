@@ -65,7 +65,8 @@
 		398908691857F192007B3F67 /* SurveyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908671857F192007B3F67 /* SurveyTableViewCell.m */; };
 		3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989086B1857F399007B3F67 /* AKRDownloadView.m */; };
 		39890DA31858C99E007B3F67 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39890DA21858C99E007B3F67 /* Images.xcassets */; };
-		398A972D1CC56B1A00143160 /* Sample Protocolv2.obsprot in Resources */ = {isa = PBXBuildFile; fileRef = 398A972C1CC56B1A00143160 /* Sample Protocolv2.obsprot */; };
+		398A97311CCEDB2800143160 /* Sample Protocolv2.obsprot in Resources */ = {isa = PBXBuildFile; fileRef = 398A97301CCEDB2800143160 /* Sample Protocolv2.obsprot */; };
+		398A97371CCFD11800143160 /* MissionTotalizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 398A97361CCFD11800143160 /* MissionTotalizer.m */; };
 		39946AB0191DA0EA00875D90 /* Observation+CsvExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */; };
 		39946AB91925473A00875D90 /* TrackLogSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AB81925473A00875D90 /* TrackLogSegment.m */; };
 		39955E4B178334BF00D225D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
@@ -288,7 +289,9 @@
 		3989086A1857F399007B3F67 /* AKRDownloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDownloadView.h; sourceTree = "<group>"; };
 		3989086B1857F399007B3F67 /* AKRDownloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDownloadView.m; sourceTree = "<group>"; };
 		39890DA21858C99E007B3F67 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		398A972C1CC56B1A00143160 /* Sample Protocolv2.obsprot */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Sample Protocolv2.obsprot"; sourceTree = "<group>"; };
+		398A97301CCEDB2800143160 /* Sample Protocolv2.obsprot */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Sample Protocolv2.obsprot"; sourceTree = "<group>"; };
+		398A97351CCFD11800143160 /* MissionTotalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MissionTotalizer.h; sourceTree = "<group>"; };
+		398A97361CCFD11800143160 /* MissionTotalizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MissionTotalizer.m; sourceTree = "<group>"; };
 		39946AAE191DA0EA00875D90 /* Observation+CsvExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Observation+CsvExport.h"; path = "Model/Observation+CsvExport.h"; sourceTree = "<group>"; };
 		39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Observation+CsvExport.m"; path = "Model/Observation+CsvExport.m"; sourceTree = "<group>"; };
 		39946AB71925473A00875D90 /* TrackLogSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackLogSegment.h; sourceTree = "<group>"; };
@@ -638,7 +641,7 @@
 				393E8AFD17A30012009AD0AC /* Settings.bundle */,
 				3929196617BEB6A8008B0FFC /* Todo.rtf */,
 				396E1E9A189AD87000B735EF /* Sample Protocol.obsprot */,
-				398A972C1CC56B1A00143160 /* Sample Protocolv2.obsprot */,
+				398A97301CCEDB2800143160 /* Sample Protocolv2.obsprot */,
 				39336F4A18AC23DC00620A3A /* Protocol Specification.rtf */,
 				39E921AB195B52E60043DB5E /* Protocol Description.md */,
 			);
@@ -689,6 +692,8 @@
 				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
 				39946AB71925473A00875D90 /* TrackLogSegment.h */,
 				39946AB81925473A00875D90 /* TrackLogSegment.m */,
+				398A97351CCFD11800143160 /* MissionTotalizer.h */,
+				398A97361CCFD11800143160 /* MissionTotalizer.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -864,6 +869,7 @@
 				39890DA31858C99E007B3F67 /* Images.xcassets in Resources */,
 				39C53E6B1885D98400C0CECE /* SurveyDocumentIcon.png in Resources */,
 				39C53E6E1885D9DF00C0CECE /* ProtocolDocumentIcon.png in Resources */,
+				398A97311CCEDB2800143160 /* Sample Protocolv2.obsprot in Resources */,
 				391401451975A03A0055F2E1 /* LICENSE in Resources */,
 				398A972D1CC56B1A00143160 /* Sample Protocolv2.obsprot in Resources */,
 				39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */,
@@ -946,6 +952,7 @@
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
 				5980662018D16420004830E7 /* UIPopoverController+Presenting.m in Sources */,
+				398A97371CCFD11800143160 /* MissionTotalizer.m in Sources */,
 				398908601857EDE1007B3F67 /* NSIndexSet+indexPath.m in Sources */,
 				394CC2501858F11800FA859C /* AngleDistanceLocation.m in Sources */,
 				3989084D1857ED00007B3F67 /* Survey.m in Sources */,

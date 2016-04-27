@@ -56,6 +56,7 @@
 @property (nonatomic, strong) MissionProperty *lastAdHocMissionProperty;
 @property (nonatomic, readwrite) BOOL isObserving;
 @property (nonatomic, readwrite) BOOL isRecording;
+@property (nonatomic, strong, readwrite) MissionTotalizer *totalizer;
 
 @end
 
@@ -254,6 +255,20 @@
     return _documentUrl;
 }
 
+- (NSString *)statusMessage
+{
+    if (self.isObserving) return self.protocol.observingMessage;
+    if (self.isRecording) return self.protocol.notObservingMessage;
+    return nil;
+}
+
+- (MissionTotalizer *)totalizer
+{
+    if (!_totalizer) {
+        _totalizer = [[MissionTotalizer alloc] initWithProtocol:self.protocol trackLogSegments:self.trackLogSegments];
+    }
+    return _totalizer;
+}
 
 
 
@@ -771,6 +786,7 @@
     if (tracklog && tracklog.gpsPoints.count == 1) {
         [self.document.managedObjectContext deleteObject:tracklog.missionProperty];
         [self.trackLogSegments removeLastObject];
+        [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
     }
 }
 
@@ -820,6 +836,7 @@
                 [self drawLineFor:[self lastTrackLogSegment].missionProperty from:self.lastGpsPoint to:gpsPoint];
             }
             self.lastGpsPoint = gpsPoint;
+            [self.totalizer updateWithLocation:location forMissionProperties:[self lastTrackLogSegment].missionProperty];
         }
         return gpsPoint;
     } else {
@@ -917,6 +934,7 @@
             newTrackLog.missionProperty = missionProperty;
             newTrackLog.gpsPoints = [NSMutableArray arrayWithObject:missionProperty.gpsPoint];
             [self.trackLogSegments addObject:newTrackLog];
+            [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
         }
     }
     return newTrackLog;
