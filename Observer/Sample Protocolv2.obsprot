@@ -91,6 +91,13 @@
       },
       "label": "",
       "description": ""
+		},
+		"totalizer": {
+			"fields": ["Transect"],
+			"units": "kilometers",
+			"includeon": true,
+			"includeoff": true,
+			"includetotal": true
 		}
 	},
   "features":[
@@ -143,6 +150,7 @@
           "style": "esriSMSCircle",
           "color": [204,0,204,255],
           "size": 13
+				}
 			}
 		},
 		{
@@ -177,6 +185,7 @@
           "style": "esriSMSCircle",
           "color": [187,187,0,255],
           "size": 12
+				}
 			}
 		},
 		{
