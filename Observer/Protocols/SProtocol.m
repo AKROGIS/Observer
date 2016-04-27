@@ -256,6 +256,9 @@
     _notObservingMessage = [_notObservingMessage stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     _notObservingMessage = [_notObservingMessage length] == 0 ? nil : _notObservingMessage;
 
+    id totalizerConfig = json[@"mission"][@"totalizer"];
+    _totalizerConfig = [totalizerConfig isKindOfClass:[NSDictionary class]] ? totalizerConfig : nil;
+
     _missionFeature = [[ProtocolMissionFeature alloc] initWithJSON:json[@"mission"] version:jsonVersion];
     _features = [self buildFeaturelist:json[@"features"] version:jsonVersion];
     _featuresWithLocateByTouch = [self buildFeaturesWithLocateByTouch:_features];
