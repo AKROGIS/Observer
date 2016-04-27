@@ -65,7 +65,7 @@
 		398908691857F192007B3F67 /* SurveyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908671857F192007B3F67 /* SurveyTableViewCell.m */; };
 		3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989086B1857F399007B3F67 /* AKRDownloadView.m */; };
 		39890DA31858C99E007B3F67 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39890DA21858C99E007B3F67 /* Images.xcassets */; };
-		398A97311CCEDB2800143160 /* Sample Protocol v2.obsprot in Resources */ = {isa = PBXBuildFile; fileRef = 398A97301CCEDB2800143160 /* Sample Protocol v2.obsprot */; };
+		398A97311CCEDB2800143160 /* Sample Protocolv2.obsprot in Resources */ = {isa = PBXBuildFile; fileRef = 398A97301CCEDB2800143160 /* Sample Protocolv2.obsprot */; };
 		398A97371CCFD11800143160 /* MissionTotalizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 398A97361CCFD11800143160 /* MissionTotalizer.m */; };
 		39946AB0191DA0EA00875D90 /* Observation+CsvExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */; };
 		39946AB91925473A00875D90 /* TrackLogSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AB81925473A00875D90 /* TrackLogSegment.m */; };
@@ -289,7 +289,7 @@
 		3989086A1857F399007B3F67 /* AKRDownloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDownloadView.h; sourceTree = "<group>"; };
 		3989086B1857F399007B3F67 /* AKRDownloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDownloadView.m; sourceTree = "<group>"; };
 		39890DA21858C99E007B3F67 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		398A97301CCEDB2800143160 /* Sample Protocol v2.obsprot */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Sample Protocol v2.obsprot"; sourceTree = "<group>"; };
+		398A97301CCEDB2800143160 /* Sample Protocolv2.obsprot */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Sample Protocolv2.obsprot"; sourceTree = "<group>"; };
 		398A97351CCFD11800143160 /* MissionTotalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MissionTotalizer.h; sourceTree = "<group>"; };
 		398A97361CCFD11800143160 /* MissionTotalizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MissionTotalizer.m; sourceTree = "<group>"; };
 		39946AAE191DA0EA00875D90 /* Observation+CsvExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Observation+CsvExport.h"; path = "Model/Observation+CsvExport.h"; sourceTree = "<group>"; };
@@ -641,7 +641,7 @@
 				393E8AFD17A30012009AD0AC /* Settings.bundle */,
 				3929196617BEB6A8008B0FFC /* Todo.rtf */,
 				396E1E9A189AD87000B735EF /* Sample Protocol.obsprot */,
-				398A97301CCEDB2800143160 /* Sample Protocol v2.obsprot */,
+				398A97301CCEDB2800143160 /* Sample Protocolv2.obsprot */,
 				39336F4A18AC23DC00620A3A /* Protocol Specification.rtf */,
 				39E921AB195B52E60043DB5E /* Protocol Description.md */,
 			);
@@ -868,7 +868,7 @@
 				39890DA31858C99E007B3F67 /* Images.xcassets in Resources */,
 				39C53E6B1885D98400C0CECE /* SurveyDocumentIcon.png in Resources */,
 				39C53E6E1885D9DF00C0CECE /* ProtocolDocumentIcon.png in Resources */,
-				398A97311CCEDB2800143160 /* Sample Protocol v2.obsprot in Resources */,
+				398A97311CCEDB2800143160 /* Sample Protocolv2.obsprot in Resources */,
 				391401451975A03A0055F2E1 /* LICENSE in Resources */,
 				39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
