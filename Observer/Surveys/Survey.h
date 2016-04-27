@@ -30,6 +30,10 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 
 @end
 
+//This line should not be required (for some unknown reason this file and only this file
+//refuses to acknowledge the class definition in the included MissionTotalizer.h file.)
+//It is included to keep the compiler for complaining about the definition of the totalizer property
+@class MissionTotalizer;
 
 @interface Survey : NSObject <AKRTableViewItem>
 
