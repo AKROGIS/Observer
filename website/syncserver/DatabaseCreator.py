@@ -1,5 +1,3 @@
-__author__ = 'RESarwas'
-
 import arcpy
 import json
 import os
@@ -12,7 +10,7 @@ def database_for_protocol_file(protocol_path, fgdb_folder):
     if protocol['meta-name'] == 'NPS-Protocol-Specification':
         version = protocol['meta-version']
         if version == 1:
-            if not protocol.has_key('csv'):
+            if 'csv' not in protocol:
                 add_missing_csv_section(protocol)
             database = database_for_version1(protocol, fgdb_folder)
             return database, protocol
@@ -23,9 +21,10 @@ def database_for_protocol_file(protocol_path, fgdb_folder):
         print("File {0} is not a valid protocol file".format(protocol_path))
     return None, None
 
+
 def add_missing_csv_section(protocol):
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    csv_path = os.path.join(script_dir,'csv.json')
+    csv_path = os.path.join(script_dir, 'csv.json')
     with open(csv_path, 'r') as f:
         csv = json.load(f)
         protocol['csv'] = csv
@@ -114,13 +113,13 @@ def build_gpspoints_table_version1(fgdb, sr, protocol):
     # doing multiple operations on a view is faster than on a table
     view = arcpy.MakeTableView_management(os.path.join(fgdb, table_name), "view")
     try:
-        #Protocol Attributes
+        # Protocol Attributes
         #  - None
-        #Standard Attributes
+        # Standard Attributes
         for i in range(len(field_names)):
             alias = field_names[i].replace('_', ' ')
             arcpy.AddField_management(view, field_names[i], field_types[i], '', '', '', alias)
-        #Links to related data
+        # Links to related data
         arcpy.AddField_management(view, "TrackLog_ID", "LONG")
     finally:
         arcpy.Delete_management(view)
@@ -137,11 +136,11 @@ def build_tracklog_table_version1(fgdb, sr, attributes, protocol):
         for attribute in attributes:
             arcpy.AddField_management(view, attribute['name'], attribute['type'], '', '', '', attribute['alias'],
                                       '', '', attribute['domain'])
-        #Standard Attributes
+        # Standard Attributes
         for i in range(len(field_names)):
             alias = field_names[i].replace('_', ' ')
             arcpy.AddField_management(view, field_names[i], field_types[i], '', '', '', alias)
-            #Links to related data
+            # Links to related data
             #  - None
     finally:
         arcpy.Delete_management(view)
@@ -156,11 +155,11 @@ def build_observations_table_version1(fgdb, sr, protocol):
     try:
         # Protocol Attributes
         #  - None
-        #Standard Attributes
+        # Standard Attributes
         for i in range(len(field_names)):
             alias = field_names[i].replace('_', ' ')
             arcpy.AddField_management(view, field_names[i], field_types[i], '', '', '', alias)
-        #Link to related data
+        # Link to related data
         arcpy.AddField_management(view, "GpsPoint_ID", "LONG")
     finally:
         arcpy.Delete_management(view)
@@ -177,11 +176,11 @@ def build_feature_table_version1(fgdb, sr, raw_name, attributes, protocol):
         for attribute in attributes:
             arcpy.AddField_management(view, attribute['name'], attribute['type'], '', '', '', attribute['alias'],
                                       '', '', attribute['domain'])
-        #Standard Attributes
+        # Standard Attributes
         for i in range(len(field_names)):
             alias = field_names[i].replace('_', ' ')
             arcpy.AddField_management(view, field_names[i], field_types[i], '', '', '', alias)
-        #Link to related data
+        # Link to related data
         arcpy.AddField_management(view, "GpsPoint_ID", "LONG")
         arcpy.AddField_management(view, "Observation_ID", "LONG")
     finally:
@@ -206,8 +205,9 @@ def build_relationships(fgdb, protocol):
                                                  "{0}_to_GpsPoint".format(feature), "SIMPLE", feature, "GpsPoint",
                                                  "NONE", "ONE_TO_ONE", "NONE", "OBJECTID", "GpsPoint_ID")
         arcpy.CreateRelationshipClass_management(observations_table, os.path.join(fgdb, feature),
-                                                 "{0}_to_Observation".format(feature), "SIMPLE", feature, "Observation",
-                                                 "NONE", "ONE_TO_ONE", "NONE", "OBJECTID", "Observation_ID")
+                                                 "{0}_to_Observation".format(feature), "SIMPLE", feature,
+                                                 "Observation", "NONE", "ONE_TO_ONE", "NONE", "OBJECTID",
+                                                 "Observation_ID")
 
 
 def build_domains(fgdb, domains):
@@ -239,7 +239,7 @@ def get_aliases_from_protocol_v1(protocol):
             for field in section['elements']:
                 field_name = field['bind'].split(':')[1]
                 if section_title:
-                    field_alias = '{0} {1}'.format(section_title,field['title'])
+                    field_alias = '{0} {1}'.format(section_title, field['title'])
                 else:
                     field_alias = field['title']
                 feature_results[field_name] = field_alias
