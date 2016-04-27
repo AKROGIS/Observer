@@ -219,6 +219,7 @@
                     NSInteger version = [(NSNumber *)item integerValue];
                     switch (version) {
                         case 1:
+                        case 2:
                             [self processProtocolJSON:json version:version];
                             break;
                         default:

@@ -67,6 +67,7 @@
         if ([json isKindOfClass:[NSArray class]]) {
             switch (version) {
                 case 1:
+                case 2:
                     [self defineReadonlyProperties:(NSArray *)json];
                     break;
                 default:

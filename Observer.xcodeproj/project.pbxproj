@@ -65,6 +65,7 @@
 		398908691857F192007B3F67 /* SurveyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908671857F192007B3F67 /* SurveyTableViewCell.m */; };
 		3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989086B1857F399007B3F67 /* AKRDownloadView.m */; };
 		39890DA31858C99E007B3F67 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39890DA21858C99E007B3F67 /* Images.xcassets */; };
+		398A972D1CC56B1A00143160 /* Sample Protocolv2.obsprot in Resources */ = {isa = PBXBuildFile; fileRef = 398A972C1CC56B1A00143160 /* Sample Protocolv2.obsprot */; };
 		39946AB0191DA0EA00875D90 /* Observation+CsvExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */; };
 		39946AB91925473A00875D90 /* TrackLogSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AB81925473A00875D90 /* TrackLogSegment.m */; };
 		39955E4B178334BF00D225D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E4A178334BF00D225D7 /* UIKit.framework */; };
@@ -287,6 +288,7 @@
 		3989086A1857F399007B3F67 /* AKRDownloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDownloadView.h; sourceTree = "<group>"; };
 		3989086B1857F399007B3F67 /* AKRDownloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDownloadView.m; sourceTree = "<group>"; };
 		39890DA21858C99E007B3F67 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		398A972C1CC56B1A00143160 /* Sample Protocolv2.obsprot */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Sample Protocolv2.obsprot"; sourceTree = "<group>"; };
 		39946AAE191DA0EA00875D90 /* Observation+CsvExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Observation+CsvExport.h"; path = "Model/Observation+CsvExport.h"; sourceTree = "<group>"; };
 		39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Observation+CsvExport.m"; path = "Model/Observation+CsvExport.m"; sourceTree = "<group>"; };
 		39946AB71925473A00875D90 /* TrackLogSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackLogSegment.h; sourceTree = "<group>"; };
@@ -636,6 +638,7 @@
 				393E8AFD17A30012009AD0AC /* Settings.bundle */,
 				3929196617BEB6A8008B0FFC /* Todo.rtf */,
 				396E1E9A189AD87000B735EF /* Sample Protocol.obsprot */,
+				398A972C1CC56B1A00143160 /* Sample Protocolv2.obsprot */,
 				39336F4A18AC23DC00620A3A /* Protocol Specification.rtf */,
 				39E921AB195B52E60043DB5E /* Protocol Description.md */,
 			);
@@ -770,6 +773,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = Observer;
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "GIS Team";
 				TargetAttributes = {
@@ -861,6 +865,7 @@
 				39C53E6B1885D98400C0CECE /* SurveyDocumentIcon.png in Resources */,
 				39C53E6E1885D9DF00C0CECE /* ProtocolDocumentIcon.png in Resources */,
 				391401451975A03A0055F2E1 /* LICENSE in Resources */,
+				398A972D1CC56B1A00143160 /* Sample Protocolv2.obsprot in Resources */,
 				39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
 				39C53E701885DAB000C0CECE /* TilePackageDocumentIcon.png in Resources */,
@@ -1150,6 +1155,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1159,9 +1165,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.nps.akr.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Observer/Park Observer-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1172,6 +1181,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1181,9 +1191,11 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.nps.akr.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Observer/Park Observer-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
 			};

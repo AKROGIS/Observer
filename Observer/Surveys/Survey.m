@@ -562,37 +562,36 @@
 {
     if (!_graphicsLayersByName) {
         NSMutableDictionary *graphicsLayers = [NSMutableDictionary new];
-
-        //gps points
-        AGSGraphicsLayer *graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
-        [symbol setSize:CGSizeMake(6,6)];
-        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
-        graphicsLayers[kGpsPointEntityName] = graphicsLayer;
+        AGSGraphicsLayer *graphicsLayer;
 
         //Observations
         for (ProtocolFeature *feature in self.protocol.features) {
             graphicsLayer = [[AGSGraphicsLayer alloc] init];
-            [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.symbology.agsMarkerSymbol]];
+            [graphicsLayer setRenderer:feature.pointRenderer];
             graphicsLayers[feature.name] = graphicsLayer;
         }
 
         //Mission Properties
         ProtocolMissionFeature *missionFeature = self.protocol.missionFeature;
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:missionFeature.symbology.agsMarkerSymbol]];
+        [graphicsLayer setRenderer:missionFeature.pointRenderer];
         graphicsLayers[kMissionPropertyEntityName] = graphicsLayer;
+
+        //gps points
+        graphicsLayer = [[AGSGraphicsLayer alloc] init];
+        [graphicsLayer setRenderer:missionFeature.pointRendererGps];
+        graphicsLayers[kGpsPointEntityName] = graphicsLayer;
 
         //Track logs observing
         NSString * name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:missionFeature.observingSymbology.agsLineSymbol]];
+        [graphicsLayer setRenderer:missionFeature.lineRendererObserving];
         graphicsLayers[name] = graphicsLayer;
 
         //Track logs not observing
         name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:missionFeature.notObservingSymbology.agsLineSymbol]];
+        [graphicsLayer setRenderer:missionFeature.lineRendererNotObserving];
         graphicsLayers[name] = graphicsLayer;
 
         _graphicsLayersByName = [graphicsLayers copy];
