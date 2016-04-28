@@ -3,7 +3,7 @@
 	"meta-version":1,
 	"name":"CAKN Long Form",
 	"version":2.0,
-	"date":"2016-04-27",
+	"date":"2016-04-28",
 	"description":"This protocol is for sheep and bear surveys in the Central Alaska I&M Network.  Contact kumi_rattenbury@nps.gov for more details.",
     "mission":{
 		"attributes":[
@@ -25,13 +25,13 @@
 			"sections":[
 				{
 					"elements":[
-						{"type":"QEntryElement",   "key":"t",   "bind":"textValue:Transect",    "title":"Transect",    "placeholder":"ID", "autocorrectionType":"No"},
-						{"type":"QEntryElement",   "key":"s",   "bind":"textValue:Survey",      "title":"Survey",      "placeholder":"Number"},
-						{"type":"QEntryElement",   "key":"p",   "bind":"textValue:Pilot",       "title":"Pilot",       "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QEntryElement",   "key":"o2",  "bind":"textValue:Observer",    "title":"Observer",    "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QBooleanElement", "key":"o2r", "bind":"boolValue:Direction",   "title":"Looking Right"},
-						{"type":"QEntryElement",   "key":"a",   "bind":"textValue:Aircraft",    "title":"Aircraft",    "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QRadioElement",   "key":"cc",  "bind":"selectedItem:CloudCover",   "title":"Cloud Cover",         "items":["None", "<50% scattered", "> 50% broken", "Overcase"]},
+						{"type":"QEntryElement",   "key":"t",   "bind":"textValue:Transect",        "title":"Transect",      "placeholder":"ID", "autocorrectionType":"No"},
+						{"type":"QEntryElement",   "key":"s",   "bind":"textValue:Survey",          "title":"Survey",        "placeholder":"Park and Year"},
+						{"type":"QEntryElement",   "key":"p",   "bind":"textValue:Pilot",           "title":"Pilot",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",   "key":"o2",  "bind":"textValue:Observer",        "title":"Observer",      "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",   "key":"a",   "bind":"textValue:Aircraft",        "title":"Aircraft",      "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QBooleanElement", "key":"o2r", "bind":"boolValue:Direction",       "title":"Looking Right"},
+						{"type":"QRadioElement",   "key":"cc",  "bind":"selectedItem:CloudCover",   "title":"Cloud Cover",         "items":["None", "<50% scattered", "> 50% broken", "Overcast"]},
 						{"type":"QRadioElement",   "key":"pp",  "bind":"selectedItem:Precipitation","title":"Precipitation",       "items":["None", "Rain", "Snow"]},
 						{"type":"QRadioElement",   "key":"ti",  "bind":"selectedItem:TurbIntensity","title":"Turbulence Intensity","items":["None", "Light", "Moderate"]},
 						{"type":"QRadioElement",   "key":"td",  "bind":"selectedItem:TurbDuration", "title":"Turbulence Duration", "items":["None", "Occasional", "Intermittent", "Constant"]},
