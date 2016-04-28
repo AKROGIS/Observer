@@ -35,60 +35,60 @@
 			]
 		},
 		"symbology":{
-      "type": "simple",
-      "symbol": {
-        "type": "esriSMS",
-        "style": "esriSMSCircle",
-        "color": [0,255,0,255],
-        "size": 13,
-        "angle": 0,
-        "xoffset": 0,
-        "yoffset": 0,
-        "outline": {
+			"type": "simple",
+			"symbol": {
+				"type": "esriSMS",
+				"style": "esriSMSCircle",
+				"color": [0,255,0,255],
+				"size": 13,
+				"angle": 0,
+				"xoffset": 0,
+				"yoffset": 0,
+				"outline": {
           "color": [0,0,0,0],
           "width": 0
-        }
-      },
-      "label": "",
-      "description": ""
+				}
+			},
+			"label": "",
+			"description": ""
 		},
 		"on-symbology":{
-      "type": "simple",
-      "symbol": {
-        "type": "esriSLS",
-        "style": "esriSLSSolid",
-        "color": [255,0,0,255],
-        "width": 3
-      },
-      "label": "",
-      "description": ""
+			"type": "simple",
+			"symbol": {
+				"type": "esriSLS",
+				"style": "esriSLSSolid",
+				"color": [255,0,0,255],
+				"width": 3
+			},
+			"label": "",
+			"description": ""
 		},
-    "off-symbology":{
-      "type": "simple",
-      "symbol": {
-        "type": "esriSLS",
-        "style": "esriSLSSolid",
-        "color": [255,255,194,255],
-        "width": 1
-      }
+		"off-symbology":{
+			"type": "simple",
+			"symbol": {
+				"type": "esriSLS",
+				"style": "esriSLSSolid",
+				"color": [255,255,194,255],
+				"width": 1
+			}
 		},
-    "gps-symbology": {
-      "type": "simple",
-      "symbol": {
-        "type": "esriSMS",
-        "style": "esriSMSCircle",
-        "color": [0,0,255,255],
-        "size": 6,
-        "angle": 0,
-        "xoffset": 0,
-        "yoffset": 0,
-        "outline": {
-          "color": [0,0,0,0],
-          "width": 0
-        }
-      },
-      "label": "",
-      "description": ""
+		"gps-symbology": {
+			"type": "simple",
+			"symbol": {
+				"type": "esriSMS",
+				"style": "esriSMSCircle",
+				"color": [0,0,255,255],
+				"size": 6,
+				"angle": 0,
+				"xoffset": 0,
+				"yoffset": 0,
+				"outline": {
+					"color": [0,0,0,0],
+					"width": 0
+				}
+			},
+			"label": "",
+			"description": ""
 		}
 	},
   "features":[
