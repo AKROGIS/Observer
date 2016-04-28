@@ -871,7 +871,6 @@
 				39C53E6E1885D9DF00C0CECE /* ProtocolDocumentIcon.png in Resources */,
 				398A97311CCEDB2800143160 /* Sample Protocolv2.obsprot in Resources */,
 				391401451975A03A0055F2E1 /* LICENSE in Resources */,
-				398A972D1CC56B1A00143160 /* Sample Protocolv2.obsprot in Resources */,
 				39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
 				39C53E701885DAB000C0CECE /* TilePackageDocumentIcon.png in Resources */,
