@@ -97,7 +97,7 @@
 ,
 {
 	"name":"Test Protocol Version 2",
-	"version":1.0,
+	"version":2.0,
 	"date":"2016-04-28",
 	"url":"http://akrgis.nps.gov/observer/protocols/SampleProtocolV2.obsprot"
 }
