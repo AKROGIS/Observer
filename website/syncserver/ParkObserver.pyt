@@ -368,7 +368,7 @@ def database_for_protocol_file(protocol_path, fgdb_folder):
     # I either crashed or I have a good protocol
     if protocol['meta-name'] == 'NPS-Protocol-Specification':
         version = protocol['meta-version']
-        if version == 1:
+        if version <= 2:
             if 'csv' not in protocol:
                 add_missing_csv_section(protocol)
             database = database_for_version1(protocol, fgdb_folder)
