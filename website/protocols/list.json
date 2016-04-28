@@ -94,4 +94,11 @@
 	"date":"2014-07-01",
 	"url":"http://akrgis.nps.gov/observer/protocols/sample.obsprot"
 }
+,
+{
+	"name":"Test Protocol Version 2",
+	"version":1.0,
+	"date":"2016-04-28",
+	"url":"http://akrgis.nps.gov/observer/protocols/SampleProtocolV2.obsprot"
+}
 ]
