@@ -1465,6 +1465,19 @@
     }
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
 
+    id maybeDate = [entity valueForKeyPath:@"adhocLocation.timestamp"];
+    if (!maybeDate) {
+        maybeDate = [entity valueForKeyPath:@"gpsPoint.timestamp"];
+    }
+    if ([maybeDate isKindOfClass:[NSDate class]]) {
+        NSDate *timestamp = (NSDate *)maybeDate;
+        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+        [dateFormatter setDateFormat:@"HH:mm:ss"];
+        //[dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
+        NSString *formattedTime = [dateFormatter stringFromDate:timestamp];
+        root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, formattedTime];
+    }
+
     //TODO: if we are reviewing/editing an existing record, show the observing status
 
     //Show a Location Button only when editing/reviewing
