@@ -1,21 +1,19 @@
-__author__ = 'RESarwas'
-
 import arcpy
 import os
 import glob
 import DatabaseCreator
 import dateutil.parser
 
-#MACROS: Key indexes for GPS data in CSV data (T=Timestamp, X=Longitude, Y=Latitude)
+# MACROS: Key indexes for GPS data in CSV data (T=Timestamp, X=Longitude, Y=Latitude)
 T, X, Y = 0, 1, 2
 
 
 def process_csv_folder(csv_path, protocol, database_path):
     version = protocol['meta-version']
-    if version == 1:
+    if version <= 2:
         process_csv_folder_v1(csv_path, protocol, database_path)
     else:
-        print("Unable to process protocol specification version {1}.".format(version))
+        print("Unable to process protocol specification version {0}.".format(version))
 
 
 def process_csv_folder_v1(csv_path, protocol, database_path):

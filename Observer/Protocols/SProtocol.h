@@ -15,6 +15,7 @@
 
 @interface SProtocol : NSObject <NSCoding, AKRTableViewItem, NSURLSessionDownloadDelegate>
 
+@property (nonatomic, readonly) NSInteger metaversion;
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, strong, readonly) NSNumber *version;
 @property (nonatomic, strong, readonly) NSString *versionString;

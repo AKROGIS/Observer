@@ -9,7 +9,7 @@
 \margl1440\margr1440\vieww9000\viewh8400\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\sl480\slmult1\pardirnatural\partightenfactor0
 
-\f0\b\fs28 \cf0 \ul \ulc0 Protocol Specifications, version 1\
+\f0\b\fs28 \cf0 \ul \ulc0 Protocol Specifications, version 2\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \b0\fs24 \cf0 \ulnone \
@@ -143,10 +143,11 @@ The protocol file (*.obsprot) is just a text file in JSON (javascript object not
 \pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural\partightenfactor0
 \ls3\ilvl2\cf0 {\listtext	\uc0\u8259 	}These symbology properties define the look of the track log when observing (on or on-transect), and not observing (off).\
 \pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
-\ls3\ilvl1\cf0 {\listtext	\uc0\u8259 	}The mission attributes are often things like the names of the observers, and the weather.\
-\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
 \ls3\ilvl1
 \f1\fs22 \cf0 {\listtext	
+\f2 \uc0\u8259 
+\f1 	}The mission attributes are often things like the names of the observers, and the weather.\
+{\listtext	
 \f2 \uc0\u8259 
 \f1 	}totalizer - 
 \f0\fs24 An object used to define the parameters for collecting and displaying a Mission Totalizer.   This is used to provide information on how long the user has been observing for a given set of conditions, usually this is just the transect id.  In this case, the totalizer show how long the user has been observing on a current transect.\
@@ -172,8 +173,7 @@ The protocol file (*.obsprot) is just a text file in JSON (javascript object not
 \f1\fs22 \CocoaLigature0 "minutes". 
 \f0\fs24 \CocoaLigature1 Default is 
 \f1\fs22 \CocoaLigature0 "kilometers"\
-\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural\partightenfactor0
-\ls3\ilvl2\cf0 \CocoaLigature1 {\listtext	
+\ls3\ilvl2\CocoaLigature1 {\listtext	
 \f2 \uc0\u8259 
 \f1 	}includeon - 
 \f0\fs24 A boolean value (
@@ -182,8 +182,7 @@ The protocol file (*.obsprot) is just a text file in JSON (javascript object not
 \f1\fs22 \CocoaLigature0 false
 \f0\fs24 \CocoaLigature1 ), that indicate is the total while "observing" is true should be displayed.  The default is  
 \f1\fs22 \CocoaLigature0 true\CocoaLigature1 \
-\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural\partightenfactor0
-\ls3\ilvl2\cf0 {\listtext	
+{\listtext	
 \f2 \uc0\u8259 
 \f1 	}includeoff - 
 \f0\fs24 A boolean value (
@@ -206,7 +205,9 @@ The protocol file (*.obsprot) is just a text file in JSON (javascript object not
 \f0\fs24 \CocoaLigature1 \
 \pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
 \ls3\ilvl1
-\f1\fs22 \cf0 	
+\f1\fs22 \cf0 {\listtext	
+\f2 \uc0\u8259 
+\f1 	}
 \f0\fs24 An Array of objects with the following properties
 \f1\fs22 \
 {\listtext	
@@ -426,5 +427,15 @@ The protocol file (*.obsprot) is just a text file in JSON (javascript object not
 \ls3\ilvl3\cf0 {\listtext	\uc0\u8259 	}The size is an integer number for the size in points of the simple circle marker symbol\
 {\listtext	\uc0\u8259 	}The default is 12 if not provided.\
 \pard\tx560\tx1120\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
+\cf0 Notes on Version 2\
+\
+Added gps-symbology under mission\
+\
+The value of the symbology tags are full ESRI Renderer JSON as defined in {\field{\*\fldinst{HYPERLINK "http://resources.arcgis.com/en/help/rest/apiref/renderer.html"}}{\fldrslt http://resources.arcgis.com/en/help/rest/apiref/renderer.html}}\
+\
+Not all fields in the ESRI rest API need to be provided, when defaults are obvious ; i.e. "label":"" and "angle":0 (I have not tested everything)\
+the type is required and must be one of simple, uniqueValue, classBreak\
+TODO test which other fields are required, and document the defaults\
+\
+\
 }

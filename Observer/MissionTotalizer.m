@@ -91,7 +91,7 @@ typedef NS_OPTIONS(NSUInteger, TotalizerUnits) {
 - (BOOL)parseProtocol
 {
     BOOL hasTotalizer = NO;
-    switch ([self.protocol.version integerValue]) {
+    switch (self.protocol.metaversion) {
         case 2:
         {
             NSDictionary *config = self.protocol.totalizerConfig;

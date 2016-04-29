@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ZipKit/ZipKit.h>
 #import "AKRTableViewItem.h"
 #import "SProtocol.h"
 #import "SurveyCoreDataDocument.h"
@@ -81,6 +82,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 // I am not supporting saveTo
 - (void)closeDocumentWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 - (void)syncWithCompletionHandler:(void (^)(NSError*))handler;
+- (void)addCSVtoArchive:(ZKDataArchive *)archive since:(NSDate *)startDate;
 
 + (NSURL *)privateDocumentsDirectory;
 

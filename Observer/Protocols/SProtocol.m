@@ -217,6 +217,7 @@
                 id item = json[@"meta-version"];
                 if ([item isKindOfClass:[NSNumber class]]) {
                     NSInteger version = [(NSNumber *)item integerValue];
+                    _metaversion = version;
                     switch (version) {
                         case 1:
                         case 2:

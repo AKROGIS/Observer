@@ -38,7 +38,7 @@
         _name = (NSString *)name;
     }
     _allowedLocations = [[ProtocolFeatureAllowedLocations alloc] initWithLocationsJSON:json[@"locations"]version:version];
-    _symbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"symbology"] version:version];
+    [self defineReadonlySymbology:json[@"symbology"] version:version];
     _attributes = [self buildAttributeArrayWithJSON:json[@"attributes"] version:version];
     id dialog = json[@"dialog"];
     if ([dialog isKindOfClass:[NSDictionary class]]) {
@@ -119,6 +119,50 @@
         locationMethod = self.preferredLocationMethod;
     }
     return locationMethod;
+}
+
+- (void)defineReadonlySymbology:(NSDictionary *)json version:(NSInteger) version
+{
+    switch (version) {
+        case 1:
+        {
+             ProtocolFeatureSymbology *symbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json version:version];
+            _pointRenderer = [AGSSimpleRenderer simpleRendererWithSymbol:symbology.agsMarkerSymbol];
+            break;
+        }
+        case 2:
+            @try {
+                //protect against malformed symbology definition in the protocol (JSON) file
+                _pointRenderer = [self AGSRendererFromJSON:json];
+            } @catch (NSException *exception) {
+                AKRLog(@"Failed to create feature renderer (bad protocol): %@", exception);
+                //Create a simple default
+                AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor greenColor]];
+                [symbol setSize:CGSizeMake(12,12)];
+                _pointRenderer = [AGSSimpleRenderer simpleRendererWithSymbol:symbol];
+            }
+            break;
+        default:
+            AKRLog(@"Unsupported version (%ld) of the NPS-Protocol-Specification", (long)version);
+            break;
+    }
+}
+
+- (AGSRenderer *)AGSRendererFromJSON:(NSDictionary *)json
+{
+    NSString *rendererType = json[@"type"];
+    if ([rendererType isEqualToString:@"simple"]) {
+        return [[AGSSimpleRenderer alloc] initWithJSON:json];
+    }
+    if ([rendererType isEqualToString:@"classBreaks"]) {
+        return [[AGSClassBreaksRenderer alloc] initWithJSON:json];
+    }
+    if ([rendererType isEqualToString:@"uniqueValue"]) {
+        return [[AGSUniqueValueRenderer alloc] initWithJSON:json];
+    }
+    return [[AGSRenderer alloc] initWithJSON:json];
+    //TODO: starting in version 100 (quartz) replace this method with
+    //return [AGSRenderer fromJSON:json]
 }
 
 @end
