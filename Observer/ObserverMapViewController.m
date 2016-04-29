@@ -41,6 +41,7 @@
 //Support Model Objects
 #import "AutoPanStateMachine.h"
 #import "Survey+CsvExport.h"
+#import "NSDate+Formatting.h"
 
 //Support sub-system
 #import "QuickDialog.h"
@@ -1471,11 +1472,12 @@
     }
     if ([maybeDate isKindOfClass:[NSDate class]]) {
         NSDate *timestamp = (NSDate *)maybeDate;
-        NSDateFormatter *dateFormatter = [NSDateFormatter new];
-        [dateFormatter setDateFormat:@"HH:mm:ss"];
-        //[dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
-        NSString *formattedTime = [dateFormatter stringFromDate:timestamp];
-        root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, formattedTime];
+        root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, [timestamp stringWithMediumTimeFormat]];
+        QLabelElement *label = [QLabelElement new];
+        label.title = @"Timestamp";
+        label.value = [timestamp stringWithMediumDateTimeFormat];
+        //[[root.sections firstObject] insertObject:label atIndex:0]; //crashed inexplicably
+        [[[root.sections firstObject] elements] insertObject:label atIndex:0];  //works unless elements is nil
     }
 
     //TODO: if we are reviewing/editing an existing record, show the observing status
