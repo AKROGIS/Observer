@@ -297,6 +297,10 @@
 
 - (IBAction)startRecording:(UIBarButtonItem *)sender
 {
+    if(!self.map) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"You need to select a map before you can begin." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+        return;
+    }
     if (self.survey.isRecording) {
         return;
     }
