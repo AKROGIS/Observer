@@ -29,14 +29,13 @@
 
 - (void) dealloc
 {
+    [self.survey closeDocumentWithCompletionHandler:nil];
     self.survey = nil;
 }
 
 - (void)setSurvey:(Survey *)survey
 {
-    if (_survey) {
-        [_survey closeDocumentWithCompletionHandler:nil];
-    }
+    [_survey closeDocumentWithCompletionHandler:nil];
     _survey = nil;
     [survey openDocumentWithCompletionHandler:^(BOOL success) {
         if (success) {

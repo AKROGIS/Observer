@@ -20,11 +20,23 @@
 
 @implementation SurveyUploadTableViewController
 
+- (void) dealloc
+{
+    [self.survey closeDocumentWithCompletionHandler:nil];
+    self.survey = nil;
+}
+
 - (void)setSurvey:(Survey *)survey
 {
-    _survey = survey;
-    self.title = survey.title;
-    self.navigationController.title = survey.title;
+    [_survey closeDocumentWithCompletionHandler:nil];
+    _survey = nil;
+    [survey openDocumentWithCompletionHandler:^(BOOL success) {
+        if (success) {
+            self->_survey = survey;
+            self.title = survey.title;
+            self.navigationController.title = survey.title;
+        }
+    }];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -123,8 +135,11 @@
 
 - (void)shareSurvey
 {
+    [self.syncActivityIndicator startAnimating];
     NSError *error = nil;
-    if ([self.survey exportToDiskWithForce:NO error:&error]) {
+    BOOL exportSuccess = [self.survey exportToDiskWithForce:NO error:&error];
+    [self.syncActivityIndicator stopAnimating];
+    if (exportSuccess) {
         [self.navigationController popViewControllerAnimated:YES];
     } else {
         if (error) {
@@ -144,8 +159,11 @@
         [[[UIAlertView alloc] initWithTitle:nil message:@"This device is not configured to send mail" delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         return;
     }
+
+    [self.syncActivityIndicator startAnimating];
     NSError *error = nil;
     NSData *attachmentData = [self.survey exportToNSDataError:&error];
+    [self.syncActivityIndicator stopAnimating];
     if (!attachmentData) {
         NSString *msg = @"Unable to create an email-able export of the survey.";
         if (error) {
@@ -181,37 +199,27 @@
         [[[UIAlertView alloc] initWithTitle:nil message:@"This device is not configured to send mail" delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
         return;
     }
-    [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
-        //do any other background work;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (success) {
-                MFMailComposeViewController *mailVC = [[MFMailComposeViewController alloc] init];
-                NSString *subject = [NSString stringWithFormat:@"Park Observer Data"];
-                NSString *body = [NSString stringWithFormat:@"CSV data collected for %@.",self.survey.title];
-                [mailVC setSubject:subject];
-                [mailVC setMessageBody:body isHTML:NO];
-                NSDictionary *features = [self.survey csvForFeaturesSince:nil];
-                for (NSString *featureName in features){
-                    NSData *data = [features[featureName] dataUsingEncoding:NSUTF8StringEncoding];
-                    NSString *fileName = [NSString stringWithFormat:@"%@.csv",featureName];
-                    [mailVC addAttachmentData:data mimeType:@"text/csv" fileName:fileName];
-                }
-                NSData *data = [[self.survey csvForTrackLogsSince:nil] dataUsingEncoding:NSUTF8StringEncoding];
-                NSString *csvName = @"TrackLogs.csv"; //TODO: get this from the survey protocol
-                [mailVC addAttachmentData:data mimeType:@"text/csv" fileName:csvName];
-                if (includeGps) {
-                    data = [[self.survey csvForGpsPointsSince:nil] dataUsingEncoding:NSUTF8StringEncoding];
-                    csvName = @"GpsPoints.csv"; //TODO: get this from the survey protocol
-                    [mailVC addAttachmentData:data mimeType:@"text/csv" fileName:csvName];
-                }
-                mailVC.mailComposeDelegate = self;
-                [self presentViewController:mailVC animated:YES completion:nil];
-                [self.survey closeDocumentWithCompletionHandler:nil];
-            } else {
-                [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-            }
-        });
-    }];
+    MFMailComposeViewController *mailVC = [[MFMailComposeViewController alloc] init];
+    NSString *subject = [NSString stringWithFormat:@"Park Observer Data"];
+    NSString *body = [NSString stringWithFormat:@"CSV data collected for %@.",self.survey.title];
+    [mailVC setSubject:subject];
+    [mailVC setMessageBody:body isHTML:NO];
+    NSDictionary *features = [self.survey csvForFeaturesSince:nil];
+    for (NSString *featureName in features){
+        NSData *data = [features[featureName] dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *fileName = [NSString stringWithFormat:@"%@.csv",featureName];
+        [mailVC addAttachmentData:data mimeType:@"text/csv" fileName:fileName];
+    }
+    NSData *data = [[self.survey csvForTrackLogsSince:nil] dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *csvName = @"TrackLogs.csv"; //TODO: get this from the survey protocol
+    [mailVC addAttachmentData:data mimeType:@"text/csv" fileName:csvName];
+    if (includeGps) {
+        data = [[self.survey csvForGpsPointsSince:nil] dataUsingEncoding:NSUTF8StringEncoding];
+        csvName = @"GpsPoints.csv"; //TODO: get this from the survey protocol
+        [mailVC addAttachmentData:data mimeType:@"text/csv" fileName:csvName];
+    }
+    mailVC.mailComposeDelegate = self;
+    [self presentViewController:mailVC animated:YES completion:nil];
 }
 
 @end
