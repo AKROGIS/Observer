@@ -1612,8 +1612,10 @@
     [self dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;
     if ([obj isKindOfClass:[MissionProperty class]]) {
-        [self.survey.totalizer missionPropertyChanged:(MissionProperty *)obj];
-        self.totalizerMessage.text = self.survey.totalizer.message;
+        if (self.survey.isRecording) {
+            [self.survey.totalizer missionPropertyChanged:(MissionProperty *)obj];
+            self.totalizerMessage.text = self.survey.totalizer.message;
+        }
     }
 }
 
