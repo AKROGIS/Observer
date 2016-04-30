@@ -1,29 +1,29 @@
 [
-	{
-		"name":"ARCN RTLO Survey",
-		"version":1.00,
-		"date":"2016-03-25",
-		"url":"http://akrgis.nps.gov/observer/protocols/arcn_rtlo.obsprot"
-	}
-	,
-	{
-		"name":"ARCN YBLO Survey",
-		"version":1.00,
-		"date":"2016-03-25",
-		"url":"http://akrgis.nps.gov/observer/protocols/arcn_yblo.obsprot"
-	}
-	,
+{
+	"name":"ARCN RTLO Survey",
+	"version":1.0,
+	"date":"2016-03-25",
+	"url":"http://akrgis.nps.gov/observer/protocols/arcn_rtlo.obsprot"
+}
+,
+{
+	"name":"ARCN YBLO Survey",
+	"version":1.1,
+	"date":"2016-04-26",
+	"url":"http://akrgis.nps.gov/observer/protocols/arcn_yblo.obsprot"
+}
+,
 {
 	"name":"CAKN Sheep Short Form",
-	"version":1.1,
-	"date":"2015-07-16",
+	"version":2.0,
+	"date":"2016-04-28",
 	"url":"http://akrgis.nps.gov/observer/protocols/cakn_sheep.obsprot"
 }
 ,
 {
 	"name":"CAKN Long Form",
-	"version":1.1,
-	"date":"2015-07-16",
+	"version":2.0,
+	"date":"2016-04-28",
 	"url":"http://akrgis.nps.gov/observer/protocols/cakn_long.obsprot"
 }
 ,
@@ -82,7 +82,7 @@
 }
 ,
 {
-	"name":"YUC Moose Surveys",
+	"name":"YUCH Moose Surveys",
 	"version":1.00,
 	"date":"2015-11-05",
 	"url":"http://akrgis.nps.gov/observer/protocols/yuch_moose.obsprot"
