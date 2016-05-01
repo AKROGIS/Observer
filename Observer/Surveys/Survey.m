@@ -14,7 +14,6 @@
 #import "NSURL+isEqualToURL.h"
 #import "NSDate+Formatting.h"
 #import "ObserverModel.h"
-#import <ZipKit/ZipKit.h>
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -57,6 +56,7 @@
 @property (nonatomic, strong) MissionProperty *lastAdHocMissionProperty;
 @property (nonatomic, readwrite) BOOL isObserving;
 @property (nonatomic, readwrite) BOOL isRecording;
+@property (nonatomic, strong, readwrite) MissionTotalizer *totalizer;
 
 @end
 
@@ -131,7 +131,7 @@
 {
     NSString *name = [[archive lastPathComponent] stringByDeletingPathExtension];
     NSURL *newDocument = [Survey privateDocumentFromName:name];
-    if ([Archiver unpackArchive:archive to:newDocument]) {
+    if ([Archiver unpackSurvey:newDocument fromArchive:archive]) {
         return [self initWithURL:newDocument];
     } else {
         return nil;
@@ -255,6 +255,20 @@
     return _documentUrl;
 }
 
+- (NSString *)statusMessage
+{
+    if (self.isObserving) return self.protocol.observingMessage;
+    if (self.isRecording) return self.protocol.notObservingMessage;
+    return nil;
+}
+
+- (MissionTotalizer *)totalizer
+{
+    if (!_totalizer) {
+        _totalizer = [[MissionTotalizer alloc] initWithProtocol:self.protocol trackLogSegments:self.trackLogSegments];
+    }
+    return _totalizer;
+}
 
 
 
@@ -280,6 +294,13 @@
 
 - (void)openDocumentWithCompletionHandler:(void (^)(BOOL success))handler
 {
+    if (self.isReady) {
+        AKRLog(@"Oops, Survey:%@ is already open!", self.title);
+        if (handler) handler(YES);
+        return;
+    }
+    AKRLog(@"Opening document for Survey:%@", self.title);
+
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
         //during development, it is possible that a previously valid protocol is no longer recognized as valid
         //we might be able to remove this check in production code.
@@ -289,9 +310,11 @@
         if (self.state == kCorrupt) {
             if (handler) handler(NO);
         } else {
-            self.document = [[SurveyCoreDataDocument alloc] initWithFileURL:self.documentUrl];
+            if (!self.document) {
+                self.document = [[SurveyCoreDataDocument alloc] initWithFileURL:self.documentUrl];
+            }
             BOOL documentExists = [[NSFileManager defaultManager] fileExistsAtPath:[self.documentUrl path]];
-            //FIXME:  The following block craches the app.
+            //FIXME:  The following block crashes the app.
             // https://fabric.io/national-park-service-alaska-region/ios/apps/gov.nps.akr.park-observer/issues/56b4f83ef5d3a7f76b9c5c05
             // __44-[Survey openDocumentWithCompletionHandler:]_block_invoke
             if (documentExists) {
@@ -319,40 +342,46 @@
 - (void)closeDocumentWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
 #ifdef AKR_DEBUG
-    AKRLog(@"Closing document");
+    AKRLog(@"Closing document for Survey: %@", self.title);
     //[self logStats];
 #endif
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.document closeWithCompletionHandler:completionHandler];
 }
 
-- (void)syncWithCompletionHandler:(void (^)(NSError*))handler
-{
-    if ([self isReady]) {
-        dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
-            [self trySyncWithCompletionHandler:handler];
-        });
-    } else {
-        [self openDocumentWithCompletionHandler:^(BOOL success) {
-            if (success) {
-                [self trySyncWithCompletionHandler:handler];
-            } else {
-                NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
-                [errorDetails setValue:@"Unable to open the survey." forKey:NSLocalizedDescriptionKey];
-                NSError *error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
-                handler(error);
-                if (handler) {
-                    handler(error);
-                }
-            }
-        }];
-    }
-}
+//- (void)syncWithCompletionHandler:(void (^)(NSError*))handler
+//{
+//    if ([self isReady]) {
+//        dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
+//            [self trySyncWithCompletionHandler:handler];
+//        });
+//    } else {
+//        [self openDocumentWithCompletionHandler:^(BOOL success) {
+//            if (success) {
+//                // The sync method will create an archive with the open document and then start the upload
+//                // task and return.  We can close the document and return.  Eventually
+//                // the upload task will call the handler.
+//                [self trySyncWithCompletionHandler:handler];
+//                [self closeDocumentWithCompletionHandler:nil];
+//            } else {
+//                // No document was opened, so no document needs to be closed.
+//                NSMutableDictionary* errorDetails = [NSMutableDictionary dictionary];
+//                [errorDetails setValue:@"Unable to open the survey." forKey:NSLocalizedDescriptionKey];
+//                NSError *error = [NSError errorWithDomain:@"gov.nps.parkobserver" code:200 userInfo:errorDetails];
+//                handler(error);
+//                if (handler) {
+//                    handler(error);
+//                }
+//            }
+//        }];
+//    }
+//}
 
 //on background thread
-- (void)trySyncWithCompletionHandler:(void (^)(NSError*))handler
+- (void)syncWithCompletionHandler:(void (^)(NSError*))handler
 {
-    ZKDataArchive *archive = [self buildZipArchive];
+    ZKDataArchive *archive = [ZKDataArchive new];
+    [self addCSVtoArchive:archive since:self.syncDate];
 
     //save a copy of the survey in the documents directory (only needed for testing
     //NSURL *url = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
@@ -407,12 +436,8 @@
     [uploadTask resume];
 }
 
-- (ZKDataArchive *)buildZipArchive
+- (void)addCSVtoArchive:(ZKDataArchive *)archive since:(NSDate *)startDate
 {
-    ZKDataArchive *archive = [ZKDataArchive new];
-
-    NSDate *startDate = self.syncDate;
-
     NSData *csvData = nil;
     NSString *csvName = nil;
     //features
@@ -436,8 +461,6 @@
     NSString *protocolPath = self.protocolUrl.path;
     NSString *protocolFolder = [self.protocolUrl URLByDeletingLastPathComponent].path;
     [archive deflateFile:protocolPath relativeToPath:protocolFolder usingResourceFork:NO];
-
-    return archive;
 }
 
 
@@ -568,37 +591,36 @@
 {
     if (!_graphicsLayersByName) {
         NSMutableDictionary *graphicsLayers = [NSMutableDictionary new];
-
-        //gps points
-        AGSGraphicsLayer *graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
-        [symbol setSize:CGSizeMake(6,6)];
-        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:symbol]];
-        graphicsLayers[kGpsPointEntityName] = graphicsLayer;
+        AGSGraphicsLayer *graphicsLayer;
 
         //Observations
         for (ProtocolFeature *feature in self.protocol.features) {
             graphicsLayer = [[AGSGraphicsLayer alloc] init];
-            [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:feature.symbology.agsMarkerSymbol]];
+            [graphicsLayer setRenderer:feature.pointRenderer];
             graphicsLayers[feature.name] = graphicsLayer;
         }
 
         //Mission Properties
         ProtocolMissionFeature *missionFeature = self.protocol.missionFeature;
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:missionFeature.symbology.agsMarkerSymbol]];
+        [graphicsLayer setRenderer:missionFeature.pointRenderer];
         graphicsLayers[kMissionPropertyEntityName] = graphicsLayer;
+
+        //gps points
+        graphicsLayer = [[AGSGraphicsLayer alloc] init];
+        [graphicsLayer setRenderer:missionFeature.pointRendererGps];
+        graphicsLayers[kGpsPointEntityName] = graphicsLayer;
 
         //Track logs observing
         NSString * name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:missionFeature.observingSymbology.agsLineSymbol]];
+        [graphicsLayer setRenderer:missionFeature.lineRendererObserving];
         graphicsLayers[name] = graphicsLayer;
 
         //Track logs not observing
         name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:[AGSSimpleRenderer simpleRendererWithSymbol:missionFeature.notObservingSymbology.agsLineSymbol]];
+        [graphicsLayer setRenderer:missionFeature.lineRendererNotObserving];
         graphicsLayers[name] = graphicsLayer;
 
         _graphicsLayersByName = [graphicsLayers copy];
@@ -778,6 +800,7 @@
     if (tracklog && tracklog.gpsPoints.count == 1) {
         [self.document.managedObjectContext deleteObject:tracklog.missionProperty];
         [self.trackLogSegments removeLastObject];
+        [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
     }
 }
 
@@ -827,6 +850,7 @@
                 [self drawLineFor:[self lastTrackLogSegment].missionProperty from:self.lastGpsPoint to:gpsPoint];
             }
             self.lastGpsPoint = gpsPoint;
+            [self.totalizer updateWithLocation:location forMissionProperties:[self lastTrackLogSegment].missionProperty];
         }
         return gpsPoint;
     } else {
@@ -924,6 +948,7 @@
             newTrackLog.missionProperty = missionProperty;
             newTrackLog.gpsPoints = [NSMutableArray arrayWithObject:missionProperty.gpsPoint];
             [self.trackLogSegments addObject:newTrackLog];
+            [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
         }
     }
     return newTrackLog;

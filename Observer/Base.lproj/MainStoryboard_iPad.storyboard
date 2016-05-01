@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="TiC-11-YSU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="TiC-11-YSU">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Untitled Survey-->
@@ -106,17 +107,37 @@
                             <imageView opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="center" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" image="Crosshairs" translatesAutoresizingMaskIntoConstraints="NO" id="fpV-JS-knH">
                                 <rect key="frame" x="352" y="490" width="64" height="64"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SYY-xD-UCh" userLabel="Status">
+                                <rect key="frame" x="20" y="28" width="61" height="24"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                <color key="textColor" red="1" green="0.0" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                                <color key="shadowColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
+                                <size key="shadowOffset" width="1" height="1"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Totalizer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e2P-qz-5od" userLabel="Totalizer">
+                                <rect key="frame" x="20" y="60" width="62" height="20"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="gK6-lQ-eLV" secondAttribute="trailing" id="0tW-7C-WRV"/>
+                            <constraint firstItem="SYY-xD-UCh" firstAttribute="top" secondItem="jAV-ok-Y8z" secondAttribute="bottom" constant="8" symbolic="YES" id="2Vr-yN-k0k"/>
+                            <constraint firstItem="SYY-xD-UCh" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leadingMargin" id="7SC-zH-qtx"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="centerY" secondItem="zJv-q7-y2x" secondAttribute="centerY" id="HNZ-ve-753"/>
-                            <constraint firstItem="fOP-b6-5IU" firstAttribute="top" secondItem="jAV-ok-Y8z" secondAttribute="bottom" constant="20" symbolic="YES" id="bbd-yI-sVt"/>
+                            <constraint firstItem="e2P-qz-5od" firstAttribute="top" secondItem="SYY-xD-UCh" secondAttribute="bottom" constant="8" symbolic="YES" id="QDI-jo-AbQ"/>
+                            <constraint firstItem="vWS-gC-g0n" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leadingMargin" constant="-20" id="TfB-9h-CXW"/>
+                            <constraint firstItem="e2P-qz-5od" firstAttribute="leading" secondItem="SYY-xD-UCh" secondAttribute="leading" id="bTY-RE-FY4"/>
+                            <constraint firstItem="fOP-b6-5IU" firstAttribute="top" secondItem="jAV-ok-Y8z" secondAttribute="bottom" constant="8" symbolic="YES" id="bbd-yI-sVt"/>
                             <constraint firstAttribute="centerX" secondItem="zJv-q7-y2x" secondAttribute="centerX" id="c9i-GS-Uhf"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="centerX" secondItem="fpV-JS-knH" secondAttribute="centerX" id="dSl-Tq-Iwi"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="leading" secondItem="vWS-gC-g0n" secondAttribute="leading" id="fab-kJ-dql"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="top" secondItem="vWS-gC-g0n" secondAttribute="top" id="kXI-cK-JkM"/>
-                            <constraint firstItem="D2B-BM-dlF" firstAttribute="top" secondItem="3Af-C7-mib" secondAttribute="bottom" constant="20" symbolic="YES" id="lPc-eG-ECb"/>
+                            <constraint firstItem="D2B-BM-dlF" firstAttribute="top" secondItem="3Af-C7-mib" secondAttribute="bottom" symbolic="YES" id="lPc-eG-ECb"/>
                             <constraint firstItem="3Af-C7-mib" firstAttribute="leading" secondItem="SFd-OI-tIi" secondAttribute="leading" id="msM-N1-Wbb"/>
                             <constraint firstItem="D2B-BM-dlF" firstAttribute="top" secondItem="gK6-lQ-eLV" secondAttribute="bottom" id="nTs-2E-lF7"/>
                             <constraint firstItem="gK6-lQ-eLV" firstAttribute="width" secondItem="vWS-gC-g0n" secondAttribute="width" id="nfN-Er-1Qq"/>
@@ -130,6 +151,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Untitled Survey" id="DZH-KF-4La"/>
                     <connections>
+                        <outlet property="StatusMessage" destination="SYY-xD-UCh" id="Mtv-jP-tcO"/>
                         <outlet property="compassRoseButton" destination="fOP-b6-5IU" id="MRd-X5-ZrB"/>
                         <outlet property="editEnvironmentBarButton" destination="Fdi-yp-sWi" id="cJv-sd-s4Y"/>
                         <outlet property="mapLoadingIndicator" destination="zJv-q7-y2x" id="hBV-WL-ipD"/>
@@ -140,7 +162,9 @@
                         <outlet property="selectSurveyButton" destination="SCL-a5-7Et" id="aeX-q0-EBn"/>
                         <outlet property="startStopObservingBarButtonItem" destination="faa-Nc-OBV" id="qgk-KR-oAf"/>
                         <outlet property="startStopRecordingBarButtonItem" destination="fCO-tO-IRq" id="nGf-oH-pi4"/>
+                        <outlet property="statusMessage" destination="SYY-xD-UCh" id="h3R-Kx-1Qn"/>
                         <outlet property="toolbar" destination="3Af-C7-mib" id="YHr-yM-Amg"/>
+                        <outlet property="totalizerMessage" destination="e2P-qz-5od" id="00T-Ht-fWc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dpZ-sC-Ovn" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -1,0 +1,267 @@
+{
+	"meta-name":"NPS-Protocol-Specification",
+	"meta-version":2,
+	"name":"Test Protocol2",
+	"version":1.0,
+	"date":"2016-04-28",
+	"description":"This survey protocol is for for testing various features of the protocol specification - version 2",
+	"observing": "ON Transect",
+	"notobserving": "Recording NOT observing",
+  "mission":{
+		"attributes":[
+			{"name":"Transect",   "type":700},
+			{"name":"Vessel",     "type":700},
+			{"name":"Recorder",   "type":700},
+			{"name":"Observer1",  "type":700},
+			{"name":"Observer2",  "type":700},
+			{"name":"Weather",    "type":100},
+			{"name":"Visibility", "type":100},
+			{"name":"Beaufort",   "type":100}
+		],
+		"dialog":{
+			"title":"Mission Properties",
+			"grouped":true,
+			"sections":[
+				{
+					"elements":[
+						{"type":"QRadioElement", "key":"t",  "bind":"selectedItem:Transect", "title":"Transect",    "items":["101", "102", "121"]},
+						{"type":"QEntryElement", "key":"v1", "bind":"textValue:Vessel",      "title":"Vessel",      "placeholder":"Name", "autocorrectionType":"No"},
+						{"type":"QEntryElement", "key":"r",  "bind":"textValue:Recorder",    "title":"Recorder",    "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement", "key":"o1", "bind":"textValue:Observer1",   "title":"Observer #1", "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement", "key":"o2", "bind":"textValue:Observer2",   "title":"Observer #2", "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QRadioElement", "key":"w",  "bind":"selected:Weather",      "title":"Weather",     "items":["<50% clouds", ">50% clouds", "Fog", "Mist", "Rain"]},
+						{"type":"QRadioElement", "key":"v2", "bind":"selected:Visibility",   "title":"Visibility",  "items":["<250m", "250-500m", ">500m"]},
+						{"type":"QRadioElement", "key":"b",  "bind":"selected:Beaufort",     "title":"Beaufort",    "items":["0:Glassy", "1:Ripples", "2:Few whitecaps", "3:Scattered whitecaps", "4:Spray and whitecaps"]}
+				  	]
+				}
+			]
+		},
+		"symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSSquare",
+        "color": [171,235,198,255],
+        "size": 11,
+        "outline": {
+          "color": [24,106,59,255],
+          "width": 1
+        }
+      }
+		},
+		"on-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSSolid",
+        "color": [46,204,113,255],
+        "width": 3
+      }
+		},
+    "off-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSDash",
+        "color": [231,76,60,255],
+        "width": 1.5
+      }
+		},
+    "gps-symbology": {
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSCircle",
+        "color": [52,152,219,255],
+        "size": 5
+      }
+		},
+		"totalizer": {
+			"fields": ["Transect"],
+			"units": "miles",
+			"includeon": true,
+			"includeoff": true,
+			"includetotal": true
+		}
+	},
+  "features":[
+		{
+    	"name":"Birds",
+    	"attributes":[
+				{"name":"countWaterPending",  "type":100},
+				{"name":"countWaterMarbled",  "type":100},
+				{"name":"countWaterKitlitz",  "type":100},
+				{"name":"countWaterUnknown",  "type":100},
+				{"name":"countFlyingPending", "type":100},
+				{"name":"countFlyingMarbled", "type":100},
+				{"name":"countFlyingKitlitz", "type":100},
+				{"name":"countFlyingUnknown", "type":100}
+ 			],
+			"locations":[
+				{"type":"gps",           "default":false, "allow":false},
+				{"type":"mapTarget",     "default":false, "allow":false},
+				{"type":"mapTouch",      "default":false, "allow":false},
+				{"type":"angleDistance", "default":true,  "allow":true, "deadAhead":180.0, "units":"meters", "direction":"cw" }
+			],
+			"dialog":{
+				"title":"Bird Groups",
+				"grouped":true,
+				"sections":[
+					{
+						"title":"On the water",
+					  "elements":[
+							{"type":"QIntegerElement", "key":"wh", "bind":"numberValue:countWaterPending", "title":"On hold"},
+							{"type":"QIntegerElement", "key":"wm", "bind":"numberValue:countWaterMarbled", "title":"Marbled"},
+							{"type":"QIntegerElement", "key":"wk", "bind":"numberValue:countWaterKitlitz", "title":"Kitlitz"},
+							{"type":"QIntegerElement", "key":"wu", "bind":"numberValue:countWaterUnknown", "title":"Unidentified"}
+					  ]
+					},
+					{
+						"title":"Flying",
+					  "elements":[
+							{"type":"QIntegerElement", "key":"fh", "bind":"numberValue:countFlyingPending", "title":"On hold"},
+							{"type":"QIntegerElement", "key":"fm", "bind":"numberValue:countFlyingMarbled", "title":"Marbled"},
+							{"type":"QIntegerElement", "key":"fk", "bind":"numberValue:countFlyingKitlitz", "title":"Kitlitz"},
+							{"type":"QIntegerElement", "key":"fu", "bind":"numberValue:countFlyingUnknown", "title":"Unidentified"}
+					  ]
+					}
+				]
+			},
+			"symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [247,220,111,255],
+          "size": 15,
+					"outline": {
+						"color": [0,0,0,255],
+						"width": 2
+					}
+				}
+			}
+		},
+		{
+    	"name":"Nests",
+    	"attributes":[
+				{"name":"nestid",   "type":700},
+				{"name":"occupied", "type":800},
+				{"name":"chicks",   "type":100}
+ 			],
+			"locations":[
+				{"type":"gps",         "default":false, "allow":true},
+				{"type":"mapTarget",   "default":false, "allow":true},
+				{"type":"mapTouch",    "default":false, "allow":true}
+			],
+			"dialog":{
+				"title":"Eagle Nest",
+				"grouped":true,
+				"sections":[
+					{
+					  "elements":[
+						  {"type":"QEntryElement",   "key":"i1", "bind":"textValue:nestid",   "title":"Nest Id", "placeholder":"Unique Id"},
+							{"type":"QBooleanElement", "key":"o1", "bind":"boolValue:occupied", "title":"Occupied"},
+							{"type":"QIntegerElement", "key":"s1", "bind":"numberValue:chicks", "title":"Chick Count"}
+					  ]
+					}
+				]
+			},
+			"symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSTriangle",
+          "color": [205,97,85,255],
+          "size": 15,
+					"outline": {
+						"color": [40,8,0,255],
+						"width": 2
+					}
+				}
+			}
+		},
+		{
+    	"name":"Cabins",
+    	"attributes":[
+				{"name":"name", "type":700},
+				{"name":"roof", "type":800}
+ 			],
+			"locations":[
+				{"type":"gps",         "default":false, "allow":true},
+				{"type":"mapTarget",   "default":false, "allow":true},
+				{"type":"mapTouch",    "default":false, "allow":true}
+			],
+			"dialog":{
+				"title":"Cabin",
+				"grouped":true,
+				"sections":[
+					{
+					  "elements":[
+						  {"type":"QEntryElement",   "key":"n1", "bind":"textValue:name", "title":"Name", "placeholder":"Optional"},
+							{"type":"QBooleanElement", "key":"r1", "bind":"boolValue:roof", "title":"Has A Roof"}
+					  ]
+					}
+				]
+			},
+			"symbology":{
+        "type": "uniqueValue",
+				"field1": "A_roof",
+	      "field2": null,
+	      "field3": null,
+	      "fieldDelimiter" : ", ",
+	      "defaultSymbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [142,68,173,255],
+          "size": 15,
+					"outline": {
+						"color": [74,35,90,255],
+						"width": 2
+					}
+        },
+				"uniqueValueInfos": [
+					{
+				  	"value": "1",
+				    "symbol": {
+							"type": "esriSMS",
+		          "style": "esriSMSDiamond",
+		          "color": [215,189,226,255],
+		          "size": 13,
+							"outline": {
+								"color": [74,35,90,255],
+								"width": 2
+							}
+						}
+					}
+				]
+			}
+		}
+ 	],
+	"csv":{
+		"gps_points":{
+			"name":"GpsPoints",
+			"field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+			"field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+			"key_indexes":[0,2,1]
+		},
+		"track_logs":{
+			"name":"TrackLogs",
+			"field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+			"field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+			"start_key_indexes":[1,9,8],
+			"end_key_indexes":[5,11,10]
+		},
+		"features":{
+			"header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+			"feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+			"feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+			"feature_field_map":[0,1,2,3,4,5,8],
+			"feature_key_indexes":[0,5,4],
+			"obs_name":"Observations",
+			"obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+			"obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+			"obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+			"obs_key_indexes":[0,11,10]
+		}
+	}
+}

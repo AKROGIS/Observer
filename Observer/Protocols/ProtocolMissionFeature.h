@@ -12,8 +12,10 @@
 
 - (id)initWithJSON:(id)json version:(NSInteger) version;
 
-// How should these features be drawn on the map
-@property (strong, nonatomic, readonly) ProtocolFeatureSymbology *observingSymbology;
-@property (strong, nonatomic, readonly) ProtocolFeatureSymbology *notObservingSymbology;
+// How should these mission features be drawn on the map
+@property (strong, nonatomic, readonly) AGSRenderer *lineRendererObserving;
+@property (strong, nonatomic, readonly) AGSRenderer *lineRendererNotObserving;
+//@property (strong, nonatomic, readonly) AGSRenderer *pointRenderer;
+@property (strong, nonatomic, readonly) AGSRenderer *pointRendererGps;
 
 @end

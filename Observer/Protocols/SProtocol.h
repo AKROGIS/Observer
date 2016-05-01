@@ -15,12 +15,16 @@
 
 @interface SProtocol : NSObject <NSCoding, AKRTableViewItem, NSURLSessionDownloadDelegate>
 
+@property (nonatomic, readonly) NSInteger metaversion;
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, strong, readonly) NSNumber *version;
 @property (nonatomic, strong, readonly) NSString *versionString;
 @property (nonatomic, strong, readonly) NSDate *date;
 @property (nonatomic, strong, readonly) NSString *dateString;
 @property (nonatomic, strong, readonly) NSString *details;
+@property (nonatomic, strong, readonly) NSString *observingMessage;
+@property (nonatomic, strong, readonly) NSString *notObservingMessage;
+@property (nonatomic, strong, readonly) NSDictionary *totalizerConfig;
 @property (nonatomic, strong, readonly) NSArray *features;  // of ProtocolFeatures
 @property (nonatomic, strong, readonly) NSArray *featuresWithLocateByTouch;  // of ProtocolFeatures
 @property (nonatomic, strong, readonly) ProtocolMissionFeature *missionFeature;
