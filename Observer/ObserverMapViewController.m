@@ -1565,6 +1565,7 @@
 
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
+    dialog.graphic = graphic;
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
         dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
@@ -1608,6 +1609,7 @@
         NSString *msg = [NSString stringWithFormat:@"%@\nCheck the protocol file.", ex.description];
         [[[UIAlertView alloc] initWithTitle:@"Save Failed" message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
     }
+    [self redrawGraphic:dialog.graphic withAttributes:dict];
     //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
     [self dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;
@@ -1619,6 +1621,14 @@
     }
 }
 
+- (void)redrawGraphic:(AGSGraphic *)graphic withAttributes:(NSDictionary *)attributes
+{
+    //FIXME: ASSERT geometry is a Point
+    AGSPoint *mapPoint = (AGSPoint *)graphic.geometry;
+    AGSGraphic *newGraphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
+    [graphic.layer addGraphic:newGraphic];
+    [graphic.layer removeGraphic:graphic];
+}
 
 
 
