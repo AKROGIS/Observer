@@ -1,0 +1,170 @@
+{
+	"meta-name":"NPS-Protocol-Specification",
+	"meta-version":2,
+	"name":"CAKN Sheep Short Form",
+	"version":2.0,
+	"date":"2016-04-28",
+	"description":"This protocol is for sheep surveys in the Central Alaska I&M Network.  Contact kumi_rattenbury@nps.gov for more details.",
+  "observing": "ON Transect",
+	"notobserving": "Recording NOT observing",
+  "mission":{
+		"attributes":[
+			{"name":"Transect",      "type":700},
+			{"name":"Survey",        "type":700},
+			{"name":"Pilot",         "type":700},
+			{"name":"Observer",      "type":700},
+			{"name":"Direction",     "type":800},
+			{"name":"Aircraft",      "type":700},
+			{"name":"CloudCover",    "type":700},
+			{"name":"Precipitation", "type":700},
+			{"name":"TurbIntensity", "type":700},
+			{"name":"TurbDuration",  "type":700},
+			{"name":"Temperature",   "type":600}
+		],
+		"dialog":{
+			"title":"Mission Properties",
+			"grouped":true,
+			"sections":[
+				{
+					"elements":[
+						{"type":"QEntryElement",   "key":"t",   "bind":"textValue:Transect",        "title":"Transect",      "placeholder":"ID", "autocorrectionType":"No"},
+						{"type":"QEntryElement",   "key":"s",   "bind":"textValue:Survey",          "title":"Survey",        "placeholder":"Park and Year"},
+						{"type":"QEntryElement",   "key":"p",   "bind":"textValue:Pilot",           "title":"Pilot",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",   "key":"o1",  "bind":"textValue:Observer",        "title":"Observer",      "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",   "key":"a",   "bind":"textValue:Aircraft",        "title":"Aircraft",      "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QBooleanElement", "key":"o1r", "bind":"boolValue:Direction",       "title":"Looking Right"},
+						{"type":"QRadioElement",   "key":"cc",  "bind":"selectedItem:CloudCover",   "title":"Cloud Cover",         "items":["None", "<50% scattered", "> 50% broken", "Overcast"]},
+						{"type":"QRadioElement",   "key":"pp",  "bind":"selectedItem:Precipitation","title":"Precipitation",       "items":["None", "Rain", "Snow"]},
+						{"type":"QRadioElement",   "key":"ti",  "bind":"selectedItem:TurbIntensity","title":"Turbulence Intensity","items":["None", "Light", "Moderate"]},
+						{"type":"QRadioElement",   "key":"td",  "bind":"selectedItem:TurbDuration", "title":"Turbulence Duration", "items":["None", "Occasional", "Intermittent", "Constant"]},
+						{"type":"QDecimalElement", "key":"tp",  "bind":"numberValue:Temperature",   "title":"Temperature (F)", "fractionDigits":0}
+				  	]
+				}
+			]
+		},
+    "symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSSquare",
+        "color": [171,235,198,255],
+        "size": 11,
+        "outline": {
+          "color": [24,106,59,255],
+          "width": 1
+        }
+      }
+		},
+		"on-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSSolid",
+        "color": [46,204,113,255],
+        "width": 3
+      }
+		},
+    "off-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSDash",
+        "color": [231,76,60,255],
+        "width": 1.5
+      }
+		},
+    "gps-symbology": {
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSCircle",
+        "color": [52,152,219,255],
+        "size": 5
+      }
+		},
+		"totalizer": {
+			"fields": ["Transect"],
+			"units": "kilometers",
+			"includeon": true,
+			"includeoff": false,
+			"includetotal": false
+		}
+	},
+  "features":[
+		{
+    		"name":"Sheep",
+    		"attributes":[
+				{"name":"countEwelike",   "type":100},
+				{"name":"countLambs",     "type":100},
+				{"name":"countRams099",   "type":100},
+				{"name":"countRams101",   "type":100},
+				{"name":"countRamsOther", "type":100},
+				{"name":"countUnknown",   "type":100},
+				{"name":"activity",       "type":700}
+ 			],
+			"locations":[
+				{"type":"gps",           "default":false, "allow":true},
+				{"type":"adhocTarget",   "default":true, "allow":true},
+				{"type":"adhocTouch",    "default":false, "allow":true},
+				{"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+			],
+			"dialog":{
+				"title":"Sheep",
+				"grouped":true,
+				"sections":[
+					{
+					    "elements":[
+							{"type":"QIntegerElement", "key":"e2", "bind":"numberValue:countEwelike",   "title":"Ewe-like"},
+							{"type":"QIntegerElement", "key":"e4", "bind":"numberValue:countLambs",     "title":"Lambs"},
+							{"type":"QIntegerElement", "key":"r5", "bind":"numberValue:countRams099",   "title":"< Full Curl"},
+							{"type":"QIntegerElement", "key":"r6", "bind":"numberValue:countRams101",   "title":"Full Curl(+)"},
+							{"type":"QIntegerElement", "key":"r7", "bind":"numberValue:countRamsOther", "title":"Other Rams"},
+							{"type":"QIntegerElement", "key":"e5", "bind":"numberValue:countUnknown",   "title":"Unclassified"},
+							{"type":"QRadioElement",   "key":"a", "bind":"selectedItem:activity",    "title":"Activity",   "items":["Running", "Walking", "Stationary"]}
+					    ]
+					}
+				]
+			},
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [187,187,0,255],
+          "size": 15,
+					"outline": {
+						"color": [0,0,0,255],
+						"width": 2
+					}
+				}
+			}
+		}
+ 	],
+	"csv":{
+		"gps_points":{
+			"name":"GpsPoints",
+			"field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+			"field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+			"key_indexes":[0,2,1]
+		},
+		"track_logs":{
+			"name":"TrackLogs",
+			"field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+			"field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+			"start_key_indexes":[1,9,8],
+			"end_key_indexes":[5,11,10]
+		},
+		"features":{
+			"header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+			"feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+			"feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+			"feature_field_map":[0,1,2,3,4,5,8],
+			"feature_key_indexes":[0,5,4],
+			"obs_name":"Observations",
+			"obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+			"obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+			"obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+			"obs_key_indexes":[0,11,10]
+		}
+	}
+}
