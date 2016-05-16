@@ -10,6 +10,12 @@
 #import "ObserverModel.h"
 #import "AKRFormatter.h"
 
+@interface TrackLogSegment ()
+
+@property (nonatomic, strong, readwrite) AGSMutablePolyline *polyline;
+
+@end
+
 @implementation TrackLogSegment
 
 + (NSString *)csvHeaderForProtocol:(SProtocol *)protocol
@@ -47,14 +53,24 @@
 }
 
 - (AGSPolyline *)polyline {
-    AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];
-    AGSMutablePolyline *pline = [[AGSMutablePolyline alloc] initWithSpatialReference:wgs84];
-    [pline addPathToPolyline];
-    for (GpsPoint *gpsPoint in self.gpsPoints) {
-        [pline addPointToPath:[AGSPoint pointFromLocation:gpsPoint.locationOfGps spatialReference:wgs84]];
+    if (!_polyline) {
+        AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];
+        AGSMutablePolyline *pline = [[AGSMutablePolyline alloc] initWithSpatialReference:wgs84];
+        [pline addPathToPolyline];
+        for (GpsPoint *gpsPoint in self.gpsPoints) {
+            [pline addPointToPath:[AGSPoint pointFromLocation:gpsPoint.locationOfGps spatialReference:wgs84]];
+        }
     }
-    return (AGSPolyline *)[[AGSGeometryEngine defaultGeometryEngine] simplifyGeometry:pline];
+    return (AGSPolyline *)[[AGSGeometryEngine defaultGeometryEngine] simplifyGeometry:_polyline];
 }
+
+- (void)addGpsPoint:(GpsPoint *)gpsPoint
+{
+    AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];
+    AGSPoint *point = [AGSPoint pointFromLocation:gpsPoint.locationOfGps spatialReference:wgs84];
+    [_polyline addPointToPath:point];
+}
+
 
 - (double)length
 {
