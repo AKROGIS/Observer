@@ -1,11 +1,11 @@
 {
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":2,
-	"name":"CAKN Sheep Short Form",
-	"version":2.0,
-	"date":"2016-04-28",
-	"description":"This protocol is for sheep surveys in the Central Alaska I&M Network.  Contact kumi_rattenbury@nps.gov for more details.",
-  "observing": "ON Transect",
+	"name":"Sheep Transects Short",
+	"version":1.0,
+	"date":"2016-06-06",
+	"description":"This protocol is for sheep surveys in the Alaskan I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
+	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
   "mission":{
 		"attributes":[
@@ -19,7 +19,8 @@
 			{"name":"Precipitation", "type":700},
 			{"name":"TurbIntensity", "type":700},
 			{"name":"TurbDuration",  "type":700},
-			{"name":"Temperature",   "type":600}
+			{"name":"Temperature",   "type":600},
+			{"name":"Comments",      "type":700}
 		],
 		"dialog":{
 			"title":"Mission Properties",
@@ -27,22 +28,27 @@
 			"sections":[
 				{
 					"elements":[
-						{"type":"QEntryElement",   "key":"t",   "bind":"textValue:Transect",        "title":"Transect",      "placeholder":"ID", "autocorrectionType":"No"},
-						{"type":"QEntryElement",   "key":"s",   "bind":"textValue:Survey",          "title":"Survey",        "placeholder":"Park and Year"},
-						{"type":"QEntryElement",   "key":"p",   "bind":"textValue:Pilot",           "title":"Pilot",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QEntryElement",   "key":"o1",  "bind":"textValue:Observer",        "title":"Observer",      "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QEntryElement",   "key":"a",   "bind":"textValue:Aircraft",        "title":"Aircraft",      "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QBooleanElement", "key":"o1r", "bind":"boolValue:Direction",       "title":"Looking Right"},
-						{"type":"QRadioElement",   "key":"cc",  "bind":"selectedItem:CloudCover",   "title":"Cloud Cover",         "items":["None", "<50% scattered", "> 50% broken", "Overcast"]},
-						{"type":"QRadioElement",   "key":"pp",  "bind":"selectedItem:Precipitation","title":"Precipitation",       "items":["None", "Rain", "Snow"]},
-						{"type":"QRadioElement",   "key":"ti",  "bind":"selectedItem:TurbIntensity","title":"Turbulence Intensity","items":["None", "Light", "Moderate"]},
-						{"type":"QRadioElement",   "key":"td",  "bind":"selectedItem:TurbDuration", "title":"Turbulence Duration", "items":["None", "Occasional", "Intermittent", "Constant"]},
-						{"type":"QDecimalElement", "key":"tp",  "bind":"numberValue:Temperature",   "title":"Temperature (F)", "fractionDigits":0}
-				  	]
+						{"type":"QEntryElement",     "key":"t",   "bind":"textValue:Transect",        "title":"Transect",      "placeholder":"ID", "autocorrectionType":"No"},
+						{"type":"QEntryElement",     "key":"s",   "bind":"textValue:Survey",          "title":"Survey",        "placeholder":"Park and Year"},
+						{"type":"QEntryElement",     "key":"p",   "bind":"textValue:Pilot",           "title":"Pilot",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",     "key":"o1",  "bind":"textValue:Observer",        "title":"Observer",      "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",     "key":"a",   "bind":"textValue:Aircraft",        "title":"Aircraft",      "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QBooleanElement",   "key":"o1r", "bind":"boolValue:Direction",       "title":"Looking Right"},
+						{"type":"QLabelElement",     "title":"Cloud Cover"},
+						{"type":"QSegmentedElement", "key":"cc",  "bind":"selectedItem:CloudCover",   "items":["None", "<50% scattered", "> 50% broken", "Overcast"]},
+						{"type":"QLabelElement",     "title":"Precipitation"},
+						{"type":"QSegmentedElement", "key":"pp",  "bind":"selectedItem:Precipitation","items":["None", "Rain", "Snow"]},
+						{"type":"QLabelElement",     "title":"Turbulence Intensity"},
+						{"type":"QSegmentedElement", "key":"ti",  "bind":"selectedItem:TurbIntensity","items":["None", "Light", "Moderate"]},
+						{"type":"QLabelElement",     "title":"Turbulence Duration"},
+						{"type":"QSegmentedElement", "key":"td",  "bind":"selectedItem:TurbDuration", "items":["None", "Occasional", "Intermittent", "Constant"]},
+						{"type":"QDecimalElement",   "key":"tp",  "bind":"numberValue:Temperature",   "title":"Temperature (F)", "fractionDigits":0},
+						{"type":"QMultilineElement", "key":"c",   "bind":"textValue:Comments",        "title":"Comments"}
+				  ]
 				}
 			]
 		},
-    "symbology":{
+		"symbology":{
       "type": "simple",
       "symbol": {
         "type": "esriSMS",
@@ -90,17 +96,19 @@
 			"includetotal": false
 		}
 	},
-  "features":[
+	"features":[
 		{
     		"name":"Sheep",
     		"attributes":[
-				{"name":"countEwelike",   "type":100},
-				{"name":"countLambs",     "type":100},
-				{"name":"countRams099",   "type":100},
-				{"name":"countRams101",   "type":100},
-				{"name":"countRamsOther", "type":100},
-				{"name":"countUnknown",   "type":100},
-				{"name":"activity",       "type":700}
+				{"name":"CountEwelike",   "type":100},
+				{"name":"CountLambs",     "type":100},
+				{"name":"CountRams099",   "type":100},
+				{"name":"CountRams101",   "type":100},
+				{"name":"CountRamsOther", "type":100},
+				{"name":"CountUnknown",   "type":100},
+				{"name":"Activity",       "type":700},
+				{"name":"Waypoint",       "type":700},
+				{"name":"Notes",          "type":700}
  			],
 			"locations":[
 				{"type":"gps",           "default":false, "allow":true},
@@ -114,23 +122,26 @@
 				"sections":[
 					{
 					    "elements":[
-							{"type":"QIntegerElement", "key":"e2", "bind":"numberValue:countEwelike",   "title":"Ewe-like"},
-							{"type":"QIntegerElement", "key":"e4", "bind":"numberValue:countLambs",     "title":"Lambs"},
-							{"type":"QIntegerElement", "key":"r5", "bind":"numberValue:countRams099",   "title":"< Full Curl"},
-							{"type":"QIntegerElement", "key":"r6", "bind":"numberValue:countRams101",   "title":"Full Curl(+)"},
-							{"type":"QIntegerElement", "key":"r7", "bind":"numberValue:countRamsOther", "title":"Other Rams"},
-							{"type":"QIntegerElement", "key":"e5", "bind":"numberValue:countUnknown",   "title":"Unclassified"},
-							{"type":"QRadioElement",   "key":"a", "bind":"selectedItem:activity",    "title":"Activity",   "items":["Running", "Walking", "Stationary"]}
+							{"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountEwelike",   "title":"Ewe-like"},
+							{"type":"QIntegerElement",   "key":"e4", "bind":"numberValue:CountLambs",     "title":"Lambs"},
+							{"type":"QIntegerElement",   "key":"r5", "bind":"numberValue:CountRams099",   "title":"< Full Curl"},
+							{"type":"QIntegerElement",   "key":"r6", "bind":"numberValue:CountRams101",   "title":"Full Curl(+)"},
+							{"type":"QIntegerElement",   "key":"r7", "bind":"numberValue:CountRamsOther", "title":"Other Rams"},
+							{"type":"QIntegerElement",   "key":"e5", "bind":"numberValue:CountUnknown",   "title":"Unclassified"},
+							{"type":"QLabelElement",     "title":"Activity"},
+							{"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",     "items":["Stationary", "Walking", "Running"]},
+							{"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",         "title":"Waypoint",       "placeholder":"ID", "autocorrectionType":"No"},
+							{"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",            "title":"Comments"}
 					    ]
 					}
 				]
 			},
-      "symbology":{
+			"symbology":{
         "type": "simple",
         "symbol": {
           "type": "esriSMS",
           "style": "esriSMSCircle",
-          "color": [187,187,0,255],
+					"color": [255,215,0,255],
           "size": 15,
 					"outline": {
 						"color": [0,0,0,255],
