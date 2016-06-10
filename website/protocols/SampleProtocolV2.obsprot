@@ -2,8 +2,8 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":2,
 	"name":"Test Protocol2",
-	"version":1.0,
-	"date":"2016-04-28",
+	"version":2.0,
+	"date":"2016-06-10",
 	"description":"This survey protocol is for for testing various features of the protocol specification - version 2",
 	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
@@ -145,6 +145,7 @@
     	"name":"Nests",
     	"attributes":[
 				{"name":"nestid",   "type":700},
+				{"name":"tree",     "type":700},
 				{"name":"occupied", "type":800},
 				{"name":"chicks",   "type":100}
  			],
@@ -161,23 +162,71 @@
 					  "elements":[
 						  {"type":"QEntryElement",   "key":"i1", "bind":"textValue:nestid",   "title":"Nest Id", "placeholder":"Unique Id"},
 							{"type":"QBooleanElement", "key":"o1", "bind":"boolValue:occupied", "title":"Occupied"},
-							{"type":"QIntegerElement", "key":"s1", "bind":"numberValue:chicks", "title":"Chick Count"}
+							{"type":"QIntegerElement", "key":"s1", "bind":"numberValue:chicks", "title":"Chick Count"},
+							{"type":"QLabelElement",     "title":"Tree"},
+						  {"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:tree",      "items":["Spruce", "Cottonwood", "Other"]}
 					  ]
 					}
 				]
 			},
 			"symbology":{
-        "type": "simple",
-        "symbol": {
+			  "type" : "uniqueValue",
+			  "field1" : "tree",
+			  "defaultSymbol" : {
           "type": "esriSMS",
-          "style": "esriSMSTriangle",
-          "color": [205,97,85,255],
+          "style": "esriSMSSquare",
+					"color": [255,0,0,255],
           "size": 15,
 					"outline": {
-						"color": [40,8,0,255],
+						"color": [0,0,0,255],
 						"width": 2
 					}
-				}
+				},
+			  "defaultLabel" : "Unknown",
+			  "uniqueValueInfos" : [
+			    {
+			      "value" : "Spruce",
+			      "label" : "Spruce",
+			      "symbol" : {
+		          "type": "esriSMS",
+		          "style": "esriSMSCircle",
+							"color": [50,205,50,255],
+		          "size": 15,
+							"outline": {
+								"color": [0,0,0,255],
+								"width": 2
+							}
+						}
+			    },
+			    {
+			      "value" : "Cottonwood",
+			      "label" : "Cottonwood",
+			      "symbol" : {
+		          "type": "esriSMS",
+		          "style": "esriSMSCircle",
+							"color": [100,149,237,255],
+		          "size": 15,
+							"outline": {
+								"color": [0,0,0,255],
+								"width": 2
+							}
+						}
+					},
+					{
+			      "value" : "Other",
+			      "label" : "Other",
+			      "symbol" : {
+		          "type": "esriSMS",
+		          "style": "esriSMSCircle",
+							"color": [255,0,0,255],
+		          "size": 15,
+							"outline": {
+								"color": [0,0,0,255],
+								"width": 2
+							}
+						}
+					}
+			  ]
 			}
 		},
 		{
@@ -205,7 +254,7 @@
 			},
 			"symbology":{
         "type": "uniqueValue",
-				"field1": "A_roof",
+				"field1": "roof",
 	      "field2": null,
 	      "field3": null,
 	      "fieldDelimiter" : ", ",
