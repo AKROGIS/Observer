@@ -1,10 +1,10 @@
 {
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":1,
-	"name":"CAKN Long Form",
-	"version":2.0,
-	"date":"2016-04-28",
-	"description":"This protocol is for sheep and bear surveys in the Central Alaska I&M Network.  Contact kumi_rattenbury@nps.gov for more details.",
+	"name":"Sheep Transects Long",
+	"version":1.0,
+	"date":"2016-06-03",
+	"description":"This protocol is for sheep (and bear) surveys in the Alaska I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
     "mission":{
 		"attributes":[
 			{"name":"Transect",      "type":700},
@@ -17,7 +17,8 @@
 			{"name":"Precipitation", "type":700},
 			{"name":"TurbIntensity", "type":700},
 			{"name":"TurbDuration",  "type":700},
-			{"name":"Temperature",   "type":600}
+			{"name":"Temperature",   "type":600},
+			{"name":"Comments",      "type":700}
 		],
 		"dialog":{
 			"title":"Mission Properties",
@@ -25,18 +26,23 @@
 			"sections":[
 				{
 					"elements":[
-						{"type":"QEntryElement",   "key":"t",   "bind":"textValue:Transect",        "title":"Transect",      "placeholder":"ID", "autocorrectionType":"No"},
-						{"type":"QEntryElement",   "key":"s",   "bind":"textValue:Survey",          "title":"Survey",        "placeholder":"Park and Year"},
-						{"type":"QEntryElement",   "key":"p",   "bind":"textValue:Pilot",           "title":"Pilot",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QEntryElement",   "key":"o2",  "bind":"textValue:Observer",        "title":"Observer",      "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QEntryElement",   "key":"a",   "bind":"textValue:Aircraft",        "title":"Aircraft",      "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QBooleanElement", "key":"o2r", "bind":"boolValue:Direction",       "title":"Looking Right"},
-						{"type":"QRadioElement",   "key":"cc",  "bind":"selectedItem:CloudCover",   "title":"Cloud Cover",         "items":["None", "<50% scattered", "> 50% broken", "Overcast"]},
-						{"type":"QRadioElement",   "key":"pp",  "bind":"selectedItem:Precipitation","title":"Precipitation",       "items":["None", "Rain", "Snow"]},
-						{"type":"QRadioElement",   "key":"ti",  "bind":"selectedItem:TurbIntensity","title":"Turbulence Intensity","items":["None", "Light", "Moderate"]},
-						{"type":"QRadioElement",   "key":"td",  "bind":"selectedItem:TurbDuration", "title":"Turbulence Duration", "items":["None", "Occasional", "Intermittent", "Constant"]},
-						{"type":"QDecimalElement", "key":"tp",  "bind":"numberValue:Temperature",   "title":"Temperature (F)", "fractionDigits":0}
-				  	]
+						{"type":"QEntryElement",     "key":"t",   "bind":"textValue:Transect",        "title":"Transect",      "placeholder":"ID", "autocorrectionType":"No"},
+						{"type":"QEntryElement",     "key":"s",   "bind":"textValue:Survey",          "title":"Survey",        "placeholder":"Park and Year"},
+						{"type":"QEntryElement",     "key":"p",   "bind":"textValue:Pilot",           "title":"Pilot",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",     "key":"o1",  "bind":"textValue:Observer",        "title":"Observer",      "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",     "key":"a",   "bind":"textValue:Aircraft",        "title":"Aircraft",      "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QBooleanElement",   "key":"o1r", "bind":"boolValue:Direction",       "title":"Looking Right"},
+						{"type":"QLabelElement",     "title":"Cloud Cover"},
+						{"type":"QSegmentedElement", "key":"cc",  "bind":"selectedItem:CloudCover",   "items":["None", "<50% scattered", "> 50% broken", "Overcast"]},
+						{"type":"QLabelElement",     "title":"Precipitation"},
+						{"type":"QSegmentedElement", "key":"pp",  "bind":"selectedItem:Precipitation","items":["None", "Rain", "Snow"]},
+						{"type":"QLabelElement",     "title":"Turbulence Intensity"},
+						{"type":"QSegmentedElement", "key":"ti",  "bind":"selectedItem:TurbIntensity","items":["None", "Light", "Moderate"]},
+						{"type":"QLabelElement",     "title":"Turbulence Duration"},
+						{"type":"QSegmentedElement", "key":"td",  "bind":"selectedItem:TurbDuration", "items":["None", "Occasional", "Intermittent", "Constant"]},
+						{"type":"QDecimalElement",   "key":"tp",  "bind":"numberValue:Temperature",   "title":"Temperature (F)", "fractionDigits":0},
+						{"type":"QMultilineElement", "key":"c",   "bind":"textValue:Comments",        "title":"Comments"}
+				  ]
 				}
 			]
 		},
@@ -62,12 +68,12 @@
 				{"name":"CountLambs",     "type":100},
 				{"name":"CountYearlings", "type":100},
 				{"name":"CountEweLike",   "type":100},
-				{"name":"countUnknown",   "type":100},
-				{"name":"countRamsSmall", "type":100},
-				{"name":"countRams025",   "type":100},
-				{"name":"countRams050",   "type":100},
-				{"name":"countRams075",   "type":100},
-				{"name":"countRamsFull",  "type":100},
+				{"name":"CountUnknown",   "type":100},
+				{"name":"CountRamsSmall", "type":100},
+				{"name":"CountRams025",   "type":100},
+				{"name":"CountRams050",   "type":100},
+				{"name":"CountRams075",   "type":100},
+				{"name":"CountRamsFull",  "type":100},
 				{"name":"Activity",       "type":700}
  			],
 			"locations":[
@@ -87,13 +93,14 @@
 					    {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountLambs",     "title":"Lambs"},
 					    {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountYearlings", "title":"Yearlings"},
 							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountEweLike",   "title":"Ewe-like"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countUnknown",   "title":"Unknown"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRamsSmall", "title":"Rams <1/4 Curl"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams025",   "title":"Rams 1/4 Curl"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams050",   "title":"Rams 1/2 Curl"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams075",   "title":"Rams 3/4 Curl"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRamsFull",  "title":"Rams Full Curl"},
-							{"type":"QRadioElement",     "key":"a", "bind":"selectedItem:Activity",      "title":"Activity",    "items":["Standing", "Feeding", "Bedded", "Running", "Walking"]}
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountUnknown",   "title":"Unknown"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountRamsSmall", "title":"Rams <1/4 Curl"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountRams025",   "title":"Rams 1/4 Curl"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountRams050",   "title":"Rams 1/2 Curl"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountRams075",   "title":"Rams 3/4 Curl"},
+							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountRamsFull",  "title":"Rams Full Curl"},
+							{"type":"QLabelElement",     "title":"Activity"},
+							{"type":"QSegmentedElement", "key":"a", "bind":"selectedItem:Activity",      "items":["Standing", "Feeding", "Bedded", "Running", "Walking"]}
 						]
 					}
 				]
@@ -106,10 +113,10 @@
 		{
     		"name":"Bear",
     		"attributes":[
-				{"name":"species",     "type":700},
-				{"name":"count",       "type":100},
-				{"name":"composition", "type":700},
-				{"name":"activity2",    "type":700}
+				{"name":"Species",     "type":700},
+				{"name":"Count",       "type":100},
+				{"name":"Composition", "type":700},
+				{"name":"Activity2",    "type":700}
  			],
 			"locations":[
 				{"type":"gps",           "default":false, "allow":true},
@@ -123,15 +130,17 @@
 				"sections":[
 					{
 					    "elements":[
-							{"type":"QRadioElement",   "key":"s", "bind":"selectedItem:species",     "title":"Species",    "items":["Black Bear", "Blue Bear", "Brown Bear"]},
-							{"type":"QIntegerElement", "key":"n", "bind":"numberValue:count",    "title":"Group Size"},
-							{"type":"QRadioElement",   "key":"c", "bind":"selectedItem:composition", "title":"Group Type", "items":["Adult - Sex unknown",
+							{"type":"QLabelElement",     "title":"Species"},
+							{"type":"QSegmentedElement", "key":"s", "bind":"selectedItem:Species",     "items":["Black Bear", "Blue Bear", "Brown Bear"]},
+							{"type":"QIntegerElement", "key":"n", "bind":"numberValue:Count",        "title":"Group Size"},
+							{"type":"QRadioElement",   "key":"c", "bind":"selectedItem:Composition", "title":"Group Type", "items":["Adult - Sex unknown",
 																																"Subadult - Sex unknown",
 																																"Large Male",
 																																"Female with cubs",
 																																"Female with yearlings",
 																																"Female with juveniles"]},
-							{"type":"QRadioElement",   "key":"a", "bind":"selectedItem:activity2",    "title":"Activity",   "items":["Running", "Walking", "Stationary"]}
+							{"type":"QLabelElement",     "title":"Activity"},
+							{"type":"QSegmentedElement", "key":"a", "bind":"selectedItem:Activity2",    "items":["Running", "Walking", "Stationary"]}
 					    ]
 					}
 				]
