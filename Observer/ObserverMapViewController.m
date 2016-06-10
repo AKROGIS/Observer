@@ -1625,7 +1625,9 @@
 {
     //FIXME: ASSERT geometry is a Point
     AGSPoint *mapPoint = (AGSPoint *)graphic.geometry;
-    AGSGraphic *newGraphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attributes];
+    NSMutableDictionary *newAttributes = [NSMutableDictionary dictionaryWithDictionary:graphic.allAttributes];
+    [newAttributes addEntriesFromDictionary:attributes];
+    AGSGraphic *newGraphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:newAttributes];
     [graphic.layer addGraphic:newGraphic];
     [graphic.layer removeGraphic:graphic];
 }
