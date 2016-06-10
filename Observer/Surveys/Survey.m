@@ -600,6 +600,10 @@
             graphicsLayers[feature.name] = graphicsLayer;
         }
 
+        //Observation labels (all labels on only one layer, individually rendered)
+        graphicsLayer = [[AGSGraphicsLayer alloc] init];
+        graphicsLayers[kLabelLayerName] = graphicsLayer;
+
         //Mission Properties
         ProtocolMissionFeature *missionFeature = self.protocol.missionFeature;
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
@@ -1136,6 +1140,48 @@
     }
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     [[self graphicsLayerForObservation:observation] addGraphic:graphic];
+    //For testing: need to track the graphic so it can be deleted, moved, or updated
+    [self drawLabelObservation:observation];
+    return graphic;
+}
+
+- (AGSGraphic *)drawLabelObservation:(Observation *)observation
+{
+    NSString *entityName = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
+    ProtocolFeature *feature = [self.protocol featureWithName:entityName];
+    ProtocolFeatureLabel *labelSpec = feature.labelSpec;
+    if (labelSpec == nil) return nil;
+    if (labelSpec.field == nil) return nil;
+    NSString *field = [NSString stringWithFormat:@"%@%@",kAttributePrefix,labelSpec.field];
+    NSString *labelText = nil;
+    @try {
+        labelText = [observation valueForKey:field];
+    } @catch (NSException *exception) {
+        AKRLog(@"Failed to create feature label (bad protocol): %@", exception);
+    }
+    if (labelText == nil) return nil;
+    AGSTextSymbol *symbol = nil;
+    if (labelSpec.hasSymbol) {
+        NSMutableDictionary *json = [NSMutableDictionary dictionaryWithDictionary:labelSpec.symbolJSON];
+        json[@"text"] = labelText;
+        @try {
+            symbol = [[AGSTextSymbol alloc] initWithJSON:json];
+        } @catch (NSException *exception) {
+            AKRLog(@"Failed to create feature label (bad protocol): %@", exception);
+        }
+    }
+    if (symbol == nil) {
+        UIColor *color = [UIColor whiteColor];
+        if (labelSpec.hasColor) {
+            color = labelSpec.color;
+        }
+        symbol = [AGSTextSymbol textSymbolWithText:labelText color:color];
+        symbol.offset = CGPointMake(0,8); // Doing much more would require a rendering engine
+    }
+    AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:symbol attributes:nil];
+    AGSGraphicsLayer *layer = (AGSGraphicsLayer *)self.graphicsLayersByName[kLabelLayerName];
+    [layer addGraphic:graphic];
     return graphic;
 }
 

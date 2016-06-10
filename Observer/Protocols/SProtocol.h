@@ -29,6 +29,9 @@
 @property (nonatomic, strong, readonly) NSArray *featuresWithLocateByTouch;  // of ProtocolFeatures
 @property (nonatomic, strong, readonly) ProtocolMissionFeature *missionFeature;
 
+// Find a feature's definition
+- (ProtocolFeature *)featureWithName:(NSString *)name;
+
 //YES if the protocol is available locally, NO otherwise;
 - (BOOL)isLocal;
 

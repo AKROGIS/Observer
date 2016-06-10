@@ -200,6 +200,16 @@
     return _featuresWithLocateByTouch;
 }
 
+- (ProtocolFeature *)featureWithName:(NSString *)name
+{
+    for (ProtocolFeature *feature in self.features) {
+        if ([name isEqualToString:feature.name]) {
+            return feature;
+        }
+    }
+    return nil;
+}
+
 
 
 
