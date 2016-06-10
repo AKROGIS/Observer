@@ -1128,7 +1128,12 @@
     NSAssert(timestamp, @"An observation has no timestamp: %@", observation);
     if (!timestamp) return nil; //AKRLog(@"##ERROR## - A observation has no timestamp %@",observation);
     AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
-    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
+    NSMutableDictionary *attribs = [NSMutableDictionary new];
+    attribs[kTimestampKey] = timestamp;
+    for (NSString *obscuredKey in observation.entity.attributesByName){
+        NSString *key = [obscuredKey stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
+        attribs[key] = [observation valueForKey:obscuredKey];
+    }
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     [[self graphicsLayerForObservation:observation] addGraphic:graphic];
     return graphic;
