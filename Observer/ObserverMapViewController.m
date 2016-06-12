@@ -1559,7 +1559,11 @@
             [self.editAttributePopoverController dismissPopoverAnimated:YES];
             self.editAttributePopoverController = nil;
         };
-        [[root.sections lastObject] addElement:deleteButton];
+        if (self.survey.protocol.cancelOnTop) {
+            [[root.sections firstObject] insertElement:deleteButton atIndex:0];
+        } else {
+            [[root.sections lastObject] addElement:deleteButton];
+        }
     }
 
 
