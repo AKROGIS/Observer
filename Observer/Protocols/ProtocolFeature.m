@@ -11,6 +11,8 @@
 
 @implementation ProtocolFeature
 
+NSUInteger currentUniqueId = 0;
+
 - (id)initWithJSON:(id)json version:(NSInteger) version
 {
     if (self = [super init]) {
@@ -64,13 +66,20 @@
                 NSAttributeDescription *attributeDescription = [[NSAttributeDescription alloc] init];
                 [attributeProperties addObject:attributeDescription];
                 id value = item[@"name"];
+                NSString *obscuredName;
                 if ([value isKindOfClass:[NSString class]]) {
-                    NSString *obscuredName = [NSString stringWithFormat:@"%@%@",kAttributePrefix,value];
+                    obscuredName = [NSString stringWithFormat:@"%@%@",kAttributePrefix,value];
                     [attributeDescription setName:obscuredName];
                 }
                 value = item[@"type"];
                 if ([value isKindOfClass:[NSNumber class]]) {
-                    [attributeDescription setAttributeType:[(NSNumber*)value unsignedIntegerValue]];
+                    NSUInteger type = [(NSNumber*)value unsignedIntegerValue];
+                    if (type == 0) {
+                        type = 200;
+                        _hasUniqueId = YES;
+                        _uniqueIdName = obscuredName;
+                    }
+                    [attributeDescription setAttributeType:type];
                 }
                 value = item[@"required"];
                 if ([value isKindOfClass:[NSNumber class]]) {
@@ -108,6 +117,11 @@
         return attributeProperties;
     }
     return nil;
+}
+
+- (NSNumber *)nextUniqueId
+{
+    return [NSNumber numberWithUnsignedInteger:++currentUniqueId];
 }
 
 - (WaysToLocateFeature) locationMethod

@@ -1219,6 +1219,10 @@
                                                              inManagedObjectContext:self.document.managedObjectContext];
     NSAssert(observation, @"Could not create an Observation in Core Data Context %@", self.document.managedObjectContext);
     observation.mission = self.currentMission;
+    if (feature.hasUniqueId)
+    {
+        [observation setValue:feature.nextUniqueId forKey:feature.uniqueIdName];
+    }
     return observation;
 }
 
@@ -1289,6 +1293,7 @@
             [self drawObservation:observation];
         }
     }
+    //FIXME: if feature.hasUniqueId Get max value of attribute feature.uniqueIDName and set feature.nextUniqueID
 
     //Get MissionProperties
     AKRLog(@"  Fetching mission properties");

@@ -1373,6 +1373,7 @@
 {
     FeatureSelectorTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"FeatureSelectorTableViewController"];
     vc.features = features;
+    vc.protocol = self.survey.protocol;
     vc.featureSelectedCallback = ^(NSString *layerName, id<AGSFeature> graphic) {
         //New in iOS 8, popover on top of popover is not allowed (it was bad form anyway)
         //now we need to dismiss the FeatureSelectorTableView (if it is visible) before presenting this feature
@@ -1472,7 +1473,11 @@
     }
     if ([maybeDate isKindOfClass:[NSDate class]]) {
         NSDate *timestamp = (NSDate *)maybeDate;
-        root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, [timestamp stringWithMediumTimeFormat]];
+        if (feature.hasUniqueId) {
+            root.title = [NSString stringWithFormat:@"%@ %@", root.title, [entity valueForKey:feature.uniqueIdName]];
+        } else {
+            root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, [timestamp stringWithMediumTimeFormat]];
+        }
         QLabelElement *label = [QLabelElement new];
         label.title = @"Timestamp";
         label.value = [timestamp stringWithMediumDateTimeFormat];

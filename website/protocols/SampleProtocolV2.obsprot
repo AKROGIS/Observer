@@ -236,6 +236,7 @@
 		{
     	"name":"Cabins",
     	"attributes":[
+				{"name":"id", "type":0},
 				{"name":"name", "type":700},
 				{"name":"roof", "type":800}
  			],
@@ -250,6 +251,7 @@
 				"sections":[
 					{
 					  "elements":[
+							{"type":"QLabelElement",   "key":"id", "bind":"value:id", "title":"ID Number"},
 						  {"type":"QEntryElement",   "key":"n1", "bind":"textValue:name", "title":"Name", "placeholder":"Optional"},
 							{"type":"QBooleanElement", "key":"r1", "bind":"boolValue:roof", "title":"Has A Roof"}
 					  ]

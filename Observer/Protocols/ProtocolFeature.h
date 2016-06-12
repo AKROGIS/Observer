@@ -47,4 +47,9 @@
 // Only for sub classes
 - (AGSRenderer *)AGSRendererFromJSON:(NSDictionary *)json;
 
+//Support for Unique ID Attribute
+@property (nonatomic, readonly) BOOL hasUniqueId;
+@property (strong, nonatomic, readonly) NSNumber *nextUniqueId;
+@property (strong, nonatomic, readonly) NSString *uniqueIdName;
+
 @end
