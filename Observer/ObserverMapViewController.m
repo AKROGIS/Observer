@@ -1189,7 +1189,17 @@
 - (void)initializeGraphicsLayer
 {
     NSDictionary *graphicsLayers = [self.survey graphicsLayersByName];
-    for (NSString *name in graphicsLayers) {
+    NSString *onTransect = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
+    NSString *offTransect = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
+    //Draw these layers first and in this order
+    NSArray *lowerLayers = @[kGpsPointEntityName, onTransect, offTransect, kMissionPropertyEntityName, kLabelLayerName];
+    for (NSString *name in lowerLayers) {
+        [self.mapView addMapLayer:graphicsLayers[name] withName:name];
+    }
+    // Draw the remaining layers (observations) in any order
+    NSMutableArray *layerNames = [NSMutableArray arrayWithArray:[graphicsLayers allKeys]];
+    [layerNames removeObjectsInArray:lowerLayers];
+    for (NSString *name in layerNames) {
         [self.mapView addMapLayer:graphicsLayers[name] withName:name];
     }
 }
