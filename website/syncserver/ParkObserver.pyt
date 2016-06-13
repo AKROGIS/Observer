@@ -5,6 +5,7 @@ import shutil
 import glob
 import dateutil.parser
 import json
+import csv
 
 import arcpy
 
@@ -235,8 +236,8 @@ def process_feature_file_v1(feature_f, protocol, gps_points_list, feature_name, 
 #    arcpy.RemoveSpatialIndex_management(observation_table)
     with arcpy.da.InsertCursor(feature_table, feature_columns) as feature_cursor, \
             arcpy.da.InsertCursor(observation_table, observation_columns) as observation_cursor:
-        for line in feature_f:
-            items = line.split(',')
+        for line in csv.reader(feature_f):
+            items = line  # line is a list of utf8 enocde strings (bytes)
             protocol_items, other_items = items[:feature_fields_count], items[feature_fields_count:]
             feature_items = filter_items_by_index(other_items, feature_field_map)
             observe_items = filter_items_by_index(other_items, observation_field_map)
