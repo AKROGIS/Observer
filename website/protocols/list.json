@@ -1,23 +1,37 @@
 [
 {
-	"name":"ARCN Loon Survey",
-	"version":1.01,
-	"date":"2015-07-16",
-	"url":"http://akrgis.nps.gov/observer/protocols/arcn_loons.obsprot"
+	"name":"ARCN Bears",
+	"version":1.0,
+	"date":"2016-06-06",
+	"url":"http://akrgis.nps.gov/observer/protocols/arcn_bears2.obsprot"
 }
 ,
 {
-	"name":"CAKN Sheep Short Form",
-	"version":1.2,
-	"date":"2016-04-25",
-	"url":"http://akrgis.nps.gov/observer/protocols/cakn_sheep.obsprot"
+	"name":"ARCN RTLO Survey",
+	"version":1.0,
+	"date":"2016-03-25",
+	"url":"http://akrgis.nps.gov/observer/protocols/arcn_rtlo.obsprot"
 }
 ,
 {
-	"name":"CAKN Long Form",
-	"version":1.2,
-	"date":"2016-04-25",
-	"url":"http://akrgis.nps.gov/observer/protocols/cakn_long.obsprot"
+	"name":"ARCN YBLO Survey",
+	"version":1.1,
+	"date":"2016-04-26",
+	"url":"http://akrgis.nps.gov/observer/protocols/arcn_yblo.obsprot"
+}
+,
+{
+	"name":"Sheep Transects Short",
+	"version":1.0,
+	"date":"2016-06-06",
+	"url":"http://akrgis.nps.gov/observer/protocols/sheep_short2.obsprot"
+}
+,
+{
+	"name":"Sheep Transects Long",
+	"version":1.0,
+	"date":"2016-06-06",
+	"url":"http://akrgis.nps.gov/observer/protocols/sheep_long2.obsprot"
 }
 ,
 {
@@ -75,7 +89,7 @@
 }
 ,
 {
-	"name":"YUC Moose Surveys",
+	"name":"YUCH Moose Surveys",
 	"version":1.00,
 	"date":"2015-11-05",
 	"url":"http://akrgis.nps.gov/observer/protocols/yuch_moose.obsprot"
@@ -86,5 +100,12 @@
 	"version":1.3,
 	"date":"2014-07-01",
 	"url":"http://akrgis.nps.gov/observer/protocols/sample.obsprot"
+}
+,
+{
+	"name":"Test Protocol Version 2",
+	"version":1.0,
+	"date":"2016-04-28",
+	"url":"http://akrgis.nps.gov/observer/protocols/SampleProtocolV2.obsprot"
 }
 ]

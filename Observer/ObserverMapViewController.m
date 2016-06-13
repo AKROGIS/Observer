@@ -41,6 +41,7 @@
 //Support Model Objects
 #import "AutoPanStateMachine.h"
 #import "Survey+CsvExport.h"
+#import "NSDate+Formatting.h"
 
 //Support sub-system
 #import "QuickDialog.h"
@@ -77,6 +78,9 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
 
 @property (strong, nonatomic) NSMutableArray *addFeatureBarButtonItems;  //NSArray of AddFeatureBarButtonItem
+
+@property (weak, nonatomic) IBOutlet UILabel *statusMessage;
+@property (weak, nonatomic) IBOutlet UILabel *totalizerMessage;
 
 //Support
 @property (nonatomic) int  busyCount;
@@ -128,6 +132,8 @@
     [self configureObservationButtons];
     [self openMap];
     [self openSurvey];
+    self.statusMessage.text = nil;
+    self.totalizerMessage.text = nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -292,6 +298,10 @@
 
 - (IBAction)startRecording:(UIBarButtonItem *)sender
 {
+    if(!self.map) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"You need to select a map before you can begin." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+        return;
+    }
     if (self.survey.isRecording) {
         return;
     }
@@ -346,6 +356,7 @@
     [self.survey stopRecording];
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(startRecording:) ToPlay:YES];
     [self enableControls];
+    self.totalizerMessage.text = nil;
 }
 
 - (void)stopObserving:(UIBarButtonItem *)sender
@@ -507,6 +518,7 @@
         for (CLLocation *location in locations) {
             [self.survey addGpsPointAtLocation:location];
         }
+        self.totalizerMessage.text = self.survey.totalizer.message;
     }
 
     //use the speed of the last location to update the autorotation behavior
@@ -959,6 +971,19 @@
     self.editEnvironmentBarButton.enabled = self.survey.isRecording && self.survey.protocol.missionFeature.attributes.count > 0 && !self.gpsFailed;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
         item.enabled = self.survey.isObserving && !self.gpsFailed;
+    }
+    [self updateStatusMessage];
+}
+
+- (void)updateStatusMessage
+{
+    //call this from map load; start/stop recording/observing  gps fail/recover (all the cases when enableControls is called)
+    self.statusMessage.text = self.gpsFailed ? @"GPS Failed" : self.survey.statusMessage;
+    if (self.survey.isRecording) {
+        self.statusMessage.textColor = [UIColor colorWithWhite:(CGFloat)0.7 alpha:1];
+    }
+    if (self.survey.isObserving) {
+        self.statusMessage.textColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.5 alpha:1.0];
     }
 }
 
@@ -1441,6 +1466,20 @@
     }
     QRootElement *root = [[QRootElement alloc] initWithJSON:config andData:data];
 
+    id maybeDate = [entity valueForKeyPath:@"adhocLocation.timestamp"];
+    if (!maybeDate) {
+        maybeDate = [entity valueForKeyPath:@"gpsPoint.timestamp"];
+    }
+    if ([maybeDate isKindOfClass:[NSDate class]]) {
+        NSDate *timestamp = (NSDate *)maybeDate;
+        root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, [timestamp stringWithMediumTimeFormat]];
+        QLabelElement *label = [QLabelElement new];
+        label.title = @"Timestamp";
+        label.value = [timestamp stringWithMediumDateTimeFormat];
+        //[[root.sections firstObject] insertObject:label atIndex:0]; //crashed inexplicably
+        [[[root.sections firstObject] elements] insertObject:label atIndex:0];  //works unless elements is nil
+    }
+
     //TODO: if we are reviewing/editing an existing record, show the observing status
 
     //Show a Location Button only when editing/reviewing
@@ -1583,6 +1622,12 @@
         //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
         [self dismissViewControllerAnimated:YES completion:nil];
         self.modalAttributeCollector = nil;
+        if ([obj isKindOfClass:[MissionProperty class]]) {
+            if (self.survey.isRecording) {
+                [self.survey.totalizer missionPropertyChanged:(MissionProperty *)obj];
+                self.totalizerMessage.text = self.survey.totalizer.message;
+            }
+        }
     }
 }
 

@@ -21,4 +21,8 @@
 
 - (AGSPolyline *)polyline;
 
+- (double)length; //in meters
+
+- (NSTimeInterval)duration; //in seconds
+
 @end
