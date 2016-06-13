@@ -263,6 +263,9 @@
     _missionFeature = [[ProtocolMissionFeature alloc] initWithJSON:json[@"mission"] version:jsonVersion];
     _features = [self buildFeaturelist:json[@"features"] version:jsonVersion];
     _featuresWithLocateByTouch = [self buildFeaturesWithLocateByTouch:_features];
+    
+    id cancel = json[@"cancel_on_top"];
+    _cancelOnTop = [cancel isKindOfClass:[NSNumber class]] ? [cancel boolValue] : NO;
 }
 
 - (NSArray *)buildFeaturelist:(id)json version:(NSInteger) version
