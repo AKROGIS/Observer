@@ -98,9 +98,10 @@
 		{
     		"name":"Nests",
     		"attributes":[
-				{"name":"nestid",   "type":700, "required":true},
+				{"name":"nestid",   "type":700},
 				{"name":"occupied", "type":800},
-				{"name":"chicks",   "type":100}
+				{"name":"chicks",   "type":100, "default":4,
+"constraints": [{"predicate":"chicks > 0", "warning":"Chick count must be greater than 0"}]}
  			],
 			"locations":[
 				{"type":"gps",         "default":false, "allow":true},

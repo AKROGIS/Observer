@@ -72,7 +72,7 @@
                 }
                 value = item[@"required"];
                 if ([value isKindOfClass:[NSNumber class]]) {
-                    [attributeDescription setOptional:[(NSNumber*)value boolValue]];
+                    [attributeDescription setOptional:![(NSNumber*)value boolValue]];
                 }
                 [attributeDescription setDefaultValue:item[@"default"]];
                 value = item[@"constraints"];
@@ -87,6 +87,9 @@
                             id value1 = constraint[@"predicate"];
                             if ([value1 isKindOfClass:[NSString class]]) {
                                 predicate = (NSString*)value1;
+                                NSString *name = item[@"name"];
+                                NSString *obscuredName = [NSString stringWithFormat:@"%@%@",kAttributePrefix,name];
+                                predicate = [predicate stringByReplacingOccurrencesOfString:name withString:obscuredName];
                             }
                             value1 = constraint[@"warning"];
                             if ([value1 isKindOfClass:[NSString class]]) {

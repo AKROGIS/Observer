@@ -1563,14 +1563,15 @@
             //This will throw an exception if the key is not valid. This will only happen with a bad protocol file - catch problem in testing, or protocol load
             NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,aKey];
             AKRLog(@"Saving Attributes from Dialog key:%@ (%@) Value:%@", aKey, obscuredKey, [dict valueForKey:aKey]);
-            id value = [dict valueForKey:aKey];
+            id oldValue = [obj valueForKey:obscuredKey];
+            id newValue = [dict valueForKey:aKey];
+            [obj setValue:newValue forKey:obscuredKey];
             NSError *error;
-            if ([obj validateValue:&value forKey:obscuredKey error:&error]) {
+            if (![obj validateValue:&obj forKey:obscuredKey error:&error]) {
+                [obj setValue:oldValue forKey:obscuredKey];
                 formIsValid = NO;
-                NSString *msg = [NSString stringWithFormat:@"Field: %@\nError: %@", aKey, error.description];
+                NSString *msg = [NSString stringWithFormat:@"Field: %@\nError: %@", aKey, error.localizedDescription];
                 [[[UIAlertView alloc] initWithTitle:@"Invalid Form Input" message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-            } else {
-                [obj setValue:value forKey:obscuredKey];
             }
         }
     }
