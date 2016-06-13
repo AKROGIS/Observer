@@ -595,13 +595,22 @@ def get_aliases_from_protocol_v1(protocol):
                 section_title = section['title']
             except KeyError:
                 section_title = None
+            field_title = None
             for field in section['elements']:
-                field_name = field['bind'].split(':')[1]
-                if section_title:
-                    field_alias = '{0} {1}'.format(section_title, field['title'])
-                else:
-                    field_alias = field['title']
-                feature_results[field_name] = field_alias
+                try:
+                    field_title = field['title']
+                except KeyError:
+                    pass
+                try:
+                    field_name = field['bind'].split(':')[1]
+                except (KeyError, IndexError, AttributeError) as e:
+                    field_name = None
+                if field_name and field_title:
+                    if section_title:
+                        field_alias = '{0} {1}'.format(section_title, field_title)
+                    else:
+                        field_alias = field_title
+                    feature_results[field_name] = field_alias
         results[feature_name] = feature_results
     return results
 
