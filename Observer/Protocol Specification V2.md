@@ -38,6 +38,8 @@ Each of these properties is define in the following sections. Complete details o
 		-	User defined message to display on screen when observing. The default is nothing.
 	*	notobserving
 		-	User defined message to display on screen when track logging but not observing.  The default is nothing.
+	*	cancel_on_top
+		-	Optional boolean property.  `true` will put the `cancel`/`delete` button on the top of the observation attributes form.  The default is false - the button will be on the bottom.
 	*	mission
 		-	An objects with the similar properties to the features described below.  For now, refer to that section for details
 		-	The mission describes the attributes and symbology of the mission.
