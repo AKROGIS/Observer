@@ -1,5 +1,12 @@
 [
 {
+	"name":"ARCN Bears",
+	"version":1.0,
+	"date":"2016-06-06",
+	"url":"http://akrgis.nps.gov/observer/protocols/arcn_bears2.obsprot"
+}
+,
+{
 	"name":"ARCN RTLO Survey",
 	"version":1.0,
 	"date":"2016-03-25",
@@ -14,17 +21,17 @@
 }
 ,
 {
-	"name":"CAKN Sheep Short Form",
-	"version":2.0,
-	"date":"2016-04-28",
-	"url":"http://akrgis.nps.gov/observer/protocols/cakn_sheep.obsprot"
+	"name":"Sheep Transects Short",
+	"version":1.0,
+	"date":"2016-06-06",
+	"url":"http://akrgis.nps.gov/observer/protocols/sheep_short2.obsprot"
 }
 ,
 {
-	"name":"CAKN Long Form",
-	"version":2.0,
-	"date":"2016-04-28",
-	"url":"http://akrgis.nps.gov/observer/protocols/cakn_long.obsprot"
+	"name":"Sheep Transects Long",
+	"version":1.0,
+	"date":"2016-06-06",
+	"url":"http://akrgis.nps.gov/observer/protocols/sheep_long2.obsprot"
 }
 ,
 {
