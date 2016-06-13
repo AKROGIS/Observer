@@ -2,11 +2,12 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":2,
 	"name":"Test Protocol2",
-	"version":1.0,
-	"date":"2016-04-28",
+	"version":1.1,
+	"date":"2016-06-12",
 	"description":"This survey protocol is for for testing various features of the protocol specification - version 2",
 	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
+	"cancel_on_top": true,
   "mission":{
 		"attributes":[
 			{"name":"Transect",   "type":700},
