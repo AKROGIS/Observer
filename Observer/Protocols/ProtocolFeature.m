@@ -124,6 +124,11 @@ NSUInteger currentUniqueId = 0;
     return [NSNumber numberWithUnsignedInteger:++currentUniqueId];
 }
 
+- (void)initUniqueId:(NSNumber *)id
+{
+    currentUniqueId = [id unsignedIntegerValue];
+}
+
 - (WaysToLocateFeature) locationMethod
 {
     WaysToLocateFeature locationMethod = self.allowedLocations.defaultNonTouchChoice;

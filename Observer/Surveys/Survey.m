@@ -1293,7 +1293,6 @@
             [self drawObservation:observation];
         }
     }
-    //FIXME: if feature.hasUniqueId Get max value of attribute feature.uniqueIDName and set feature.nextUniqueID
 
     //Get MissionProperties
     AKRLog(@"  Fetching mission properties");
@@ -1308,10 +1307,44 @@
         }
     }
 
+    //Initialize the nextUniqueID for each feature (observations and mission properties)
+    for (ProtocolFeature *feature in self.protocol.features) {
+        if (feature.hasUniqueId) {
+            //NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,feature.uniqueIdName];
+            NSString *obscuredName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,feature.name];
+            NSNumber *maxId = [self maxIntFromContext:self.document.managedObjectContext entityName:obscuredName attributeName:feature.uniqueIdName];
+            [feature initUniqueId:maxId];
+        }
+    }
+    ProtocolFeature *feature = self.protocol.missionFeature;
+    if (feature.hasUniqueId) {
+        //NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,feature.uniqueIdName];
+        NSString *obscuredName = kMissionPropertyEntityName;
+        NSNumber *maxId = [self maxIntFromContext:self.document.managedObjectContext entityName:obscuredName attributeName:feature.uniqueIdName];
+        [feature initUniqueId:maxId];
+    }
+
     AKRLog(@"  Done loading graphics");
 }
 
-
+- (NSNumber *)maxIntFromContext:(NSManagedObjectContext *)context entityName:(NSString *)entity attributeName:(NSString *)attribute
+{
+    NSExpression *keyExpression = [NSExpression expressionForKeyPath:attribute];
+    NSExpression *maxExpression = [NSExpression expressionForFunction:@"max:" arguments:@[keyExpression]];
+    NSExpressionDescription *description = [NSExpressionDescription new];
+    description.name = @"maxID";
+    description.expression = maxExpression;
+    description.expressionResultType = NSInteger32AttributeType;
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entity];
+    request.resultType = NSDictionaryResultType;
+    request.propertiesToFetch = @[description];
+    NSArray *results = [self.document.managedObjectContext  executeFetchRequest:request error:nil];
+    if (results != nil && results.count > 0){
+        NSNumber *maxID = [[results objectAtIndex:0] valueForKey:@"maxID"];
+        return maxID;
+    }
+    return nil;
+}
 
 
 #pragma mark - Private Drawing Methods

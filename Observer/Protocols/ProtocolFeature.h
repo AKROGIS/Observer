@@ -51,5 +51,6 @@
 @property (nonatomic, readonly) BOOL hasUniqueId;
 @property (strong, nonatomic, readonly) NSNumber *nextUniqueId;
 @property (strong, nonatomic, readonly) NSString *uniqueIdName;
+- (void)initUniqueId:(NSNumber *)id;
 
 @end
