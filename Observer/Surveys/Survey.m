@@ -1086,12 +1086,19 @@
     NSAssert(missionProperty, @"Could not create a Mission Property in Core Data Context %@", self.document.managedObjectContext);
     missionProperty.mission = self.currentMission;
     missionProperty.observing = self.isObserving;
+    ProtocolFeature *feature = self.protocol.missionFeature;
+    if (feature.hasUniqueId)
+    {
+        [missionProperty setValue:feature.nextUniqueId forKey:feature.uniqueIdName];
+    }
     return missionProperty;
 }
 
 - (void) copyAttributesForFeature:(ProtocolFeature *)feature fromEntity:(NSManagedObject *)fromEntity toEntity:(NSManagedObject *)toEntity
 {
     for (NSAttributeDescription *attribute in feature.attributes) {
+        //do not replace the entity value of unique ID with the template value
+        if (attribute.name == feature.uniqueIdName) continue;
         id value = [fromEntity valueForKey:attribute.name];
         if (value) {
             [toEntity setValue:value forKey:attribute.name];
