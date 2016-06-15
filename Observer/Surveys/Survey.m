@@ -650,6 +650,7 @@
 - (BOOL)isSelectableLayerName:(NSString *)layerName
 {
     for (NSString *badName in @[kGpsPointEntityName,
+                                kLabelLayerName,
                                 [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn],
                                 [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]) {
         if ([layerName isEqualToString:badName]) {
