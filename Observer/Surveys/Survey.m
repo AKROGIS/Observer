@@ -1171,12 +1171,12 @@
         }
     }
     if (symbol == nil) {
-        UIColor *color = [UIColor whiteColor];
-        if (labelSpec.hasColor) {
-            color = labelSpec.color;
-        }
-        symbol = [AGSTextSymbol textSymbolWithText:labelText color:color];
-        symbol.offset = CGPointMake(0,8); // Doing much more would require a rendering engine
+         symbol = [AGSTextSymbol textSymbolWithText:labelText color:labelSpec.color];
+        symbol.fontSize = [labelSpec.size floatValue];
+        // make lable anchor at lower left with offset for 15pt round marker; Doing more would require a rendering engine
+        symbol.vAlignment = AGSTextSymbolVAlignmentBottom;
+        symbol.hAlignment = AGSTextSymbolHAlignmentLeft;
+        symbol.offset = CGPointMake(6,1);
     }
     AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:symbol attributes:nil];
