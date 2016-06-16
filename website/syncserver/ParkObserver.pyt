@@ -622,7 +622,7 @@ def get_domains_from_protocol_v1(protocol):
     for section in protocol['mission']['dialog']['sections']:
         for field in section['elements']:
             if field['type'] == 'QRadioElement' and field['bind'].startswith('selected:'):
-                name = field['bind'].replace('selected:', '')
+                name = field['bind'].replace('selected:', '').strip()
                 if name in mission_attribute_names:
                     results[name] = field['items']
     for feature in protocol['features']:
