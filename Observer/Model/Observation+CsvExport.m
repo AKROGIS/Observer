@@ -10,6 +10,7 @@
 #import "Observation+Location.h"
 #import "ObserverModel.h"
 #import "AKRFormatter.h"
+#import "NSString+csvEscape.h"
 
 @implementation Observation (CsvExport)
 
@@ -39,6 +40,9 @@
     //get the variable attributes based on the feature type
     for (NSAttributeDescription *attribute in feature.attributes) {
         id value = [self valueForKey:attribute.name];
+        if ([value isKindOfClass:[NSString class]]) {
+            value = [((NSString *)value) csvEscape];
+        }
         [csv appendFormat:@"%@,",(value ? value : @"")];
     }
 

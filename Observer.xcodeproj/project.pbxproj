@@ -113,6 +113,7 @@
 		39D947AE18BEA7DF0069DB31 /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947AC18BEA7DF0069DB31 /* LocationAngleDistanceTests.m */; };
 		39E921AC195B52E60043DB5E /* Protocol Description.md in Resources */ = {isa = PBXBuildFile; fileRef = 39E921AB195B52E60043DB5E /* Protocol Description.md */; };
 		5980662018D16420004830E7 /* UIPopoverController+Presenting.m in Sources */ = {isa = PBXBuildFile; fileRef = 5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */; };
+		5980838A1D0CE41900E4B2E8 /* NSString+csvEscape.m in Sources */ = {isa = PBXBuildFile; fileRef = 598083891D0CE41900E4B2E8 /* NSString+csvEscape.m */; };
 		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
 		59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FEE1863FDBF00470791 /* AKRFormatter.m */; };
 /* End PBXBuildFile section */
@@ -360,6 +361,8 @@
 		39E921AB195B52E60043DB5E /* Protocol Description.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "Protocol Description.md"; path = "Protocols/Protocol Description.md"; sourceTree = "<group>"; };
 		5980661E18D16420004830E7 /* UIPopoverController+Presenting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIPopoverController+Presenting.h"; path = "Categories/UIPopoverController+Presenting.h"; sourceTree = "<group>"; };
 		5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIPopoverController+Presenting.m"; path = "Categories/UIPopoverController+Presenting.m"; sourceTree = "<group>"; };
+		598083881D0CE41900E4B2E8 /* NSString+csvEscape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+csvEscape.h"; path = "Categories/NSString+csvEscape.h"; sourceTree = "<group>"; };
+		598083891D0CE41900E4B2E8 /* NSString+csvEscape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+csvEscape.m"; path = "Categories/NSString+csvEscape.m"; sourceTree = "<group>"; };
 		59C60FE6185ABF9400470791 /* AKRDirectionIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDirectionIndicatorView.h; sourceTree = "<group>"; };
 		59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDirectionIndicatorView.m; sourceTree = "<group>"; };
 		59C60FED1863FDBF00470791 /* AKRFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRFormatter.h; sourceTree = "<group>"; };
@@ -561,6 +564,8 @@
 				3989085C1857EDE1007B3F67 /* NSURL+unique.m */,
 				5980661E18D16420004830E7 /* UIPopoverController+Presenting.h */,
 				5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */,
+				598083881D0CE41900E4B2E8 /* NSString+csvEscape.h */,
+				598083891D0CE41900E4B2E8 /* NSString+csvEscape.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -946,6 +951,7 @@
 				3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */,
 				394CC2411858F11700FA859C /* MapReference.m in Sources */,
 				39A836C4185A668D008BF4E3 /* AKRAngleDistance.m in Sources */,
+				5980838A1D0CE41900E4B2E8 /* NSString+csvEscape.m in Sources */,
 				396E1E961899AD2900B735EF /* ProtocolFeature.m in Sources */,
 				3989085F1857EDE1007B3F67 /* NSDate+Formatting.m in Sources */,
 				39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */,
