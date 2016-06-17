@@ -14,6 +14,7 @@
 #import "NSURL+isEqualToURL.h"
 #import "NSDate+Formatting.h"
 #import "ObserverModel.h"
+#import "POGraphic.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -1139,10 +1140,9 @@
         NSString *key = [obscuredKey stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
         attribs[key] = [observation valueForKey:obscuredKey];
     }
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
+    POGraphic *graphic = [[POGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
+    graphic.label = [self drawLabelObservation:observation];
     [[self graphicsLayerForObservation:observation] addGraphic:graphic];
-    //For testing: need to track the graphic so it can be deleted, moved, or updated
-    [self drawLabelObservation:observation];
     return graphic;
 }
 
@@ -1321,6 +1321,7 @@
     [[self graphicsLayerForGpsPoints] addGraphic:graphic];
 }
 
+//TODO: add attributes and label like drawObservation to support symbology and labels
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
 {
     NSDate *timestamp = [missionProperty timestamp];
