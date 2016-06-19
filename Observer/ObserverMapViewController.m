@@ -32,6 +32,7 @@
 #import "FeatureSelectorTableViewController.h"
 #import "UIPopoverController+Presenting.h"
 #import "GpsPointTableViewController.h"
+#import "POGraphic.h"
 
 //Views
 #import "AutoPanButton.h"
@@ -699,6 +700,9 @@
     //TODO: If the moving feature is based on a GPS point, then snap to the closest GPS point
     if (self.movingGraphic) {
         [self.movingGraphic setGeometry:mapPoint];
+        if ([self.movingGraphic isKindOfClass:[POGraphic class]]) {
+            [((POGraphic *)self.movingGraphic).label setGeometry:mapPoint];
+        }
     }
 }
 
@@ -708,8 +712,9 @@
 
     //Move Adhoc location
     [self.survey updateAdhocLocation:self.movingObservation.adhocLocation withMapPoint:mapPoint];
-    if ([self.movingGraphic isKindOfClass:[AGSGraphic class]]) {
-        AGSGraphic *graphic = (AGSGraphic *)self.movingGraphic;
+    if ([self.movingGraphic isKindOfClass:[POGraphic class]]) {
+        POGraphic *graphic = (POGraphic *)self.movingGraphic;
+        [[graphic.label layer] removeGraphic:graphic.label];
         [[graphic layer] removeGraphic:graphic];
         [self.survey drawObservation:self.movingObservation];
     }
@@ -1539,8 +1544,12 @@
                         //Note: add new gps point, but do not remove the adhoc location as that records the time of the observation
                         observation.gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
                         if (observation.gpsPoint && graphic) {
-                            [[graphic layer] removeGraphic:graphic];
-                            [self.survey drawObservation:observation];
+                            if ([graphic isKindOfClass:[POGraphic class]]) {
+                                POGraphic *pographic = (POGraphic *)self.movingGraphic;
+                                [[pographic layer] removeGraphic:pographic];
+                                [[pographic.label layer] removeGraphic:pographic.label];
+                                [self.survey drawObservation:observation];
+                            }
                         }
                     };
                     [[root.sections lastObject] addElement:updateLocationButton];
@@ -1565,11 +1574,19 @@
         }
         deleteButton.onSelected = ^(){
             [[self.survey graphicsLayerForFeature:feature] removeGraphic:graphic];
+            if ([graphic isKindOfClass:[POGraphic class]]) {
+                POGraphic *pographic = (POGraphic *)graphic;
+                [[pographic.label layer] removeGraphic:pographic.label];
+            }
             [self.survey deleteEntity:entity];
             [self.editAttributePopoverController dismissPopoverAnimated:YES];
             self.editAttributePopoverController = nil;
         };
-        [[root.sections lastObject] addElement:deleteButton];
+        if (self.survey.protocol.cancelOnTop) {
+            [[root.sections firstObject] insertElement:deleteButton atIndex:0];
+        } else {
+            [[root.sections lastObject] addElement:deleteButton];
+        }
     }
 
 
@@ -1619,7 +1636,17 @@
         NSString *msg = [NSString stringWithFormat:@"%@\nCheck the protocol file.", ex.description];
         [[[UIAlertView alloc] initWithTitle:@"Save Failed" message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
     }
-    [self redrawGraphic:dialog.graphic withAttributes:dict];
+    //For observations, redraw the graphic and label with the new attributes
+    if ([dialog.managedObject isKindOfClass:[Observation class]]) {
+        [[dialog.graphic layer] removeGraphic:dialog.graphic];
+        if ([dialog.graphic isKindOfClass:[POGraphic class]]) {
+            POGraphic *graphic = (POGraphic *)dialog.graphic;
+            [[graphic.label layer] removeGraphic:graphic.label];
+        }
+        [self.survey drawObservation:(Observation *)dialog.managedObject];
+    }
+    //For Mission properties currently do nothing (no labels or attribute based symbology supported)
+
     //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
     [self dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;
@@ -1631,16 +1658,6 @@
     }
 }
 
-- (void)redrawGraphic:(AGSGraphic *)graphic withAttributes:(NSDictionary *)attributes
-{
-    //FIXME: ASSERT geometry is a Point
-    AGSPoint *mapPoint = (AGSPoint *)graphic.geometry;
-    NSMutableDictionary *newAttributes = [NSMutableDictionary dictionaryWithDictionary:graphic.allAttributes];
-    [newAttributes addEntriesFromDictionary:attributes];
-    AGSGraphic *newGraphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:newAttributes];
-    [graphic.layer addGraphic:newGraphic];
-    [graphic.layer removeGraphic:graphic];
-}
 
 
 
