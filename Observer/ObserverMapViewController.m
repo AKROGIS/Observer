@@ -1388,6 +1388,7 @@
 {
     FeatureSelectorTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"FeatureSelectorTableViewController"];
     vc.features = features;
+    vc.protocol = self.survey.protocol;
     vc.featureSelectedCallback = ^(NSString *layerName, id<AGSFeature> graphic) {
         //New in iOS 8, popover on top of popover is not allowed (it was bad form anyway)
         //now we need to dismiss the FeatureSelectorTableView (if it is visible) before presenting this feature
@@ -1463,13 +1464,19 @@
 
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
-    if (template) {
+    if (template || entity) {
         data = [[NSMutableDictionary alloc] init];
         for (NSAttributeDescription *attribute in feature.attributes) {
             NSString *cleanName = [attribute.name stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
-            id value = [template valueForKey:attribute.name];
+            // Use value provided by entity, else use template
+            id value = [entity valueForKey:attribute.name];
             if (value) {
                 data[cleanName] = value;
+            } else {
+                value = [template valueForKey:attribute.name];
+                if (value) {
+                    data[cleanName] = value;
+                }
             }
         }
         //AKRLog(@"default data attributes %@", data);
@@ -1487,7 +1494,11 @@
     }
     if ([maybeDate isKindOfClass:[NSDate class]]) {
         NSDate *timestamp = (NSDate *)maybeDate;
-        root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, [timestamp stringWithMediumTimeFormat]];
+        if (feature.hasUniqueId) {
+            root.title = [NSString stringWithFormat:@"%@ %@", root.title, [entity valueForKey:feature.uniqueIdName]];
+        } else {
+            root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, [timestamp stringWithMediumTimeFormat]];
+        }
         QLabelElement *label = [QLabelElement new];
         label.title = @"Timestamp";
         label.value = [timestamp stringWithMediumDateTimeFormat];

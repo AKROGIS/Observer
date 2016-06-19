@@ -1088,12 +1088,19 @@
     NSAssert(missionProperty, @"Could not create a Mission Property in Core Data Context %@", self.document.managedObjectContext);
     missionProperty.mission = self.currentMission;
     missionProperty.observing = self.isObserving;
+    ProtocolFeature *feature = self.protocol.missionFeature;
+    if (feature.hasUniqueId)
+    {
+        [missionProperty setValue:feature.nextUniqueId forKey:feature.uniqueIdName];
+    }
     return missionProperty;
 }
 
 - (void) copyAttributesForFeature:(ProtocolFeature *)feature fromEntity:(NSManagedObject *)fromEntity toEntity:(NSManagedObject *)toEntity
 {
     for (NSAttributeDescription *attribute in feature.attributes) {
+        //do not replace the entity value of unique ID with the template value
+        if (attribute.name == feature.uniqueIdName) continue;
         id value = [fromEntity valueForKey:attribute.name];
         if (value) {
             [toEntity setValue:value forKey:attribute.name];
@@ -1220,6 +1227,10 @@
                                                              inManagedObjectContext:self.document.managedObjectContext];
     NSAssert(observation, @"Could not create an Observation in Core Data Context %@", self.document.managedObjectContext);
     observation.mission = self.currentMission;
+    if (feature.hasUniqueId)
+    {
+        [observation setValue:feature.nextUniqueId forKey:feature.uniqueIdName];
+    }
     return observation;
 }
 
@@ -1304,10 +1315,44 @@
         }
     }
 
+    //Initialize the nextUniqueID for each feature (observations and mission properties)
+    for (ProtocolFeature *feature in self.protocol.features) {
+        if (feature.hasUniqueId) {
+            //NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,feature.uniqueIdName];
+            NSString *obscuredName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,feature.name];
+            NSNumber *maxId = [self maxIntFromContext:self.document.managedObjectContext entityName:obscuredName attributeName:feature.uniqueIdName];
+            [feature initUniqueId:maxId];
+        }
+    }
+    ProtocolFeature *feature = self.protocol.missionFeature;
+    if (feature.hasUniqueId) {
+        //NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,feature.uniqueIdName];
+        NSString *obscuredName = kMissionPropertyEntityName;
+        NSNumber *maxId = [self maxIntFromContext:self.document.managedObjectContext entityName:obscuredName attributeName:feature.uniqueIdName];
+        [feature initUniqueId:maxId];
+    }
+
     AKRLog(@"  Done loading graphics");
 }
 
-
+- (NSNumber *)maxIntFromContext:(NSManagedObjectContext *)context entityName:(NSString *)entity attributeName:(NSString *)attribute
+{
+    NSExpression *keyExpression = [NSExpression expressionForKeyPath:attribute];
+    NSExpression *maxExpression = [NSExpression expressionForFunction:@"max:" arguments:@[keyExpression]];
+    NSExpressionDescription *description = [NSExpressionDescription new];
+    description.name = @"maxID";
+    description.expression = maxExpression;
+    description.expressionResultType = NSInteger32AttributeType;
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entity];
+    request.resultType = NSDictionaryResultType;
+    request.propertiesToFetch = @[description];
+    NSArray *results = [self.document.managedObjectContext  executeFetchRequest:request error:nil];
+    if (results != nil && results.count > 0){
+        NSNumber *maxID = [[results objectAtIndex:0] valueForKey:@"maxID"];
+        return maxID;
+    }
+    return nil;
+}
 
 
 #pragma mark - Private Drawing Methods

@@ -3,13 +3,14 @@
 	"meta-version":2,
 	"name":"Test Protocol2",
 	"version":2.0,
-	"date":"2016-06-10",
+	"date":"2016-06-12",
 	"description":"This survey protocol is for for testing various features of the protocol specification - version 2",
 	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
 	"cancel_on_top": true,
   "mission":{
 		"attributes":[
+			{"name":"Track",      "type":0},
 			{"name":"Transect",   "type":700},
 			{"name":"Vessel",     "type":700},
 			{"name":"Recorder",   "type":700},
@@ -25,6 +26,7 @@
 			"sections":[
 				{
 					"elements":[
+						{"type":"QLabelElement", "key":"t1", "bind":"value:Track", "title":"Track ID"},
 						{"type":"QRadioElement", "key":"t",  "bind":"selectedItem:Transect", "title":"Transect",    "items":["101", "102", "121"]},
 						{"type":"QEntryElement", "key":"v1", "bind":"textValue:Vessel",      "title":"Vessel",      "placeholder":"Name", "autocorrectionType":"No"},
 						{"type":"QEntryElement", "key":"r",  "bind":"textValue:Recorder",    "title":"Recorder",    "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
@@ -237,6 +239,7 @@
 		{
     	"name":"Cabins",
     	"attributes":[
+				{"name":"id", "type":0},
 				{"name":"name", "type":700},
 				{"name":"roof", "type":800}
  			],
@@ -251,6 +254,7 @@
 				"sections":[
 					{
 					  "elements":[
+							{"type":"QLabelElement",   "key":"id", "bind":"value:id", "title":"ID Number"},
 						  {"type":"QEntryElement",   "key":"n1", "bind":"textValue:name", "title":"Name", "placeholder":"Optional"},
 							{"type":"QBooleanElement", "key":"r1", "bind":"boolValue:roof", "title":"Has A Roof"}
 					  ]
