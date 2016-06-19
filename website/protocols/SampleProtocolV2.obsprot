@@ -7,6 +7,7 @@
 	"description":"This survey protocol is for for testing various features of the protocol specification - version 2",
 	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
+	"cancel_on_top": true,
   "mission":{
 		"attributes":[
 			{"name":"Track",      "type":0},

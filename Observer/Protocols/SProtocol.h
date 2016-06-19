@@ -28,6 +28,7 @@
 @property (nonatomic, strong, readonly) NSArray *features;  // of ProtocolFeatures
 @property (nonatomic, strong, readonly) NSArray *featuresWithLocateByTouch;  // of ProtocolFeatures
 @property (nonatomic, strong, readonly) ProtocolMissionFeature *missionFeature;
+@property (nonatomic, readonly) BOOL cancelOnTop;
 
 // Find a feature's definition
 - (ProtocolFeature *)featureWithName:(NSString *)name;
