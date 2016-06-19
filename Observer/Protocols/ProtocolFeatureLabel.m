@@ -36,12 +36,18 @@
         _field = value;
     }
 
+    _color = [UIColor whiteColor];
     value = json[@"color"];
     if ([value isKindOfClass:[NSString class]]) {
         _color = [self colorFromHexString:value];
-        _hasColor = YES;
     }
-
+    
+    _size = [NSNumber numberWithInt:14];
+    value = json[@"size"];
+    if ([value isKindOfClass:[NSNumber class]]) {
+        _size = value;
+    }
+    
     value = json[@"symbol"];
     if ([value isKindOfClass:[NSDictionary class]]) {
         NSDictionary *symbolJSON = (NSDictionary *)value;

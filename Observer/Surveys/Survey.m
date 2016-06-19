@@ -14,6 +14,7 @@
 #import "NSURL+isEqualToURL.h"
 #import "NSDate+Formatting.h"
 #import "ObserverModel.h"
+#import "POGraphic.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -650,6 +651,7 @@
 - (BOOL)isSelectableLayerName:(NSString *)layerName
 {
     for (NSString *badName in @[kGpsPointEntityName,
+                                kLabelLayerName,
                                 [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn],
                                 [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]) {
         if ([layerName isEqualToString:badName]) {
@@ -1138,10 +1140,9 @@
         NSString *key = [obscuredKey stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
         attribs[key] = [observation valueForKey:obscuredKey];
     }
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
+    POGraphic *graphic = [[POGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
+    graphic.label = [self drawLabelObservation:observation];
     [[self graphicsLayerForObservation:observation] addGraphic:graphic];
-    //For testing: need to track the graphic so it can be deleted, moved, or updated
-    [self drawLabelObservation:observation];
     return graphic;
 }
 
@@ -1171,12 +1172,12 @@
         }
     }
     if (symbol == nil) {
-        UIColor *color = [UIColor whiteColor];
-        if (labelSpec.hasColor) {
-            color = labelSpec.color;
-        }
-        symbol = [AGSTextSymbol textSymbolWithText:labelText color:color];
-        symbol.offset = CGPointMake(0,8); // Doing much more would require a rendering engine
+         symbol = [AGSTextSymbol textSymbolWithText:labelText color:labelSpec.color];
+        symbol.fontSize = [labelSpec.size floatValue];
+        // make lable anchor at lower left with offset for 15pt round marker; Doing more would require a rendering engine
+        symbol.vAlignment = AGSTextSymbolVAlignmentBottom;
+        symbol.hAlignment = AGSTextSymbolHAlignmentLeft;
+        symbol.offset = CGPointMake(6,1);
     }
     AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:symbol attributes:nil];
@@ -1320,6 +1321,7 @@
     [[self graphicsLayerForGpsPoints] addGraphic:graphic];
 }
 
+//TODO: add attributes and label like drawObservation to support symbology and labels
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
 {
     NSDate *timestamp = [missionProperty timestamp];

@@ -5,6 +5,7 @@ import shutil
 import glob
 import dateutil.parser
 import json
+import csv
 
 import arcpy
 
@@ -235,8 +236,8 @@ def process_feature_file_v1(feature_f, protocol, gps_points_list, feature_name, 
 #    arcpy.RemoveSpatialIndex_management(observation_table)
     with arcpy.da.InsertCursor(feature_table, feature_columns) as feature_cursor, \
             arcpy.da.InsertCursor(observation_table, observation_columns) as observation_cursor:
-        for line in feature_f:
-            items = line.split(',')
+        for line in csv.reader(feature_f):
+            items = line  # line is a list of utf8 enocde strings (bytes)
             protocol_items, other_items = items[:feature_fields_count], items[feature_fields_count:]
             feature_items = filter_items_by_index(other_items, feature_field_map)
             observe_items = filter_items_by_index(other_items, observation_field_map)
@@ -595,13 +596,22 @@ def get_aliases_from_protocol_v1(protocol):
                 section_title = section['title']
             except KeyError:
                 section_title = None
+            field_title = None
             for field in section['elements']:
-                field_name = field['bind'].split(':')[1]
-                if section_title:
-                    field_alias = '{0} {1}'.format(section_title, field['title'])
-                else:
-                    field_alias = field['title']
-                feature_results[field_name] = field_alias
+                try:
+                    field_title = field['title']
+                except KeyError:
+                    pass
+                try:
+                    field_name = field['bind'].split(':')[1]
+                except (KeyError, IndexError, AttributeError) as e:
+                    field_name = None
+                if field_name and field_title:
+                    if section_title:
+                        field_alias = '{0} {1}'.format(section_title, field_title)
+                    else:
+                        field_alias = field_title
+                    feature_results[field_name] = field_alias
         results[feature_name] = feature_results
     return results
 
@@ -612,7 +622,7 @@ def get_domains_from_protocol_v1(protocol):
     for section in protocol['mission']['dialog']['sections']:
         for field in section['elements']:
             if field['type'] == 'QRadioElement' and field['bind'].startswith('selected:'):
-                name = field['bind'].replace('selected:', '')
+                name = field['bind'].replace('selected:', '').strip()
                 if name in mission_attribute_names:
                     results[name] = field['items']
     for feature in protocol['features']:
@@ -620,7 +630,7 @@ def get_domains_from_protocol_v1(protocol):
         for section in feature['dialog']['sections']:
             for field in section['elements']:
                 if field['type'] == 'QRadioElement' and field['bind'].startswith('selected:'):
-                    name = field['bind'].replace('selected:', '')
+                    name = field['bind'].replace('selected:', '').strip()
                     if name in attribute_names:
                         results[name] = field['items']
     return results
