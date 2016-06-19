@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "ProtocolFeatureAllowedLocations.h"
 #import "ProtocolFeatureSymbology.h"
+#import "ProtocolFeatureLabel.h"
 
 // This immutable class is a protocol support object and is only created by a protocol
 // It is highly dependent on the specification for a protocol document.
@@ -27,6 +28,9 @@
 
 // How should these features be drawn on the map
 @property (strong, nonatomic, readonly) AGSRenderer *pointRenderer;
+
+// How should these features be labeled on the map
+@property (strong, nonatomic, readonly) ProtocolFeatureLabel *labelSpec;
 
 // The CoreData attributes used to augment the generic Observation entity
 @property (strong, nonatomic, readonly) NSArray *attributes;  //of NSAttributeDescription

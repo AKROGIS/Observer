@@ -14,6 +14,7 @@
 #import "NSURL+isEqualToURL.h"
 #import "NSDate+Formatting.h"
 #import "ObserverModel.h"
+#import "POGraphic.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -600,6 +601,10 @@
             graphicsLayers[feature.name] = graphicsLayer;
         }
 
+        //Observation labels (all labels on only one layer, individually rendered)
+        graphicsLayer = [[AGSGraphicsLayer alloc] init];
+        graphicsLayers[kLabelLayerName] = graphicsLayer;
+
         //Mission Properties
         ProtocolMissionFeature *missionFeature = self.protocol.missionFeature;
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
@@ -646,6 +651,7 @@
 - (BOOL)isSelectableLayerName:(NSString *)layerName
 {
     for (NSString *badName in @[kGpsPointEntityName,
+                                kLabelLayerName,
                                 [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn],
                                 [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]) {
         if ([layerName isEqualToString:badName]) {
@@ -1134,8 +1140,49 @@
         NSString *key = [obscuredKey stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
         attribs[key] = [observation valueForKey:obscuredKey];
     }
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
+    POGraphic *graphic = [[POGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
+    graphic.label = [self drawLabelObservation:observation];
     [[self graphicsLayerForObservation:observation] addGraphic:graphic];
+    return graphic;
+}
+
+- (AGSGraphic *)drawLabelObservation:(Observation *)observation
+{
+    NSString *entityName = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
+    ProtocolFeature *feature = [self.protocol featureWithName:entityName];
+    ProtocolFeatureLabel *labelSpec = feature.labelSpec;
+    if (labelSpec == nil) return nil;
+    if (labelSpec.field == nil) return nil;
+    NSString *field = [NSString stringWithFormat:@"%@%@",kAttributePrefix,labelSpec.field];
+    NSString *labelText = nil;
+    @try {
+        labelText = [observation valueForKey:field];
+    } @catch (NSException *exception) {
+        AKRLog(@"Failed to create feature label (bad protocol): %@", exception);
+    }
+    if (labelText == nil) return nil;
+    AGSTextSymbol *symbol = nil;
+    if (labelSpec.hasSymbol) {
+        NSMutableDictionary *json = [NSMutableDictionary dictionaryWithDictionary:labelSpec.symbolJSON];
+        json[@"text"] = labelText;
+        @try {
+            symbol = [[AGSTextSymbol alloc] initWithJSON:json];
+        } @catch (NSException *exception) {
+            AKRLog(@"Failed to create feature label (bad protocol): %@", exception);
+        }
+    }
+    if (symbol == nil) {
+         symbol = [AGSTextSymbol textSymbolWithText:labelText color:labelSpec.color];
+        symbol.fontSize = [labelSpec.size floatValue];
+        // make lable anchor at lower left with offset for 15pt round marker; Doing more would require a rendering engine
+        symbol.vAlignment = AGSTextSymbolVAlignmentBottom;
+        symbol.hAlignment = AGSTextSymbolHAlignmentLeft;
+        symbol.offset = CGPointMake(6,1);
+    }
+    AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:symbol attributes:nil];
+    AGSGraphicsLayer *layer = (AGSGraphicsLayer *)self.graphicsLayersByName[kLabelLayerName];
+    [layer addGraphic:graphic];
     return graphic;
 }
 
@@ -1274,6 +1321,7 @@
     [[self graphicsLayerForGpsPoints] addGraphic:graphic];
 }
 
+//TODO: add attributes and label like drawObservation to support symbology and labels
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
 {
     NSDate *timestamp = [missionProperty timestamp];

@@ -39,6 +39,7 @@
     }
     _allowedLocations = [[ProtocolFeatureAllowedLocations alloc] initWithLocationsJSON:json[@"locations"]version:version];
     [self defineReadonlySymbology:json[@"symbology"] version:version];
+    _labelSpec = [[ProtocolFeatureLabel alloc] initWithLabelJSON:json[@"label"] version:version];
     _attributes = [self buildAttributeArrayWithJSON:json[@"attributes"] version:version];
     id dialog = json[@"dialog"];
     if ([dialog isKindOfClass:[NSDictionary class]]) {
@@ -147,6 +148,34 @@
             break;
     }
 }
+
+- (void)defineReadonlyLabel:(NSDictionary *)json version:(NSInteger) version
+{
+    switch (version) {
+        case 1:
+        {
+            _labelSpec = nil;
+            break;
+        }
+        case 2:
+        @try {
+            //protect against malformed symbology definition in the protocol (JSON) file
+            _pointRenderer = [self AGSRendererFromJSON:json];
+        } @catch (NSException *exception) {
+            AKRLog(@"Failed to create feature renderer (bad protocol): %@", exception);
+            //Create a simple default
+            AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor greenColor]];
+            [symbol setSize:CGSizeMake(12,12)];
+            _pointRenderer = [AGSSimpleRenderer simpleRendererWithSymbol:symbol];
+        }
+        break;
+        default:
+        AKRLog(@"Unsupported version (%ld) of the NPS-Protocol-Specification", (long)version);
+        break;
+    }
+}
+
+
 
 - (AGSRenderer *)AGSRendererFromJSON:(NSDictionary *)json
 {
