@@ -1535,9 +1535,9 @@
                         observation.gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
                         if (observation.gpsPoint && graphic) {
                             if ([graphic isKindOfClass:[POGraphic class]]) {
-                                POGraphic *graphic = (POGraphic *)self.movingGraphic;
-                                [[graphic layer] removeGraphic:graphic];
-                                [[graphic.label layer] removeGraphic:graphic.label];
+                                POGraphic *pographic = (POGraphic *)self.movingGraphic;
+                                [[pographic layer] removeGraphic:pographic];
+                                [[pographic.label layer] removeGraphic:pographic.label];
                                 [self.survey drawObservation:observation];
                             }
                         }
@@ -1565,8 +1565,8 @@
         deleteButton.onSelected = ^(){
             [[self.survey graphicsLayerForFeature:feature] removeGraphic:graphic];
             if ([graphic isKindOfClass:[POGraphic class]]) {
-                POGraphic *graphic = (POGraphic *)self.movingGraphic;
-                [[graphic.label layer] removeGraphic:graphic.label];
+                POGraphic *pographic = (POGraphic *)graphic;
+                [[pographic.label layer] removeGraphic:pographic.label];
             }
             [self.survey deleteEntity:entity];
             [self.editAttributePopoverController dismissPopoverAnimated:YES];
