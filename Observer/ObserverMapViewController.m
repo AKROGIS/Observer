@@ -32,6 +32,7 @@
 #import "FeatureSelectorTableViewController.h"
 #import "UIPopoverController+Presenting.h"
 #import "GpsPointTableViewController.h"
+#import "POGraphic.h"
 
 //Views
 #import "AutoPanButton.h"
@@ -699,6 +700,9 @@
     //TODO: If the moving feature is based on a GPS point, then snap to the closest GPS point
     if (self.movingGraphic) {
         [self.movingGraphic setGeometry:mapPoint];
+        if ([self.movingGraphic isKindOfClass:[POGraphic class]]) {
+            [((POGraphic *)self.movingGraphic).label setGeometry:mapPoint];
+        }
     }
 }
 
@@ -708,8 +712,9 @@
 
     //Move Adhoc location
     [self.survey updateAdhocLocation:self.movingObservation.adhocLocation withMapPoint:mapPoint];
-    if ([self.movingGraphic isKindOfClass:[AGSGraphic class]]) {
-        AGSGraphic *graphic = (AGSGraphic *)self.movingGraphic;
+    if ([self.movingGraphic isKindOfClass:[POGraphic class]]) {
+        POGraphic *graphic = (POGraphic *)self.movingGraphic;
+        [[graphic.label layer] removeGraphic:graphic.label];
         [[graphic layer] removeGraphic:graphic];
         [self.survey drawObservation:self.movingObservation];
     }
@@ -1189,7 +1194,17 @@
 - (void)initializeGraphicsLayer
 {
     NSDictionary *graphicsLayers = [self.survey graphicsLayersByName];
-    for (NSString *name in graphicsLayers) {
+    NSString *onTransect = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
+    NSString *offTransect = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
+    //Draw these layers first and in this order
+    NSArray *lowerLayers = @[kGpsPointEntityName, onTransect, offTransect, kMissionPropertyEntityName, kLabelLayerName];
+    for (NSString *name in lowerLayers) {
+        [self.mapView addMapLayer:graphicsLayers[name] withName:name];
+    }
+    // Draw the remaining layers (observations) in any order
+    NSMutableArray *layerNames = [NSMutableArray arrayWithArray:[graphicsLayers allKeys]];
+    [layerNames removeObjectsInArray:lowerLayers];
+    for (NSString *name in layerNames) {
         [self.mapView addMapLayer:graphicsLayers[name] withName:name];
     }
 }
@@ -1373,6 +1388,7 @@
 {
     FeatureSelectorTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"FeatureSelectorTableViewController"];
     vc.features = features;
+    vc.protocol = self.survey.protocol;
     vc.featureSelectedCallback = ^(NSString *layerName, id<AGSFeature> graphic) {
         //New in iOS 8, popover on top of popover is not allowed (it was bad form anyway)
         //now we need to dismiss the FeatureSelectorTableView (if it is visible) before presenting this feature
@@ -1448,13 +1464,19 @@
 
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
-    if (template) {
+    if (template || entity) {
         data = [[NSMutableDictionary alloc] init];
         for (NSAttributeDescription *attribute in feature.attributes) {
             NSString *cleanName = [attribute.name stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
-            id value = [template valueForKey:attribute.name];
+            // Use value provided by entity, else use template
+            id value = [entity valueForKey:attribute.name];
             if (value) {
                 data[cleanName] = value;
+            } else {
+                value = [template valueForKey:attribute.name];
+                if (value) {
+                    data[cleanName] = value;
+                }
             }
         }
         //AKRLog(@"default data attributes %@", data);
@@ -1472,7 +1494,11 @@
     }
     if ([maybeDate isKindOfClass:[NSDate class]]) {
         NSDate *timestamp = (NSDate *)maybeDate;
-        root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, [timestamp stringWithMediumTimeFormat]];
+        if (feature.hasUniqueId) {
+            root.title = [NSString stringWithFormat:@"%@ %@", root.title, [entity valueForKey:feature.uniqueIdName]];
+        } else {
+            root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, [timestamp stringWithMediumTimeFormat]];
+        }
         QLabelElement *label = [QLabelElement new];
         label.title = @"Timestamp";
         label.value = [timestamp stringWithMediumDateTimeFormat];
@@ -1529,8 +1555,12 @@
                         //Note: add new gps point, but do not remove the adhoc location as that records the time of the observation
                         observation.gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
                         if (observation.gpsPoint && graphic) {
-                            [[graphic layer] removeGraphic:graphic];
-                            [self.survey drawObservation:observation];
+                            if ([graphic isKindOfClass:[POGraphic class]]) {
+                                POGraphic *pographic = (POGraphic *)self.movingGraphic;
+                                [[pographic layer] removeGraphic:pographic];
+                                [[pographic.label layer] removeGraphic:pographic.label];
+                                [self.survey drawObservation:observation];
+                            }
                         }
                     };
                     [[root.sections lastObject] addElement:updateLocationButton];
@@ -1555,16 +1585,25 @@
         }
         deleteButton.onSelected = ^(){
             [[self.survey graphicsLayerForFeature:feature] removeGraphic:graphic];
+            if ([graphic isKindOfClass:[POGraphic class]]) {
+                POGraphic *pographic = (POGraphic *)graphic;
+                [[pographic.label layer] removeGraphic:pographic.label];
+            }
             [self.survey deleteEntity:entity];
             [self.editAttributePopoverController dismissPopoverAnimated:YES];
             self.editAttributePopoverController = nil;
         };
-        [[root.sections lastObject] addElement:deleteButton];
+        if (self.survey.protocol.cancelOnTop) {
+            [[root.sections firstObject] insertElement:deleteButton atIndex:0];
+        } else {
+            [[root.sections lastObject] addElement:deleteButton];
+        }
     }
 
 
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
+    dialog.graphic = graphic;
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
         dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
@@ -1608,6 +1647,17 @@
         NSString *msg = [NSString stringWithFormat:@"%@\nCheck the protocol file.", ex.description];
         [[[UIAlertView alloc] initWithTitle:@"Save Failed" message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
     }
+    //For observations, redraw the graphic and label with the new attributes
+    if ([dialog.managedObject isKindOfClass:[Observation class]]) {
+        [[dialog.graphic layer] removeGraphic:dialog.graphic];
+        if ([dialog.graphic isKindOfClass:[POGraphic class]]) {
+            POGraphic *graphic = (POGraphic *)dialog.graphic;
+            [[graphic.label layer] removeGraphic:graphic.label];
+        }
+        [self.survey drawObservation:(Observation *)dialog.managedObject];
+    }
+    //For Mission properties currently do nothing (no labels or attribute based symbology supported)
+
     //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
     [self dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;

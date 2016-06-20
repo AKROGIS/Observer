@@ -200,6 +200,16 @@
     return _featuresWithLocateByTouch;
 }
 
+- (ProtocolFeature *)featureWithName:(NSString *)name
+{
+    for (ProtocolFeature *feature in self.features) {
+        if ([name isEqualToString:feature.name]) {
+            return feature;
+        }
+    }
+    return nil;
+}
+
 
 
 
@@ -263,6 +273,9 @@
     _missionFeature = [[ProtocolMissionFeature alloc] initWithJSON:json[@"mission"] version:jsonVersion];
     _features = [self buildFeaturelist:json[@"features"] version:jsonVersion];
     _featuresWithLocateByTouch = [self buildFeaturesWithLocateByTouch:_features];
+    
+    id cancel = json[@"cancel_on_top"];
+    _cancelOnTop = [cancel isKindOfClass:[NSNumber class]] ? [cancel boolValue] : NO;
 }
 
 - (NSArray *)buildFeaturelist:(id)json version:(NSInteger) version

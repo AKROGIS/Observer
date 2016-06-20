@@ -11,6 +11,8 @@
 
 @implementation ProtocolFeature
 
+NSUInteger currentUniqueId = 0;
+
 - (id)initWithJSON:(id)json version:(NSInteger) version
 {
     if (self = [super init]) {
@@ -39,6 +41,7 @@
     }
     _allowedLocations = [[ProtocolFeatureAllowedLocations alloc] initWithLocationsJSON:json[@"locations"]version:version];
     [self defineReadonlySymbology:json[@"symbology"] version:version];
+    _labelSpec = [[ProtocolFeatureLabel alloc] initWithLabelJSON:json[@"label"] version:version];
     _attributes = [self buildAttributeArrayWithJSON:json[@"attributes"] version:version];
     id dialog = json[@"dialog"];
     if ([dialog isKindOfClass:[NSDictionary class]]) {
@@ -63,13 +66,20 @@
                 NSAttributeDescription *attributeDescription = [[NSAttributeDescription alloc] init];
                 [attributeProperties addObject:attributeDescription];
                 id value = item[@"name"];
+                NSString *obscuredName;
                 if ([value isKindOfClass:[NSString class]]) {
-                    NSString *obscuredName = [NSString stringWithFormat:@"%@%@",kAttributePrefix,value];
+                    obscuredName = [NSString stringWithFormat:@"%@%@",kAttributePrefix,value];
                     [attributeDescription setName:obscuredName];
                 }
                 value = item[@"type"];
                 if ([value isKindOfClass:[NSNumber class]]) {
-                    [attributeDescription setAttributeType:[(NSNumber*)value unsignedIntegerValue]];
+                    NSUInteger type = [(NSNumber*)value unsignedIntegerValue];
+                    if (type == 0) {
+                        type = 200;
+                        _hasUniqueId = YES;
+                        _uniqueIdName = obscuredName;
+                    }
+                    [attributeDescription setAttributeType:type];
                 }
                 value = item[@"required"];
                 if ([value isKindOfClass:[NSNumber class]]) {
@@ -107,6 +117,16 @@
         return attributeProperties;
     }
     return nil;
+}
+
+- (NSNumber *)nextUniqueId
+{
+    return [NSNumber numberWithUnsignedInteger:++currentUniqueId];
+}
+
+- (void)initUniqueId:(NSNumber *)id
+{
+    currentUniqueId = [id unsignedIntegerValue];
 }
 
 - (WaysToLocateFeature) locationMethod
@@ -147,6 +167,34 @@
             break;
     }
 }
+
+- (void)defineReadonlyLabel:(NSDictionary *)json version:(NSInteger) version
+{
+    switch (version) {
+        case 1:
+        {
+            _labelSpec = nil;
+            break;
+        }
+        case 2:
+        @try {
+            //protect against malformed symbology definition in the protocol (JSON) file
+            _pointRenderer = [self AGSRendererFromJSON:json];
+        } @catch (NSException *exception) {
+            AKRLog(@"Failed to create feature renderer (bad protocol): %@", exception);
+            //Create a simple default
+            AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor greenColor]];
+            [symbol setSize:CGSizeMake(12,12)];
+            _pointRenderer = [AGSSimpleRenderer simpleRendererWithSymbol:symbol];
+        }
+        break;
+        default:
+        AKRLog(@"Unsupported version (%ld) of the NPS-Protocol-Specification", (long)version);
+        break;
+    }
+}
+
+
 
 - (AGSRenderer *)AGSRendererFromJSON:(NSDictionary *)json
 {

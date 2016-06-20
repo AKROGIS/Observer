@@ -1,14 +1,16 @@
 {
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":2,
-	"name":"Test Protocol2",
-	"version":1.0,
-	"date":"2016-04-28",
+	"name":"Test Protocol Version 2",
+	"version":2.0,
+	"date":"2016-06-12",
 	"description":"This survey protocol is for for testing various features of the protocol specification - version 2",
 	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
+	"cancel_on_top": true,
   "mission":{
 		"attributes":[
+			{"name":"Track",      "type":0},
 			{"name":"Transect",   "type":700},
 			{"name":"Vessel",     "type":700},
 			{"name":"Recorder",   "type":700},
@@ -24,6 +26,7 @@
 			"sections":[
 				{
 					"elements":[
+						{"type":"QLabelElement", "key":"t1", "bind":"value:Track", "title":"Track ID"},
 						{"type":"QRadioElement", "key":"t",  "bind":"selectedItem:Transect", "title":"Transect",    "items":["101", "102", "121"]},
 						{"type":"QEntryElement", "key":"v1", "bind":"textValue:Vessel",      "title":"Vessel",      "placeholder":"Name", "autocorrectionType":"No"},
 						{"type":"QEntryElement", "key":"r",  "bind":"textValue:Recorder",    "title":"Recorder",    "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
@@ -145,6 +148,7 @@
     	"name":"Nests",
     	"attributes":[
 				{"name":"nestid",   "type":700},
+				{"name":"tree",     "type":700},
 				{"name":"occupied", "type":800},
 				{"name":"chicks",   "type":100}
  			],
@@ -161,28 +165,81 @@
 					  "elements":[
 						  {"type":"QEntryElement",   "key":"i1", "bind":"textValue:nestid",   "title":"Nest Id", "placeholder":"Unique Id"},
 							{"type":"QBooleanElement", "key":"o1", "bind":"boolValue:occupied", "title":"Occupied"},
-							{"type":"QIntegerElement", "key":"s1", "bind":"numberValue:chicks", "title":"Chick Count"}
+							{"type":"QIntegerElement", "key":"s1", "bind":"numberValue:chicks", "title":"Chick Count"},
+							{"type":"QLabelElement",     "title":"Tree"},
+						  {"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:tree",      "items":["Spruce", "Cottonwood", "Other"]}
 					  ]
 					}
 				]
 			},
+			"label":{
+				"field":"nestid",
+				"color":"#FF0000"
+			},
 			"symbology":{
-        "type": "simple",
-        "symbol": {
+			  "type" : "uniqueValue",
+			  "field1" : "tree",
+			  "defaultSymbol" : {
           "type": "esriSMS",
-          "style": "esriSMSTriangle",
-          "color": [205,97,85,255],
+          "style": "esriSMSSquare",
+					"color": [255,0,0,255],
           "size": 15,
 					"outline": {
-						"color": [40,8,0,255],
+						"color": [0,0,0,255],
 						"width": 2
 					}
-				}
+				},
+			  "defaultLabel" : "Unknown",
+			  "uniqueValueInfos" : [
+			    {
+			      "value" : "Spruce",
+			      "label" : "Spruce",
+			      "symbol" : {
+		          "type": "esriSMS",
+		          "style": "esriSMSCircle",
+							"color": [50,205,50,255],
+		          "size": 15,
+							"outline": {
+								"color": [0,0,0,255],
+								"width": 2
+							}
+						}
+			    },
+			    {
+			      "value" : "Cottonwood",
+			      "label" : "Cottonwood",
+			      "symbol" : {
+		          "type": "esriSMS",
+		          "style": "esriSMSCircle",
+							"color": [100,149,237,255],
+		          "size": 15,
+							"outline": {
+								"color": [0,0,0,255],
+								"width": 2
+							}
+						}
+					},
+					{
+			      "value" : "Other",
+			      "label" : "Other",
+			      "symbol" : {
+		          "type": "esriSMS",
+		          "style": "esriSMSCircle",
+							"color": [255,0,0,255],
+		          "size": 15,
+							"outline": {
+								"color": [0,0,0,255],
+								"width": 2
+							}
+						}
+					}
+			  ]
 			}
 		},
 		{
     	"name":"Cabins",
     	"attributes":[
+				{"name":"id", "type":0},
 				{"name":"name", "type":700},
 				{"name":"roof", "type":800}
  			],
@@ -197,15 +254,42 @@
 				"sections":[
 					{
 					  "elements":[
+							{"type":"QLabelElement",   "key":"id", "bind":"value:id", "title":"ID Number"},
 						  {"type":"QEntryElement",   "key":"n1", "bind":"textValue:name", "title":"Name", "placeholder":"Optional"},
 							{"type":"QBooleanElement", "key":"r1", "bind":"boolValue:roof", "title":"Has A Roof"}
 					  ]
 					}
 				]
 			},
+			"label":{
+				"field":"name",
+				"symbol":{
+					"type": "esriTS",
+		      "color": [78,78,78,255],
+		      "backgroundColor": [0,0,0,0],
+		      "borderLineSize": 2,
+		      "borderLineColor": [255,0,255,255],
+		      "haloSize": 2,
+		      "haloColor": [0,255,0,255],
+		      "verticalAlignment": "bottom",
+		      "horizontalAlignment": "left",
+		      "rightToLeft": false,
+		      "angle": 0,
+		      "xoffset": 0,
+		      "yoffset": 0,
+		      "kerning": true,
+		      "font": {
+		        "family": "Arial",
+		        "size": 12,
+		        "style": "normal",
+		        "weight": "bold",
+		        "decoration": "none"
+		      }
+				}
+			},
 			"symbology":{
         "type": "uniqueValue",
-				"field1": "A_roof",
+				"field1": "roof",
 	      "field2": null,
 	      "field3": null,
 	      "fieldDelimiter" : ", ",

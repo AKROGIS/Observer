@@ -11,5 +11,6 @@
 @interface AttributeViewController : QuickDialogController
 
 @property (nonatomic, strong) NSManagedObject *managedObject;
+@property (nonatomic, strong) AGSGraphic *graphic;
 
 @end
