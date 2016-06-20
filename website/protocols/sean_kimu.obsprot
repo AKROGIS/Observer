@@ -126,13 +126,27 @@
 				},
 			  "defaultLabel" : "Some Pending",
 			  "uniqueValueInfos" : [
-			    {
+					{
 			      "value" : "0",
 			      "label" : "No Pending",
 			      "symbol" : {
 		          "type": "esriSMS",
 		          "style": "esriSMSCircle",
-							"color": [50,205,50,255],
+							"color": [186,85,211,255],
+		          "size": 15,
+							"outline": {
+								"color": [0,0,0,255],
+								"width": 2
+							}
+						}
+			    },
+					{
+			      "value" : "<Null>",
+			      "label" : "No Pending",
+			      "symbol" : {
+		          "type": "esriSMS",
+		          "style": "esriSMSCircle",
+							"color": [186,85,211,255],
 		          "size": 15,
 							"outline": {
 								"color": [0,0,0,255],
