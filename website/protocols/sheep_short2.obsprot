@@ -2,11 +2,13 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":2,
 	"name":"Sheep Transects Short",
-	"version":1.0,
-	"date":"2016-06-06",
+	"version":1.1,
+	"date":"2016-06-20",
 	"description":"This protocol is for sheep surveys in the Alaskan I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
 	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
+	"cancel_on_top": true,
+	"gps_interval": 2,
   "mission":{
 		"attributes":[
 			{"name":"Transect",      "type":700},

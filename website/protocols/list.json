@@ -1,8 +1,8 @@
 [
 {
 	"name":"ARCN Bears",
-	"version":1.0,
-	"date":"2016-06-06",
+	"version":1.1,
+	"date":"2016-06-20",
 	"url":"http://akrgis.nps.gov/observer/protocols/arcn_bears2.obsprot"
 }
 ,
@@ -22,15 +22,15 @@
 ,
 {
 	"name":"Sheep Transects Short",
-	"version":1.0,
-	"date":"2016-06-06",
+	"version":1.1,
+	"date":"2016-06-20",
 	"url":"http://akrgis.nps.gov/observer/protocols/sheep_short2.obsprot"
 }
 ,
 {
 	"name":"Sheep Transects Long",
-	"version":1.0,
-	"date":"2016-06-06",
+	"version":1.1,
+	"date":"2016-06-20",
 	"url":"http://akrgis.nps.gov/observer/protocols/sheep_long2.obsprot"
 }
 ,
@@ -72,7 +72,7 @@
 {
 	"name":"SEAN KIMU Protocol",
 	"version":2.0,
-	"date":"2016-06-19",
+	"date":"2016-06-20",
 	"url":"http://akrgis.nps.gov/observer/protocols/sean_kimu.obsprot"
 }
 ,
@@ -104,8 +104,8 @@
 ,
 {
 	"name":"Test Protocol Version 2",
-	"version":2.0,
-	"date":"2016-06-12",
+	"version":2.1,
+	"date":"2016-06-20",
 	"url":"http://akrgis.nps.gov/observer/protocols/SampleProtocolV2.obsprot"
 }
 ]
