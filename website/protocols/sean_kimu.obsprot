@@ -5,6 +5,7 @@
 	"version":2.0,
 	"date":"2016-06-19",
 	"description":"This survey protocol is for the Kitlitz Murrelet survey program in Glacier Bay NPP.  Contact regan_sarwas@nps.gov (907)-644-3548 for more details.",
+	"gps_interval": 2,
   "mission":{
 		"attributes":[
 			{"name":"Transect",   "type":700},
