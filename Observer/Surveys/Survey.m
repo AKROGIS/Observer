@@ -1161,13 +1161,19 @@
     if (labelSpec == nil) return nil;
     if (labelSpec.field == nil) return nil;
     NSString *field = [NSString stringWithFormat:@"%@%@",kAttributePrefix,labelSpec.field];
-    NSString *labelText = nil;
+   id labelObj = nil;
     @try {
-        labelText = [observation valueForKey:field];
+        labelObj = [observation valueForKey:field];
     } @catch (NSException *exception) {
         AKRLog(@"Failed to create feature label (bad protocol): %@", exception);
     }
-    if (labelText == nil) return nil;
+    if (labelObj == nil) return nil;
+    NSString *labelText;
+    if ([labelObj isKindOfClass:[NSString class]]) {
+        labelText = labelObj;
+    } else {
+        labelText = [NSString stringWithFormat:@"%@", labelObj];
+    }
     AGSTextSymbol *symbol = nil;
     if (labelSpec.hasSymbol) {
         NSMutableDictionary *json = [NSMutableDictionary dictionaryWithDictionary:labelSpec.symbolJSON];
