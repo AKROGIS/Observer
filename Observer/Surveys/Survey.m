@@ -1165,7 +1165,8 @@
     attribs[kTimestampKey] = timestamp;
     for (NSString *obscuredKey in observation.entity.attributesByName){
         NSString *key = [obscuredKey stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
-        attribs[key] = [observation valueForKey:obscuredKey];
+        id value = [observation valueForKey:obscuredKey];
+        attribs[key] = value == nil ? [NSNull null] : value;
     }
     POGraphic *graphic = [[POGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     graphic.label = [self drawLabelObservation:observation];
