@@ -1201,7 +1201,7 @@
     NSString *onTransect = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
     NSString *offTransect = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
     //Draw these layers first and in this order
-    NSArray *lowerLayers = @[kGpsPointEntityName, onTransect, offTransect, kMissionPropertyEntityName, kLabelLayerName];
+    NSArray *lowerLayers = @[onTransect, offTransect, kGpsPointEntityName, kMissionPropertyEntityName, kLabelLayerName];
     for (NSString *name in lowerLayers) {
         [self.mapView addMapLayer:graphicsLayers[name] withName:name];
     }
