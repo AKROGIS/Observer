@@ -329,6 +329,9 @@
 
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
+    //do this as a callback from a method that gets a current good location
+    //if we just woke the GPS up, it might give an old location
+    //create a new gps point at the good location
     if (self.survey.isRecording) {
         TrackLogSegment *tracklog = [self.survey startNewTrackLogSegment];
         [self showTrackLogAttributeEditor:tracklog];
@@ -517,7 +520,7 @@
     //AKRLog(@"locationManager: didUpdateLocations:%@",locations);
     if (self.survey.isRecording) {
         for (CLLocation *location in locations) {
-            [self.survey addGpsPointAtLocation:location];
+            [self.survey maybeAddGpsPointAtLocation:location];
         }
         self.totalizerMessage.text = self.survey.totalizer.message;
     }
@@ -846,6 +849,7 @@
 
 - (CLLocation *)locationOfGPS
 {
+    //FIXME: make sure that this is a current/good location
     return self.locationManager.location;
 }
 
@@ -1310,6 +1314,7 @@
 
 - (void)addFeatureAtGps:(ProtocolFeature *)feature
 {
+    //FIXME: do this as a callback from a method that gets a current/good location
     GpsPoint *gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
     if (!gpsPoint) {
         [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get GPS point for Feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
@@ -1553,6 +1558,7 @@
                     updateLocationButton.title = @"Move to GPS Location";
                     updateLocationButton.onSelected = ^(){
                         //Note: add new gps point, but do not remove the adhoc location as that records the time of the observation
+                        //FIXME: do this as a callback from a method that gets a current/good location
                         observation.gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
                         if (observation.gpsPoint && graphic) {
                             if ([graphic isKindOfClass:[POGraphic class]]) {
@@ -1683,6 +1689,7 @@
         return;
     }
 
+    //FIXME: do this as a callback from a method that gets a current/good location
     GpsPoint *gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
     if (!gpsPoint) {
         [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current location for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];

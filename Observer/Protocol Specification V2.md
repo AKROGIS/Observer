@@ -40,6 +40,11 @@ Each of these properties is define in the following sections. Complete details o
 		-	User defined message to display on screen when track logging but not observing.  The default is nothing.
 	*	cancel_on_top
 		-	Optional boolean property.  `true` will put the `cancel`/`delete` button on the top of the observation attributes form.  The default is false - the button will be on the bottom.
+	* gps_interval
+	  - Optional numeric property.  Specifies the number of seconds to wait between successive GPS points saved for the tracklog.
+		This is helpful when the GPS delivers locations at a very high rate, or if a detailed tracklog is not useful.
+		The default is 0 (zero) - all locations provided by the GPS are put in the tracklog.
+		Regardless of this setting, a user action creates a GPS point at the most recent location available from the device.
 	*	mission
 		-	An objects with the similar properties to the features described below.  For now, refer to that section for details
 		-	The mission describes the attributes and symbology of the mission.
