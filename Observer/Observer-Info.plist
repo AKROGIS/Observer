@@ -89,6 +89,10 @@
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Location services are required to record your observation locations.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UIMainStoryboardFile</key>
