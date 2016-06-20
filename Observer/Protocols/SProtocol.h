@@ -29,6 +29,8 @@
 @property (nonatomic, strong, readonly) NSArray *featuresWithLocateByTouch;  // of ProtocolFeatures
 @property (nonatomic, strong, readonly) ProtocolMissionFeature *missionFeature;
 @property (nonatomic, readonly) BOOL cancelOnTop;
+@property (nonatomic, readonly) NSTimeInterval gpsInterval;
+
 
 // Find a feature's definition
 - (ProtocolFeature *)featureWithName:(NSString *)name;

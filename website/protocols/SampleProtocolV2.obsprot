@@ -8,6 +8,7 @@
 	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
 	"cancel_on_top": true,
+	"gps_interval": 5,
   "mission":{
 		"attributes":[
 			{"name":"Track",      "type":0},
