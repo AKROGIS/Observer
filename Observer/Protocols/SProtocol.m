@@ -276,6 +276,9 @@
     
     id cancel = json[@"cancel_on_top"];
     _cancelOnTop = [cancel isKindOfClass:[NSNumber class]] ? [cancel boolValue] : NO;
+    
+    id wait = json[@"gps_interval"];
+    _gpsInterval = [wait isKindOfClass:[NSNumber class]] ? [wait doubleValue] : 0;
 }
 
 - (NSArray *)buildFeaturelist:(id)json version:(NSInteger) version

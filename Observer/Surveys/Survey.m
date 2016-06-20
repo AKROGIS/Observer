@@ -845,8 +845,28 @@
 
 #pragma mark - GPS Methods
 
+- (void)maybeAddGpsPointAtLocation:(CLLocation *)location
+{
+    //Adds a GPS Point if enough time has passed since last GPS Point
+
+    //Create a point if there is no prior point, or we want all points.
+    if (!self.lastGpsPoint || self.protocol.gpsInterval <= 0) {
+        [self addGpsPointAtLocation:location];
+        return;
+    }
+    
+    NSTimeInterval timeSinceLastLocation = [location.timestamp timeIntervalSinceDate:self.lastGpsPoint.timestamp];
+    if (self.protocol.gpsInterval < timeSinceLastLocation) {
+        [self addGpsPointAtLocation:location];
+    }
+}
+
 - (GpsPoint *)addGpsPointAtLocation:(CLLocation *)location
 {
+    //TODO: many callers (in VC and in Survey) assume location is good.
+    //Should we check here and sleep if necessary to wait for a current GPS point?
+    
+    //Adds a GPS point definitively.
     if ([self isNewLocation:location]) {
         GpsPoint *gpsPoint = [self createGpsPoint:location];
         if (gpsPoint) {
