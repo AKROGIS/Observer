@@ -1,7 +1,7 @@
 {
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":2,
-	"name":"Test Protocol2",
+	"name":"Test Protocol Version 2",
 	"version":2.0,
 	"date":"2016-06-12",
 	"description":"This survey protocol is for for testing various features of the protocol specification - version 2",

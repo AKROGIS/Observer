@@ -71,8 +71,8 @@
 ,
 {
 	"name":"SEAN KIMU Protocol",
-	"version":1.2,
-	"date":"2015-06-15",
+	"version":2.0,
+	"date":"2016-06-19",
 	"url":"http://akrgis.nps.gov/observer/protocols/sean_kimu.obsprot"
 }
 ,
@@ -104,8 +104,8 @@
 ,
 {
 	"name":"Test Protocol Version 2",
-	"version":1.0,
-	"date":"2016-04-28",
+	"version":2.0,
+	"date":"2016-06-12",
 	"url":"http://akrgis.nps.gov/observer/protocols/SampleProtocolV2.obsprot"
 }
 ]
