@@ -2,8 +2,8 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":2,
 	"name":"Sheep Transects Short",
-	"version":1.1,
-	"date":"2016-06-20",
+	"version":1.2,
+	"date":"2016-06-21",
 	"description":"This protocol is for sheep surveys in the Alaskan I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
 	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
@@ -100,8 +100,9 @@
 	},
 	"features":[
 		{
-    		"name":"Sheep",
-    		"attributes":[
+    	"name":"Sheep",
+    	"attributes":[
+				{"name":"id", "type":0},
 				{"name":"CountEwelike",   "type":100},
 				{"name":"CountLambs",     "type":100},
 				{"name":"CountRams099",   "type":100},
@@ -123,7 +124,8 @@
 				"grouped":true,
 				"sections":[
 					{
-					    "elements":[
+					  "elements":[
+							{"type":"QLabelElement",   "key":"id", "bind":"value:id", "title":"ID Number"},
 							{"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountEwelike",   "title":"Ewe-like"},
 							{"type":"QIntegerElement",   "key":"e4", "bind":"numberValue:CountLambs",     "title":"Lambs"},
 							{"type":"QIntegerElement",   "key":"r5", "bind":"numberValue:CountRams099",   "title":"< Full Curl"},
@@ -134,9 +136,14 @@
 							{"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",     "items":["Stationary", "Walking", "Running"]},
 							{"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",         "title":"Waypoint",       "placeholder":"ID", "autocorrectionType":"No"},
 							{"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",            "title":"Comments"}
-					    ]
+					  ]
 					}
 				]
+			},
+			"label":{
+				"field":"id",
+				"size":17,
+				"color":"#FFD700"
 			},
 			"symbology":{
         "type": "simple",
