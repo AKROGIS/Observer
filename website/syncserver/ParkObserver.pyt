@@ -421,6 +421,7 @@ def build_database_version1(protocol, folder, database):
 def get_attributes(feature, domains=None, aliases=None):
     attribute_list = []
     type_table = {
+          0: "LONG",
         100: "SHORT",
         200: "LONG",
         300: "DOUBLE",  # 64bit int (not supported by ESRI)
