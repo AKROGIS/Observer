@@ -2,8 +2,8 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":2,
 	"name":"ARCN Bears",
-	"version":1.1,
-	"date":"2016-06-20",
+	"version":1.2,
+	"date":"2016-06-22",
 	"description":"This protocol is for bear surveys in the Arctic Alaska I&M Network.  Contact kumi_rattenbury@nps.gov for more details.",
 	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
@@ -154,6 +154,11 @@
 					    ]
 					}
 				]
+			},
+			"label":{
+				"field":"Waypoint",
+				"size":17,
+				"color":"#FFD700"
 			},
 			"symbology":{
         "type": "simple",

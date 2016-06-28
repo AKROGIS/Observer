@@ -2,8 +2,8 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":2,
 	"name":"Sheep Transects Long",
-	"version":1.1,
-	"date":"2016-06-20",
+	"version":2.0,
+	"date":"2016-06-22",
 	"description":"This protocol is for sheep (and bear) surveys in the Alaska I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
 	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
@@ -113,6 +113,7 @@
 				{"name":"CountRams050",   "type":100},
 				{"name":"CountRams075",   "type":100},
 				{"name":"CountRamsFull",  "type":100},
+				{"name":"Waypoint",       "type":700},
 				{"name":"Activity",       "type":700}
  			],
 			"locations":[
@@ -138,11 +139,17 @@
 							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountRams050",   "title":"Rams 1/2 Curl"},
 							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountRams075",   "title":"Rams 3/4 Curl"},
 							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountRamsFull",  "title":"Rams Full Curl"},
+							{"type":"QEntryElement",     "key":"w", "bind":"textValue:Waypoint",         "title":"Waypoint",              "placeholder":"ID", "autocorrectionType":"No"},
 							{"type":"QLabelElement",     "title":"Activity"},
 							{"type":"QSegmentedElement", "key":"a", "bind":"selectedItem:Activity",      "items":["Standing", "Feeding", "Bedded", "Running", "Walking"]}
 						]
 					}
 				]
+			},
+			"label":{
+				"field":"Waypoint",
+				"size":17,
+				"color":"#FFD700"
 			},
 			"symbology":{
         "type": "simple",
@@ -164,6 +171,7 @@
 				{"name":"Species",     "type":700},
 				{"name":"Count",       "type":100},
 				{"name":"Composition", "type":700},
+				{"name":"Waypoint2",      "type":700},
 				{"name":"Activity2",    "type":700}
  			],
 			"locations":[
@@ -187,11 +195,17 @@
 																																"Female with cubs",
 																																"Female with yearlings",
 																																"Female with juveniles"]},
+							{"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint2",        "title":"Waypoint",              "placeholder":"ID", "autocorrectionType":"No"},
 							{"type":"QLabelElement",     "title":"Activity"},
 							{"type":"QSegmentedElement", "key":"a", "bind":"selectedItem:Activity2",    "items":["Running", "Walking", "Stationary"]}
 					    ]
 					}
 				]
+			},
+			"label":{
+				"field":"Waypoint",
+				"size":17,
+				"color":"#FFD700"
 			},
 			"symbology":{
         "type": "simple",
