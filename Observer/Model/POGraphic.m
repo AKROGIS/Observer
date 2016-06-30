@@ -10,4 +10,16 @@
 
 @implementation POGraphic
 
+- (AGSGraphic *)redraw:(Observation *)observation survey:(Survey *)survey
+{
+    [self remove];
+    return [survey drawObservation:observation];
+}
+
+- (void)remove
+{
+    [[self layer] removeGraphic:self];
+    [[self.label layer] removeGraphic:self.label];
+}
+
 @end

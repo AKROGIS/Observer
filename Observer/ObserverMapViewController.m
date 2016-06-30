@@ -716,10 +716,7 @@
     //Move Adhoc location
     [self.survey updateAdhocLocation:self.movingObservation.adhocLocation withMapPoint:mapPoint];
     if ([self.movingGraphic isKindOfClass:[POGraphic class]]) {
-        POGraphic *graphic = (POGraphic *)self.movingGraphic;
-        [[graphic.label layer] removeGraphic:graphic.label];
-        [[graphic layer] removeGraphic:graphic];
-        [self.survey drawObservation:self.movingObservation];
+        [(POGraphic *)self.movingGraphic redraw:self.movingObservation survey:self.survey];
     }
 
     //Move GPS location
@@ -1560,13 +1557,15 @@
                         //Note: add new gps point, but do not remove the adhoc location as that records the time of the observation
                         //FIXME: do this as a callback from a method that gets a current/good location
                         observation.gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
-                        if (observation.gpsPoint && graphic) {
-                            if ([graphic isKindOfClass:[POGraphic class]]) {
-                                POGraphic *pographic = (POGraphic *)self.movingGraphic;
-                                [[pographic layer] removeGraphic:pographic];
-                                [[pographic.label layer] removeGraphic:pographic.label];
-                                [self.survey drawObservation:observation];
-                            }
+                        //TODO: If we can't get a location, throw an error
+                        // "Move" the observation; put the new graphic in the dialog for other attribute changes
+                        // all graphics for observations should be a POGraphic; do nothing if something went wrong
+                        if ([graphic isKindOfClass:[POGraphic class]]) {
+                            AGSGraphic *newGraphic = [(POGraphic *)graphic redraw:observation survey:self.survey];
+                            UINavigationController *nav = (UINavigationController *)[self.editAttributePopoverController contentViewController];
+                            AttributeViewController *dialog = (AttributeViewController *)[nav topViewController];
+                            dialog.graphic = newGraphic;
+                            // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
                         }
                     };
                     [[root.sections lastObject] addElement:updateLocationButton];
@@ -1590,10 +1589,10 @@
             deleteButton.appearance.actionColorEnabled = self.view.tintColor;
         }
         deleteButton.onSelected = ^(){
-            [[self.survey graphicsLayerForFeature:feature] removeGraphic:graphic];
             if ([graphic isKindOfClass:[POGraphic class]]) {
-                POGraphic *pographic = (POGraphic *)graphic;
-                [[pographic.label layer] removeGraphic:pographic.label];
+                [(POGraphic *)graphic remove];
+            } else {
+                [graphic.layer removeGraphic:graphic];
             }
             [self.survey deleteEntity:entity];
             [self.editAttributePopoverController dismissPopoverAnimated:YES];
@@ -1655,12 +1654,10 @@
     }
     //For observations, redraw the graphic and label with the new attributes
     if ([dialog.managedObject isKindOfClass:[Observation class]]) {
-        [[dialog.graphic layer] removeGraphic:dialog.graphic];
+        // all graphics for observations should be a POGraphic; do nothing if something went wrong
         if ([dialog.graphic isKindOfClass:[POGraphic class]]) {
-            POGraphic *graphic = (POGraphic *)dialog.graphic;
-            [[graphic.label layer] removeGraphic:graphic.label];
+            [(POGraphic *)dialog.graphic redraw:(Observation *)dialog.managedObject survey:self.survey];
         }
-        [self.survey drawObservation:(Observation *)dialog.managedObject];
     }
     //For Mission properties currently do nothing (no labels or attribute based symbology supported)
 
@@ -1749,8 +1746,17 @@
         self.angleDistancePopoverController = nil;
         Observation *observation = [self.survey observationFromEntity:entity];
         [self.survey updateAngleDistanceObservation:observation withAngleDistance:controller.location];
-        [[graphic layer] removeGraphic:graphic];
-        [self.survey drawObservation:observation];
+        // "Move" the observation; put the new graphic in the dialog for other attribute changes
+        // all graphics for observations should be a POGraphic; do nothing if something went wrong
+        if ([graphic isKindOfClass:[POGraphic class]]) {
+            AGSGraphic *newGraphic = [(POGraphic *)graphic redraw:observation survey:self.survey];
+            AttributeViewController *dialog = (AttributeViewController *)[nav.viewControllers objectAtIndex:0];
+            dialog.graphic = newGraphic;
+            // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
+            //AGSPoint *toPoint = (AGSPoint *)newGraphic.geometry;
+            //[self.editAttributePopoverController presentPopoverFromMapPoint:toPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+            //self.popoverMapPoint = toPoint;
+        }
         [nav popViewControllerAnimated:YES];
     };
     vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
