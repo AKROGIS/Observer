@@ -552,23 +552,27 @@ def build_relationships(fgdb, protocol):
     gps_points_table = os.path.join(fgdb, protocol['csv']['gps_points']['name'])
     track_logs_table = os.path.join(fgdb, protocol['csv']['track_logs']['name'])
     observations_table = os.path.join(fgdb, "Observations")
-    arcpy.CreateRelationshipClass_management(track_logs_table, gps_points_table, "GpsPoints_to_TrackLog",
-                                             "COMPOSITE", "GpsPoints", "TrackLog", "NONE", "ONE_TO_MANY", "NONE",
-                                             "OBJECTID", "TrackLog_ID")
+    arcpy.CreateRelationshipClass_management(track_logs_table, gps_points_table,
+                                             os.path.join(fgdb, "GpsPoints_to_TrackLog"),
+                                             "COMPOSITE", "GpsPoints", "TrackLog",
+                                             "NONE", "ONE_TO_MANY", "NONE", "OBJECTID", "TrackLog_ID")
 
     arcpy.CreateRelationshipClass_management(gps_points_table, observations_table,
-                                             "Observations_to_GpsPoint", "SIMPLE", "Observations", "GpsPoints",
+                                             os.path.join(fgdb, "Observations_to_GpsPoint"),
+                                             "SIMPLE", "Observations", "GpsPoints",
                                              "NONE", "ONE_TO_ONE", "NONE", "OBJECTID", "GpsPoint_ID")
 
     for feature_obj in protocol['features']:
         feature = feature_obj["name"]
-        arcpy.CreateRelationshipClass_management(gps_points_table, os.path.join(fgdb, feature),
-                                                 "{0}_to_GpsPoint".format(feature), "SIMPLE", feature, "GpsPoint",
+        feature_table = os.path.join(fgdb, feature)
+        arcpy.CreateRelationshipClass_management(gps_points_table, feature_table,
+                                                 os.path.join(fgdb, "{0}_to_GpsPoint".format(feature)),
+                                                 "SIMPLE", feature, "GpsPoint",
                                                  "NONE", "ONE_TO_ONE", "NONE", "OBJECTID", "GpsPoint_ID")
-        arcpy.CreateRelationshipClass_management(observations_table, os.path.join(fgdb, feature),
-                                                 "{0}_to_Observation".format(feature), "SIMPLE", feature,
-                                                 "Observation", "NONE", "ONE_TO_ONE", "NONE", "OBJECTID",
-                                                 "Observation_ID")
+        arcpy.CreateRelationshipClass_management(observations_table, feature_table,
+                                                 os.path.join(fgdb, "{0}_to_Observation".format(feature)),
+                                                 "SIMPLE", feature, "Observation",
+                                                 "NONE", "ONE_TO_ONE", "NONE", "OBJECTID", "Observation_ID")
 
 
 def build_domains(fgdb, domains):
