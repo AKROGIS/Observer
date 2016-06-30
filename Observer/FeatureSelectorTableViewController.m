@@ -69,7 +69,9 @@
     id<AGSFeature> graphic = (id<AGSFeature>)graphics[indexPath.urow];
     NSString *layerName = self.layerNames[indexPath.usection];
     ProtocolFeature *feature = [self.protocol featureWithName:layerName];
-    if (feature.hasUniqueId) {
+    if (feature.labelSpec && feature.labelSpec.field) {
+        cell.textLabel.text = [NSString stringWithFormat:@"%@", [graphic safeAttributeForKey:feature.labelSpec.field]];
+    } else if (feature.hasUniqueId) {
         NSString *cleanName = [feature.uniqueIdName stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
         cell.textLabel.text = [NSString stringWithFormat:@"%@", [graphic safeAttributeForKey:cleanName]];
     } else {
