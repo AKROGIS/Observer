@@ -14,6 +14,7 @@
 #import "NSURL+isEqualToURL.h"
 #import "NSDate+Formatting.h"
 #import "ObserverModel.h"
+#import "POGraphic.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -600,6 +601,10 @@
             graphicsLayers[feature.name] = graphicsLayer;
         }
 
+        //Observation labels (all labels on only one layer, individually rendered)
+        graphicsLayer = [[AGSGraphicsLayer alloc] init];
+        graphicsLayers[kLabelLayerName] = graphicsLayer;
+
         //Mission Properties
         ProtocolMissionFeature *missionFeature = self.protocol.missionFeature;
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
@@ -646,6 +651,7 @@
 - (BOOL)isSelectableLayerName:(NSString *)layerName
 {
     for (NSString *badName in @[kGpsPointEntityName,
+                                kLabelLayerName,
                                 [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn],
                                 [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff]]) {
         if ([layerName isEqualToString:badName]) {
@@ -839,8 +845,28 @@
 
 #pragma mark - GPS Methods
 
+- (void)maybeAddGpsPointAtLocation:(CLLocation *)location
+{
+    //Adds a GPS Point if enough time has passed since last GPS Point
+
+    //Create a point if there is no prior point, or we want all points.
+    if (!self.lastGpsPoint || self.protocol.gpsInterval <= 0) {
+        [self addGpsPointAtLocation:location];
+        return;
+    }
+    
+    NSTimeInterval timeSinceLastLocation = [location.timestamp timeIntervalSinceDate:self.lastGpsPoint.timestamp];
+    if (self.protocol.gpsInterval < timeSinceLastLocation) {
+        [self addGpsPointAtLocation:location];
+    }
+}
+
 - (GpsPoint *)addGpsPointAtLocation:(CLLocation *)location
 {
+    //TODO: many callers (in VC and in Survey) assume location is good.
+    //Should we check here and sleep if necessary to wait for a current GPS point?
+    
+    //Adds a GPS point definitively.
     if ([self isNewLocation:location]) {
         GpsPoint *gpsPoint = [self createGpsPoint:location];
         if (gpsPoint) {
@@ -1082,12 +1108,19 @@
     NSAssert(missionProperty, @"Could not create a Mission Property in Core Data Context %@", self.document.managedObjectContext);
     missionProperty.mission = self.currentMission;
     missionProperty.observing = self.isObserving;
+    ProtocolFeature *feature = self.protocol.missionFeature;
+    if (feature.hasUniqueId)
+    {
+        [missionProperty setValue:feature.nextUniqueId forKey:feature.uniqueIdName];
+    }
     return missionProperty;
 }
 
 - (void) copyAttributesForFeature:(ProtocolFeature *)feature fromEntity:(NSManagedObject *)fromEntity toEntity:(NSManagedObject *)toEntity
 {
     for (NSAttributeDescription *attribute in feature.attributes) {
+        //do not replace the entity value of unique ID with the template value
+        if (attribute.name == feature.uniqueIdName) continue;
         id value = [fromEntity valueForKey:attribute.name];
         if (value) {
             [toEntity setValue:value forKey:attribute.name];
@@ -1128,9 +1161,62 @@
     NSAssert(timestamp, @"An observation has no timestamp: %@", observation);
     if (!timestamp) return nil; //AKRLog(@"##ERROR## - A observation has no timestamp %@",observation);
     AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
-    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
+    NSMutableDictionary *attribs = [NSMutableDictionary new];
+    attribs[kTimestampKey] = timestamp;
+    for (NSString *obscuredKey in observation.entity.attributesByName){
+        NSString *key = [obscuredKey stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
+        id value = [observation valueForKey:obscuredKey];
+        attribs[key] = value == nil ? [NSNull null] : value;
+    }
+    POGraphic *graphic = [[POGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
+    graphic.label = [self drawLabelObservation:observation];
     [[self graphicsLayerForObservation:observation] addGraphic:graphic];
+    return graphic;
+}
+
+- (AGSGraphic *)drawLabelObservation:(Observation *)observation
+{
+    NSString *entityName = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
+    ProtocolFeature *feature = [self.protocol featureWithName:entityName];
+    ProtocolFeatureLabel *labelSpec = feature.labelSpec;
+    if (labelSpec == nil) return nil;
+    if (labelSpec.field == nil) return nil;
+    NSString *field = [NSString stringWithFormat:@"%@%@",kAttributePrefix,labelSpec.field];
+   id labelObj = nil;
+    @try {
+        labelObj = [observation valueForKey:field];
+    } @catch (NSException *exception) {
+        AKRLog(@"Failed to create feature label (bad protocol): %@", exception);
+    }
+    if (labelObj == nil) return nil;
+    NSString *labelText;
+    if ([labelObj isKindOfClass:[NSString class]]) {
+        labelText = labelObj;
+    } else {
+        labelText = [NSString stringWithFormat:@"%@", labelObj];
+    }
+    AGSTextSymbol *symbol = nil;
+    if (labelSpec.hasSymbol) {
+        NSMutableDictionary *json = [NSMutableDictionary dictionaryWithDictionary:labelSpec.symbolJSON];
+        json[@"text"] = labelText;
+        @try {
+            symbol = [[AGSTextSymbol alloc] initWithJSON:json];
+        } @catch (NSException *exception) {
+            AKRLog(@"Failed to create feature label (bad protocol): %@", exception);
+        }
+    }
+    if (symbol == nil) {
+         symbol = [AGSTextSymbol textSymbolWithText:labelText color:labelSpec.color];
+        symbol.fontSize = [labelSpec.size floatValue];
+        // make lable anchor at lower left with offset for 15pt round marker; Doing more would require a rendering engine
+        symbol.vAlignment = AGSTextSymbolVAlignmentBottom;
+        symbol.hAlignment = AGSTextSymbolHAlignmentLeft;
+        symbol.offset = CGPointMake(6,1);
+    }
+    AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:symbol attributes:nil];
+    AGSGraphicsLayer *layer = (AGSGraphicsLayer *)self.graphicsLayersByName[kLabelLayerName];
+    [layer addGraphic:graphic];
     return graphic;
 }
 
@@ -1168,6 +1254,10 @@
                                                              inManagedObjectContext:self.document.managedObjectContext];
     NSAssert(observation, @"Could not create an Observation in Core Data Context %@", self.document.managedObjectContext);
     observation.mission = self.currentMission;
+    if (feature.hasUniqueId)
+    {
+        [observation setValue:feature.nextUniqueId forKey:feature.uniqueIdName];
+    }
     return observation;
 }
 
@@ -1252,10 +1342,44 @@
         }
     }
 
+    //Initialize the nextUniqueID for each feature (observations and mission properties)
+    for (ProtocolFeature *feature in self.protocol.features) {
+        if (feature.hasUniqueId) {
+            //NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,feature.uniqueIdName];
+            NSString *obscuredName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,feature.name];
+            NSNumber *maxId = [self maxIntFromContext:self.document.managedObjectContext entityName:obscuredName attributeName:feature.uniqueIdName];
+            [feature initUniqueId:maxId];
+        }
+    }
+    ProtocolFeature *feature = self.protocol.missionFeature;
+    if (feature.hasUniqueId) {
+        //NSString *obscuredKey = [NSString stringWithFormat:@"%@%@",kAttributePrefix,feature.uniqueIdName];
+        NSString *obscuredName = kMissionPropertyEntityName;
+        NSNumber *maxId = [self maxIntFromContext:self.document.managedObjectContext entityName:obscuredName attributeName:feature.uniqueIdName];
+        [feature initUniqueId:maxId];
+    }
+
     AKRLog(@"  Done loading graphics");
 }
 
-
+- (NSNumber *)maxIntFromContext:(NSManagedObjectContext *)context entityName:(NSString *)entity attributeName:(NSString *)attribute
+{
+    NSExpression *keyExpression = [NSExpression expressionForKeyPath:attribute];
+    NSExpression *maxExpression = [NSExpression expressionForFunction:@"max:" arguments:@[keyExpression]];
+    NSExpressionDescription *description = [NSExpressionDescription new];
+    description.name = @"maxID";
+    description.expression = maxExpression;
+    description.expressionResultType = NSInteger32AttributeType;
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entity];
+    request.resultType = NSDictionaryResultType;
+    request.propertiesToFetch = @[description];
+    NSArray *results = [self.document.managedObjectContext  executeFetchRequest:request error:nil];
+    if (results != nil && results.count > 0){
+        NSNumber *maxID = [[results objectAtIndex:0] valueForKey:@"maxID"];
+        return maxID;
+    }
+    return nil;
+}
 
 
 #pragma mark - Private Drawing Methods
@@ -1269,6 +1393,7 @@
     [[self graphicsLayerForGpsPoints] addGraphic:graphic];
 }
 
+//TODO: add attributes and label like drawObservation to support symbology and labels
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
 {
     NSDate *timestamp = [missionProperty timestamp];

@@ -38,6 +38,13 @@ Each of these properties is define in the following sections. Complete details o
 		-	User defined message to display on screen when observing. The default is nothing.
 	*	notobserving
 		-	User defined message to display on screen when track logging but not observing.  The default is nothing.
+	*	cancel_on_top
+		-	Optional boolean property.  `true` will put the `cancel`/`delete` button on the top of the observation attributes form.  The default is false - the button will be on the bottom.
+	* gps_interval
+	  - Optional numeric property.  Specifies the number of seconds to wait between successive GPS points saved for the tracklog.
+		This is helpful when the GPS delivers locations at a very high rate, or if a detailed tracklog is not useful.
+		The default is 0 (zero) - all locations provided by the GPS are put in the tracklog.
+		Regardless of this setting, a user action creates a GPS point at the most recent location available from the device.
 	*	mission
 		-	An objects with the similar properties to the features described below.  For now, refer to that section for details
 		-	The mission describes the attributes and symbology of the mission.
@@ -137,6 +144,24 @@ Each of these properties is define in the following sections. Complete details o
 		-	The symbology may have an optional "size" element
 		-	The size is an integer number for the size in points of the simple circle marker symbol
 		-	The default is 12 if not provided.
+    -	`label`
+			-	an optional object that defines how the feature will be labeled on the map
+			- The label should have a `field` element
+			 	- where `field` is a string which references one of the attributes for this feature
+				- If the `field` is not provided, or can't be found in the feature attributes, no label is shown
+			-	The label may have an optional `color` element
+				-	The color element is a string in the form `#FFFFFF`
+				-	where F is a hexadecimal digit
+				-	The Hex pairs represent the Red, Green, and Blue respectively.
+				-	The default if not provided, or malformed is "#FFFFFF" (white)
+			-	The label may have an optional `size` element
+				-	The `size` is an integer number for the size in points of the label
+				-	The default is 14 if not provided.
+			- The `label` may have an optional `symbol` element
+				- `symbol` is a JSON object as described in the Text Symbol section of the ArcGIS ReST API (http://resources.arcgis.com/en/help/arcgis-rest-api/#/Symbol_Objects/02r3000000n5000000/)
+				- if the JSON object is malformed or unrecognized, then it is ignored
+				- if the symbol is valid, then `size` and `color` elements of `label` are ignored in deference to the values in `symbol`.  
+
 Notes on Version 2
 
 Added gps-symbology under mission

@@ -9,6 +9,7 @@
 #import "TrackLogSegment.h"
 #import "ObserverModel.h"
 #import "AKRFormatter.h"
+#import "NSString+csvEscape.h"
 
 @interface TrackLogSegment ()
 
@@ -35,6 +36,9 @@
     //get the variable attributes based on the feature type
     for (NSAttributeDescription *attribute in protocol.missionFeature.attributes) {
         id value = [self.missionProperty valueForKey:attribute.name];
+        if ([value isKindOfClass:[NSString class]]) {
+            value = [((NSString *)value) csvEscape];
+        }
         [csv appendFormat:@"%@,",(value ? value : @"")];
     }
 

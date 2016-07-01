@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
+#import "ObserverModel.h"
 #import "FeatureSelectorTableViewController.h"
 #import "NSIndexPath+unsignedAccessors.h"
 #import "NSDate+Formatting.h"
@@ -66,19 +67,28 @@
     
     NSArray *graphics = (NSArray *)self.graphics[indexPath.usection];
     id<AGSFeature> graphic = (id<AGSFeature>)graphics[indexPath.urow];
-    id item = [graphic safeAttributeForKey:@"timestamp"];
-    NSDate *timestamp = nil;
-    if ([item isKindOfClass:[NSDate class]]) {
-        timestamp = (NSDate *)item;
-    }
-    if (timestamp) {
-        if ([timestamp isToday]) {
-            cell.textLabel.text = [timestamp stringWithMediumTimeFormat];
-        } else {
-            cell.textLabel.text = [timestamp stringWithMediumDateTimeFormat];
-        }
+    NSString *layerName = self.layerNames[indexPath.usection];
+    ProtocolFeature *feature = [self.protocol featureWithName:layerName];
+    if (feature.labelSpec && feature.labelSpec.field) {
+        cell.textLabel.text = [NSString stringWithFormat:@"%@", [graphic safeAttributeForKey:feature.labelSpec.field]];
+    } else if (feature.hasUniqueId) {
+        NSString *cleanName = [feature.uniqueIdName stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
+        cell.textLabel.text = [NSString stringWithFormat:@"%@", [graphic safeAttributeForKey:cleanName]];
     } else {
-        cell.textLabel.text = @"Unknown timestamp";
+        id item = [graphic safeAttributeForKey:@"timestamp"];
+        NSDate *timestamp = nil;
+        if ([item isKindOfClass:[NSDate class]]) {
+            timestamp = (NSDate *)item;
+        }
+        if (timestamp) {
+            if ([timestamp isToday]) {
+                cell.textLabel.text = [timestamp stringWithMediumTimeFormat];
+            } else {
+                cell.textLabel.text = [timestamp stringWithMediumDateTimeFormat];
+            }
+        } else {
+            cell.textLabel.text = @"Unknown timestamp";
+        }
     }
     return cell;
 }

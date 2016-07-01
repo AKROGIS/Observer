@@ -3,6 +3,7 @@ import os
 import glob
 import DatabaseCreator
 import dateutil.parser
+import csv
 
 # MACROS: Key indexes for GPS data in CSV data (T=Timestamp, X=Longitude, Y=Latitude)
 T, X, Y = 0, 1, 2
@@ -69,8 +70,8 @@ def process_tracklog_file_v1(point_file, track_file, protocol, database_path):
 # Need a schema lock to drop/create the index
 #    arcpy.RemoveSpatialIndex_management(table)
     with arcpy.da.InsertCursor(table, columns) as cursor:
-        for line in track_file:
-            items = line.split(',')
+        for line in csv.reader(track_file):
+            items = line  # line is a list of utf8 enocde strings (bytes)
             protocol_items, other_items = items[:mission_fields_count], items[mission_fields_count:]
             start_time, end_time = other_items[s_key[T]], other_items[e_key[T]]
             track, last_point = build_track_geometry(point_file, last_point, start_time, end_time, gps_keys)
@@ -159,8 +160,8 @@ def process_feature_file_v1(feature_f, protocol, gps_points_list, feature_name, 
 #    arcpy.RemoveSpatialIndex_management(observation_table)
     with arcpy.da.InsertCursor(feature_table, feature_columns) as feature_cursor, \
             arcpy.da.InsertCursor(observation_table, observation_columns) as observation_cursor:
-        for line in feature_f:
-            items = line.split(',')
+        for line in csv.reader(feature_f):
+            items = line  # line is a list of utf8 enocde strings (bytes)
             protocol_items, other_items = items[:feature_fields_count], items[feature_fields_count:]
             feature_items = filter_items_by_index(other_items, feature_field_map)
             observe_items = filter_items_by_index(other_items, observation_field_map)
