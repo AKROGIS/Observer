@@ -61,6 +61,7 @@ def build_database_version1(protocol, folder, database):
 def get_attributes(feature, domains=None, aliases=None):
     attribute_list = []
     type_table = {
+          0: "LONG",
         100: "SHORT",
         200: "LONG",
         300: "DOUBLE",  # 64bit int (not supported by ESRI)
@@ -191,23 +192,27 @@ def build_relationships(fgdb, protocol):
     gps_points_table = os.path.join(fgdb, protocol['csv']['gps_points']['name'])
     track_logs_table = os.path.join(fgdb, protocol['csv']['track_logs']['name'])
     observations_table = os.path.join(fgdb, "Observations")
-    arcpy.CreateRelationshipClass_management(track_logs_table, gps_points_table, "GpsPoints_to_TrackLog",
-                                             "COMPOSITE", "GpsPoints", "TrackLog", "NONE", "ONE_TO_MANY", "NONE",
-                                             "OBJECTID", "TrackLog_ID")
+    arcpy.CreateRelationshipClass_management(track_logs_table, gps_points_table,
+                                             os.path.join(fgdb, "GpsPoints_to_TrackLog"),
+                                             "COMPOSITE", "GpsPoints", "TrackLog",
+                                             "NONE", "ONE_TO_MANY", "NONE", "OBJECTID", "TrackLog_ID")
 
     arcpy.CreateRelationshipClass_management(gps_points_table, observations_table,
-                                             "Observations_to_GpsPoint", "SIMPLE", "Observations", "GpsPoints",
+                                             os.path.join(fgdb, "Observations_to_GpsPoint"),
+                                             "SIMPLE", "Observations", "GpsPoints",
                                              "NONE", "ONE_TO_ONE", "NONE", "OBJECTID", "GpsPoint_ID")
 
     for feature_obj in protocol['features']:
         feature = feature_obj["name"]
-        arcpy.CreateRelationshipClass_management(gps_points_table, os.path.join(fgdb, feature),
-                                                 "{0}_to_GpsPoint".format(feature), "SIMPLE", feature, "GpsPoint",
+        feature_table = os.path.join(fgdb, feature)
+        arcpy.CreateRelationshipClass_management(gps_points_table, feature_table,
+                                                 os.path.join(fgdb, "{0}_to_GpsPoint".format(feature)),
+                                                 "SIMPLE", feature, "GpsPoint",
                                                  "NONE", "ONE_TO_ONE", "NONE", "OBJECTID", "GpsPoint_ID")
-        arcpy.CreateRelationshipClass_management(observations_table, os.path.join(fgdb, feature),
-                                                 "{0}_to_Observation".format(feature), "SIMPLE", feature,
-                                                 "Observation", "NONE", "ONE_TO_ONE", "NONE", "OBJECTID",
-                                                 "Observation_ID")
+        arcpy.CreateRelationshipClass_management(observations_table, feature_table,
+                                                 os.path.join(fgdb, "{0}_to_Observation".format(feature)),
+                                                 "SIMPLE", feature, "Observation",
+                                                 "NONE", "ONE_TO_ONE", "NONE", "OBJECTID", "Observation_ID")
 
 
 def build_domains(fgdb, domains):
@@ -236,13 +241,22 @@ def get_aliases_from_protocol_v1(protocol):
                 section_title = section['title']
             except KeyError:
                 section_title = None
+            field_title = None
             for field in section['elements']:
-                field_name = field['bind'].split(':')[1]
-                if section_title:
-                    field_alias = '{0} {1}'.format(section_title, field['title'])
-                else:
-                    field_alias = field['title']
-                feature_results[field_name] = field_alias
+                try:
+                    field_title = field['title']
+                except KeyError:
+                    pass
+                try:
+                    field_name = field['bind'].split(':')[1]
+                except (KeyError, IndexError, AttributeError) as e:
+                    field_name = None
+                if field_name and field_title:
+                    if section_title:
+                        field_alias = '{0} {1}'.format(section_title, field_title)
+                    else:
+                        field_alias = field_title
+                    feature_results[field_name] = field_alias
         results[feature_name] = feature_results
     return results
 
@@ -253,7 +267,7 @@ def get_domains_from_protocol_v1(protocol):
     for section in protocol['mission']['dialog']['sections']:
         for field in section['elements']:
             if field['type'] == 'QRadioElement' and field['bind'].startswith('selected:'):
-                name = field['bind'].replace('selected:', '')
+                name = field['bind'].replace('selected:', '').strip()
                 if name in mission_attribute_names:
                     results[name] = field['items']
     for feature in protocol['features']:
@@ -261,7 +275,7 @@ def get_domains_from_protocol_v1(protocol):
         for section in feature['dialog']['sections']:
             for field in section['elements']:
                 if field['type'] == 'QRadioElement' and field['bind'].startswith('selected:'):
-                    name = field['bind'].replace('selected:', '')
+                    name = field['bind'].replace('selected:', '').strip()
                     if name in attribute_names:
                         results[name] = field['items']
     return results

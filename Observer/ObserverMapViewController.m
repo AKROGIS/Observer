@@ -32,6 +32,7 @@
 #import "FeatureSelectorTableViewController.h"
 #import "UIPopoverController+Presenting.h"
 #import "GpsPointTableViewController.h"
+#import "POGraphic.h"
 
 //Views
 #import "AutoPanButton.h"
@@ -328,6 +329,9 @@
 
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
+    //do this as a callback from a method that gets a current good location
+    //if we just woke the GPS up, it might give an old location
+    //create a new gps point at the good location
     if (self.survey.isRecording) {
         TrackLogSegment *tracklog = [self.survey startNewTrackLogSegment];
         [self showTrackLogAttributeEditor:tracklog];
@@ -516,7 +520,7 @@
     //AKRLog(@"locationManager: didUpdateLocations:%@",locations);
     if (self.survey.isRecording) {
         for (CLLocation *location in locations) {
-            [self.survey addGpsPointAtLocation:location];
+            [self.survey maybeAddGpsPointAtLocation:location];
         }
         self.totalizerMessage.text = self.survey.totalizer.message;
     }
@@ -699,6 +703,9 @@
     //TODO: If the moving feature is based on a GPS point, then snap to the closest GPS point
     if (self.movingGraphic) {
         [self.movingGraphic setGeometry:mapPoint];
+        if ([self.movingGraphic isKindOfClass:[POGraphic class]]) {
+            [((POGraphic *)self.movingGraphic).label setGeometry:mapPoint];
+        }
     }
 }
 
@@ -708,10 +715,8 @@
 
     //Move Adhoc location
     [self.survey updateAdhocLocation:self.movingObservation.adhocLocation withMapPoint:mapPoint];
-    if ([self.movingGraphic isKindOfClass:[AGSGraphic class]]) {
-        AGSGraphic *graphic = (AGSGraphic *)self.movingGraphic;
-        [[graphic layer] removeGraphic:graphic];
-        [self.survey drawObservation:self.movingObservation];
+    if ([self.movingGraphic isKindOfClass:[POGraphic class]]) {
+        [(POGraphic *)self.movingGraphic redraw:self.movingObservation survey:self.survey];
     }
 
     //Move GPS location
@@ -841,6 +846,7 @@
 
 - (CLLocation *)locationOfGPS
 {
+    //FIXME: make sure that this is a current/good location
     return self.locationManager.location;
 }
 
@@ -1189,7 +1195,17 @@
 - (void)initializeGraphicsLayer
 {
     NSDictionary *graphicsLayers = [self.survey graphicsLayersByName];
-    for (NSString *name in graphicsLayers) {
+    NSString *onTransect = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
+    NSString *offTransect = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
+    //Draw these layers first and in this order
+    NSArray *lowerLayers = @[onTransect, offTransect, kGpsPointEntityName, kMissionPropertyEntityName, kLabelLayerName];
+    for (NSString *name in lowerLayers) {
+        [self.mapView addMapLayer:graphicsLayers[name] withName:name];
+    }
+    // Draw the remaining layers (observations) in any order
+    NSMutableArray *layerNames = [NSMutableArray arrayWithArray:[graphicsLayers allKeys]];
+    [layerNames removeObjectsInArray:lowerLayers];
+    for (NSString *name in layerNames) {
         [self.mapView addMapLayer:graphicsLayers[name] withName:name];
     }
 }
@@ -1295,6 +1311,7 @@
 
 - (void)addFeatureAtGps:(ProtocolFeature *)feature
 {
+    //FIXME: do this as a callback from a method that gets a current/good location
     GpsPoint *gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
     if (!gpsPoint) {
         [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get GPS point for Feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
@@ -1373,6 +1390,7 @@
 {
     FeatureSelectorTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"FeatureSelectorTableViewController"];
     vc.features = features;
+    vc.protocol = self.survey.protocol;
     vc.featureSelectedCallback = ^(NSString *layerName, id<AGSFeature> graphic) {
         //New in iOS 8, popover on top of popover is not allowed (it was bad form anyway)
         //now we need to dismiss the FeatureSelectorTableView (if it is visible) before presenting this feature
@@ -1448,13 +1466,19 @@
 
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
-    if (template) {
+    if (template || entity) {
         data = [[NSMutableDictionary alloc] init];
         for (NSAttributeDescription *attribute in feature.attributes) {
             NSString *cleanName = [attribute.name stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
-            id value = [template valueForKey:attribute.name];
+            // Use value provided by entity, else use template
+            id value = [entity valueForKey:attribute.name];
             if (value) {
                 data[cleanName] = value;
+            } else {
+                value = [template valueForKey:attribute.name];
+                if (value) {
+                    data[cleanName] = value;
+                }
             }
         }
         //AKRLog(@"default data attributes %@", data);
@@ -1472,7 +1496,11 @@
     }
     if ([maybeDate isKindOfClass:[NSDate class]]) {
         NSDate *timestamp = (NSDate *)maybeDate;
-        root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, [timestamp stringWithMediumTimeFormat]];
+        if (feature.hasUniqueId) {
+            root.title = [NSString stringWithFormat:@"%@ %@", root.title, [entity valueForKey:feature.uniqueIdName]];
+        } else {
+            root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, [timestamp stringWithMediumTimeFormat]];
+        }
         QLabelElement *label = [QLabelElement new];
         label.title = @"Timestamp";
         label.value = [timestamp stringWithMediumDateTimeFormat];
@@ -1527,10 +1555,17 @@
                     updateLocationButton.title = @"Move to GPS Location";
                     updateLocationButton.onSelected = ^(){
                         //Note: add new gps point, but do not remove the adhoc location as that records the time of the observation
+                        //FIXME: do this as a callback from a method that gets a current/good location
                         observation.gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
-                        if (observation.gpsPoint && graphic) {
-                            [[graphic layer] removeGraphic:graphic];
-                            [self.survey drawObservation:observation];
+                        //TODO: If we can't get a location, throw an error
+                        // "Move" the observation; put the new graphic in the dialog for other attribute changes
+                        // all graphics for observations should be a POGraphic; do nothing if something went wrong
+                        if ([graphic isKindOfClass:[POGraphic class]]) {
+                            AGSGraphic *newGraphic = [(POGraphic *)graphic redraw:observation survey:self.survey];
+                            UINavigationController *nav = (UINavigationController *)[self.editAttributePopoverController contentViewController];
+                            AttributeViewController *dialog = (AttributeViewController *)[nav topViewController];
+                            dialog.graphic = newGraphic;
+                            // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
                         }
                     };
                     [[root.sections lastObject] addElement:updateLocationButton];
@@ -1554,17 +1589,26 @@
             deleteButton.appearance.actionColorEnabled = self.view.tintColor;
         }
         deleteButton.onSelected = ^(){
-            [[self.survey graphicsLayerForFeature:feature] removeGraphic:graphic];
+            if ([graphic isKindOfClass:[POGraphic class]]) {
+                [(POGraphic *)graphic remove];
+            } else {
+                [graphic.layer removeGraphic:graphic];
+            }
             [self.survey deleteEntity:entity];
             [self.editAttributePopoverController dismissPopoverAnimated:YES];
             self.editAttributePopoverController = nil;
         };
-        [[root.sections lastObject] addElement:deleteButton];
+        if (self.survey.protocol.cancelOnTop) {
+            [[root.sections firstObject] insertElement:deleteButton atIndex:0];
+        } else {
+            [[root.sections lastObject] addElement:deleteButton];
+        }
     }
 
 
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
+    dialog.graphic = graphic;
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
         dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
@@ -1608,6 +1652,15 @@
         NSString *msg = [NSString stringWithFormat:@"%@\nCheck the protocol file.", ex.description];
         [[[UIAlertView alloc] initWithTitle:@"Save Failed" message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
     }
+    //For observations, redraw the graphic and label with the new attributes
+    if ([dialog.managedObject isKindOfClass:[Observation class]]) {
+        // all graphics for observations should be a POGraphic; do nothing if something went wrong
+        if ([dialog.graphic isKindOfClass:[POGraphic class]]) {
+            [(POGraphic *)dialog.graphic redraw:(Observation *)dialog.managedObject survey:self.survey];
+        }
+    }
+    //For Mission properties currently do nothing (no labels or attribute based symbology supported)
+
     //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
     [self dismissViewControllerAnimated:YES completion:nil];
     self.modalAttributeCollector = nil;
@@ -1633,6 +1686,7 @@
         return;
     }
 
+    //FIXME: do this as a callback from a method that gets a current/good location
     GpsPoint *gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
     if (!gpsPoint) {
         [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current location for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
@@ -1692,8 +1746,17 @@
         self.angleDistancePopoverController = nil;
         Observation *observation = [self.survey observationFromEntity:entity];
         [self.survey updateAngleDistanceObservation:observation withAngleDistance:controller.location];
-        [[graphic layer] removeGraphic:graphic];
-        [self.survey drawObservation:observation];
+        // "Move" the observation; put the new graphic in the dialog for other attribute changes
+        // all graphics for observations should be a POGraphic; do nothing if something went wrong
+        if ([graphic isKindOfClass:[POGraphic class]]) {
+            AGSGraphic *newGraphic = [(POGraphic *)graphic redraw:observation survey:self.survey];
+            AttributeViewController *dialog = (AttributeViewController *)[nav.viewControllers objectAtIndex:0];
+            dialog.graphic = newGraphic;
+            // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
+            //AGSPoint *toPoint = (AGSPoint *)newGraphic.geometry;
+            //[self.editAttributePopoverController presentPopoverFromMapPoint:toPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+            //self.popoverMapPoint = toPoint;
+        }
         [nav popViewControllerAnimated:YES];
     };
     vc.cancellationBlock = ^(AngleDistanceViewController *controller) {

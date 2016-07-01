@@ -1,0 +1,205 @@
+{
+	"meta-name":"NPS-Protocol-Specification",
+	"meta-version":2,
+	"name":"ARCN Bears",
+	"version":1.2,
+	"date":"2016-06-22",
+	"description":"This protocol is for bear surveys in the Arctic Alaska I&M Network.  Contact kumi_rattenbury@nps.gov for more details.",
+	"observing": "ON Transect",
+	"notobserving": "Recording NOT observing",
+	"cancel_on_top": true,
+	"gps_interval": 2,
+  "mission":{
+		"attributes":[
+			{"name":"Unit",          "type":700},
+			{"name":"Survey",        "type":700},
+			{"name":"Pilot",         "type":700},
+			{"name":"Observer",      "type":700},
+			{"name":"Aircraft",      "type":700},
+			{"name":"CloudCover",    "type":700},
+			{"name":"Precipitation", "type":700},
+			{"name":"Lighting",      "type":700},
+			{"name":"Temperature",   "type":600},
+			{"name":"Turbulence",    "type":700},
+			{"name":"VegCover",      "type":700},
+			{"name":"Snow",          "type":700},
+			{"name":"BearTracks",    "type":700},
+			{"name":"Comments",      "type":700}
+		],
+		"dialog":{
+			"title":"Mission Properties",
+			"grouped":true,
+			"sections":[
+				{
+					"elements":[
+						{"type":"QEntryElement",     "key":"u",  "bind":"textValue:Unit",             "title":"Unit",             "placeholder":"ID", "autocorrectionType":"No"},
+						{"type":"QEntryElement",     "key":"s",  "bind":"textValue:Survey",           "title":"Survey",           "placeholder":"Park and Year"},
+						{"type":"QEntryElement",     "key":"p",  "bind":"textValue:Pilot",            "title":"Pilot",            "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",     "key":"o",  "bind":"textValue:Observer",         "title":"Observer",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QEntryElement",     "key":"a",  "bind":"textValue:Aircraft",         "title":"Aircraft",         "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+						{"type":"QDecimalElement",   "key":"tp", "bind":"numberValue:Temperature",    "title":"Temperature (F)",  "fractionDigits":0},
+						{"type":"QLabelElement",     "title":"Cloud Cover"},
+						{"type":"QSegmentedElement", "key":"cc", "bind":"selectedItem:CloudCover",    "items":["None", "<50% scattered", "> 50% broken", "Overcast"]},
+						{"type":"QLabelElement",     "title":"Precipitation"},
+						{"type":"QSegmentedElement", "key":"pr", "bind":"selectedItem:Precipitation", "items":["None", "Rain", "Snow"]},
+						{"type":"QLabelElement",     "title":"Lighting"},
+						{"type":"QSegmentedElement", "key":"l",  "bind":"selectedItem:Lighting",      "items":["Bright", "Flat Light", "Mottled"]},
+						{"type":"QLabelElement",     "title":"Turbulence"},
+						{"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:Turbulence",    "items":["None", "Light", "Moderate"]},
+						{"type":"QLabelElement",     "title":"Vegetation Cover"},
+						{"type":"QSegmentedElement", "key":"v",  "bind":"selectedItem:VegCover",      "items":["<10%", "10-30%", ">30%"]},
+						{"type":"QLabelElement",     "title":"Snow Cover"},
+						{"type":"QSegmentedElement", "key":"sn", "bind":"selectedItem:Snow",          "items":["None", "Patchy", "Complete"]},
+						{"type":"QLabelElement",     "title":"Bear Track Sets"},
+						{"type":"QSegmentedElement", "key":"b",  "bind":"selectedItem:BearTracks",    "items":["0", "1", ">1"]},
+						{"type":"QMultilineElement", "key":"c",  "bind":"textValue:Comments",         "title":"Comments"}
+				  	]
+				}
+			]
+		},
+		"symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSSquare",
+        "color": [171,235,198,255],
+        "size": 11,
+        "outline": {
+          "color": [24,106,59,255],
+          "width": 1
+        }
+      }
+		},
+		"on-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSSolid",
+        "color": [46,204,113,255],
+        "width": 3
+      }
+		},
+    "off-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSDash",
+        "color": [231,76,60,255],
+        "width": 1.5
+      }
+		},
+    "gps-symbology": {
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSCircle",
+        "color": [52,152,219,255],
+        "size": 5
+      }
+		},
+		"totalizer": {
+			"fields": ["Transect"],
+			"units": "kilometers",
+			"includeon": true,
+			"includeoff": false,
+			"includetotal": false
+		}
+	},
+  "features":[
+		{
+    	"name":"Bear",
+    	"attributes":[
+				{"name":"Species",       "type":700},
+				{"name":"AdultCount",    "type":100},
+				{"name":"CubCount",      "type":100},
+				{"name":"YearlingCount", "type":100},
+				{"name":"ImmatureCount", "type":100},
+				{"name":"Activity",      "type":700},
+				{"name":"Observer2",     "type":700},
+				{"name":"VegCover2",     "type":700},
+				{"name":"Snow2",         "type":700},
+				{"name":"Waypoint",      "type":700},
+				{"name":"Photos",        "type":800},
+				{"name":"Notes",         "type":700}
+ 			],
+			"locations":[
+				{"type":"gps",           "default":false, "allow":true},
+				{"type":"adhocTarget",   "default":true, "allow":true},
+				{"type":"adhocTouch",    "default":false, "allow":true},
+				{"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+			],
+			"dialog":{
+				"title":"Bears",
+				"grouped":false,
+				"sections":[
+					{
+					    "elements":[
+							{"type":"QLabelElement",     "title":"Species or Den"},
+							{"type":"QSegmentedElement", "key":"s",  "bind":"selectedItem:Species",      "items":["Brown Bear", "Black Bear", "Den"]},
+							{"type":"QIntegerElement",   "key":"n1", "bind":"numberValue:AdultCount",    "title":"Adults"},
+							{"type":"QIntegerElement",   "key":"n2", "bind":"numberValue:CubCount",      "title":"COY"},
+							{"type":"QIntegerElement",   "key":"n3", "bind":"numberValue:YearlingCount", "title":"Yearlings"},
+							{"type":"QIntegerElement",   "key":"n4", "bind":"numberValue:ImmatureCount", "title":"Cubs ≥ 2yr"},
+							{"type":"QLabelElement",     "title":"Activity"},
+							{"type":"QSegmentedElement", "key":"z",  "bind":"selectedItem:Activity",     "items":["Stationary", "Walking", "Running"]},
+							{"type":"QLabelElement",     "title":"Observer"},
+							{"type":"QSegmentedElement", "key":"o",  "bind":"selectedItem:Observer2",    "items":["Pilot", "Observer", "Both"]},
+							{"type":"QLabelElement",     "title":"Vegetation Cover"},
+							{"type":"QSegmentedElement", "key":"v",  "bind":"selectedItem:VegCover2",    "items":["<10%", "10-30%", ">30%"]},
+							{"type":"QLabelElement",     "title":"Snow Cover"},
+							{"type":"QSegmentedElement", "key":"sn", "bind":"selectedItem:Snow2",        "items":["None", "Patchy", "Complete"]},
+							{"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",        "title":"Waypoint",              "placeholder":"ID", "autocorrectionType":"No"},
+							{"type":"QBooleanElement",   "key":"p",  "bind":"boolValue:Photos",          "title":"Photos?"},
+							{"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",           "title":"Comments"}
+					    ]
+					}
+				]
+			},
+			"label":{
+				"field":"Waypoint",
+				"size":17,
+				"color":"#FFD700"
+			},
+			"symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+					"color": [255,215,0,255],
+          "size": 15,
+					"outline": {
+						"color": [0,0,0,255],
+						"width": 2
+					}
+				}
+			}
+		}
+ 	],
+	"csv":{
+		"gps_points":{
+			"name":"GpsPoints",
+			"field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+			"field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+			"key_indexes":[0,2,1]
+		},
+		"track_logs":{
+			"name":"TrackLogs",
+			"field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+			"field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+			"start_key_indexes":[1,9,8],
+			"end_key_indexes":[5,11,10]
+		},
+		"features":{
+			"header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+			"feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+			"feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+			"feature_field_map":[0,1,2,3,4,5,8],
+			"feature_key_indexes":[0,5,4],
+			"obs_name":"Observations",
+			"obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+			"obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+			"obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+			"obs_key_indexes":[0,11,10]
+		}
+	}
+}

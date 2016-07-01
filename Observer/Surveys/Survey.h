@@ -129,6 +129,8 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (void)clearMapMapViewSpatialReference;
 
 // GPS Methods
+// Location should be checked by caller to ensure it is a good/current location
+- (void)maybeAddGpsPointAtLocation:(CLLocation *)location;
 - (GpsPoint *)addGpsPointAtLocation:(CLLocation *)location;
 
 //TrackLogs

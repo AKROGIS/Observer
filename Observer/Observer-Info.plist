@@ -61,11 +61,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.9.8</string>
+	<string>0.9.8b</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>701</string>
+	<string>707</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -89,6 +89,10 @@
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Location services are required to record your observation locations.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UIMainStoryboardFile</key>

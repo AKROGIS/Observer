@@ -55,10 +55,32 @@
 							<a href="ProtocolSpecificationV2.html">Protocol File Specifications</a> for more info.</p>
 						</li>
 						<li>
+							<h4>Allow special characters in Comments fields</h4>
+							<p>Comment fields (and all text fields) will now correctly process
+							any special characters.  This fixed a bug where commas and newlines
+						  in particular messed up the CSV data in the export files.</p>
+						</li>
+						<li>
 							<h4>Unique Identifier for Observations</h4>
-							<p>To title of the attribute editor now displays the timestamp
+							<p>The title of the attribute editor now displays the timestamp
 								of the observation for referencing the observation on paper
-								forms.  Further enhancements are planned.  See discussion below.
+								forms.  Alternatively, the protocol file can specify an 'UniqueID'
+								attribute for observations which will be use instead of the timestamp.</p>
+						</li>
+						<li>
+							<h4>Label Observations</h4>
+							<p>Add an option to use an attribute to label the observation
+								on the map.  This includes the new Unique ID attribute.</p>
+						</li>
+						<li>
+							<h4>Background tracklogging</h4>
+							<p>Currently the app does not get location updates if you
+							switch to another app while recording.  This can be fixed.</p>
+						</li>
+						<li>
+							<h4>Cancel/Delete Button on Top</h4>
+							<p>Added an option via the protocol file to move the Cancel/Delete
+								Button on the add/edit attributes form to the top of the form.</p>
 						</li>
 					</ul>
 					<h3>Features in Progress</h3>
@@ -71,18 +93,6 @@
 							feature should be used sparingly.  It violates the notion that
 							the user is in charge of the app, and puts the app in charge of
 							the user.
-						</li>
-						<li>
-							<h4>Unique Identifier for Observations</h4>
-							<p>Add an option to display a sequential number (in lieu of the
-								timestamp in the title - move the timestamp down to an uneditable
-								attribute.) An option to label the observation on
-								the map with this identifier is also under consideration.
-						</li>
-						<li>
-							<h4>Background tracklogging</h4>
-							<p>Currently the app does not get location updates if you
-							switch to another app while recording.  This can be fixed.</p>
 						</li>
 						<li>
 							<h4>Move Buttons to the Top</h4>
@@ -104,7 +114,8 @@
 				be the default over the air install from this web site.  This means
 			you will need to install the app manually to use the latest features.</p>
 				<ol>
-					<li>Download the <a href="Park_Observer_beta.ipa">application package</a> to your computer.</li>
+					<li>Download the <a href="Park_Observer_beta_0.9.8b.ipa">application package (v0.9.8b)</a> to your computer.
+					Previous versions can be found <a href="previous_versions.html">here</a>.</li>
 					<li>Follow the remainder of the instructions
 						<a href="no-wifi.htm">Getting Started without Wifi</a>.</li>
 						<li>Download the <a href="syncserver/ParkObserver.pyt">Park Observer Toolbox</a> for ArcMap.

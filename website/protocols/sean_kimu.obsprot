@@ -1,11 +1,12 @@
 {
 	"meta-name":"NPS-Protocol-Specification",
-	"meta-version":1,
+	"meta-version":2,
 	"name":"SEAN KIMU Protocol",
-	"version":1.2,
-	"date":"2015-06-15",
+	"version":2.0,
+	"date":"2016-06-20",
 	"description":"This survey protocol is for the Kitlitz Murrelet survey program in Glacier Bay NPP.  Contact regan_sarwas@nps.gov (907)-644-3548 for more details.",
-    "mission":{
+	"gps_interval": 2,
+  "mission":{
 		"attributes":[
 			{"name":"Transect",   "type":700},
 			{"name":"Vessel",     "type":700},
@@ -35,30 +36,55 @@
 			]
 		},
 		"symbology":{
-			"color":"#00FF00",
-			"size":11
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSSquare",
+        "color": [171,235,198,255],
+        "size": 11,
+        "outline": {
+          "color": [24,106,59,255],
+          "width": 1
+        }
+      }
 		},
 		"on-symbology":{
-			"color":"#FF0000",
-			"size":2
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSSolid",
+        "color": [46,204,113,255],
+        "width": 3
+      }
 		},
-		"off-symbology":{
-			"color":"#808080",
-			"size":1
+    "off-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSDash",
+        "color": [231,76,60,255],
+        "width": 1.5
+      }
+		},
+    "gps-symbology": {
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSCircle",
+        "color": [52,152,219,255],
+        "size": 5
+      }
 		}
 	},
     "features":[
 		{
-    		"name":"BirdGroups",
-    		"attributes":[
-				{"name":"countWaterPending",  "type":100},
-				{"name":"countWaterMarbled",  "type":100},
-				{"name":"countWaterKitlitz",  "type":100},
-				{"name":"countWaterUnknown",  "type":100},
-				{"name":"countFlyingPending", "type":100},
-				{"name":"countFlyingMarbled", "type":100},
-				{"name":"countFlyingKitlitz", "type":100},
-				{"name":"countFlyingUnknown", "type":100}
+    	"name":"BirdGroups",
+    	"attributes":[
+				{"name":"observationID", "type":0},
+				{"name":"countPending",  "type":100},
+				{"name":"countMarbled",  "type":100},
+				{"name":"countKitlitz",  "type":100},
+				{"name":"countUnknown",  "type":100}
  			],
 			"locations":[
 				{"type":"gps",           "default":false, "allow":false},
@@ -68,31 +94,67 @@
 			],
 			"dialog":{
 				"title":"Bird Groups",
-				"grouped":true,
 				"sections":[
 					{
-						"title":"On the water",
-					    "elements":[
-							{"type":"QIntegerElement", "key":"wh", "bind":"numberValue:countWaterPending", "title":"On hold"},
-							{"type":"QIntegerElement", "key":"wm", "bind":"numberValue:countWaterMarbled", "title":"Marbled"},
-							{"type":"QIntegerElement", "key":"wk", "bind":"numberValue:countWaterKitlitz", "title":"Kitlitz"},
-							{"type":"QIntegerElement", "key":"wu", "bind":"numberValue:countWaterUnknown", "title":"Unidentified"}
+					  "elements":[
+							{"type":"QLabelElement",   "key":"id", "bind":"value:observationID",      "title":"Observation ID"},
+							{"type":"QIntegerElement", "key":"wh", "bind":"numberValue:countPending", "title":"On hold"},
+							{"type":"QIntegerElement", "key":"wm", "bind":"numberValue:countMarbled", "title":"Marbled"},
+							{"type":"QIntegerElement", "key":"wk", "bind":"numberValue:countKitlitz", "title":"Kitlitz"},
+							{"type":"QIntegerElement", "key":"wu", "bind":"numberValue:countUnknown", "title":"Unidentified"}
 					  	]
-					},
-					{
-						"title":"Flying",
-					    "elements":[
-							{"type":"QIntegerElement", "key":"fh", "bind":"numberValue:countFlyingPending", "title":"On hold"},
-							{"type":"QIntegerElement", "key":"fm", "bind":"numberValue:countFlyingMarbled", "title":"Marbled"},
-							{"type":"QIntegerElement", "key":"fk", "bind":"numberValue:countFlyingKitlitz", "title":"Kitlitz"},
-							{"type":"QIntegerElement", "key":"fu", "bind":"numberValue:countFlyingUnknown", "title":"Unidentified"}
-					    ]
 					}
 				]
 			},
+			"label":{
+				"field":"observationID",
+				"size":17,
+				"color":"#FFFF00"
+			},
 			"symbology":{
-				"color":"#CC00CC",
-				"size":13
+			  "type" : "uniqueValue",
+			  "field1" : "countPending",
+			  "defaultSymbol" : {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+					"color": [255,0,0,255],
+          "size": 17,
+					"outline": {
+						"color": [0,0,0,255],
+						"width": 2
+					}
+				},
+			  "defaultLabel" : "Some Pending",
+			  "uniqueValueInfos" : [
+					{
+			      "value" : "0",
+			      "label" : "No Pending",
+			      "symbol" : {
+		          "type": "esriSMS",
+		          "style": "esriSMSCircle",
+							"color": [186,85,211,255],
+		          "size": 15,
+							"outline": {
+								"color": [0,0,0,255],
+								"width": 2
+							}
+						}
+			    },
+					{
+			      "value" : "<Null>",
+			      "label" : "No Pending",
+			      "symbol" : {
+		          "type": "esriSMS",
+		          "style": "esriSMSCircle",
+							"color": [186,85,211,255],
+		          "size": 15,
+							"outline": {
+								"color": [0,0,0,255],
+								"width": 2
+							}
+						}
+			    }
+			  ]
 			}
 		}
  	],

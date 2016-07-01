@@ -45,6 +45,7 @@
 #define kAngleDistanceLocationEntityName @"AngleDistanceLocation"
 #define kAdhocLocationEntityName         @"AdhocLocation"
 #define kTimestampKey                    @"timestamp"
+#define kLabelLayerName                  @"ObservationLabels"
 
 #define kTrackOff                        @"Off"
 #define kTrackOn                         @"On"

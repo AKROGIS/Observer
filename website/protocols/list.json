@@ -1,5 +1,12 @@
 [
 {
+	"name":"ARCN Bears",
+	"version":1.2,
+	"date":"2016-06-22",
+	"url":"http://akrgis.nps.gov/observer/protocols/arcn_bears2.obsprot"
+}
+,
+{
 	"name":"ARCN RTLO Survey",
 	"version":1.0,
 	"date":"2016-03-25",
@@ -14,17 +21,17 @@
 }
 ,
 {
-	"name":"CAKN Sheep Short Form",
-	"version":2.0,
-	"date":"2016-04-28",
-	"url":"http://akrgis.nps.gov/observer/protocols/cakn_sheep.obsprot"
+	"name":"Sheep Transects Short",
+	"version":2.2,
+	"date":"2016-06-28",
+	"url":"http://akrgis.nps.gov/observer/protocols/sheep_short2.obsprot"
 }
 ,
 {
-	"name":"CAKN Long Form",
+	"name":"Sheep Transects Long",
 	"version":2.0,
-	"date":"2016-04-28",
-	"url":"http://akrgis.nps.gov/observer/protocols/cakn_long.obsprot"
+	"date":"2016-06-22",
+	"url":"http://akrgis.nps.gov/observer/protocols/sheep_long2.obsprot"
 }
 ,
 {
@@ -64,8 +71,8 @@
 ,
 {
 	"name":"SEAN KIMU Protocol",
-	"version":1.2,
-	"date":"2015-06-15",
+	"version":2.0,
+	"date":"2016-06-20",
 	"url":"http://akrgis.nps.gov/observer/protocols/sean_kimu.obsprot"
 }
 ,
@@ -97,8 +104,8 @@
 ,
 {
 	"name":"Test Protocol Version 2",
-	"version":1.0,
-	"date":"2016-04-28",
+	"version":2.1,
+	"date":"2016-06-20",
 	"url":"http://akrgis.nps.gov/observer/protocols/SampleProtocolV2.obsprot"
 }
 ]
