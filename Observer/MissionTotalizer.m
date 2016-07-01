@@ -45,10 +45,10 @@ typedef NS_OPTIONS(NSUInteger, TotalizerUnits) {
     self = [super init];
     if (self != nil) {
         _protocol = protocol;
-        _trackLogSegments = trackLogSegments;
         if (![self parseProtocol]) {
             return nil;
         }
+        [self trackLogSegmentsChanged:trackLogSegments];
     }
     return self;
 }
