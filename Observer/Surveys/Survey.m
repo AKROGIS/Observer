@@ -803,7 +803,7 @@
     // - In normal operations, can only happen with rapid start/stop recording or stop observing/stop recording
     // In both cases, there is no value in the lost mission property
     TrackLogSegment *tracklog = [self lastTrackLogSegment];
-    if (tracklog && tracklog.gpsPoints.count == 1) {
+    if (tracklog && tracklog.hasOnlyOnePoint) {
         [self.document.managedObjectContext deleteObject:tracklog.missionProperty];
         [self.trackLogSegments removeLastObject];
         [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
@@ -870,7 +870,7 @@
     if ([self isNewLocation:location]) {
         GpsPoint *gpsPoint = [self createGpsPoint:location];
         if (gpsPoint) {
-            [[self lastTrackLogSegment].gpsPoints addObject:gpsPoint];
+            [[self lastTrackLogSegment] addGpsPoint:gpsPoint];
             [self drawGpsPoint:gpsPoint];
             if (self.lastGpsPoint) {
                 [self drawLineFor:[self lastTrackLogSegment].missionProperty from:self.lastGpsPoint to:gpsPoint];
@@ -970,9 +970,7 @@
             //happens if the new mission property has the same gps point as the prior mission property
             newTrackLog = [self lastTrackLogSegment];
         } else {
-            newTrackLog = [TrackLogSegment new];
-            newTrackLog.missionProperty = missionProperty;
-            newTrackLog.gpsPoints = [NSMutableArray arrayWithObject:missionProperty.gpsPoint];
+            newTrackLog = [[TrackLogSegment alloc] initWithMissionProperty:missionProperty];
             [self.trackLogSegments addObject:newTrackLog];
             [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
         }
@@ -1017,16 +1015,19 @@
                 //  The first point of a tracklog might also be the last point of the prior track log (if the mission is the same)
                 if (gpsPoint.missionProperty) {
                     if (mission == gpsPoint.mission) {
-                        [lastSegment.gpsPoints addObject:gpsPoint];
+                        [lastSegment addGpsPoint:gpsPoint];
                     }
                     mission = gpsPoint.mission;
-                    TrackLogSegment *newTrackLog = [TrackLogSegment new];
-                    newTrackLog.missionProperty = gpsPoint.missionProperty;
-                    newTrackLog.gpsPoints = [NSMutableArray new];
+                    //TrackLogSegment *newTrackLog = [TrackLogSegment new];
+                    //newTrackLog.missionProperty = gpsPoint.missionProperty;
+                    //newTrackLog.gpsPoints = [NSMutableArray new];
+                    TrackLogSegment *newTrackLog = [[TrackLogSegment alloc] initWithMissionProperty:gpsPoint.missionProperty];
+
                     [_trackLogSegments addObject:newTrackLog];
                     lastSegment = newTrackLog;
+                } else {
+                    [lastSegment addGpsPoint:gpsPoint];
                 }
-                [lastSegment.gpsPoints addObject:gpsPoint];
             }
         }
     }
@@ -1064,11 +1065,14 @@
         MissionProperty *template = [self lastTrackLogSegment].missionProperty;
         [self copyAttributesForFeature:self.protocol.missionFeature fromEntity:template toEntity:missionProperty];
         [self drawMissionProperty:missionProperty];
+        //FIXME: if we are two quick, i.e. pressing start observering right after start recording, there might not be a new GpsPoint available.
+        //This needs to be considered and corrected.
         if (template && (!template.gpsPoint || template.gpsPoint == gpsPoint)) {
             //The prior mission property had it's gps point "stolen" by the new mission property (there is a one-to-one relationship)
             //so replace the prior mission property is replaced by the new mission property
-            [self.document.managedObjectContext deleteObject:template];
-            [self lastTrackLogSegment].missionProperty = missionProperty;
+            AKRLog(@"Help!!  How did I get here");
+            //[self.document.managedObjectContext deleteObject:template];
+            //[self lastTrackLogSegment].missionProperty = missionProperty;
         }
     }
     return missionProperty;
