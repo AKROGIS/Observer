@@ -910,19 +910,12 @@
 {
     //AKRLog(@"Creating GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
     NSAssert(gpsData.timestamp, @"Can't save a GPS Point without a timestamp: %@",gpsData);
-    if (!gpsData.timestamp) {
-        return nil;
-    }
+    NSAssert(self.currentMission, @"%@", @"There is no current mission - can't create gps point");
     if (self.lastGpsPoint && [self.lastGpsPoint.timestamp timeIntervalSinceDate:gpsData.timestamp] == 0) {
         return self.lastGpsPoint;
     }
     GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:kGpsPointEntityName
                                                        inManagedObjectContext:self.document.managedObjectContext];
-    NSAssert(self.currentMission, @"%@", @"There is no current mission - can't create gps point");
-    if (!self.currentMission) {
-        return nil;
-    }
-
     gpsPoint.mission = self.currentMission;
     gpsPoint.altitude = gpsData.altitude;
     gpsPoint.course = gpsData.course;
@@ -1138,7 +1131,6 @@
     //AKRLog(@"    Drawing observation type %@",observation.entity.name);
     NSDate *timestamp = [observation timestamp];
     NSAssert(timestamp, @"An observation has no timestamp: %@", observation);
-    if (!timestamp) return nil; //AKRLog(@"##ERROR## - A observation has no timestamp %@",observation);
     AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
     NSMutableDictionary *attribs = [NSMutableDictionary new];
     attribs[kTimestampKey] = timestamp;
@@ -1362,8 +1354,7 @@
 
 - (void)drawGpsPoint:(GpsPoint *)gpsPoint
 {
-    NSAssert(gpsPoint.timestamp, @"An gpsPoint has no timestamp: %@", gpsPoint);
-    if (!gpsPoint.timestamp) return; //AKRLog(@"##ERROR## - A gpsPoint has no timestamp %@",gpsPoint);
+    NSAssert(gpsPoint.timestamp, @"A gpsPoint has no timestamp: %@", gpsPoint);
     AGSPoint *mapPoint = [gpsPoint pointOfGpsWithSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:nil];
     [[self graphicsLayerForGpsPoints] addGraphic:graphic];
@@ -1374,11 +1365,7 @@
 {
     NSDate *timestamp = [missionProperty timestamp];
     NSAssert(timestamp, @"A mission property has no timestamp: %@",missionProperty);
-    if (!timestamp) {
-        AKRLog(@"##ERROR## - A mission property has no timestamp: %@",missionProperty);
-        return;
-    }
-    NSDictionary *attribs = timestamp ? @{kTimestampKey:timestamp} : @{kTimestampKey:[NSNull null]};
+    NSDictionary *attribs = @{kTimestampKey:timestamp};
     AGSPoint *mapPoint = [missionProperty pointOfMissionPropertyWithSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     [[self graphicsLayerForMissionProperties] addGraphic:graphic];
