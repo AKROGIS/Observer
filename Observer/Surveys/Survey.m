@@ -963,18 +963,25 @@
 
 - (TrackLogSegment *)startNewTrackLogSegment
 {
-    TrackLogSegment *newTrackLog = nil;
-    MissionProperty *missionProperty = [self createMissionPropertyForTrackLog];
-    if (missionProperty.gpsPoint) {
-        if ([self lastTrackLogSegment].missionProperty == missionProperty) {
-            //happens if the new mission property has the same gps point as the prior mission property
-            newTrackLog = [self lastTrackLogSegment];
-        } else {
-            newTrackLog = [[TrackLogSegment alloc] initWithMissionProperty:missionProperty];
-            [self.trackLogSegments addObject:newTrackLog];
-            [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
-        }
+    MissionProperty *priorMissionProperty = self.lastTrackLogSegment.missionProperty;
+    GpsPoint *gpsPoint = [self addGpsPointAtLocation:[self.locationDelegate locationOfGPS]];
+    if (gpsPoint == nil) {
+        //No gps.  We cannot create a Tracklog without a GPS Point)
+        return nil;
     }
+    if (priorMissionProperty.gpsPoint != nil && gpsPoint == priorMissionProperty.gpsPoint) {
+        // The current tracklog has only one point so far, and we are still at the same time/location
+        // return the current tracklog with an update in observing status.
+        priorMissionProperty.observing = self.isObserving;
+        return [self lastTrackLogSegment];
+    }
+    //we have a new unique gpsPoint, maybe because the priorMissionProperty was nil or adhoc (no GPS)
+    MissionProperty *missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
+    [self copyAttributesForFeature:self.protocol.missionFeature fromEntity:priorMissionProperty toEntity:missionProperty];
+    [self drawMissionProperty:missionProperty];
+    TrackLogSegment *newTrackLog = [[TrackLogSegment alloc] initWithMissionProperty:missionProperty];
+    [self.trackLogSegments addObject:newTrackLog];
+    [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
     return newTrackLog;
 }
 
@@ -1055,28 +1062,6 @@
 
 
 #pragma mark - TrackLog Methods - private
-
-- (MissionProperty *)createMissionPropertyForTrackLog
-{
-    MissionProperty *missionProperty = nil;
-    GpsPoint *gpsPoint = [self addGpsPointAtLocation:[self.locationDelegate locationOfGPS]];
-    if (gpsPoint.timestamp) {
-        missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
-        MissionProperty *template = [self lastTrackLogSegment].missionProperty;
-        [self copyAttributesForFeature:self.protocol.missionFeature fromEntity:template toEntity:missionProperty];
-        [self drawMissionProperty:missionProperty];
-        //FIXME: if we are two quick, i.e. pressing start observering right after start recording, there might not be a new GpsPoint available.
-        //This needs to be considered and corrected.
-        if (template && (!template.gpsPoint || template.gpsPoint == gpsPoint)) {
-            //The prior mission property had it's gps point "stolen" by the new mission property (there is a one-to-one relationship)
-            //so replace the prior mission property is replaced by the new mission property
-            AKRLog(@"Help!!  How did I get here");
-            //[self.document.managedObjectContext deleteObject:template];
-            //[self lastTrackLogSegment].missionProperty = missionProperty;
-        }
-    }
-    return missionProperty;
-}
 
 - (MissionProperty *)createMissionPropertyAtGpsPoint:(GpsPoint *)gpsPoint
 {
