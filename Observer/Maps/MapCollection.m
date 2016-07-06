@@ -191,7 +191,6 @@ static int _downloadsInProgress = 0;
 
 - (void)insertLocalMap:(Map *)map atIndex:(NSUInteger)index
 {
-    NSAssert(index <= self.localItems.count, @"Array index out of bounds in [MapCollection insertLocalMapAtIndex:%lu]; size = %lu",(unsigned long)index,(unsigned long)self.localItems.count);
     [self.localItems insertObject:map atIndex:index];
     [self saveCache];
 }
@@ -222,7 +221,6 @@ static int _downloadsInProgress = 0;
 {
     if (fromIndex == toIndex)
         return;
-    NSAssert(fromIndex < self.localItems.count && toIndex < self.localItems.count, @"Array index out of bounds in [MapCollection moveLocalMapAtIndex:%lu toIndex:%lu] size = %lu",(unsigned long)fromIndex,(unsigned long)toIndex,(unsigned long)self.localItems.count);
     id temp = self.localItems[fromIndex];
     [self.localItems removeObjectAtIndex:fromIndex];
     [self.localItems insertObject:temp atIndex:toIndex];
@@ -233,7 +231,6 @@ static int _downloadsInProgress = 0;
 {
     if (fromIndex == toIndex)
         return;
-    NSAssert(fromIndex < self.remoteItems.count && toIndex < self.remoteItems.count, @"Array index out of bounds in [MapCollection moveRemoteMapAtIndex:%lu toIndex:%lu] size = %lu",(unsigned long)fromIndex,(unsigned long)toIndex,(unsigned long)self.remoteItems.count);
     id temp = self.remoteItems[fromIndex];
     [self.remoteItems removeObjectAtIndex:fromIndex];
     [self.remoteItems insertObject:temp atIndex:toIndex];
