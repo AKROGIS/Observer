@@ -45,10 +45,10 @@ typedef NS_OPTIONS(NSUInteger, TotalizerUnits) {
     self = [super init];
     if (self != nil) {
         _protocol = protocol;
-        _trackLogSegments = trackLogSegments;
         if (![self parseProtocol]) {
             return nil;
         }
+        [self trackLogSegmentsChanged:trackLogSegments];
     }
     return self;
 }
@@ -133,6 +133,7 @@ typedef NS_OPTIONS(NSUInteger, TotalizerUnits) {
 
 - (void)updateMessage
 {
+    //TODO: combine with buildMessage and do case logic first to short circuit some work when only on or off is required
     double onTotal = self.priorOnTotal;
     double offTotal = self.priorOffTotal;
     double value = 0;

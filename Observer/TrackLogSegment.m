@@ -11,7 +11,31 @@
 #import "AKRFormatter.h"
 #import "NSString+csvEscape.h"
 
+@interface TrackLogSegment ()
+
+@property (nonatomic, strong, readwrite) AGSMutablePolyline *mutablePolyline;
+@property (nonatomic, strong, readwrite) NSMutableArray *points; //of GpsPoints
+
+@end
+
 @implementation TrackLogSegment
+
+- (id)initWithMissionProperty:(MissionProperty *)missionProperty
+{
+    if (!missionProperty || !missionProperty.gpsPoint) {
+        return nil;
+    }
+    if (self = [super init]) {
+        _missionProperty = missionProperty;
+        _points = [NSMutableArray arrayWithObject:missionProperty.gpsPoint];
+        AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];
+        AGSPoint *mapPoint = [AGSPoint pointFromLocation:missionProperty.gpsPoint.locationOfGps spatialReference:wgs84];
+        _mutablePolyline = [[AGSMutablePolyline alloc] initWithSpatialReference:wgs84];
+        [_mutablePolyline addPathToPolyline];
+        [_mutablePolyline addPointToPath:mapPoint];
+    }
+    return self;
+}
 
 + (NSString *)csvHeaderForProtocol:(SProtocol *)protocol
 {
@@ -36,8 +60,8 @@
         [csv appendFormat:@"%@,",(value ? value : @"")];
     }
 
-    GpsPoint *start = (GpsPoint *)[self.gpsPoints firstObject];
-    GpsPoint *end = (GpsPoint *)[self.gpsPoints lastObject];
+    GpsPoint *start = (GpsPoint *)[self.points firstObject];
+    GpsPoint *end = (GpsPoint *)[self.points lastObject];
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSInteger year = [gregorian components:NSYearCalendarUnit fromDate:start.timestamp].year;
     NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSDayCalendarUnit inUnit:NSYearCalendarUnit forDate:start.timestamp];
@@ -50,14 +74,17 @@
     return csv;
 }
 
-- (AGSPolyline *)polyline {
+- (AGSPolyline *)polyline
+{
+    return (AGSPolyline *)[[AGSGeometryEngine defaultGeometryEngine] simplifyGeometry:self.mutablePolyline];
+}
+
+- (void)addGpsPoint:(GpsPoint *)gpsPoint
+{
+    [self.points addObject:gpsPoint];
     AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];
-    AGSMutablePolyline *pline = [[AGSMutablePolyline alloc] initWithSpatialReference:wgs84];
-    [pline addPathToPolyline];
-    for (GpsPoint *gpsPoint in self.gpsPoints) {
-        [pline addPointToPath:[AGSPoint pointFromLocation:gpsPoint.locationOfGps spatialReference:wgs84]];
-    }
-    return (AGSPolyline *)[[AGSGeometryEngine defaultGeometryEngine] simplifyGeometry:pline];
+    AGSPoint *point = [AGSPoint pointFromLocation:gpsPoint.locationOfGps spatialReference:wgs84];
+    [self.mutablePolyline addPointToPath:point];
 }
 
 - (double)length
@@ -67,9 +94,19 @@
 
 - (NSTimeInterval)duration
 {
-    GpsPoint *start = (GpsPoint *)[self.gpsPoints firstObject];
-    GpsPoint *end = (GpsPoint *)[self.gpsPoints lastObject];
+    GpsPoint *start = (GpsPoint *)[self.points firstObject];
+    GpsPoint *end = (GpsPoint *)[self.points lastObject];
     return [end.timestamp timeIntervalSinceDate:start.timestamp];
+}
+
+//- (NSArray *)gpsPoints
+//{
+//    return [self.points copy];
+//}
+
+- (BOOL)hasOnlyOnePoint
+{
+    return self.points.count == 1;
 }
 
 @end

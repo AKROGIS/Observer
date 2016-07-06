@@ -803,7 +803,7 @@
     // - In normal operations, can only happen with rapid start/stop recording or stop observing/stop recording
     // In both cases, there is no value in the lost mission property
     TrackLogSegment *tracklog = [self lastTrackLogSegment];
-    if (tracklog && tracklog.gpsPoints.count == 1) {
+    if (tracklog && tracklog.hasOnlyOnePoint) {
         [self.document.managedObjectContext deleteObject:tracklog.missionProperty];
         [self.trackLogSegments removeLastObject];
         [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
@@ -870,7 +870,7 @@
     if ([self isNewLocation:location]) {
         GpsPoint *gpsPoint = [self createGpsPoint:location];
         if (gpsPoint) {
-            [[self lastTrackLogSegment].gpsPoints addObject:gpsPoint];
+            [[self lastTrackLogSegment] addGpsPoint:gpsPoint];
             [self drawGpsPoint:gpsPoint];
             if (self.lastGpsPoint) {
                 [self drawLineFor:[self lastTrackLogSegment].missionProperty from:self.lastGpsPoint to:gpsPoint];
@@ -963,20 +963,25 @@
 
 - (TrackLogSegment *)startNewTrackLogSegment
 {
-    TrackLogSegment *newTrackLog = nil;
-    MissionProperty *missionProperty = [self createMissionPropertyForTrackLog];
-    if (missionProperty.gpsPoint) {
-        if ([self lastTrackLogSegment].missionProperty == missionProperty) {
-            //happens if the new mission property has the same gps point as the prior mission property
-            newTrackLog = [self lastTrackLogSegment];
-        } else {
-            newTrackLog = [TrackLogSegment new];
-            newTrackLog.missionProperty = missionProperty;
-            newTrackLog.gpsPoints = [NSMutableArray arrayWithObject:missionProperty.gpsPoint];
-            [self.trackLogSegments addObject:newTrackLog];
-            [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
-        }
+    MissionProperty *priorMissionProperty = self.lastTrackLogSegment.missionProperty;
+    GpsPoint *gpsPoint = [self addGpsPointAtLocation:[self.locationDelegate locationOfGPS]];
+    if (gpsPoint == nil) {
+        //No gps.  We cannot create a Tracklog without a GPS Point)
+        return nil;
     }
+    if (priorMissionProperty.gpsPoint != nil && gpsPoint == priorMissionProperty.gpsPoint) {
+        // The current tracklog has only one point so far, and we are still at the same time/location
+        // return the current tracklog with an update in observing status.
+        priorMissionProperty.observing = self.isObserving;
+        return [self lastTrackLogSegment];
+    }
+    //we have a new unique gpsPoint, maybe because the priorMissionProperty was nil or adhoc (no GPS)
+    MissionProperty *missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
+    [self copyAttributesForFeature:self.protocol.missionFeature fromEntity:priorMissionProperty toEntity:missionProperty];
+    [self drawMissionProperty:missionProperty];
+    TrackLogSegment *newTrackLog = [[TrackLogSegment alloc] initWithMissionProperty:missionProperty];
+    [self.trackLogSegments addObject:newTrackLog];
+    [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
     return newTrackLog;
 }
 
@@ -1017,16 +1022,19 @@
                 //  The first point of a tracklog might also be the last point of the prior track log (if the mission is the same)
                 if (gpsPoint.missionProperty) {
                     if (mission == gpsPoint.mission) {
-                        [lastSegment.gpsPoints addObject:gpsPoint];
+                        [lastSegment addGpsPoint:gpsPoint];
                     }
                     mission = gpsPoint.mission;
-                    TrackLogSegment *newTrackLog = [TrackLogSegment new];
-                    newTrackLog.missionProperty = gpsPoint.missionProperty;
-                    newTrackLog.gpsPoints = [NSMutableArray new];
+                    //TrackLogSegment *newTrackLog = [TrackLogSegment new];
+                    //newTrackLog.missionProperty = gpsPoint.missionProperty;
+                    //newTrackLog.gpsPoints = [NSMutableArray new];
+                    TrackLogSegment *newTrackLog = [[TrackLogSegment alloc] initWithMissionProperty:gpsPoint.missionProperty];
+
                     [_trackLogSegments addObject:newTrackLog];
                     lastSegment = newTrackLog;
+                } else {
+                    [lastSegment addGpsPoint:gpsPoint];
                 }
-                [lastSegment.gpsPoints addObject:gpsPoint];
             }
         }
     }
@@ -1054,25 +1062,6 @@
 
 
 #pragma mark - TrackLog Methods - private
-
-- (MissionProperty *)createMissionPropertyForTrackLog
-{
-    MissionProperty *missionProperty = nil;
-    GpsPoint *gpsPoint = [self addGpsPointAtLocation:[self.locationDelegate locationOfGPS]];
-    if (gpsPoint.timestamp) {
-        missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
-        MissionProperty *template = [self lastTrackLogSegment].missionProperty;
-        [self copyAttributesForFeature:self.protocol.missionFeature fromEntity:template toEntity:missionProperty];
-        [self drawMissionProperty:missionProperty];
-        if (template && (!template.gpsPoint || template.gpsPoint == gpsPoint)) {
-            //The prior mission property had it's gps point "stolen" by the new mission property (there is a one-to-one relationship)
-            //so replace the prior mission property is replaced by the new mission property
-            [self.document.managedObjectContext deleteObject:template];
-            [self lastTrackLogSegment].missionProperty = missionProperty;
-        }
-    }
-    return missionProperty;
-}
 
 - (MissionProperty *)createMissionPropertyAtGpsPoint:(GpsPoint *)gpsPoint
 {
