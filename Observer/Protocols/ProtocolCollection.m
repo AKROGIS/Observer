@@ -164,7 +164,6 @@ static BOOL _isLoaded = NO;
 
 - (void)insertLocalProtocol:(SProtocol *)protocol atIndex:(NSUInteger)index
 {
-    NSAssert(index <= self.localItems.count, @"Array index out of bounds in [ProtocolCollection insertLocalProtocolAtIndex:%lu]; size = %lu",(unsigned long)index,(unsigned long)self.localItems.count);
     [self.localItems insertObject:protocol atIndex:index];
     [self saveCache];
 }
@@ -195,7 +194,6 @@ static BOOL _isLoaded = NO;
 {
     if (fromIndex == toIndex)
         return;
-    NSAssert(fromIndex < self.localItems.count && toIndex < self.localItems.count, @"Array index out of bounds in [ProtocolCollection moveLocalProtocolAtIndex:%lu toIndex:%lu] size = %lu",(unsigned long)fromIndex,(unsigned long)toIndex,(unsigned long)self.localItems.count);
     id temp = self.localItems[fromIndex];
     [self.localItems removeObjectAtIndex:fromIndex];
     [self.localItems insertObject:temp atIndex:toIndex];
@@ -206,7 +204,6 @@ static BOOL _isLoaded = NO;
 {
     if (fromIndex == toIndex)
         return;
-    NSAssert(fromIndex < self.remoteItems.count && toIndex < self.remoteItems.count, @"Array index out of bounds in [ProtocolCollection moveRemoteProtocolAtIndex:%lu toIndex:%lu] size = %lu",(unsigned long)fromIndex,(unsigned long)toIndex,(unsigned long)self.remoteItems.count);
     id temp = self.remoteItems[fromIndex];
     [self.remoteItems removeObjectAtIndex:fromIndex];
     [self.remoteItems insertObject:temp atIndex:toIndex];

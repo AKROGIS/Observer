@@ -132,7 +132,6 @@ static BOOL _isLoaded = NO;
 
 - (void)insertSurvey:(Survey *)survey atIndex:(NSUInteger)index
 {
-    NSAssert(index <= self.items.count, @"Array index out of bounds in [SurveyCollection insertSurvey:atIndex:%lu]; size = %lu",(unsigned long)index,(unsigned long)self.items.count);
     [self.items insertObject:survey atIndex:index];
     [self saveCache];
 }
@@ -153,7 +152,6 @@ static BOOL _isLoaded = NO;
 {
     if (fromIndex == toIndex)
         return;
-    NSAssert(fromIndex < self.items.count && toIndex < self.items.count, @"Array index out of bounds in [SurveyCollection moveSurveyAtIndex:%lu toIndex:%lu] size = %lu",(unsigned long)fromIndex,(unsigned long)toIndex,(unsigned long)self.items.count);
     id temp = self.items[fromIndex];
     [self.items removeObjectAtIndex:fromIndex];
     [self.items insertObject:temp atIndex:toIndex];
