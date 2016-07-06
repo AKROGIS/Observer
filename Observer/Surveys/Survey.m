@@ -781,10 +781,6 @@
     }
     self.currentMission = [NSEntityDescription insertNewObjectForEntityForName:kMissionEntityName
                                                         inManagedObjectContext:self.document.managedObjectContext];
-    NSAssert(self.currentMission, @"Could not create a Mission in Core Data Context %@", self.document.managedObjectContext);
-    if (!self.currentMission) {
-        return NO;
-    }
     TrackLogSegment *newTrackLogSegment = [self startNewTrackLogSegment];
     if (!newTrackLogSegment) {
         return NO;
@@ -823,7 +819,6 @@
     if(!self.currentMapEntity) {
         //AKRLog(@"  Map not found, creating new CoreData Entity");
         self.currentMapEntity = [NSEntityDescription insertNewObjectForEntityForName:kMapEntityName inManagedObjectContext:self.document.managedObjectContext];
-        NSAssert(self.currentMapEntity, @"Could not create a Map Reference in Core Data Context %@", self.document.managedObjectContext);
         self.currentMapEntity.name = map.title;
         self.currentMapEntity.author = map.author;
         self.currentMapEntity.date = map.date;
@@ -923,10 +918,6 @@
     }
     GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:kGpsPointEntityName
                                                        inManagedObjectContext:self.document.managedObjectContext];
-    NSAssert(gpsPoint, @"Could not create a GPS Point in Core Data Context %@", self.document.managedObjectContext);
-    if (!gpsPoint) {
-        return nil;
-    }
     NSAssert(self.currentMission, @"%@", @"There is no current mission - can't create gps point");
     if (!self.currentMission) {
         return nil;
@@ -1094,7 +1085,6 @@
 {
     //AKRLog(@"Creating MissionProperty managed object");
     MissionProperty *missionProperty = [NSEntityDescription insertNewObjectForEntityForName:kMissionPropertyEntityName inManagedObjectContext:self.document.managedObjectContext];
-    NSAssert(missionProperty, @"Could not create a Mission Property in Core Data Context %@", self.document.managedObjectContext);
     missionProperty.mission = self.currentMission;
     missionProperty.observing = self.isObserving;
     ProtocolFeature *feature = self.protocol.missionFeature;
@@ -1241,7 +1231,6 @@
     NSString *entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,feature.name];
     Observation *observation = [NSEntityDescription insertNewObjectForEntityForName:entityName
                                                              inManagedObjectContext:self.document.managedObjectContext];
-    NSAssert(observation, @"Could not create an Observation in Core Data Context %@", self.document.managedObjectContext);
     observation.mission = self.currentMission;
     if (feature.hasUniqueId)
     {
@@ -1255,7 +1244,6 @@
     //AKRLog(@"Adding Adhoc Location to Core Data at Map Point %@", mapPoint);
     AdhocLocation *adhocLocation = [NSEntityDescription insertNewObjectForEntityForName:kAdhocLocationEntityName
                                                                  inManagedObjectContext:self.document.managedObjectContext];
-    NSAssert(adhocLocation, @"Could not create an AdhocLocation in Core Data Context %@", self.document.managedObjectContext);
     [self updateAdhocLocation:adhocLocation withMapPoint:mapPoint];
     adhocLocation.map = self.currentMapEntity;
     return adhocLocation;
@@ -1266,7 +1254,6 @@
     //AKRLog(@"Adding Angle = %f, Distance = %f, Course = %f to CoreData", location.absoluteAngle, location.distanceMeters, location.deadAhead);
     AngleDistanceLocation *angleDistance = [NSEntityDescription insertNewObjectForEntityForName:kAngleDistanceLocationEntityName
                                                                          inManagedObjectContext:self.document.managedObjectContext];
-    NSAssert(angleDistance, @"Could not create an AngleDistanceLocation in Core Data Context %@", self.document.managedObjectContext);
     angleDistance.angle = location.absoluteAngle;
     angleDistance.distance = location.distanceMeters;
     angleDistance.direction = location.deadAhead;
