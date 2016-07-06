@@ -28,6 +28,11 @@
     if (self = [super init]) {
         _missionProperty = missionProperty;
         _points = [NSMutableArray arrayWithObject:missionProperty.gpsPoint];
+        AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];
+        AGSPoint *mapPoint = [AGSPoint pointFromLocation:missionProperty.gpsPoint.locationOfGps spatialReference:wgs84];
+        _mutablePolyline = [[AGSMutablePolyline alloc] initWithSpatialReference:wgs84];
+        [_mutablePolyline addPathToPolyline];
+        [_mutablePolyline addPointToPath:mapPoint];
     }
     return self;
 }
@@ -72,20 +77,6 @@
 - (AGSPolyline *)polyline
 {
     return (AGSPolyline *)[[AGSGeometryEngine defaultGeometryEngine] simplifyGeometry:self.mutablePolyline];
-}
-
-- (AGSMutablePolyline *)mutablePolyline
-{
-    if (!_mutablePolyline) {
-        AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];
-        AGSMutablePolyline *pline = [[AGSMutablePolyline alloc] initWithSpatialReference:wgs84];
-        [pline addPathToPolyline];
-        for (GpsPoint *gpsPoint in self.points) {
-            [pline addPointToPath:[AGSPoint pointFromLocation:gpsPoint.locationOfGps spatialReference:wgs84]];
-        }
-        _mutablePolyline = pline;
-    }
-    return _mutablePolyline;
 }
 
 - (void)addGpsPoint:(GpsPoint *)gpsPoint
