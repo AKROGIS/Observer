@@ -25,12 +25,6 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
     kSaved    = 4
 };
 
-@protocol SurveyLocationDelegate <NSObject>
-
-- (CLLocation *)locationOfGPS;
-
-@end
-
 //This line should not be required (for some unknown reason this file and only this file
 //refuses to acknowledge the class definition in the included MissionTotalizer.h file.)
 //It is included to keep the compiler for complaining about the definition of the totalizer property
@@ -116,14 +110,12 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (void)deleteEntity:(NSManagedObject *)entity;
 
 // State Control
-- (BOOL)startRecording;
+- (BOOL)startRecording:(CLLocation *)locationOfGPS;
 @property (nonatomic, readonly) BOOL isRecording;
-- (void)stopRecording;
+- (void)stopRecording:(CLLocation *)locationOfGPS;
 
 - (void)setMap:(Map *)map;
 - (void)clearMap;
-
-@property (nonatomic, weak) id<SurveyLocationDelegate>locationDelegate;
 
 @property (nonatomic, strong) AGSSpatialReference *mapViewSpatialReference;
 - (void)clearMapMapViewSpatialReference;
@@ -134,10 +126,10 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (GpsPoint *)addGpsPointAtLocation:(CLLocation *)location;
 
 //TrackLogs
-- (TrackLogSegment *)startObserving;
+- (TrackLogSegment *)startObserving:(CLLocation *)locationOfGPS;
 @property (nonatomic, readonly) BOOL isObserving;
-- (void)stopObserving;
-- (TrackLogSegment *)startNewTrackLogSegment;
+- (void)stopObserving:(CLLocation *)locationOfGPS;
+- (TrackLogSegment *)startNewTrackLogSegment:(CLLocation *)locationOfGPS;
 - (NSArray *) trackLogSegmentsSince:(NSDate *)timestamp;
 
 //Non-TrackLogging Mission Property

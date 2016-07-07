@@ -771,7 +771,7 @@
 
 #pragma mark - State Methods
 
-- (BOOL)startRecording
+- (BOOL)startRecording:(CLLocation *)locationOfGPS
 {
     if (self.isRecording) {
         return YES;
@@ -781,26 +781,25 @@
     }
     self.currentMission = [NSEntityDescription insertNewObjectForEntityForName:kMissionEntityName
                                                         inManagedObjectContext:self.document.managedObjectContext];
-    TrackLogSegment *newTrackLogSegment = [self startNewTrackLogSegment];
-    if (!newTrackLogSegment) {
-        return NO;
-    }
+    [self startNewTrackLogSegment:locationOfGPS];
     self.isRecording = YES;
     return YES;
 }
 
-- (void)stopRecording
+- (void)stopRecording:(CLLocation *)locationOfGPS
 {
+    if (locationOfGPS.timestamp) {
+        [self addGpsPointAtLocation:locationOfGPS];
+    }
     self.isObserving = NO;
     self.lastGpsPoint = nil;
     self.currentMission = nil;
     self.isRecording = NO;
-    // Remove Aborted TrackLog
-    // - In normal operations, can only happen with rapid start/stop recording or stop observing/stop recording
-    // In both cases, there is no value in the lost mission property
-    TrackLogSegment *tracklog = [self lastTrackLogSegment];
-    if (tracklog && tracklog.hasOnlyOnePoint) {
-        [self.document.managedObjectContext deleteObject:tracklog.missionProperty];
+    if (self.lastTrackLogSegment.hasOnlyOnePoint) {
+        // Remove incomplete (aborted) TrackLog and last MissionProperty
+        // - In normal operations, can only happen with rapid start/stop recording or stop observing/stop recording
+        // - In both cases, there is no value in the lost mission property
+        [self.document.managedObjectContext deleteObject:self.lastTrackLogSegment.missionProperty];
         [self.trackLogSegments removeLastObject];
         [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
     }
@@ -858,21 +857,20 @@
 
 - (GpsPoint *)addGpsPointAtLocation:(CLLocation *)location
 {
+    NSAssert(location.timestamp, @"Can't save a GPS Point without a timestamp: %@",location);
     //TODO: many callers (in VC and in Survey) assume location is good.
     //Should we check here and sleep if necessary to wait for a current GPS point?
     
     //Adds a GPS point definitively.
     if ([self isNewLocation:location]) {
         GpsPoint *gpsPoint = [self createGpsPoint:location];
-        if (gpsPoint) {
-            [[self lastTrackLogSegment] addGpsPoint:gpsPoint];
-            [self drawGpsPoint:gpsPoint];
-            if (self.lastGpsPoint) {
-                [self drawLineFor:[self lastTrackLogSegment].missionProperty from:self.lastGpsPoint to:gpsPoint];
-            }
-            self.lastGpsPoint = gpsPoint;
-            [self.totalizer updateWithLocation:location forMissionProperties:[self lastTrackLogSegment].missionProperty];
+        [[self lastTrackLogSegment] addGpsPoint:gpsPoint];
+        [self drawGpsPoint:gpsPoint];
+        if (self.lastGpsPoint) {
+            [self drawLineFor:[self lastTrackLogSegment].missionProperty from:self.lastGpsPoint to:gpsPoint];
         }
+        self.lastGpsPoint = gpsPoint;
+        [self.totalizer updateWithLocation:location forMissionProperties:[self lastTrackLogSegment].missionProperty];
         return gpsPoint;
     } else {
         return self.lastGpsPoint;
@@ -886,6 +884,8 @@
 
 - (BOOL)isNewLocation:(CLLocation *)location
 {
+    //Timestamp is being used as a unique key, need to ensure it is unique
+
     if (!self.lastGpsPoint)
         return YES;
 #ifdef AKR_DEBUG
@@ -909,11 +909,7 @@
 - (GpsPoint *)createGpsPoint:(CLLocation *)gpsData
 {
     //AKRLog(@"Creating GpsPoint, Lat = %f, lon = %f, timestamp = %@", gpsData.coordinate.latitude, gpsData.coordinate.longitude, gpsData.timestamp);
-    NSAssert(gpsData.timestamp, @"Can't save a GPS Point without a timestamp: %@",gpsData);
     NSAssert(self.currentMission, @"%@", @"There is no current mission - can't create gps point");
-    if (self.lastGpsPoint && [self.lastGpsPoint.timestamp timeIntervalSinceDate:gpsData.timestamp] == 0) {
-        return self.lastGpsPoint;
-    }
     GpsPoint *gpsPoint = [NSEntityDescription insertNewObjectForEntityForName:kGpsPointEntityName
                                                        inManagedObjectContext:self.document.managedObjectContext];
     gpsPoint.mission = self.currentMission;
@@ -933,26 +929,22 @@
 
 #pragma mark - TrackLog Methods - private
 
-- (TrackLogSegment *)startObserving
+- (TrackLogSegment *)startObserving:(CLLocation *)locationOfGPS
 {
     self.isObserving = YES;
-    return [self startNewTrackLogSegment];
+    return [self startNewTrackLogSegment:locationOfGPS];
 }
 
-- (void)stopObserving
+- (void)stopObserving:(CLLocation *)locationOfGPS
 {
     self.isObserving = NO;
-    [self startNewTrackLogSegment];
+    [self startNewTrackLogSegment:locationOfGPS];
 }
 
-- (TrackLogSegment *)startNewTrackLogSegment
+- (TrackLogSegment *)startNewTrackLogSegment:(CLLocation *)locationOfGPS
 {
     MissionProperty *priorMissionProperty = self.lastTrackLogSegment.missionProperty;
-    GpsPoint *gpsPoint = [self addGpsPointAtLocation:[self.locationDelegate locationOfGPS]];
-    if (gpsPoint == nil) {
-        //No gps.  We cannot create a Tracklog without a GPS Point)
-        return nil;
-    }
+    GpsPoint *gpsPoint = [self addGpsPointAtLocation:locationOfGPS];
     if (priorMissionProperty.gpsPoint != nil && gpsPoint == priorMissionProperty.gpsPoint) {
         // The current tracklog has only one point so far, and we are still at the same time/location
         // return the current tracklog with an update in observing status.

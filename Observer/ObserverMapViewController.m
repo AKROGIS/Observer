@@ -306,8 +306,13 @@
     if (self.survey.isRecording) {
         return;
     }
-    if(![self.survey startRecording]) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to start recording.  GPS may not be ready." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    CLLocation *location = self.mostRecentLocation;
+    if (!location.timestamp) {
+        [self showNoLocationAlert];
+        return;
+    }
+    if(![self.survey startRecording:location]) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to start recording.  Please try again." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
         return;
     }
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(stopRecording:) ToPlay:NO];
@@ -321,7 +326,12 @@
     if (self.survey.isObserving || !self.survey.isRecording) {
         return;
     }
-    TrackLogSegment *tracklog = [self.survey startObserving];
+    CLLocation *location = self.mostRecentLocation;
+    if (!location.timestamp) {
+        [self showNoLocationAlert];
+        return;
+    }
+    TrackLogSegment *tracklog = [self.survey startObserving:location];
     [self showTrackLogAttributeEditor:tracklog];
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(stopObserving:) ToPlay:NO];
     [self enableControls];
@@ -329,19 +339,20 @@
 
 - (IBAction)changeEnvironment:(UIBarButtonItem *)sender
 {
-    //do this as a callback from a method that gets a current good location
-    //if we just woke the GPS up, it might give an old location
-    //create a new gps point at the good location
     if (self.survey.isRecording) {
-        TrackLogSegment *tracklog = [self.survey startNewTrackLogSegment];
+        CLLocation *location = self.mostRecentLocation;
+        if (!location.timestamp) {
+            [self showNoLocationAlert];
+            return;
+        }
+        TrackLogSegment *tracklog = [self.survey startNewTrackLogSegment:location];
         [self showTrackLogAttributeEditor:tracklog];
     } else {
+        //TODO: This currently not an accessible code path, because ad Hoc mission properties are not supported.
         MissionProperty *missionProperty = [self.survey createMissionPropertyAtMapLocation:self.mapView.mapAnchor];
         [self showMissionPropertyAttributeEditor:missionProperty];
     }
 }
-
-
 
 
 #pragma mark - Actions wired up programatically
@@ -351,13 +362,14 @@
     if (!self.survey.isRecording) {
         return;
     }
+    BOOL wasObserving = self.survey.isObserving;
+    CLLocation *location = self.mostRecentLocation;
     [self stopLocationUpdates];
+    [self.survey stopRecording:location]; //Stops observing
     [UIApplication sharedApplication].idleTimerDisabled = NO;
-    if (self.survey.isObserving) {
+    if (wasObserving) {
         self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startObserving:) ToPlay:YES];
-        [self enableControls];
     }
-    [self.survey stopRecording];
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(startRecording:) ToPlay:YES];
     [self enableControls];
     self.totalizerMessage.text = nil;
@@ -368,7 +380,12 @@
     if (!self.survey.isObserving) {
         return;
     }
-    [self.survey stopObserving];
+    CLLocation *location = self.mostRecentLocation;
+    if (!location.timestamp) {
+        [self showNoLocationAlert];
+        return;
+    }
+    [self.survey stopObserving:location];
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startObserving:) ToPlay:YES];
     [self enableControls];
 }
@@ -842,18 +859,13 @@
 
 
 
-#pragma mark = Delegate Methods - SurveyLocationDelegate
+#pragma mark - Private Properties
 
-- (CLLocation *)locationOfGPS
+- (CLLocation *)mostRecentLocation
 {
     //FIXME: make sure that this is a current/good location
     return self.locationManager.location;
 }
-
-
-
-
-#pragma mark - Private Properties
 
 - (BOOL)locationServicesAvailable
 {
@@ -1024,6 +1036,13 @@
 
 #pragma mark - Private Methods - support for UI actions
 
+- (void)showNoLocationAlert
+{
+    //TODO: provide more helpful error message.  Why can't I get the location?  What can the user do about it?
+    //This is a low priority, since the buttons that activate this should not be enabled unless location services are available.
+    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get your location.  Please try again later." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+}
+
 - (void)requestAuthorizationForAlwaysOnLocationServices
 {
     // Good reference: http://nevan.net/2014/09/core-location-manager-changes-in-ios-8/
@@ -1187,7 +1206,6 @@
     }
     [self.survey setMap:self.map];
     [self.survey setMapViewSpatialReference:self.mapView.spatialReference];
-    [self.survey setLocationDelegate:self];
     [self initializeGraphicsLayer];
     [self.survey loadGraphics];
 }
@@ -1311,17 +1329,13 @@
 
 - (void)addFeatureAtGps:(ProtocolFeature *)feature
 {
-    //FIXME: do this as a callback from a method that gets a current/good location
-    GpsPoint *gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
-    if (!gpsPoint) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get GPS point for Feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+    CLLocation *location = self.mostRecentLocation;
+    if (!location.timestamp) {
+        [self showNoLocationAlert];
         return;
     }
+    GpsPoint *gpsPoint = [self.survey addGpsPointAtLocation:location];
     Observation *observation = [self.survey createObservation:feature atGpsPoint:gpsPoint];
-    if (!observation) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-        return;
-    }
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
     AGSGraphic *graphic = [self.survey drawObservation:observation];
     [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
@@ -1555,9 +1569,12 @@
                     updateLocationButton.title = @"Move to GPS Location";
                     updateLocationButton.onSelected = ^(){
                         //Note: add new gps point, but do not remove the adhoc location as that records the time of the observation
-                        //FIXME: do this as a callback from a method that gets a current/good location
-                        observation.gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
-                        //TODO: If we can't get a location, throw an error
+                        CLLocation *location = self.mostRecentLocation;
+                        if (!location.timestamp) {
+                            [self showNoLocationAlert];
+                            return;
+                        }
+                        observation.gpsPoint = [self.survey addGpsPointAtLocation:location];
                         // "Move" the observation; put the new graphic in the dialog for other attribute changes
                         // all graphics for observations should be a POGraphic; do nothing if something went wrong
                         if ([graphic isKindOfClass:[POGraphic class]]) {
@@ -1686,13 +1703,12 @@
         return;
     }
 
-    //FIXME: do this as a callback from a method that gets a current/good location
-    GpsPoint *gpsPoint = [self.survey addGpsPointAtLocation:self.locationManager.location];
-    if (!gpsPoint) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current location for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+    CLLocation *recentlocation = self.mostRecentLocation;
+    if (!recentlocation.timestamp) {
+        [self showNoLocationAlert];
         return;
     }
-    
+    GpsPoint *gpsPoint = [self.survey addGpsPointAtLocation:recentlocation];
     LocationAngleDistance *location = nil;
     if (0 <= gpsPoint.course) {
         location = [[LocationAngleDistance alloc] initWithDeadAhead:gpsPoint.course protocolFeature:feature];
