@@ -325,7 +325,7 @@
 - (double)maxSpeedForBearing
 {
     double value = [[NSUserDefaults standardUserDefaults] doubleForKey:DEFAULTS_KEY_MAX_SPEED_FOR_BEARING];
-    return value ? value : DEFAULTS_DEFAULT_MAX_SPEED_FOR_BEARING;
+    return (value > 0) ? value : DEFAULTS_DEFAULT_MAX_SPEED_FOR_BEARING;
 }
 
 - (void)setMaxSpeedForBearing:(double)maxSpeedForBearing
@@ -400,7 +400,7 @@
 - (double) angleDistanceDeadAhead
 {
     double value = [[NSUserDefaults standardUserDefaults] doubleForKey:DEFAULTS_KEY_ANGLE_DISTANCE_DEAD_AHEAD];
-    return value ? value : DEFAULTS_DEFAULT_ANGLE_DISTANCE_DEAD_AHEAD;
+    return (value > 0) ? value : DEFAULTS_DEFAULT_ANGLE_DISTANCE_DEAD_AHEAD;
 }
 
 - (void) setAngleDistanceDeadAhead:(double)angleDistanceDeadAhead

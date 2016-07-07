@@ -66,7 +66,6 @@
 		398908691857F192007B3F67 /* SurveyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908671857F192007B3F67 /* SurveyTableViewCell.m */; };
 		3989086C1857F399007B3F67 /* AKRDownloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989086B1857F399007B3F67 /* AKRDownloadView.m */; };
 		39890DA31858C99E007B3F67 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39890DA21858C99E007B3F67 /* Images.xcassets */; };
-		398A97311CCEDB2800143160 /* SampleProtocolV2.obsprot in Resources */ = {isa = PBXBuildFile; fileRef = 398A97301CCEDB2800143160 /* SampleProtocolV2.obsprot */; };
 		398A97371CCFD11800143160 /* MissionTotalizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 398A97361CCFD11800143160 /* MissionTotalizer.m */; };
 		39946AB0191DA0EA00875D90 /* Observation+CsvExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AAF191DA0EA00875D90 /* Observation+CsvExport.m */; };
 		39946AB91925473A00875D90 /* TrackLogSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = 39946AB81925473A00875D90 /* TrackLogSegment.m */; };
@@ -95,7 +94,6 @@
 		39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */; };
 		39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */; };
 		39BA8FC2196F33F800F90A77 /* Survey+ZipExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BA8FC1196F33F800F90A77 /* Survey+ZipExport.m */; };
-		39BAF29E1CD28C7E0093A5A5 /* Protocol Specification V2.md in Sources */ = {isa = PBXBuildFile; fileRef = 39BAF29D1CD28C7E0093A5A5 /* Protocol Specification V2.md */; };
 		39C3B84B18B816020041FF36 /* FeatureSelectorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C3B84A18B816020041FF36 /* FeatureSelectorTableViewController.m */; };
 		39C53E61187F411B00C0CECE /* AutoPanStateMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C53E60187F411B00C0CECE /* AutoPanStateMachine.m */; };
 		39C53E65187F4B5E00C0CECE /* AutoPanButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C53E64187F4B5E00C0CECE /* AutoPanButton.m */; };
@@ -111,7 +109,6 @@
 		39D947A418BEA79E0069DB31 /* ObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947A318BEA79E0069DB31 /* ObserverTests.m */; };
 		39D947AD18BEA7DF0069DB31 /* AGSPointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947AB18BEA7DF0069DB31 /* AGSPointTests.m */; };
 		39D947AE18BEA7DF0069DB31 /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947AC18BEA7DF0069DB31 /* LocationAngleDistanceTests.m */; };
-		39E921AC195B52E60043DB5E /* Protocol Description.md in Resources */ = {isa = PBXBuildFile; fileRef = 39E921AB195B52E60043DB5E /* Protocol Description.md */; };
 		5980662018D16420004830E7 /* UIPopoverController+Presenting.m in Sources */ = {isa = PBXBuildFile; fileRef = 5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */; };
 		5980838A1D0CE41900E4B2E8 /* NSString+csvEscape.m in Sources */ = {isa = PBXBuildFile; fileRef = 598083891D0CE41900E4B2E8 /* NSString+csvEscape.m */; };
 		59954F851D146175006C32B4 /* POGraphic.m in Sources */ = {isa = PBXBuildFile; fileRef = 59954F841D146175006C32B4 /* POGraphic.m */; };
@@ -885,14 +882,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39E921AC195B52E60043DB5E /* Protocol Description.md in Resources */,
 				39955E55178334C000D225D7 /* InfoPlist.strings in Resources */,
 				39449F1418ADABCF00A1F8FE /* Localizable.strings in Resources */,
 				3914014B1975AA1D0055F2E1 /* ACKNOWLEDGEMENTS in Resources */,
 				39890DA31858C99E007B3F67 /* Images.xcassets in Resources */,
 				39C53E6B1885D98400C0CECE /* SurveyDocumentIcon.png in Resources */,
 				39C53E6E1885D9DF00C0CECE /* ProtocolDocumentIcon.png in Resources */,
-				398A97311CCEDB2800143160 /* SampleProtocolV2.obsprot in Resources */,
 				391401451975A03A0055F2E1 /* LICENSE in Resources */,
 				39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
@@ -1004,7 +999,6 @@
 				3989085D1857EDE1007B3F67 /* AGSPoint+AKRAdditions.m in Sources */,
 				394CC2531858F11800FA859C /* Observation.m in Sources */,
 				396E1E9D189ADE8F00B735EF /* ProtocolFeatureSymbology.m in Sources */,
-				39BAF29E1CD28C7E0093A5A5 /* Protocol Specification V2.md in Sources */,
 				39A9EF90196F5BD80059FC0F /* Archiver.m in Sources */,
 				39A836CB185FDAB8008BF4E3 /* AttributeViewController.m in Sources */,
 				398908511857ED00007B3F67 /* SurveySelectViewController.m in Sources */,
