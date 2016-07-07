@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ObserverModel.h"
 
-@interface ObserverMapViewController : UIViewController <CLLocationManagerDelegate, AGSLayerDelegate, AGSMapViewLayerDelegate, AGSMapViewTouchDelegate, AGSCalloutDelegate, UIPopoverControllerDelegate, UIAlertViewDelegate, UIActionSheetDelegate, LocationPresenter, SurveyLocationDelegate>
+@interface ObserverMapViewController : UIViewController <CLLocationManagerDelegate, AGSLayerDelegate, AGSMapViewLayerDelegate, AGSMapViewTouchDelegate, AGSCalloutDelegate, UIPopoverControllerDelegate, UIAlertViewDelegate, UIActionSheetDelegate, LocationPresenter>
 
 //Model
 @property (strong, nonatomic) Survey *survey;
