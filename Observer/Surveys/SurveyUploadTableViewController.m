@@ -20,12 +20,6 @@
 
 @implementation SurveyUploadTableViewController
 
-- (void) dealloc
-{
-    [self.survey closeDocumentWithCompletionHandler:nil];
-    self.survey = nil;
-}
-
 - (void)setSurvey:(Survey *)survey
 {
     [_survey closeDocumentWithCompletionHandler:nil];

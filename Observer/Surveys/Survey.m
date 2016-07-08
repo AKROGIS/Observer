@@ -141,7 +141,9 @@
 
 - (void)dealloc
 {
-    [self closeDocumentWithCompletionHandler:nil];
+    if (self.isReady) {
+        [self closeDocumentWithCompletionHandler:nil];
+    }
 }
 
 
@@ -342,10 +344,10 @@
 
 - (void)closeDocumentWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
-#ifdef AKR_DEBUG
+    if (!self.isReady) {
+        return;
+    }
     AKRLog(@"Closing document for Survey: %@", self.title);
-    //[self logStats];
-#endif
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.document closeWithCompletionHandler:completionHandler];
 }
