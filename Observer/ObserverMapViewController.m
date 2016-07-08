@@ -442,12 +442,12 @@
     if ([survey isEqualToSurvey:_survey]) {
         return;
     }
-    if ([self closeSurveyWithConcurrentOpen:(survey != nil)]) {
-        _survey = survey;
-        [Settings manager].activeSurveyURL = survey.url;
-        [self openSurvey];
-        [self updateSelectSurveyViewControllerWithNewSurvey:survey];
-    }
+    // open survey will close when it is released
+    _survey = survey;
+    [Settings manager].activeSurveyURL = survey.url;
+    [self openSurvey];
+    [self updateSelectSurveyViewControllerWithNewSurvey:survey];
+
 }
 
 - (void)setMap:(Map *)map
@@ -1255,42 +1255,6 @@
         }];
     }
 }
-
-- (BOOL)closeSurveyWithConcurrentOpen:(BOOL)concurrentOpen
-{
-    if (self.survey && self.isViewLoaded) {
-        Survey *survey = self.survey;  //make a copy, since self.survey may be changed before I finish.
-        if (survey.document.documentState == UIDocumentStateNormal) {
-            AKRLog(@"Closing survey document (%@)", survey.title);
-            [self incrementBusy];  //closing the survey document may block
-            self.selectSurveyButton.title = @"Closing survey...";
-            if (self.survey.isRecording) {
-                [self stopRecording:nil];
-            }
-            [self.mapView clearGraphicsLayers];
-            [survey closeDocumentWithCompletionHandler:^(BOOL success) {
-                //this completion handler runs on the main queue;
-                if (!success) {
-                    //This happens if I deleted the active survey (and there are unsaved changes).  Due to the asyncronity
-                    //the delete can happen before the close can finish.  But I don't really care, because it is deleted.
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to close the survey. (Did you just delete it?)" delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-                }
-                if (!concurrentOpen) {
-                    [self updateTitleBar];
-                }
-                [self decrementBusy];
-            }];
-        } else if (survey.document.documentState != UIDocumentStateClosed) {
-            AKRLog(@"Survey (%@) is in an abnormal state: %lu", survey.title, (unsigned long)survey.document.documentState);
-            [[[UIAlertView alloc] initWithTitle:nil message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-            return NO;
-        }
-    }
-    return YES;
-}
-
-
-
 
 
 
