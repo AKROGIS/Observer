@@ -143,7 +143,11 @@ static BOOL _isLoaded = NO;
         return;
     }
     Survey *item = [self surveyAtIndex:index];
-    [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
+    [item closeDocumentWithCompletionHandler:^(BOOL success){
+        AKRLog(@"  Survey Document Closed; Success: %@", success ? @"YES" : @"NO");
+        [[NSFileManager defaultManager] removeItemAtURL:item.url error:nil];
+        AKRLog(@"  Survey Document Deleted");
+    }];
     [self.items removeObjectAtIndex:index];
     [self saveCache];
 }
