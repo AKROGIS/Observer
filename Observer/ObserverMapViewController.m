@@ -436,18 +436,27 @@
 
 - (void)setSurvey:(Survey *)survey
 {
-    if (!survey && !_survey) {  //covers case where survey is nil
+    if (!survey && !_survey) {  //covers case where survey and _survey are nil
         return;
     }
     if ([survey isEqualToSurvey:_survey]) {
         return;
     }
-    // open survey will close when it is released
+    Survey *oldSurvey = _survey;
     _survey = survey;
     [Settings manager].activeSurveyURL = survey.url;
-    [self openSurvey];
     [self updateSelectSurveyViewControllerWithNewSurvey:survey];
-
+    if (survey) {
+        [self openSurvey];
+    } else {
+        [oldSurvey closeDocumentWithCompletionHandler:^(BOOL success){
+            AKRLog(@"  Survey Document Closed; Success: %@", success ? @"YES" : @"NO");
+        }];
+        [self stopRecording:nil];
+        [self updateTitleBar];
+        [self.mapView clearGraphicsLayers];
+    }
+    // open survey will close when it is released
 }
 
 - (void)setMap:(Map *)map
