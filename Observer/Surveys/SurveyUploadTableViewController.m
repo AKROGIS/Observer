@@ -14,21 +14,49 @@
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 
 @interface SurveyUploadTableViewController ()
-
+{
+    BOOL _mineToClose;
+}
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *syncActivityIndicator;
 @end
 
 @implementation SurveyUploadTableViewController
 
+-(void)dealloc
+{
+    if (_mineToClose) {
+        NSString *title = self.survey.title;
+        [self.survey closeDocumentWithCompletionHandler:^(BOOL success) {
+            if (!success) {
+                AKRLog(@"Error - Failed to close survey %@ in Export VC", title);
+                // Continue anyway...
+            }
+            AKRLog(@"Closed survey %@ in Export VC", title);
+        }];
+    }
+}
+
 - (void)setSurvey:(Survey *)survey
 {
-    [survey openDocumentWithCompletionHandler:^(BOOL success) {
-        if (success) {
-            self->_survey = survey;
-            self.title = survey.title;
-            self.navigationController.title = survey.title;
-        }
-    }];
+    if (survey.isReady) {
+        _survey = survey;
+        self.title = survey.title;
+        self.navigationController.title = survey.title;
+        _mineToClose = NO;
+    } else {
+        AKRLog(@"Opening survey %@ for Export VC", survey.title);
+        [survey openDocumentWithCompletionHandler:^(BOOL success) {
+            if (success) {
+                self->_survey = survey;
+                self.title = survey.title;
+                self.navigationController.title = survey.title;
+                self->_mineToClose = YES;
+            } else {
+                AKRLog(@"Error - Failed to open survey %@ in Export VC", survey.title);
+                self->_mineToClose = NO;
+            }
+        }];
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

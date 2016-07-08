@@ -59,8 +59,8 @@
         [self cacheSurveyProperties];
         //Close the survey document; were done with it
         [survey closeDocumentWithCompletionHandler:^(BOOL success2) {
-            if (!success) {
-                AKRLog(@"Error - Faile to close survey %@ in Details VC", survey.title);
+            if (!success2) {
+                AKRLog(@"Error - Failed to close survey %@ in Details VC", survey.title);
                 // Continue anyway...
             }
             //AKRLog(@"Closed survey %@ in Details VC", survey.title);
