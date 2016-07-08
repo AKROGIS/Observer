@@ -13,6 +13,17 @@
 #import "ProtocolDetailViewController.h"
 #import "GpsPointTableViewController.h"
 
+@interface SurveyDetailViewController ()
+{
+    NSUInteger _observationCount;
+    NSUInteger _segmentCount;
+    NSUInteger _gpsCount;
+    NSUInteger _gpsCountSinceSync;
+    NSDate *_firstGpsDate;
+    NSDate *_lastGpsDate;
+}
+@end
+
 @implementation SurveyDetailViewController
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -29,12 +40,47 @@
 
 - (void)setSurvey:(Survey *)survey
 {
+    _survey = survey;
+    if (survey.isReady)
+    {
+        //this survey was opened by someone else, don't mess with it;
+        [self cacheSurveyProperties];
+        [self.tableView reloadData];
+        return;
+    }
+    //Open the survey document
+    //AKRLog(@"Opening survey %@ for Details VC", survey.title);
     [survey openDocumentWithCompletionHandler:^(BOOL success) {
-        if (success) {
-            self->_survey = survey;
-            [self.tableView reloadData];
+        if (!success) {
+            AKRLog(@"Error - Failed to open survey %@ in Details VC", survey.title);
+            return;
         }
+        //Get the survey properties
+        [self cacheSurveyProperties];
+        //Close the survey document; were done with it
+        [survey closeDocumentWithCompletionHandler:^(BOOL success2) {
+            if (!success) {
+                AKRLog(@"Error - Faile to close survey %@ in Details VC", survey.title);
+                // Continue anyway...
+            }
+            //AKRLog(@"Closed survey %@ in Details VC", survey.title);
+        }];
+
+        //Update the table
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
     }];
+}
+
+- (void)cacheSurveyProperties
+{
+    _observationCount = self.survey.observationCount;
+    _segmentCount = self.survey.segmentCount;
+    _gpsCount = self.survey.gpsCount;
+    _gpsCountSinceSync = self.survey.gpsCountSinceSync;
+    _firstGpsDate = self.survey.firstGpsDate;
+    _lastGpsDate = self.survey.lastGpsDate;
 }
 
 #pragma mark - Table view data source
@@ -65,28 +111,28 @@
         switch (indexPath.row) {
             case 0:
                 cell.textLabel.text = @"Observations";
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.survey.observationCount];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)_observationCount];
                 break;
             case 1:
                 cell.textLabel.text = @"Tracks";
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.survey.segmentCount];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)_segmentCount];
                 break;
             case 2:
                 cell.textLabel.text = @"Gps Points";
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.survey.gpsCount];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)_gpsCount];
                 break;
             case 3:
                 cell.textLabel.text = @"..Since Sync";
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.survey.gpsCountSinceSync];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)_gpsCountSinceSync];
                 break;
             case 4:
                 cell.textLabel.text = @"First Point";
-                cell.detailTextLabel.text = [AKRFormatter descriptiveStringFromDate:self.survey.firstGpsDate];
+                cell.detailTextLabel.text = [AKRFormatter descriptiveStringFromDate:_firstGpsDate];
 //                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                 break;
             case 5:
                 cell.textLabel.text = @"last Point";
-                cell.detailTextLabel.text = [AKRFormatter descriptiveStringFromDate:self.survey.lastGpsDate];
+                cell.detailTextLabel.text = [AKRFormatter descriptiveStringFromDate:_lastGpsDate];
 //                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                 break;
             default:
