@@ -139,14 +139,6 @@
     }
 }
 
-- (void)dealloc
-{
-    if (self.isReady) {
-        [self closeDocumentWithCompletionHandler:nil];
-    }
-}
-
-
 
 
 #pragma mark property accessors
@@ -350,6 +342,7 @@
     AKRLog(@"Closing document for Survey: %@", self.title);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.document closeWithCompletionHandler:completionHandler];
+    self.document = nil;  //UIDocument is a "oneshot" object; it cannot be opened/closed multiple times
 }
 
 //- (void)syncWithCompletionHandler:(void (^)(NSError*))handler
@@ -1528,7 +1521,7 @@
 
 - (void) dataSaved: (NSNotification *)notification
 {
-    //AKRLog(@"Document (%@) data saved", self.title);
+    AKRLog(@"Document (%@) data saved", self.title);
     [self saveProperties];
 }
 
