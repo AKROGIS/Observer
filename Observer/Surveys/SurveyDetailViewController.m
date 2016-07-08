@@ -29,8 +29,6 @@
 
 - (void)setSurvey:(Survey *)survey
 {
-    [_survey closeDocumentWithCompletionHandler:nil];
-    _survey = nil;
     [survey openDocumentWithCompletionHandler:^(BOOL success) {
         if (success) {
             self->_survey = survey;
