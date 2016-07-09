@@ -372,7 +372,7 @@
 //Alert: will block for IO
 - (void)loadTileCache {
     _tileCache = [Map loadTileCacheAtURL:self.tileCacheURL];
-    self.isTileCacheLoaded = YES;
+    self.isTileCacheLoaded = _tileCache != nil;
 }
 
 //Alert: will block for IO
