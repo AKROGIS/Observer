@@ -77,6 +77,7 @@
         return nil;
     }
     AGSLocalTiledLayer *tileCache =[Map loadTileCacheAtURL:url];
+    // loadTileCacheAtURL will check tilecache properties and return nil if invalid.
     if (!tileCache) {
         return nil;
     }
@@ -386,11 +387,13 @@
             if (tiles.fullEnvelope && !tiles.fullEnvelope.isEmpty) {
                 return tiles;
             }
+            AKRLog(@"missing or empty envelope in tile cache %@",url);
         }
         @catch (NSException *exception) {
-            AKRLog(@"Exception %@ when loading tile cache %@",exception,url);
-            return nil;
+            AKRLog(@"Exception %@ when checking tile cache %@",exception,url);
         }
+    } else {
+        AKRLog(@"tile cache not found at path %@",url);
     }
     return nil;
 }
