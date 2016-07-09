@@ -358,7 +358,9 @@
     return _tileCache;
 }
 
+//FIXME: This method is never called
 //Alert: will call a mutating function
+//FIXME: instead of mutating, return an optional(tilecache) in the completion handler
 - (void)loadTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
         [self loadTileCache];
@@ -370,6 +372,7 @@
 
 //Alert: Mutating function
 //Alert: will block for IO
+//FIXME: instead of mutating, return an optional(tilecache) in the completion handler
 - (void)loadTileCache {
     _tileCache = [Map loadTileCacheAtURL:self.tileCacheURL];
     self.isTileCacheLoaded = _tileCache != nil;
@@ -419,7 +422,7 @@
 - (BOOL)isEqualToRemoteProperties:(NSDictionary *)remoteMapProperties
 {
     //Equality is not well defined here, but I am trying to answer this question:
-    //Is the tilecache represented by the remote properties the same as a tilecache that I already have already memorized?
+    //Is the tilecache represented by the remote properties the same as a tilecache that I have already memorized?
 
     //Metadata equality
     //Equal if the title, author and date are the same. (even if the content (URL/size) maybe different)
