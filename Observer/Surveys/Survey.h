@@ -131,6 +131,8 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (void)stopObserving:(CLLocation *)locationOfGPS;
 - (TrackLogSegment *)startNewTrackLogSegment:(CLLocation *)locationOfGPS;
 - (NSArray *) trackLogSegmentsSince:(NSDate *)timestamp;
+- (TrackLogSegment *)lastTrackLogSegment;
+
 
 //Non-TrackLogging Mission Property
 - (MissionProperty *)createMissionPropertyAtMapLocation:(AGSPoint *)mapPoint;

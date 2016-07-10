@@ -321,6 +321,7 @@
         [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to start recording.  Please try again." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
         return;
     }
+    [self showTrackLogAttributeEditor:self.survey.lastTrackLogSegment];
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(stopRecording:) ToPlay:NO];
     [self enableControls];
     [self startLocationUpdates];
