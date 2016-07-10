@@ -291,7 +291,9 @@
 {
     if (self.isReady) {
         AKRLog(@"Oops, Survey:%@ is already open!", self.title);
-        if (handler) handler(YES);
+        if (handler) {
+            handler(YES);
+        }
         return;
     }
     AKRLog(@"Opening document for Survey:%@", self.title);
@@ -329,20 +331,24 @@
                                              selector:@selector(objectsDidChange:)
                                                  name:NSManagedObjectContextObjectsDidChangeNotification
                                                object:self.document.managedObjectContext];
-#ifdef AKR_DEBUG
-    //[self connectToNotificationCenter];
-#endif
 }
 
 - (void)closeDocumentWithCompletionHandler:(void (^)(BOOL success))completionHandler
 {
     if (!self.isReady) {
+        if (completionHandler) {
+            completionHandler(YES);
+        }
         return;
     }
     AKRLog(@"Closing document for Survey: %@", self.title);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self.document closeWithCompletionHandler:completionHandler];
-    self.document = nil;  //UIDocument is a "oneshot" object; it cannot be opened/closed multiple times
+    [self.document closeWithCompletionHandler:^(BOOL success) {
+        self.document = nil;  //UIDocument is a "oneshot" object; it cannot be opened/closed multiple times
+        if (completionHandler) {
+            completionHandler(success);
+        }
+    }];
 }
 
 //- (void)syncWithCompletionHandler:(void (^)(NSError*))handler
