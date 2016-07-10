@@ -297,36 +297,22 @@
         return;
     }
     AKRLog(@"Opening document for Survey:%@", self.title);
-
-    dispatch_async(dispatch_queue_create("gov.nps.akr.observer",DISPATCH_QUEUE_CONCURRENT), ^{
-        //during development, it is possible that a previously valid protocol is no longer recognized as valid
-        //we might be able to remove this check in production code.
-        if (!self.protocol.isValid) {
-            self.state = kCorrupt;
+    // This may require loading and testing the protocol file
+    if (!self.protocol.isValid) {
+        self.state = kCorrupt;
+        if (handler) {
+            handler(NO);
         }
-        if (self.state == kCorrupt) {
-            if (handler) handler(NO);
-        } else {
-            if (!self.document) {
-                self.document = [[SurveyCoreDataDocument alloc] initWithFileURL:self.documentUrl];
-            }
-            BOOL documentExists = [[NSFileManager defaultManager] fileExistsAtPath:[self.documentUrl path]];
-            //FIXME:  The following block crashes the app.
-            // https://fabric.io/national-park-service-alaska-region/ios/apps/gov.nps.akr.park-observer/issues/56b4f83ef5d3a7f76b9c5c05
-            // __44-[Survey openDocumentWithCompletionHandler:]_block_invoke
-            if (documentExists) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.document openWithCompletionHandler:handler];  //fails unless executed on UI thread
-                });
-            }
-            else
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.document saveToURL:self.documentUrl forSaveOperation:UIDocumentSaveForCreating completionHandler:handler];
-                });
-            }
-        }
-    });
+        return;
+    }
+    //UIDocument is a "oneshot" object; it cannot be opened/closed multiple times, so create a new one.
+    self.document = [[SurveyCoreDataDocument alloc] initWithFileURL:self.documentUrl];
+    BOOL documentExists = [[NSFileManager defaultManager] fileExistsAtPath:[self.documentUrl path]];
+    if (documentExists) {
+        [self.document openWithCompletionHandler:handler];
+    } else {
+        [self.document saveToURL:self.documentUrl forSaveOperation:UIDocumentSaveForCreating completionHandler:handler];
+    }
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(objectsDidChange:)
                                                  name:NSManagedObjectContextObjectsDidChangeNotification
