@@ -452,8 +452,8 @@
     if (survey == nil && _survey == nil) {  //fails isEqual test
         return;
     }
-    _survey = survey;
     [self closeSurvey:_survey];
+    _survey = survey;
     [self openSurvey:survey];
     [Settings manager].activeSurveyURL = survey.url;
     [self updateSelectSurveyViewControllerWithNewSurvey:survey];
@@ -467,8 +467,8 @@
     if (map == nil && _map == nil) {  //fails isEqual test
         return;
     }
-    _map = map;
     [self closeMap:_map];
+    _map = map;
     [self openMap:map];
     [Settings manager].activeMapPropertiesURL = map.plistURL;
     [self updateSelectMapViewControllerWithNewMap:map];
@@ -1173,12 +1173,12 @@
 
 - (void)closeMap:(Map *)map
 {
-    if (!map) {
-        AKRLog(@"Cannot close the map because none was provided.");
-        return;
-    }
     if (!self.isViewLoaded) {
         AKRLog(@"Cannot close the map becasue the view is not ready yet.");
+        return;
+    }
+    if (!map) {
+        AKRLog(@"Cannot close the map because none was provided.");
         return;
     }
     [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
@@ -1190,12 +1190,12 @@
 
 - (void)openMap:(Map *)map
 {
-    if (!map) {
-        AKRLog(@"Cannot open the map because none was provided.");
-        return;
-    }
     if (!self.isViewLoaded) {
         AKRLog(@"Cannot open the map becasue the view is not ready yet.");
+        return;
+    }
+    if (!map) {
+        AKRLog(@"Cannot open the map because none was provided.");
         return;
     }
     AKRLog(@"Opening the map %@", map);
@@ -1263,23 +1263,22 @@
 
 - (void)closeSurvey:(Survey *)survey
 {
-    if (!survey) {
-        AKRLog(@"Cannot close the survey, because there is none");
-        return;
-    }
     if (!self.isViewLoaded) {
         AKRLog(@"Cannot close the survey because the view isn't loaded yet");
+        return;
+    }
+    if (!survey) {
+        AKRLog(@"Cannot close the survey, because there is none");
         return;
     }
     if (survey.document.documentState != UIDocumentStateNormal) {
         AKRLog(@"Survey (%@) is in an abnormal state: %lu", survey.title, (unsigned long)survey.document.documentState);
         //There is really nothing I can do but continue...
     }
-    BOOL concurrentOpen = YES; //Always assume there may be an open operation that will begin before the completion handler runs
     AKRLog(@"Closing survey document (%@)", survey.title);
     [self incrementBusy];  //closing the survey document may block
     self.selectSurveyButton.title = @"Closing survey...";
-    if (self.survey.isRecording) {
+    if (survey.isRecording) {
         [self stopRecording:nil];
     }
     [self.mapView clearGraphicsLayers];
@@ -1289,19 +1288,19 @@
             AKRLog(@"Survey (%@) failed to close", survey.title);
             //There is really nothing I can do but continue...
         }
-        [self updateTitleBar];
+        [self updateTitleBar];  //WARNING: references self.survey, which might be different than local survey when this runs.
         [self decrementBusy];
     }];
 }
 
 - (void)openSurvey:(Survey *)survey
 {
-    if (!survey) {
-        AKRLog(@"Cannot open the survey, because there is none");
-        return;
-    }
     if (!self.isViewLoaded) {
         AKRLog(@"Cannot open the survey because the view isn't loaded yet");
+        return;
+    }
+    if (!survey) {
+        AKRLog(@"Cannot open the survey, because there is none");
         return;
     }
     AKRLog(@"Opening survey document (%@)", self.survey.title);
