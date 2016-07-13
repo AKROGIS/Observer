@@ -12,7 +12,11 @@
 @implementation Survey (ZipExport)
 
 - (NSString *)getExportFileName {
-    return [NSString stringWithFormat:@"%@.%@", self.title, SURVEY_EXT];
+    NSString *name = [NSString stringWithFormat:@"%@.%@", self.title, SURVEY_EXT];
+    NSString *fixedName = [name stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
+    fixedName = [fixedName stringByReplacingOccurrencesOfString:@"\\" withString:@"-"];
+    fixedName = [fixedName stringByReplacingOccurrencesOfString:@":" withString:@"-"];
+    return fixedName;
 }
 
 - (NSData *)exportToNSDataError:(NSError * __autoreleasing *)error
