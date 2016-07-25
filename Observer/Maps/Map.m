@@ -384,9 +384,11 @@
     //with ArcGIS 10.2 tilecache is non-null even when initilazing with a bad file
     //However accessing properties like fullEnvelope will yield an EXC_BAD_ACCESS if it is invalid
     //We do the sanity check now to avoid any surprises later.
+    //July 2016 Update: this is not always true.  I'm getting some crash reports on the alloc/init line
+    //So I am moving it inside the try/catch
     if ([[NSFileManager defaultManager] fileExistsAtPath:url.path]) {
-        AGSLocalTiledLayer *tiles = [[AGSLocalTiledLayer alloc] initWithPath:url.path];
         @try {
+            AGSLocalTiledLayer *tiles = [[AGSLocalTiledLayer alloc] initWithPath:url.path];
             if (tiles.fullEnvelope && !tiles.fullEnvelope.isEmpty) {
                 return tiles;
             }
