@@ -77,6 +77,7 @@
         return nil;
     }
     AGSLocalTiledLayer *tileCache =[Map loadTileCacheAtURL:url];
+    // loadTileCacheAtURL will check tilecache properties and return nil if invalid.
     if (!tileCache) {
         return nil;
     }
@@ -357,7 +358,9 @@
     return _tileCache;
 }
 
+//FIXME: This method is never called
 //Alert: will call a mutating function
+//FIXME: instead of mutating, return an optional(tilecache) in the completion handler
 - (void)loadTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
         [self loadTileCache];
@@ -369,9 +372,10 @@
 
 //Alert: Mutating function
 //Alert: will block for IO
+//FIXME: instead of mutating, return an optional(tilecache) in the completion handler
 - (void)loadTileCache {
     _tileCache = [Map loadTileCacheAtURL:self.tileCacheURL];
-    self.isTileCacheLoaded = YES;
+    self.isTileCacheLoaded = _tileCache != nil;
 }
 
 //Alert: will block for IO
@@ -380,17 +384,21 @@
     //with ArcGIS 10.2 tilecache is non-null even when initilazing with a bad file
     //However accessing properties like fullEnvelope will yield an EXC_BAD_ACCESS if it is invalid
     //We do the sanity check now to avoid any surprises later.
+    //July 2016 Update: this is not always true.  I'm getting some crash reports on the alloc/init line
+    //So I am moving it inside the try/catch
     if ([[NSFileManager defaultManager] fileExistsAtPath:url.path]) {
-        AGSLocalTiledLayer *tiles = [[AGSLocalTiledLayer alloc] initWithPath:url.path];
         @try {
+            AGSLocalTiledLayer *tiles = [[AGSLocalTiledLayer alloc] initWithPath:url.path];
             if (tiles.fullEnvelope && !tiles.fullEnvelope.isEmpty) {
                 return tiles;
             }
+            AKRLog(@"missing or empty envelope in tile cache %@",url);
         }
         @catch (NSException *exception) {
-            AKRLog(@"Exception %@ when loading tile cache %@",exception,url);
-            return nil;
+            AKRLog(@"Exception %@ when checking tile cache %@",exception,url);
         }
+    } else {
+        AKRLog(@"tile cache not found at path %@",url);
     }
     return nil;
 }
@@ -416,7 +424,7 @@
 - (BOOL)isEqualToRemoteProperties:(NSDictionary *)remoteMapProperties
 {
     //Equality is not well defined here, but I am trying to answer this question:
-    //Is the tilecache represented by the remote properties the same as a tilecache that I already have already memorized?
+    //Is the tilecache represented by the remote properties the same as a tilecache that I have already memorized?
 
     //Metadata equality
     //Equal if the title, author and date are the same. (even if the content (URL/size) maybe different)

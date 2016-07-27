@@ -897,6 +897,7 @@
     self.mapView.touchDelegate = self;
     self.mapView.callout.delegate = self;
     //the remaining configuration will occur after a layer is loaded
+    //Alert: calling the tilecahce property may block for IO
     if (self.map.tileCache) {
         [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
         //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
@@ -1175,6 +1176,7 @@
 - (void)openMap
 {
     if (self.map && self.isViewLoaded) {
+        //Alert: calling the tilecahce property may block for IO
         if (self.map.tileCache)
         {
             [self incrementBusy];
