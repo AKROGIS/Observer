@@ -2,14 +2,15 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":1,
 	"name":"ARCN RTLO Survey",
-	"version":1.0,
-	"date":"2016-03-25",
+	"version":1.1,
+	"date":"2016-11-14",
 	"description":"This survey protocol is for Red Throated Loon Surveys on the North Slope of Alaska",
     "mission":{
 		"attributes":[
 			{"name":"Vessel",     "type":700},
 			{"name":"Recorder",   "type":700},
-			{"name":"Weather",    "type":700}
+			{"name":"Weather",    "type":700},
+			{"name":"Comments",   "type":700}
 		],
 		"dialog":{
 			"title":"Mission Properties",
@@ -19,7 +20,8 @@
 					"elements":[
 						{"type":"QEntryElement", "key":"v1", "bind":"textValue:Vessel",      "title":"Vessel",      "placeholder":"Name", "autocorrectionType":"No"},
 						{"type":"QEntryElement", "key":"r",  "bind":"textValue:Recorder",    "title":"Recorder",    "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QRadioElement", "key":"w",  "bind":"selectedItem:Weather",  "title":"Weather",     "items":["<50% clouds", ">50% clouds", "Fog", "Mist", "Rain"]}
+						{"type":"QRadioElement", "key":"w",  "bind":"selectedItem:Weather",  "title":"Weather",     "items":["<50% clouds", ">50% clouds", "Fog", "Mist", "Rain"]},
+						{"type":"QMultilineElement", "key":"c",  "bind":"textValue:Comments",    "title":"Comments"}
 				  	]
 				}
 			]
@@ -41,8 +43,11 @@
 		{
     		"name":"Loons",
     		"attributes":[
-				{"name":"count",   "type":100},
-				{"name":"species", "type":700}
+				{"name":"count",    "type":100},
+				{"name":"species",  "type":700},
+				{"name":"species2", "type":700},
+				{"name":"Waypoint", "type":700},
+				{"name":"Notes",    "type":700}
  			],
 			"locations":[
 				{"type":"gps",           "default":false, "allow":true},
@@ -56,8 +61,11 @@
 				"sections":[
 					{
 					    "elements":[
-							{"type":"QIntegerElement", "key":"c", "bind":"numberValue:count",    "title":"Count"},
-							{"type":"QRadioElement",   "key":"s", "bind":"selectedItem:species", "title":"Species",    "items":["RTLO", "RTLOP", "RTLON", "PALO", "PALOP", "PALON", "YBLO", "YBLOP", "YBLON", "UNLO", "UNLOP", "UNLON", "TERN", "ALTE", "ARTE", "TERNCO"]}
+							{"type":"QIntegerElement",   "key":"c",  "bind":"numberValue:count",     "title":"Count"},
+							{"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:species",  "title":"Loons/Terns",   "items":["RTLO", "RTLON", "RTLOP", "YBLO", "YBLON", "YBLOP", "PALO", "PALON", "PALOP", "TERN", "ARTE", "ALTE", "COLONY", "UNLO", "UNLON", "ARLO", "ARLON", "ARLOP", "COLO", "COLON", "COLOP"]},
+							{"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:species2", "title":"Other Species", "items":["RNGR", "RNGN", "TUSW", "TUSWN", "COEI", "COEIN", "BLSC", "BLSCN", "WWSC", "WWSCN", "EMGO", "EMGON", "CANG", "CANGN", "LTDU", "LTDUN", "GLGU", "GLGUN", "OTHER_SP"]},
+							{"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",    "title":"Waypoint",      "placeholder":"ID", "autocorrectionType":"No"},
+							{"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",       "title":"Comments"}
 					  	]
 					}
 				]
