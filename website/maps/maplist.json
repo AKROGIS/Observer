@@ -245,5 +245,18 @@
         "ymin":58.3767389840603,
         "xmax":-134.697614977255,
         "ymax":58.3798344836539
+      },
+      {
+        "name":"Kotzebue Test",
+        "author":"Regan Sarwas",
+        "date":"2016-12-28",
+        "size":15563376,
+        "url":"http://akrgis.nps.gov/observer/maps/kotz18.tpk",
+        "thumbnail":"http://akrgis.nps.gov/observer/maps/thumbnails/kotz1.png",
+        "description":"Kotzebue for testing by WEAR and ARCN staff",
+        "xmin":-162.609350163827,
+        "ymin":66.8889798068636,
+        "xmax":-162.565201154422,
+        "ymax":66.9045780212142
     }
 ]
