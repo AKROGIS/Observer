@@ -14,6 +14,7 @@
 #import "MapCollection.h"
 #import "ProtocolCollection.h"
 #import <Crashlytics/Crashlytics.h>
+#import <ArcGIS/ArcGIS.h>
 
 #define kAlertViewNewProtocol      1
 #define kAlertViewNewVersion       2
@@ -33,6 +34,15 @@
 {
     //Activate the Crash reporting system
     [Crashlytics startWithAPIKey:@"48e51797d0250122096db58d369feab2cac2da33"];
+
+    // Activate a Basic ArcGIS License - Set the client ID
+    NSError *error;
+    NSString* clientID = @"<my_client_ID>";
+    [AGSRuntimeEnvironment setClientID:clientID error:&error];
+    if(error){
+        // We had a problem using our client ID - Map will display "For developer use only"
+        NSLog(@"Error using client ID : %@",[error localizedDescription]);
+    }
 
     Map *savedMap = [[Map alloc] initWithCachedPropertiesURL:[Settings manager].activeMapPropertiesURL];
     if (savedMap) {
