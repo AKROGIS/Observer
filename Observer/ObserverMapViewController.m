@@ -231,6 +231,7 @@
     }
 }
 
+/*
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     self.mapView.locationDisplay.interfaceOrientation = toInterfaceOrientation;
@@ -249,7 +250,7 @@
     [self.featureSelectorPopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.angleDistancePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
-
+*/
 
 
 
@@ -872,7 +873,6 @@
 {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     BOOL authorized = (status == kCLAuthorizationStatusAuthorizedWhenInUse ||
-                       status == kCLAuthorizationStatusAuthorized ||
                        status == kCLAuthorizationStatusAuthorizedAlways);
 
     return authorized;
@@ -1196,7 +1196,7 @@
 {
     self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
     self.mapView.locationDisplay.wanderExtentFactor = 0.0;
-    self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
+    //self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
     [self.mapView.locationDisplay startDataSource];
     [self startStopLocationServicesForPanMode];
 }

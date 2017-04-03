@@ -63,7 +63,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways)
     {
         self.locationLabel.text = @"Waiting for current location ...";
         [self.locationManager startMonitoringSignificantLocationChanges];
@@ -104,7 +104,7 @@
         self.locationManager.delegate = self;
         [self.locationManager startMonitoringSignificantLocationChanges];
     }
-    if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized)
+    if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorizedAlways)
     {
         self.locationLabel.text = @"Location not authorized";
         return;

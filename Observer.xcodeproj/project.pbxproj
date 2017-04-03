@@ -41,7 +41,6 @@
 		396E1E9D189ADE8F00B735EF /* ProtocolFeatureSymbology.m in Sources */ = {isa = PBXBuildFile; fileRef = 396E1E9C189ADE8F00B735EF /* ProtocolFeatureSymbology.m */; };
 		397CF5521D0B7296008D7227 /* ProtocolFeatureLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 397CF5511D0B7296008D7227 /* ProtocolFeatureLabel.m */; };
 		3982F6CA18C00D040081C3F9 /* AGSMapView+AKRAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3982F6C918C00D040081C3F9 /* AGSMapView+AKRAdditions.m */; };
-		398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 398908041857DDFD007B3F67 /* ArcGIS.bundle */; };
 		398908221857EB2F007B3F67 /* Map.m in Sources */ = {isa = PBXBuildFile; fileRef = 398908191857EB2F007B3F67 /* Map.m */; };
 		398908231857EB2F007B3F67 /* MapCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989081B1857EB2F007B3F67 /* MapCollection.m */; };
 		398908241857EB2F007B3F67 /* MapDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989081D1857EB2F007B3F67 /* MapDetailViewController.m */; };
@@ -114,6 +113,7 @@
 		59954F851D146175006C32B4 /* POGraphic.m in Sources */ = {isa = PBXBuildFile; fileRef = 59954F841D146175006C32B4 /* POGraphic.m */; };
 		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
 		59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FEE1863FDBF00470791 /* AKRFormatter.m */; };
+		59CBF9731E91887300AE13C3 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 59CBF9721E91887300AE13C3 /* ArcGIS.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -367,6 +367,7 @@
 		59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDirectionIndicatorView.m; sourceTree = "<group>"; };
 		59C60FED1863FDBF00470791 /* AKRFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRFormatter.h; sourceTree = "<group>"; };
 		59C60FEE1863FDBF00470791 /* AKRFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRFormatter.m; sourceTree = "<group>"; };
+		59CBF9721E91887300AE13C3 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -573,6 +574,7 @@
 		39955E3E178334BF00D225D7 = {
 			isa = PBXGroup;
 			children = (
+				59CBF9721E91887300AE13C3 /* ArcGIS.bundle */,
 				39955E50178334BF00D225D7 /* Observer */,
 				39D9479D18BEA79E0069DB31 /* ObserverTests */,
 				39955E49178334BF00D225D7 /* Frameworks */,
@@ -794,7 +796,7 @@
 			attributes = {
 				CLASSPREFIX = Observer;
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0710;
+				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = "GIS Team";
 				TargetAttributes = {
 					39955E46178334BF00D225D7 = {
@@ -882,6 +884,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59CBF9731E91887300AE13C3 /* ArcGIS.bundle in Resources */,
 				39955E55178334C000D225D7 /* InfoPlist.strings in Resources */,
 				39449F1418ADABCF00A1F8FE /* Localizable.strings in Resources */,
 				3914014B1975AA1D0055F2E1 /* ACKNOWLEDGEMENTS in Resources */,
@@ -893,7 +896,6 @@
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
 				39C53E701885DAB000C0CECE /* TilePackageDocumentIcon.png in Resources */,
 				393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */,
-				398908051857DDFD007B3F67 /* ArcGIS.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1094,21 +1096,22 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					armv7,
-					i386,
-				);
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/SDKs/ArcGIS/iOS/**";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Observer/Observer-Prefix.pch";
@@ -1119,7 +1122,7 @@
 				);
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1140,25 +1143,26 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 396E1E8B18984EFF00B735EF /* Warnings.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					armv7,
-					i386,
-				);
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/SDKs/ArcGIS/iOS/**";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Observer/Observer-Prefix.pch";
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (

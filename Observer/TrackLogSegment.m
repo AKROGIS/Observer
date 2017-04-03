@@ -62,9 +62,9 @@
 
     GpsPoint *start = (GpsPoint *)[self.points firstObject];
     GpsPoint *end = (GpsPoint *)[self.points lastObject];
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSInteger year = [gregorian components:NSYearCalendarUnit fromDate:start.timestamp].year;
-    NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSDayCalendarUnit inUnit:NSYearCalendarUnit forDate:start.timestamp];
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSInteger year = [gregorian components:NSCalendarUnitYear fromDate:start.timestamp].year;
+    NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitYear forDate:start.timestamp];
     [csv appendFormat:@"%@,%@,%@,%ld,%lu,%@,%@,%0.2f,%0.6f,%0.6f,%0.6f,%0.6f,WGS84,%0.1f",
      (self.missionProperty.observing ? @"Yes" : @"No"),
      [AKRFormatter utcIsoStringFromDate:start.timestamp], [AKRFormatter localIsoStringFromDate:start.timestamp], (long)year, (unsigned long)dayOfYear,
