@@ -301,7 +301,7 @@
 - (IBAction)startRecording:(UIBarButtonItem *)sender
 {
     if(!self.map) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"You need to select a map before you can begin." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+        [self alert:nil message:@"You need to select a map before you can begin."];
         return;
     }
     if (self.survey.isRecording) {
@@ -313,7 +313,7 @@
         return;
     }
     if(![self.survey startRecording:location]) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to start recording.  Please try again." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+        [self alert:nil message:@"Unable to start recording.  Please try again."];
         return;
     }
     [self showTrackLogAttributeEditor:self.survey.lastTrackLogSegment];
@@ -553,7 +553,7 @@
     if (self.gpsFailed) {
         self.gpsFailed = NO;
         [self enableControls];
-        [[[UIAlertView alloc] initWithTitle:nil message:@"@GPS is back!" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+        [self alert:nil message:@"@GPS is back!"];
     }
 }
 
@@ -565,7 +565,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    [[[UIAlertView alloc] initWithTitle:@"Location Failure" message:error.localizedDescription delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    [self alert:@"Location Failure" message:error.localizedDescription];
     self.gpsFailed = YES;
     [self enableControls];
 }
@@ -582,7 +582,7 @@
     [self.survey clearMapMapViewSpatialReference];
     [self configureObservationButtons];
     [self decrementBusy];
-    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to load map" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    [self alert:nil message:@"Unable to load map"];
 }
 
 
@@ -684,17 +684,17 @@
                     self.movingObservation = [self.survey observationFromEntity:entity];
                     if (self.movingMissionProperty) {
                         //TODO: support moving mission properties
-                        [[[UIAlertView alloc] initWithTitle:nil message:@"Can't move mission properties yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                        [self alert:nil message:@"Can't move mission properties yet."];
                         self.movingMissionProperty = nil;
                     }
                     if (self.movingObservation.angleDistanceLocation) {
                         //TODO: Support moving Angle/Distance located observations
-                        [[[UIAlertView alloc] initWithTitle:nil message:@"Can't move angle/distance features yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                        [self alert:nil message:@"Can't move angle/distance features yet."];
                         self.movingObservation = nil;
                     }
                     if (self.movingObservation.gpsPoint) {
                         //TODO: support moving GPS located observations
-                        [[[UIAlertView alloc] initWithTitle:nil message:@"Can't move GPS located features yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                        [self alert:nil message:@"Can't move GPS located features yet."];
                         self.movingObservation = nil;
                     }
                     if (self.movingMissionProperty || self.movingObservation) {
@@ -703,13 +703,13 @@
                     break;
                 }
                 default:
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Zoom in to select a single feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                    [self alert:nil message:@"Zoom in to select a single feature."];
                     break;
             }
             break;
         }
         default:
-            [[[UIAlertView alloc] initWithTitle:nil message:@"Zoom in to select a single feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            [self alert:nil message:@"Zoom in to select a single feature."];
             break;
     }
     AKRLog(@"moving %@",self.movingGraphic);
@@ -794,6 +794,14 @@
             AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %ld",(long)alertView.tag);
             break;
     }
+}
+
+- (void) alert:(NSString *)title message:(NSString *)message
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:kOKButtonText style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:okAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 
@@ -885,7 +893,6 @@
     }
     return _addFeatureBarButtonItems;
 }
-
 
 
 
@@ -1042,7 +1049,7 @@
 {
     //TODO: provide more helpful error message.  Why can't I get the location?  What can the user do about it?
     //This is a low priority, since the buttons that activate this should not be enabled unless location services are available.
-    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get your location.  Please try again later." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    [self alert:nil message:@"Unable to get your location.  Please try again later."];
 }
 
 - (void)requestAuthorizationForAlwaysOnLocationServices
@@ -1187,7 +1194,7 @@
             [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
             //adding a layer is async. See AGSLayerDelegate layerDidLoad or layerDidFailToLoad for additional action taken when opening a map
         } else {
-            [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the map." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            [self alert:nil message:@"Unable to open the map."];
         }
     }
 }
@@ -1250,7 +1257,7 @@
                     //[self.survey logStats];
                     [self configureObservationButtons];
                 } else {
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                    [self alert:nil message:@"Unable to open the survey."];
                 }
                 [self updateTitleBar];
                 [self decrementBusy];
@@ -1276,7 +1283,7 @@
                 if (!success) {
                     //This happens if I deleted the active survey (and there are unsaved changes).  Due to the asyncronity
                     //the delete can happen before the close can finish.  But I don't really care, because it is deleted.
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to close the survey. (Did you just delete it?)" delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                    [self alert:nil message:@"Unable to close the survey. (Did you just delete it?)"];
                 }
                 if (!concurrentOpen) {
                     [self updateTitleBar];
@@ -1285,7 +1292,7 @@
             }];
         } else if (survey.document.documentState != UIDocumentStateClosed) {
             AKRLog(@"Survey (%@) is in an abnormal state: %lu", survey.title, (unsigned long)survey.document.documentState);
-            [[[UIAlertView alloc] initWithTitle:nil message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            [self alert:nil message:@"Survey is not in a closable state."];
             return NO;
         }
     }
@@ -1670,7 +1677,7 @@
     }
     @catch (NSException *ex) {
         NSString *msg = [NSString stringWithFormat:@"%@\nCheck the protocol file.", ex.description];
-        [[[UIAlertView alloc] initWithTitle:@"Save Failed" message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        [self alert:@"Save Failed" message:msg];
     }
     //For observations, redraw the graphic and label with the new attributes
     if ([dialog.managedObject isKindOfClass:[Observation class]]) {
@@ -1722,7 +1729,7 @@
         }
     }
     if (!location) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current course/heading for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        [self alert:nil message:@"Unable to get current course/heading for Angle/Distance."];
         return;
     }
 

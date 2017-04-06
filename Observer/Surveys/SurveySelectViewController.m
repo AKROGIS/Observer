@@ -189,12 +189,22 @@
         Survey *surveyToDelete = [self.items surveyAtIndex:indexPath.urow];
         self.indexPathToDelete = indexPath;
         if (surveyToDelete.state == kModified) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Unsaved Changes"
-                                                            message:@"You will lose your unsaved data.  This cannot be undone."
-                                                           delegate:self
-                                                  cancelButtonTitle:@"Keep"
-                                                  otherButtonTitles:@"Delete",nil];
-            [alert show];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Unsaved Changes"
+                                                                           message:@"You will lose your unsaved data.  This cannot be undone."
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *keepAction = [UIAlertAction actionWithTitle:@"Keep"
+                                                                 style:UIAlertActionStyleDefault
+                                                               handler:^(UIAlertAction * action){
+                                                                   self.editing = NO;
+                                                               }];
+            UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Delete"
+                                                                   style:UIAlertActionStyleDefault
+                                                                 handler:^(UIAlertAction * action){
+                                                                   [self deleteSurvey];
+                                                               }];
+            [alert addAction:keepAction];
+            [alert addAction:deleteAction];
+            [self presentViewController:alert animated:YES completion:nil];
         } else {
             [self deleteSurvey];
         }
@@ -245,24 +255,10 @@
         [self.items insertSurvey:newSurvey atIndex:0];
         [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     } else {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"New survey could not be created." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-    }
-}
-
-
-
-#pragma mark - UIAlertViewDelegate
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if ([alertView.title isEqualToString:@"Unsaved Changes"]) {
-        if (buttonIndex == 1) {
-            [self deleteSurvey];
-        } else {
-            self.editing = NO;
-        }
-    } else {
-        AKRLog(@"Unexpected AlertView in SurveySelectViewController");
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"New survey could not be created." preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:okAction];
+        [self presentViewController:alert animated:YES completion:nil];
     }
 }
 
