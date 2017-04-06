@@ -193,12 +193,12 @@
                                                                            message:@"You will lose your unsaved data.  This cannot be undone."
                                                                     preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *keepAction = [UIAlertAction actionWithTitle:@"Keep"
-                                                                 style:UIAlertActionStyleDefault
+                                                                 style:UIAlertActionStyleCancel
                                                                handler:^(UIAlertAction * action){
                                                                    self.editing = NO;
                                                                }];
             UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Delete"
-                                                                   style:UIAlertActionStyleDefault
+                                                                   style:UIAlertActionStyleDestructive
                                                                  handler:^(UIAlertAction * action){
                                                                    [self deleteSurvey];
                                                                }];

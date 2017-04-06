@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Survey.h"
 
-@interface SurveySelectViewController : UITableViewController <UIAlertViewDelegate, UITextFieldDelegate>
+@interface SurveySelectViewController : UITableViewController <UITextFieldDelegate>
 
 // A block to execute when a survey is selected.
 // This will be called even if the user re-selects the current survey
