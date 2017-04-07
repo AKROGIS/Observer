@@ -1025,7 +1025,7 @@
                                                               handler:^(UIAlertAction * action){
                                                                   // Send the user to the Settings for this app
                                                                   NSURL *settingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-                                                                  [[UIApplication sharedApplication] openURL:settingsURL];
+                                                                  [[UIApplication sharedApplication] openURL:settingsURL options:@{} completionHandler:nil];
                                                               }];
         [alert addAction:abortAction];
         [alert addAction:settingAction];
