@@ -86,13 +86,13 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
     // Called when this app is asked to open a resource (url) by a different app
     // The url is a local file resource (typically in Documents/Inbox), and can only
     //   be a file type that I have registered interest in (app configuration plist)
     // The user will expect a short delay to open the file
-    AKRLog(@"%@ asked me to open %@", sourceApplication, url);
+    AKRLog(@"Asked to open %@", url);
 
     //The url may contain a resource (e.g. a tile package) that we already have in the documents directory.
     //  This is unlikely, and while we could try to determine equality and return the existing resource if
@@ -197,7 +197,7 @@
                                                                  style:UIAlertActionStyleDefault
                                                                handler:^(UIAlertAction * action){
                                                                    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@",kAppDistributionPlist]];
-                                                                   [[UIApplication sharedApplication] openURL:url];
+                                                                   [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
                                                                }];
             [alert addAction:waitAction];
             [alert addAction:openAction];
