@@ -98,7 +98,6 @@
 @property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;  //maintain state for UIActionSheetDelegate callback
 
 //Must maintain a reference to popover controllers, otherwise they are GC'd after they are presented
-@property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
 @property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 @property (strong, nonatomic) UIPopoverController *surveysPopoverController;
 @property (strong, nonatomic) UIPopoverController *featureSelectorPopoverController;
@@ -234,7 +233,6 @@
     [self.editAttributePopoverController dismissPopoverAnimated:NO];
     [self.reviewAttributePopoverController dismissPopoverAnimated:NO];
     [self.featureSelectorPopoverController dismissPopoverAnimated:NO];
-    [self.angleDistancePopoverController dismissPopoverAnimated:NO];
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -243,7 +241,6 @@
     [self.editAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.reviewAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.featureSelectorPopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
-    [self.angleDistancePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
 */
 
@@ -764,9 +761,6 @@
 {
     if (popoverController == self.surveysPopoverController) {
         self.surveysPopoverController = nil;
-    }
-    if (popoverController == self.angleDistancePopoverController) {
-        self.angleDistancePopoverController = nil;
     }
     if (popoverController == self.mapsPopoverController) {
         self.mapsPopoverController = nil;
@@ -1680,12 +1674,6 @@
 //Called programatically by feature bar button when creating a new Angle/Distance observation
 - (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature fromButton:(UIBarButtonItem *)button
 {
-    if (self.angleDistancePopoverController) {
-        [self.angleDistancePopoverController dismissPopoverAnimated:YES];
-        self.angleDistancePopoverController = nil;
-        return;
-    }
-
     CLLocation *recentlocation = self.mostRecentLocation;
     if (!recentlocation.timestamp) {
         [self showNoLocationAlert];
@@ -1709,25 +1697,16 @@
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
     vc.location = location;
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
-        self.angleDistancePopoverController = nil;
         AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
         Observation *observation = [self.survey createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
         AGSGraphic *graphic = [self.survey drawObservation:observation];
         [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
     };
-    vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
-        self.angleDistancePopoverController = nil;
-    };
 
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        self.angleDistancePopoverController = [[UIPopoverController alloc] initWithContentViewController:nav];
-        vc.popover = self.angleDistancePopoverController;
-        vc.popover.delegate = self;
-        [self.angleDistancePopoverController presentPopoverFromBarButtonItem:button permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-    } else {
-        [self.navigationController pushViewController:vc animated:YES];
-    }
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalPresentationStyle = UIModalPresentationPopover;
+    [self presentViewController:nav animated:YES completion:nil];
+    [nav popoverPresentationController].barButtonItem = button;
 }
 
 // This is called by the feature editor (setAttributesForFeatureType:), when the user wants to edit the Angle/Distance of an observation.
@@ -1742,7 +1721,6 @@
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
     vc.location = location;
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
-        self.angleDistancePopoverController = nil;
         Observation *observation = [self.survey observationFromEntity:entity];
         [self.survey updateAngleDistanceObservation:observation withAngleDistance:controller.location];
         // "Move" the observation; put the new graphic in the dialog for other attribute changes
