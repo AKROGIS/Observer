@@ -418,17 +418,26 @@
         AKRLog(@"Oh No!  I didn't find the button the belongs to the long press");
     }
     ProtocolFeature *feature = button.feature;
-    self.currentProtocolFeature = feature;  //Save the feature for the action sheet delegate callback
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    sheet.tag = kActionSheetSelectLocation;
-    for (NSString *title in [ProtocolFeatureAllowedLocations stringsForLocations:feature.allowedLocations.nonTouchChoices]) {
-        [sheet addButtonWithTitle:title];
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil
+                                                                         message:nil
+                                                                  preferredStyle:UIAlertControllerStyleActionSheet];
+    for (NSString *choiceText in [ProtocolFeatureAllowedLocations stringsForLocations:feature.allowedLocations.nonTouchChoices]) {
+        UIAlertAction *locateChoice = [UIAlertAction actionWithTitle:choiceText
+                                                               style:UIAlertActionStyleDefault
+                                                             handler:^(UIAlertAction * action){
+                                                                 WaysToLocateFeature locationMethod = [ProtocolFeatureAllowedLocations locationMethodForName:choiceText];
+                                                                 feature.preferredLocationMethod = locationMethod;
+                                                                 [self addFeature:feature withNonTouchLocationMethod:locationMethod];
+                                                             }];
+        [actionSheet addAction:locateChoice];
     }
-    // Fix for iOS bug.  See https://devforums.apple.com/message/857939#857939
-    [sheet addButtonWithTitle:kCancelButtonText];
-    sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
-    
-    [sheet showFromBarButtonItem:button animated:NO];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:kCancelButtonText style:UIAlertActionStyleCancel handler:nil];
+    [actionSheet addAction:cancelAction];
+    // Present the action sheet in a popover at the button
+    actionSheet.modalPresentationStyle = UIModalPresentationPopover;
+    [self presentViewController:actionSheet animated:YES completion:nil];
+    UIPopoverPresentationController *popover = actionSheet.popoverPresentationController;
+    popover.barButtonItem = button;
 }
 
 
@@ -787,48 +796,6 @@
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:kOKButtonText style:UIAlertActionStyleDefault handler:nil];
     [alert addAction:okAction];
     [self presentViewController:alert animated:YES completion:nil];
-}
-
-
-
-
-#pragma mark - Delegate Methods: UIActionSheetDelegate
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    AKRLog(@"ActionSheet %ld was dismissed with Button %ld click", (long)actionSheet.tag, (long)buttonIndex);
-    if (buttonIndex < 0) {
-        return;
-    }
-    switch (actionSheet.tag) {
-        case kActionSheetSelectLocation: {
-            ProtocolFeature *feature = self.currentProtocolFeature;
-            NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
-            WaysToLocateFeature locationMethod = [ProtocolFeatureAllowedLocations locationMethodForName:buttonTitle];
-            feature.preferredLocationMethod = locationMethod;
-            [self addFeature:feature withNonTouchLocationMethod:locationMethod];
-            break;
-        }
-        case kActionSheetSelectFeature: {
-            NSString *featureName = [actionSheet buttonTitleAtIndex:buttonIndex];
-            __block ProtocolFeature *feature = nil;
-            [self.survey.protocol.featuresWithLocateByTouch enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                if ([featureName isEqualToString:((ProtocolFeature *)obj).name]) {
-                    *stop = YES;
-                    feature = obj;
-                }
-            }];
-            if (feature) {
-                [self addFeature:feature atMapPoint:self.mapPointAtAddSelectedFeature];
-            } else {
-                AKRLog(@"Oh No!, Selected feature not found in survey protocol");
-            }
-            break;
-        }
-        default:
-            AKRLog(@"Oh No!, Action sheet delegate called for an unknown action sheet (tag = %ld",(long)actionSheet.tag);
-            break;
-    }
 }
 
 
@@ -1379,19 +1346,37 @@
 - (void)presentProtocolFeatureSelector:(NSArray *)features atPoint:(CGPoint)screenpoint mapPoint:(AGSPoint *)mapPoint
 {
     self.mapPointAtAddSelectedFeature = mapPoint;
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    sheet.tag = kActionSheetSelectFeature;
-
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil
+                                                                         message:nil
+                                                                  preferredStyle:UIAlertControllerStyleActionSheet];
     [features enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSString *name = ((ProtocolFeature *)obj).name;
-        [sheet addButtonWithTitle:name];
+        NSString *choiceText = ((ProtocolFeature *)obj).name;
+        UIAlertAction *featureChoice = [UIAlertAction actionWithTitle:choiceText
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action){
+                                                                  __block ProtocolFeature *actionFeature = nil;
+                                                                  [self.survey.protocol.featuresWithLocateByTouch enumerateObjectsUsingBlock:^(id obj2, NSUInteger idx2, BOOL *stop2) {
+                                                                      if ([choiceText isEqualToString:((ProtocolFeature *)obj2).name]) {
+                                                                          *stop2 = YES;
+                                                                          actionFeature = obj2;
+                                                                      }
+                                                                  }];
+                                                                  if (actionFeature) {
+                                                                      [self addFeature:actionFeature atMapPoint:self.mapPointAtAddSelectedFeature];
+                                                                  } else {
+                                                                      AKRLog(@"Oh No!, Selected feature not found in survey protocol");
+                                                                  }
+                                                              }];
+        [actionSheet addAction:featureChoice];
     }];
-    // Fix for iOS bug.  See https://devforums.apple.com/message/857939#857939
-    [sheet addButtonWithTitle:kCancelButtonText];
-    sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
-
-    CGRect rect = CGRectMake(screenpoint.x, screenpoint.y, 1, 1);
-    [sheet showFromRect:rect inView:self.mapView animated:NO];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:kCancelButtonText style:UIAlertActionStyleCancel handler:nil];
+    [actionSheet addAction:cancelAction];
+    // Present the action sheet in a popover at the feature's screen point in the mapview
+    actionSheet.modalPresentationStyle = UIModalPresentationPopover;
+    [self presentViewController:actionSheet animated:YES completion:nil];
+    UIPopoverPresentationController *popover = actionSheet.popoverPresentationController;
+    popover.sourceView = self.mapView;
+    popover.sourceRect = CGRectMake(screenpoint.x, screenpoint.y, 1, 1);
 }
 
 //called by map touch and action sheet
