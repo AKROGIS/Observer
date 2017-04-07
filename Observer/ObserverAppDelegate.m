@@ -19,6 +19,7 @@
 #define kAlertViewNewProtocol      1
 #define kAlertViewNewVersion       2
 #define kAppDistributionPlist      @"https://akrgis.nps.gov/observer/Park_Observer.plist"
+#define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 
 
 @interface ObserverAppDelegate()
@@ -106,7 +107,7 @@
     NSError *error = nil;
     [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
     if (error) {
-        [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Unable to open file." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        [self alert:url.lastPathComponent message:@"Unable to open file."];
         return NO;
     }
 
@@ -117,7 +118,7 @@
             self.observerMapViewController.survey = newSurvey;
             return YES;
         } else {
-            [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Not a Valid Survey." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            [self alert:url.lastPathComponent message:@"Not a Valid Survey."];
             return NO;
         }
     }
@@ -131,7 +132,7 @@
             self.observerMapViewController.map = newMap;
             return YES;
         } else {
-            [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Not a Valid Map." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            [self alert:url.lastPathComponent message:@"Not a Valid Map."];
             return NO;
         }
     }
@@ -140,13 +141,28 @@
         if ([newProtocol isValid]) {
             [self.observerMapViewController newProtocolAvailable:newProtocol];
             self.protocolForSurveyCreation = newProtocol;
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to open a new survey file with this protocol?" delegate:self cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil];
-            alertView.tag = kAlertViewNewProtocol;
-            [alertView show];
-            // handle response in UIAlertView delegate method
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Protocol"
+                                                                           message:@"Do you want to open a new survey file with this protocol?"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *waitAction = [UIAlertAction actionWithTitle:@"Maybe Later"
+                                                                 style:UIAlertActionStyleCancel
+                                                               handler:nil];
+            UIAlertAction *openAction = [UIAlertAction actionWithTitle:@"Yes"
+                                                                 style:UIAlertActionStyleDefault
+                                                               handler:^(UIAlertAction * action){
+                                                                   Survey *newSurvey = [[Survey alloc] initWithProtocol:self.protocolForSurveyCreation];
+                                                                   if ([newSurvey isValid]) {
+                                                                       self.observerMapViewController.survey = newSurvey;
+                                                                   } else {
+                                                                       [self alert:nil message:@"Unable to create new survey."];
+                                                                   }
+                                                               }];
+            [alert addAction:waitAction];
+            [alert addAction:openAction];
+            [self presentAlert:alert];
             return YES;
         } else {
-            [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Not a Valid Survey Protocol" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            [self alert:url.lastPathComponent message:@"Not a Valid Survey Protocol"];
             return NO;
         }
     }
@@ -173,9 +189,21 @@
 {
     [self checkForUpdateWithCallback:^(BOOL found) {
         if (found) {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"New Version Waiting" message:@"Are you ready to upgrade?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes",nil];
-            alertView.tag = kAlertViewNewVersion;
-            [alertView show];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Version Waiting"
+                                                                           message:@"Are you ready to upgrade?"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *waitAction = [UIAlertAction actionWithTitle:@"No"
+                                                                 style:UIAlertActionStyleCancel
+                                                               handler:nil];
+            UIAlertAction *openAction = [UIAlertAction actionWithTitle:@"Yes"
+                                                                 style:UIAlertActionStyleDefault
+                                                               handler:^(UIAlertAction * action){
+                                                                   NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@",kAppDistributionPlist]];
+                                                                   [[UIApplication sharedApplication] openURL:url];
+                                                               }];
+            [alert addAction:waitAction];
+            [alert addAction:openAction];
+            [self presentAlert:alert];
         }
     }];
 }
@@ -206,33 +234,29 @@
 
 
 
-#pragma mark - Delegate Methods: UIAlertViewDelegate
+#pragma mark - Alert Helpers
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+- (void) alert:(NSString *)title message:(NSString *)message
 {
-    switch (alertView.tag) {
-        case kAlertViewNewProtocol: {
-            if (buttonIndex == 1) {  //Yes to create/open a new survey
-                Survey *newSurvey = [[Survey alloc] initWithProtocol:self.protocolForSurveyCreation];
-                if ([newSurvey isValid]) {
-                    self.observerMapViewController.survey = newSurvey;
-                } else {
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create new survey." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-                }
-            }
-            break;
-        }
-        case kAlertViewNewVersion: {
-            if (buttonIndex == 1) {
-                NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@",kAppDistributionPlist]];
-                [[UIApplication sharedApplication] openURL:url];
-            }
-            break;
-        }
-        default:
-            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %ld",(long)alertView.tag);
-            break;
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:kOKButtonText style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:okAction];
+    [self presentAlert:alert];
+}
+
+- (void)presentAlert:(UIAlertController *)alert
+{
+    // self is not a UIVeiwController, so we need to find the root view controller and ask it to display the Alert
+    id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+    if([rootViewController isKindOfClass:[UINavigationController class]])
+    {
+        rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
     }
+    if([rootViewController isKindOfClass:[UITabBarController class]])
+    {
+        rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
+    }
+    [rootViewController presentViewController:alert animated:YES completion:nil];
 }
 
 @end

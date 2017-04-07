@@ -779,22 +779,7 @@
 
 
 
-#pragma mark - Delegate Methods: UIAlertViewDelegate
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (alertView.tag) {
-        case kAlertViewLocationServices:
-            if (buttonIndex == 1) {
-                // Send the user to the Settings for this app
-                NSURL *settingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-                [[UIApplication sharedApplication] openURL:settingsURL];
-            }
-        default:
-            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %ld",(long)alertView.tag);
-            break;
-    }
-}
+#pragma mark - Alert Helper
 
 - (void) alert:(NSString *)title message:(NSString *)message
 {
@@ -1067,14 +1052,22 @@
         NSString *title;
         title = (status == kCLAuthorizationStatusDenied) ? @"Location services are off" : @"Background location is not enabled";
         NSString *message = @"To make observations you must turn on 'Always' in the Location Services Settings";
-
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title
-                                                            message:message
-                                                           delegate:self
-                                                  cancelButtonTitle:@"Cancel"
-                                                  otherButtonTitles:@"Settings", nil];
-        alertView.tag = kAlertViewLocationServices;
-        [alertView show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
+                                                                       message:message
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *abortAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                              style:UIAlertActionStyleCancel
+                                                            handler:nil];
+        UIAlertAction *settingAction = [UIAlertAction actionWithTitle:@"Settings"
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action){
+                                                                  // Send the user to the Settings for this app
+                                                                  NSURL *settingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+                                                                  [[UIApplication sharedApplication] openURL:settingsURL];
+                                                              }];
+        [alert addAction:abortAction];
+        [alert addAction:settingAction];
+        [self presentViewController:alert animated:YES completion:nil];
     }
     // The user has not enabled any location services. Request background authorization.
     else if (status == kCLAuthorizationStatusNotDetermined) {
