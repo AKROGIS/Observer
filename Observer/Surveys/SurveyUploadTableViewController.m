@@ -10,7 +10,6 @@
 #import "Survey+CsvExport.h"
 #import "Survey+ZipExport.h"
 
-#define kAlertViewReplaceSurvey    1
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 
 @interface SurveyUploadTableViewController ()

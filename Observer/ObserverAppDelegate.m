@@ -16,8 +16,6 @@
 #import <Crashlytics/Crashlytics.h>
 #import <ArcGIS/ArcGIS.h>
 
-#define kAlertViewNewProtocol      1
-#define kAlertViewNewVersion       2
 #define kAppDistributionPlist      @"https://akrgis.nps.gov/observer/Park_Observer.plist"
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 

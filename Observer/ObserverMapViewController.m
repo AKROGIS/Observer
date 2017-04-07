@@ -48,11 +48,6 @@
 #import "QuickDialog.h"
 
 //Constants and Magic Numbers/Strings
-#define kActionSheetSelectLocation 1
-#define kActionSheetSelectFeature  2
-
-#define kAlertViewLocationServices 1
-
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 #define kCancelButtonText          NSLocalizedString(@"Cancel", @"Cancel button text")
 
