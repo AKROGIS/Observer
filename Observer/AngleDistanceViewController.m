@@ -81,12 +81,14 @@
 #pragma mark - IBActions
 
 - (IBAction)done:(UIBarButtonItem *)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
     if (self.completionBlock) {
         self.completionBlock(self);
     }
 }
 
 - (IBAction)cancel:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
     if (self.cancellationBlock) {
         self.cancellationBlock(self);
     }
