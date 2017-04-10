@@ -98,7 +98,6 @@
 @property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;  //maintain state for UIActionSheetDelegate callback
 
 //Must maintain a reference to popover controllers, otherwise they are GC'd after they are presented
-@property (strong, nonatomic) UIPopoverController *surveysPopoverController;
 @property (strong, nonatomic) UIPopoverController *featureSelectorPopoverController;
 @property (strong, nonatomic) UIPopoverController *reviewAttributePopoverController;
 @property (strong, nonatomic) UIPopoverController *editAttributePopoverController;
@@ -159,31 +158,22 @@
     if ([segue.identifier isEqualToString:@"Select Survey"]){
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
+        __weak ObserverMapViewController *weakSelf = self;
         vc.surveySelectedAction = ^(Survey *survey){
-            //Dismiss the VC before assigning to self.survey, to avoid re-adding the survey to the VC
-            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-                [self.surveysPopoverController dismissPopoverAnimated:YES];
-                self.surveysPopoverController = nil;
-            } else {
-                [self.navigationController popViewControllerAnimated:YES];
-            }
-            self.survey = survey;
+            [weakSelf dismissViewControllerAnimated:YES completion:nil];
+            weakSelf.survey = survey;
         };
         vc.surveyUpdatedAction = ^(Survey *survey){
             if ([survey isEqualToSurvey:self.survey]) {
-                self.survey.title = survey.title;
-                [self updateTitleBar];
+                weakSelf.survey.title = survey.title;
+                [weakSelf updateTitleBar];
             }
         };
         vc.surveyDeletedAction = ^(Survey *survey){
             if ([survey isEqualToSurvey:self.survey]) {
-                self.survey = nil;
+                weakSelf.survey = nil;
             };
         };
-        if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
-            self.surveysPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
-            self.surveysPopoverController.delegate = self;
-        }
         return;
     }
 
@@ -429,7 +419,6 @@
         _survey = survey;
         [Settings manager].activeSurveyURL = survey.url;
         [self openSurvey];
-        [self updateSelectSurveyViewControllerWithNewSurvey:survey];
     }
 }
 
@@ -445,51 +434,6 @@
     _map = map;
     [Settings manager].activeMapPropertiesURL = map.plistURL;
     [self openMap];
-}
-
-- (void)newProtocolAvailable:(SProtocol *)protocol
-{
-    if (protocol) {
-        ProtocolSelectViewController *vc = nil;
-        UINavigationController *nav = nil;
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
-        } else {
-            nav = self.navigationController;
-        }
-        for (UIViewController *vc1 in nav.viewControllers) {
-            if ([vc1 isKindOfClass:[ProtocolSelectViewController class]]) {
-                vc = (ProtocolSelectViewController *)vc1;
-                break;
-            }
-        }
-        [vc addProtocol:protocol];
-    }
-}
-
-
-
-
-#pragma mark - Public Interface = private support
-
-- (void)updateSelectSurveyViewControllerWithNewSurvey:(Survey *)survey
-{
-    if (survey) {
-        SurveySelectViewController *vc = nil;
-        UINavigationController *nav = nil;
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
-        } else {
-            nav = self.navigationController;
-        }
-        for (UIViewController *vc1 in nav.viewControllers) {
-            if ([vc1 isKindOfClass:[SurveySelectViewController class]]) {
-                vc = (SurveySelectViewController *)vc1;
-                break;
-            }
-        }
-        [vc addSurvey:survey];
-    }
 }
 
 
@@ -721,9 +665,6 @@
 //This is not called if the popover is programatically dismissed.
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
 {
-    if (popoverController == self.surveysPopoverController) {
-        self.surveysPopoverController = nil;
-    }
     if (popoverController == self.reviewAttributePopoverController) {
         self.reviewAttributePopoverController = nil;
     }
