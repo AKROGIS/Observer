@@ -98,7 +98,6 @@
 @property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;  //maintain state for UIActionSheetDelegate callback
 
 //Must maintain a reference to popover controllers, otherwise they are GC'd after they are presented
-@property (strong, nonatomic) UIPopoverController *mapsPopoverController;
 @property (strong, nonatomic) UIPopoverController *surveysPopoverController;
 @property (strong, nonatomic) UIPopoverController *featureSelectorPopoverController;
 @property (strong, nonatomic) UIPopoverController *reviewAttributePopoverController;
@@ -140,21 +139,10 @@
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 {
-    if ([identifier isEqualToString:@"Select Survey"])
-    {
-        if (self.surveysPopoverController) {
-            [self.surveysPopoverController dismissPopoverAnimated:YES];
-            self.surveysPopoverController = nil;
-            return NO;
-        }
-    }
-    if ([identifier isEqualToString:@"Select Map"])
-    {
-        if (self.mapsPopoverController) {
-            [self.mapsPopoverController dismissPopoverAnimated:YES];
-            self.mapsPopoverController = nil;
-            return NO;
-        }
+    // There can only be one modal displayed at a time, so close any alerts or popovers.
+    // The users's action that triggered the segue is an implied dismissal of the alert/popover
+    if (self.presentedViewController) {
+        [self dismissViewControllerAnimated:YES completion:nil];
     }
     return YES;
 }
@@ -202,25 +190,17 @@
     if ([segue.identifier isEqualToString:@"Select Map"]) {
         MapSelectViewController *vc = (MapSelectViewController *)vc1;
         vc.title = segue.identifier;
+        __weak ObserverMapViewController *weakSelf = self;
         vc.mapSelectedAction = ^(Map *map){
             //Dismiss the VC before assigning to self.map, to avoid re-adding the map to the VC
-            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-                [self.mapsPopoverController dismissPopoverAnimated:YES];
-                self.mapsPopoverController = nil;
-            } else {
-                [self.navigationController popViewControllerAnimated:YES];
-            }
-            self.map = map;
+            [weakSelf dismissViewControllerAnimated:YES completion:nil];
+            weakSelf.map = map;
         };
         vc.mapDeletedAction = ^(Map *map){
             if ([map isEqualToMap:map]) {
-                self.map = nil;
+                weakSelf.map = nil;
             };
         };
-        if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
-            self.mapsPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
-            self.mapsPopoverController.delegate = self;
-        }
         return;
     }
 }
@@ -465,7 +445,6 @@
     _map = map;
     [Settings manager].activeMapPropertiesURL = map.plistURL;
     [self openMap];
-    [self updateSelectMapViewControllerWithNewMap:map];
 }
 
 - (void)newProtocolAvailable:(SProtocol *)protocol
@@ -510,23 +489,6 @@
             }
         }
         [vc addSurvey:survey];
-    }
-}
-
-- (void)updateSelectMapViewControllerWithNewMap:(Map *)map
-{
-    if (map) {
-        MapSelectViewController *vc = nil;
-        UINavigationController *nav = nil;
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            nav = (UINavigationController *)self.mapsPopoverController.contentViewController;
-        } else {
-            nav = self.navigationController;
-        }
-        if ([nav.topViewController isKindOfClass:[MapSelectViewController class]]) {
-            vc = (MapSelectViewController *)nav.topViewController;
-        }
-        [vc addMap:map];
     }
 }
 
@@ -761,9 +723,6 @@
 {
     if (popoverController == self.surveysPopoverController) {
         self.surveysPopoverController = nil;
-    }
-    if (popoverController == self.mapsPopoverController) {
-        self.mapsPopoverController = nil;
     }
     if (popoverController == self.reviewAttributePopoverController) {
         self.reviewAttributePopoverController = nil;
