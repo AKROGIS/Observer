@@ -98,7 +98,6 @@
 @property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;  //maintain state for UIActionSheetDelegate callback
 
 //Must maintain a reference to popover controllers, otherwise they are GC'd after they are presented
-@property (strong, nonatomic) UIPopoverController *featureSelectorPopoverController;
 @property (strong, nonatomic) UIPopoverController *reviewAttributePopoverController;
 @property (strong, nonatomic) UIPopoverController *editAttributePopoverController;
 
@@ -1286,12 +1285,18 @@
         //New in iOS 8, popover on top of popover is not allowed (it was bad form anyway)
         //now we need to dismiss the FeatureSelectorTableView (if it is visible) before presenting this feature
         //FIXME: a better solution would be to put this inside a navigation view controller inside the popover
-        [self.featureSelectorPopoverController dismissPopoverAnimated:FALSE];
+        [self dismissViewControllerAnimated:YES completion:nil];
         [self presentFeature:graphic fromLayer:layerName atMapPoint:mapPoint];
     };
     //TODO: reduce popover size
-    self.featureSelectorPopoverController = [[UIPopoverController alloc] initWithContentViewController:vc];
-    [self.featureSelectorPopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    vc.modalPresentationStyle = UIModalPresentationPopover;
+    [self presentViewController:vc animated:YES completion:nil];
+    UIPopoverPresentationController *popover = vc.popoverPresentationController;
+    popover.sourceView = self.mapView;
+    CGPoint screenPoint = [self.mapView nearestScreenPoint:mapPoint];
+    popover.sourceRect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
+
+
     self.popoverMapPoint = mapPoint;
 }
 
