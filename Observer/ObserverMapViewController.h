@@ -15,7 +15,4 @@
 @property (strong, nonatomic) Survey *survey;
 @property (strong, nonatomic) Map *map;
 
-// Call this if there is a new protocol available
-- (void)newProtocolAvailable:(SProtocol *)protocol;
-
 @end
