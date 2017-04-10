@@ -30,7 +30,6 @@
 #import "MapSelectViewController.h"
 #import "AttributeViewController.h"
 #import "FeatureSelectorTableViewController.h"
-#import "UIPopoverController+Presenting.h"
 #import "GpsPointTableViewController.h"
 #import "POGraphic.h"
 
@@ -96,9 +95,6 @@
 @property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
 @property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
 @property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;  //maintain state for UIActionSheetDelegate callback
-
-//Must maintain a reference to popover controllers, otherwise they are GC'd after they are presented
-@property (strong, nonatomic) UIPopoverController *editAttributePopoverController;
 
 @property (strong, nonatomic) AGSPoint *popoverMapPoint;  //maintain popover location while rotating device (did/willRotateToInterfaceOrientation:)
 
@@ -653,20 +649,6 @@
     self.movingObservation = nil;
     self.movingMissionProperty = nil;
     self.movingGraphic = nil;
-}
-
-
-
-
-#pragma mark - Delegate Methods: UIPopoverControllerDelegate
-
-//This is not called if the popover is programatically dismissed.
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
-{
-    if (popoverController == self.editAttributePopoverController) {
-        [self saveAttributes:nil];
-        self.editAttributePopoverController = nil;
-    }
 }
 
 
@@ -1459,7 +1441,7 @@
                         // all graphics for observations should be a POGraphic; do nothing if something went wrong
                         if ([graphic isKindOfClass:[POGraphic class]]) {
                             AGSGraphic *newGraphic = [(POGraphic *)graphic redraw:observation survey:self.survey];
-                            UINavigationController *nav = (UINavigationController *)[self.editAttributePopoverController contentViewController];
+                            UINavigationController *nav = (UINavigationController *)self.presentedViewController;
                             AttributeViewController *dialog = (AttributeViewController *)[nav topViewController];
                             dialog.graphic = newGraphic;
                             // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
@@ -1470,7 +1452,6 @@
             }
         }
     }
-
 
     //Delete/Cancel Button
     //TODO: support delete/cancel on a mission property
@@ -1492,8 +1473,7 @@
                 [graphic.layer removeGraphic:graphic];
             }
             [self.survey deleteEntity:entity];
-            [self.editAttributePopoverController dismissPopoverAnimated:YES];
-            self.editAttributePopoverController = nil;
+            [self dismissViewControllerAnimated:YES completion:nil];
         };
         if (self.survey.protocol.cancelOnTop) {
             [[root.sections firstObject] insertElement:deleteButton atIndex:0];
@@ -1506,6 +1486,7 @@
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
     dialog.graphic = graphic;
+
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
         dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
@@ -1525,6 +1506,10 @@
         self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
         [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
     }
+
+    1 //Make sure attributes are save when popover is dismissed
+    [self saveAttributes:nil];
+
 }
 
 // Called when editing popover is dismissed (or maybe when save/done button is tapped)
@@ -1613,10 +1598,7 @@
 // This is called by the feature editor (setAttributesForFeatureType:), when the user wants to edit the Angle/Distance of an observation.
 - (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic
 {
-    UINavigationController *nav = self.navigationController;
-    if (!nav) {
-        nav = (UINavigationController *)[self.editAttributePopoverController contentViewController];
-    }
+    UINavigationController *nav = (UINavigationController *)self.presentedViewController;
     AngleDistanceLocation *angleDistance = [self.survey angleDistanceLocationFromEntity:entity];
     LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:angleDistance.direction protocolFeature:feature absoluteAngle:angleDistance.angle distance:angleDistance.distance];;
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];

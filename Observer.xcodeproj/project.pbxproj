@@ -108,7 +108,6 @@
 		39D947A418BEA79E0069DB31 /* ObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947A318BEA79E0069DB31 /* ObserverTests.m */; };
 		39D947AD18BEA7DF0069DB31 /* AGSPointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947AB18BEA7DF0069DB31 /* AGSPointTests.m */; };
 		39D947AE18BEA7DF0069DB31 /* LocationAngleDistanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D947AC18BEA7DF0069DB31 /* LocationAngleDistanceTests.m */; };
-		5980662018D16420004830E7 /* UIPopoverController+Presenting.m in Sources */ = {isa = PBXBuildFile; fileRef = 5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */; };
 		5980838A1D0CE41900E4B2E8 /* NSString+csvEscape.m in Sources */ = {isa = PBXBuildFile; fileRef = 598083891D0CE41900E4B2E8 /* NSString+csvEscape.m */; };
 		59954F851D146175006C32B4 /* POGraphic.m in Sources */ = {isa = PBXBuildFile; fileRef = 59954F841D146175006C32B4 /* POGraphic.m */; };
 		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
@@ -357,8 +356,6 @@
 		39D947AB18BEA7DF0069DB31 /* AGSPointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGSPointTests.m; sourceTree = "<group>"; };
 		39D947AC18BEA7DF0069DB31 /* LocationAngleDistanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationAngleDistanceTests.m; sourceTree = "<group>"; };
 		39E921AB195B52E60043DB5E /* Protocol Description.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "Protocol Description.md"; path = "Protocols/Protocol Description.md"; sourceTree = "<group>"; };
-		5980661E18D16420004830E7 /* UIPopoverController+Presenting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIPopoverController+Presenting.h"; path = "Categories/UIPopoverController+Presenting.h"; sourceTree = "<group>"; };
-		5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIPopoverController+Presenting.m"; path = "Categories/UIPopoverController+Presenting.m"; sourceTree = "<group>"; };
 		598083881D0CE41900E4B2E8 /* NSString+csvEscape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+csvEscape.h"; path = "Categories/NSString+csvEscape.h"; sourceTree = "<group>"; };
 		598083891D0CE41900E4B2E8 /* NSString+csvEscape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+csvEscape.m"; path = "Categories/NSString+csvEscape.m"; sourceTree = "<group>"; };
 		59954F831D146175006C32B4 /* POGraphic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = POGraphic.h; path = Model/POGraphic.h; sourceTree = "<group>"; };
@@ -563,8 +560,6 @@
 				39A9EF93197066120059FC0F /* NSURL+isEqualToURL.m */,
 				3989085B1857EDE1007B3F67 /* NSURL+unique.h */,
 				3989085C1857EDE1007B3F67 /* NSURL+unique.m */,
-				5980661E18D16420004830E7 /* UIPopoverController+Presenting.h */,
-				5980661F18D16420004830E7 /* UIPopoverController+Presenting.m */,
 				598083881D0CE41900E4B2E8 /* NSString+csvEscape.h */,
 				598083891D0CE41900E4B2E8 /* NSString+csvEscape.m */,
 			);
@@ -971,7 +966,6 @@
 				39946AB91925473A00875D90 /* TrackLogSegment.m in Sources */,
 				39955ED2178733B900D225D7 /* ObserverMapViewController.m in Sources */,
 				396775C817A1C7B5009ECD34 /* AngleDistanceViewController.m in Sources */,
-				5980662018D16420004830E7 /* UIPopoverController+Presenting.m in Sources */,
 				398A97371CCFD11800143160 /* MissionTotalizer.m in Sources */,
 				398908601857EDE1007B3F67 /* NSIndexSet+indexPath.m in Sources */,
 				394CC2501858F11800FA859C /* AngleDistanceLocation.m in Sources */,
