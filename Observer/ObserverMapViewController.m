@@ -834,7 +834,7 @@
 
     self.panButton.enabled = self.mapView.loaded;
 
-    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady && self.locationServicesAvailable && !self.gpsFailed;
+    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady && self.mapView.loaded && self.locationServicesAvailable && !self.gpsFailed;
     self.startStopObservingBarButtonItem.enabled = self.survey.isRecording && !self.gpsFailed;
     self.editEnvironmentBarButton.enabled = self.survey.isRecording && self.survey.protocol.missionFeature.attributes.count > 0 && !self.gpsFailed;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
