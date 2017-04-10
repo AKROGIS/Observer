@@ -1331,6 +1331,9 @@
 
 - (void)showTrackLogAttributeEditor:(TrackLogSegment *)tracklog
 {
+    if (self.presentedViewController) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
     NSManagedObject *entity = tracklog.missionProperty;
     NSManagedObject *template = tracklog.missionProperty;
     ProtocolFeature *feature = self.survey.protocol.missionFeature;
