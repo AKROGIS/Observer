@@ -98,8 +98,8 @@
 
 @property (strong, nonatomic) AGSPoint *popoverMapPoint;  //maintain popover location while rotating device (did/willRotateToInterfaceOrientation:)
 
-//TODO: do I need this UINavigationController?
-@property (strong, nonatomic) UINavigationController *modalAttributeCollector;
+//Simplify dealing with the presentation, push/pop, dismissal of the VC (it will be embedded in a UINavigationController
+@property (strong, nonatomic) AttributeViewController *attributeCollector;
 
 @end
 
@@ -428,6 +428,17 @@
     _map = map;
     [Settings manager].activeMapPropertiesURL = map.plistURL;
     [self openMap];
+}
+
+
+
+
+#pragma mark - Delegate Methods: UIPopoverPresentationControllerDelegate
+
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
+{
+    //Only the attribute collector is using the delegate
+    [self saveAttributes];
 }
 
 
@@ -1407,7 +1418,7 @@
                 vc.gpsPoint = [self.survey gpsPointFromEntity:entity];
                 vc.adhocLocation = [self.survey adhocLocationFromEntity:entity];
                 //TODO Resize popover
-                [self.modalAttributeCollector pushViewController:vc animated:YES];
+                [self.attributeCollector.navigationController pushViewController:vc animated:YES];
             };
         }
         [[root.sections lastObject] addElement:locationButton];
@@ -1487,37 +1498,35 @@
     dialog.managedObject = entity;
     dialog.graphic = graphic;
 
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
-        dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
-        UIPopoverController *popover = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
-        popover.delegate = self;
-        if (isEditing) {
-            self.editAttributePopoverController = popover;
-        }
-        [popover presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-        self.popoverMapPoint = mapPoint;
-    } else {
-        //TODO: test behavior for iPhone idiom
-        self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
-        dialog.toolbarItems = @[doneButton];
-        self.modalAttributeCollector.toolbarHidden = NO;
-        self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
-        [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
-    }
+    // Present VC
+    self.attributeCollector = dialog;
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:dialog];
+    dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissAttributeCollector:)];
+    dialog.toolbarItems = @[doneButton];
+    nav.toolbarHidden = NO;
+    nav.modalPresentationStyle = UIModalPresentationPopover;
+    [self presentViewController:nav animated:YES completion:nil];
+    UIPopoverPresentationController *popover = nav.popoverPresentationController;
+    popover.sourceView = self.mapView;
+    CGPoint screenPoint = [self.mapView nearestScreenPoint:mapPoint];
+    popover.sourceRect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
+    popover.delegate = self;
+}
 
-    1 //Make sure attributes are save when popover is dismissed
-    [self saveAttributes:nil];
-
+- (void) dismissAttributeCollector:(UIBarButtonItem *)sender
+{
+    [self saveAttributes];
+    [self dismissViewControllerAnimated:YES completion:nil];
+    self.attributeCollector = nil;
 }
 
 // Called when editing popover is dismissed (or maybe when save/done button is tapped)
-- (void)saveAttributes:(UIBarButtonItem *)sender
+- (void)saveAttributes
 {
-    AKRLog(@"Saving attributes from the recently dismissed modalAttributeCollector VC");
+    AKRLog(@"Saving attributes from the recently dismissed Attribute Collector VC");
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    AttributeViewController *dialog = [self.modalAttributeCollector.viewControllers firstObject];
+    AttributeViewController *dialog = self.attributeCollector;
     [dialog.root fetchValueUsingBindingsIntoObject:dict];
     NSManagedObject *obj = dialog.managedObject;
     @try {
@@ -1541,9 +1550,7 @@
     }
     //For Mission properties currently do nothing (no labels or attribute based symbology supported)
 
-    //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
-    [self dismissViewControllerAnimated:YES completion:nil];
-    self.modalAttributeCollector = nil;
+    //Update Totalizer
     if ([obj isKindOfClass:[MissionProperty class]]) {
         if (self.survey.isRecording) {
             [self.survey.totalizer missionPropertyChanged:(MissionProperty *)obj];
@@ -1592,7 +1599,7 @@
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationPopover;
     [self presentViewController:nav animated:YES completion:nil];
-    [nav popoverPresentationController].barButtonItem = button;
+    nav.popoverPresentationController.barButtonItem = button;
 }
 
 // This is called by the feature editor (setAttributesForFeatureType:), when the user wants to edit the Angle/Distance of an observation.
