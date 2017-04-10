@@ -321,7 +321,7 @@
         NSURLSessionConfiguration *configuration;
         if (self.isBackground) {
             if (!backgroundSession) {
-                configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"gov.nps.observer.BackgroundDownloadSession"];
+                configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"gov.nps.observer.BackgroundDownloadSession"];
                 backgroundSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
             }
             _session = backgroundSession;

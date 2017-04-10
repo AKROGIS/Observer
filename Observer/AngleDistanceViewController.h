@@ -17,8 +17,6 @@
 @property (strong, nonatomic) LocationAngleDistance *location;
 
 
-//if this VC is in a popover, it will resize and dismiss the popover when appropriate
-@property (strong, nonatomic) UIPopoverController *popover;
 //a method to call when the VC is done.  Not called if the user cancels or quits the VC
 @property (copy, nonatomic) void(^completionBlock)(AngleDistanceViewController *);
 //a method to call when the VC is cancelled.  Not called if the user cancels or quits the VC

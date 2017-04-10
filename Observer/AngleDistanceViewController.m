@@ -73,8 +73,6 @@
             self.modalInPopover = userHasProgressed;
             [self updateLabel];
             [self resizeView];
-            //If the view size doesn't change, thenwe will be stuck at the sub VC size, this will ensure we are resized.
-            [self.popover setPopoverContentSize:self.preferredContentSize animated:YES];
         };
     }
 }
@@ -83,14 +81,14 @@
 #pragma mark - IBActions
 
 - (IBAction)done:(UIBarButtonItem *)sender {
-    [self.popover dismissPopoverAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
     if (self.completionBlock) {
         self.completionBlock(self);
     }
 }
 
 - (IBAction)cancel:(id)sender {
-    [self.popover dismissPopoverAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
     if (self.cancellationBlock) {
         self.cancellationBlock(self);
     }

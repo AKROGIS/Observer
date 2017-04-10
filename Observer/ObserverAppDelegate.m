@@ -14,10 +14,10 @@
 #import "MapCollection.h"
 #import "ProtocolCollection.h"
 #import <Crashlytics/Crashlytics.h>
+#import <ArcGIS/ArcGIS.h>
 
-#define kAlertViewNewProtocol      1
-#define kAlertViewNewVersion       2
 #define kAppDistributionPlist      @"https://akrgis.nps.gov/observer/Park_Observer.plist"
+#define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 
 
 @interface ObserverAppDelegate()
@@ -33,6 +33,15 @@
 {
     //Activate the Crash reporting system
     [Crashlytics startWithAPIKey:@"48e51797d0250122096db58d369feab2cac2da33"];
+
+    // Activate a Basic ArcGIS License - Set the client ID
+    NSError *error;
+    NSString* clientID = @"jgGIvIn2VCK8q3FX";
+    [AGSRuntimeEnvironment setClientID:clientID error:&error];
+    if(error){
+        // We had a problem using our client ID - Map will display "For developer use only"
+        NSLog(@"Error using client ID : %@",[error localizedDescription]);
+    }
 
     Map *savedMap = [[Map alloc] initWithCachedPropertiesURL:[Settings manager].activeMapPropertiesURL];
     if (savedMap) {
@@ -55,8 +64,9 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    AKRLog(@"Entering Background.  Synchronizing User Defaults");
+    AKRLog(@"Entering Background.  Synchronizing User Defaults, dismissing popovers/alerts");
     [[NSUserDefaults standardUserDefaults] synchronize];
+    [self.observerMapViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -77,13 +87,13 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
     // Called when this app is asked to open a resource (url) by a different app
     // The url is a local file resource (typically in Documents/Inbox), and can only
     //   be a file type that I have registered interest in (app configuration plist)
     // The user will expect a short delay to open the file
-    AKRLog(@"%@ asked me to open %@", sourceApplication, url);
+    AKRLog(@"Asked to open %@", url);
 
     //The url may contain a resource (e.g. a tile package) that we already have in the documents directory.
     //  This is unlikely, and while we could try to determine equality and return the existing resource if
@@ -96,7 +106,7 @@
     NSError *error = nil;
     [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
     if (error) {
-        [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Unable to open file." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        [self alert:url.lastPathComponent message:@"Unable to open file."];
         return NO;
     }
 
@@ -107,7 +117,7 @@
             self.observerMapViewController.survey = newSurvey;
             return YES;
         } else {
-            [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Not a Valid Survey." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            [self alert:url.lastPathComponent message:@"Not a Valid Survey."];
             return NO;
         }
     }
@@ -121,22 +131,36 @@
             self.observerMapViewController.map = newMap;
             return YES;
         } else {
-            [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Not a Valid Map." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            [self alert:url.lastPathComponent message:@"Not a Valid Map."];
             return NO;
         }
     }
     if ([ProtocolCollection collectsURL:url]) {
         SProtocol *newProtocol = [[SProtocol alloc] initWithURL:newUrl];
         if ([newProtocol isValid]) {
-            [self.observerMapViewController newProtocolAvailable:newProtocol];
             self.protocolForSurveyCreation = newProtocol;
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"New Protocol" message:@"Do you want to open a new survey file with this protocol?" delegate:self cancelButtonTitle:@"Maybe Later" otherButtonTitles:@"Yes", nil];
-            alertView.tag = kAlertViewNewProtocol;
-            [alertView show];
-            // handle response in UIAlertView delegate method
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Protocol"
+                                                                           message:@"Do you want to open a new survey file with this protocol?"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *waitAction = [UIAlertAction actionWithTitle:@"Maybe Later"
+                                                                 style:UIAlertActionStyleCancel
+                                                               handler:nil];
+            UIAlertAction *openAction = [UIAlertAction actionWithTitle:@"Yes"
+                                                                 style:UIAlertActionStyleDefault
+                                                               handler:^(UIAlertAction * action){
+                                                                   Survey *newSurvey = [[Survey alloc] initWithProtocol:self.protocolForSurveyCreation];
+                                                                   if ([newSurvey isValid]) {
+                                                                       self.observerMapViewController.survey = newSurvey;
+                                                                   } else {
+                                                                       [self alert:nil message:@"Unable to create new survey."];
+                                                                   }
+                                                               }];
+            [alert addAction:waitAction];
+            [alert addAction:openAction];
+            [self presentAlert:alert];
             return YES;
         } else {
-            [[[UIAlertView alloc] initWithTitle:url.lastPathComponent message:@"Not a Valid Survey Protocol" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            [self alert:url.lastPathComponent message:@"Not a Valid Survey Protocol"];
             return NO;
         }
     }
@@ -163,9 +187,21 @@
 {
     [self checkForUpdateWithCallback:^(BOOL found) {
         if (found) {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"New Version Waiting" message:@"Are you ready to upgrade?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes",nil];
-            alertView.tag = kAlertViewNewVersion;
-            [alertView show];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Version Waiting"
+                                                                           message:@"Are you ready to upgrade?"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *waitAction = [UIAlertAction actionWithTitle:@"No"
+                                                                 style:UIAlertActionStyleCancel
+                                                               handler:nil];
+            UIAlertAction *openAction = [UIAlertAction actionWithTitle:@"Yes"
+                                                                 style:UIAlertActionStyleDefault
+                                                               handler:^(UIAlertAction * action){
+                                                                   NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@",kAppDistributionPlist]];
+                                                                   [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+                                                               }];
+            [alert addAction:waitAction];
+            [alert addAction:openAction];
+            [self presentAlert:alert];
         }
     }];
 }
@@ -196,33 +232,29 @@
 
 
 
-#pragma mark - Delegate Methods: UIAlertViewDelegate
+#pragma mark - Alert Helpers
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+- (void) alert:(NSString *)title message:(NSString *)message
 {
-    switch (alertView.tag) {
-        case kAlertViewNewProtocol: {
-            if (buttonIndex == 1) {  //Yes to create/open a new survey
-                Survey *newSurvey = [[Survey alloc] initWithProtocol:self.protocolForSurveyCreation];
-                if ([newSurvey isValid]) {
-                    self.observerMapViewController.survey = newSurvey;
-                } else {
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to create new survey." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-                }
-            }
-            break;
-        }
-        case kAlertViewNewVersion: {
-            if (buttonIndex == 1) {
-                NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@",kAppDistributionPlist]];
-                [[UIApplication sharedApplication] openURL:url];
-            }
-            break;
-        }
-        default:
-            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %ld",(long)alertView.tag);
-            break;
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:kOKButtonText style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:okAction];
+    [self presentAlert:alert];
+}
+
+- (void)presentAlert:(UIAlertController *)alert
+{
+    // self is not a UIVeiwController, so we need to find the root view controller and ask it to display the Alert
+    id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+    if([rootViewController isKindOfClass:[UINavigationController class]])
+    {
+        rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
     }
+    if([rootViewController isKindOfClass:[UITabBarController class]])
+    {
+        rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
+    }
+    [rootViewController presentViewController:alert animated:YES completion:nil];
 }
 
 @end

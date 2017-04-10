@@ -48,9 +48,9 @@
 
     CLLocationCoordinate2D featureLocation = [self locationOfFeature];
     CLLocationCoordinate2D observerLocation = [self locationOfObserver];
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSInteger year = [gregorian components:NSYearCalendarUnit fromDate:self.timestamp].year;
-    NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSDayCalendarUnit inUnit:NSYearCalendarUnit forDate:self.timestamp];
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSInteger year = [gregorian components:NSCalendarUnitYear fromDate:self.timestamp].year;
+    NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitYear forDate:self.timestamp];
     [csv appendFormat:@"%@,%@,%ld,%lu,%0.6f,%0.6f,%0.6f,%0.6f,WGS84",
      [AKRFormatter utcIsoStringFromDate:self.timestamp],
      [AKRFormatter localIsoStringFromDate:self.timestamp],(long)year,(unsigned long)dayOfYear,

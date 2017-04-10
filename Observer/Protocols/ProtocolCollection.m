@@ -469,7 +469,7 @@ static BOOL _isLoaded = NO;
                 //update the url of cached server objects
                 SProtocol *serverProtocol = serverProtocols[index];
                 if (![p.url isEqual:serverProtocol.url]) {
-                    protocolsToUpdate[[NSNumber numberWithInt:i]] = serverProtocol;
+                    protocolsToUpdate[[NSNumber numberWithUnsignedInt:i]] = serverProtocol;
                     modelChanged = YES;
                 }
                 [serverProtocols removeObjectAtIndex:index];

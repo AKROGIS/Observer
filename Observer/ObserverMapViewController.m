@@ -30,7 +30,6 @@
 #import "MapSelectViewController.h"
 #import "AttributeViewController.h"
 #import "FeatureSelectorTableViewController.h"
-#import "UIPopoverController+Presenting.h"
 #import "GpsPointTableViewController.h"
 #import "POGraphic.h"
 
@@ -48,11 +47,6 @@
 #import "QuickDialog.h"
 
 //Constants and Magic Numbers/Strings
-#define kActionSheetSelectLocation 1
-#define kActionSheetSelectFeature  2
-
-#define kAlertViewLocationServices 1
-
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 #define kCancelButtonText          NSLocalizedString(@"Cancel", @"Cancel button text")
 
@@ -102,18 +96,10 @@
 @property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
 @property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;  //maintain state for UIActionSheetDelegate callback
 
-//Must maintain a reference to popover controllers, otherwise they are GC'd after they are presented
-@property (strong, nonatomic) UIPopoverController *angleDistancePopoverController;
-@property (strong, nonatomic) UIPopoverController *mapsPopoverController;
-@property (strong, nonatomic) UIPopoverController *surveysPopoverController;
-@property (strong, nonatomic) UIPopoverController *featureSelectorPopoverController;
-@property (strong, nonatomic) UIPopoverController *reviewAttributePopoverController;
-@property (strong, nonatomic) UIPopoverController *editAttributePopoverController;
-
 @property (strong, nonatomic) AGSPoint *popoverMapPoint;  //maintain popover location while rotating device (did/willRotateToInterfaceOrientation:)
 
-//TODO: do I need this UINavigationController?
-@property (strong, nonatomic) UINavigationController *modalAttributeCollector;
+//Simplify dealing with the presentation, push/pop, dismissal of the VC (it will be embedded in a UINavigationController
+@property (strong, nonatomic) AttributeViewController *attributeCollector;
 
 @end
 
@@ -146,21 +132,10 @@
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 {
-    if ([identifier isEqualToString:@"Select Survey"])
-    {
-        if (self.surveysPopoverController) {
-            [self.surveysPopoverController dismissPopoverAnimated:YES];
-            self.surveysPopoverController = nil;
-            return NO;
-        }
-    }
-    if ([identifier isEqualToString:@"Select Map"])
-    {
-        if (self.mapsPopoverController) {
-            [self.mapsPopoverController dismissPopoverAnimated:YES];
-            self.mapsPopoverController = nil;
-            return NO;
-        }
+    // There can only be one modal displayed at a time, so close any alerts or popovers.
+    // The users's action that triggered the segue is an implied dismissal of the alert/popover
+    if (self.presentedViewController) {
+        [self dismissViewControllerAnimated:YES completion:nil];
     }
     return YES;
 }
@@ -177,60 +152,44 @@
     if ([segue.identifier isEqualToString:@"Select Survey"]){
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
+        __weak ObserverMapViewController *weakSelf = self;
         vc.surveySelectedAction = ^(Survey *survey){
-            //Dismiss the VC before assigning to self.survey, to avoid re-adding the survey to the VC
-            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-                [self.surveysPopoverController dismissPopoverAnimated:YES];
-                self.surveysPopoverController = nil;
-            } else {
-                [self.navigationController popViewControllerAnimated:YES];
-            }
-            self.survey = survey;
+            [weakSelf dismissViewControllerAnimated:YES completion:nil];
+            weakSelf.survey = survey;
         };
         vc.surveyUpdatedAction = ^(Survey *survey){
             if ([survey isEqualToSurvey:self.survey]) {
-                self.survey.title = survey.title;
-                [self updateTitleBar];
+                weakSelf.survey.title = survey.title;
+                [weakSelf updateTitleBar];
             }
         };
         vc.surveyDeletedAction = ^(Survey *survey){
             if ([survey isEqualToSurvey:self.survey]) {
-                self.survey = nil;
+                weakSelf.survey = nil;
             };
         };
-        if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
-            self.surveysPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
-            self.surveysPopoverController.delegate = self;
-        }
         return;
     }
 
     if ([segue.identifier isEqualToString:@"Select Map"]) {
         MapSelectViewController *vc = (MapSelectViewController *)vc1;
         vc.title = segue.identifier;
+        __weak ObserverMapViewController *weakSelf = self;
         vc.mapSelectedAction = ^(Map *map){
             //Dismiss the VC before assigning to self.map, to avoid re-adding the map to the VC
-            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-                [self.mapsPopoverController dismissPopoverAnimated:YES];
-                self.mapsPopoverController = nil;
-            } else {
-                [self.navigationController popViewControllerAnimated:YES];
-            }
-            self.map = map;
+            [weakSelf dismissViewControllerAnimated:YES completion:nil];
+            weakSelf.map = map;
         };
         vc.mapDeletedAction = ^(Map *map){
             if ([map isEqualToMap:map]) {
-                self.map = nil;
+                weakSelf.map = nil;
             };
         };
-        if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
-            self.mapsPopoverController = ((UIStoryboardPopoverSegue *)segue).popoverController;
-            self.mapsPopoverController.delegate = self;
-        }
         return;
     }
 }
 
+/*
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     self.mapView.locationDisplay.interfaceOrientation = toInterfaceOrientation;
@@ -238,7 +197,6 @@
     [self.editAttributePopoverController dismissPopoverAnimated:NO];
     [self.reviewAttributePopoverController dismissPopoverAnimated:NO];
     [self.featureSelectorPopoverController dismissPopoverAnimated:NO];
-    [self.angleDistancePopoverController dismissPopoverAnimated:NO];
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -247,9 +205,8 @@
     [self.editAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.reviewAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
     [self.featureSelectorPopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
-    [self.angleDistancePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 }
-
+*/
 
 
 
@@ -300,7 +257,7 @@
 - (IBAction)startRecording:(UIBarButtonItem *)sender
 {
     if(!self.map) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"You need to select a map before you can begin." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+        [self alert:nil message:@"You need to select a map before you can begin."];
         return;
     }
     if (self.survey.isRecording) {
@@ -312,7 +269,7 @@
         return;
     }
     if(![self.survey startRecording:location]) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to start recording.  Please try again." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+        [self alert:nil message:@"Unable to start recording.  Please try again."];
         return;
     }
     [self showTrackLogAttributeEditor:self.survey.lastTrackLogSegment];
@@ -417,17 +374,26 @@
         AKRLog(@"Oh No!  I didn't find the button the belongs to the long press");
     }
     ProtocolFeature *feature = button.feature;
-    self.currentProtocolFeature = feature;  //Save the feature for the action sheet delegate callback
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    sheet.tag = kActionSheetSelectLocation;
-    for (NSString *title in [ProtocolFeatureAllowedLocations stringsForLocations:feature.allowedLocations.nonTouchChoices]) {
-        [sheet addButtonWithTitle:title];
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil
+                                                                         message:nil
+                                                                  preferredStyle:UIAlertControllerStyleActionSheet];
+    for (NSString *choiceText in [ProtocolFeatureAllowedLocations stringsForLocations:feature.allowedLocations.nonTouchChoices]) {
+        UIAlertAction *locateChoice = [UIAlertAction actionWithTitle:choiceText
+                                                               style:UIAlertActionStyleDefault
+                                                             handler:^(UIAlertAction * action){
+                                                                 WaysToLocateFeature locationMethod = [ProtocolFeatureAllowedLocations locationMethodForName:choiceText];
+                                                                 feature.preferredLocationMethod = locationMethod;
+                                                                 [self addFeature:feature withNonTouchLocationMethod:locationMethod];
+                                                             }];
+        [actionSheet addAction:locateChoice];
     }
-    // Fix for iOS bug.  See https://devforums.apple.com/message/857939#857939
-    [sheet addButtonWithTitle:kCancelButtonText];
-    sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
-    
-    [sheet showFromBarButtonItem:button animated:NO];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:kCancelButtonText style:UIAlertActionStyleCancel handler:nil];
+    [actionSheet addAction:cancelAction];
+    // Present the action sheet in a popover at the button
+    actionSheet.modalPresentationStyle = UIModalPresentationPopover;
+    [self presentViewController:actionSheet animated:YES completion:nil];
+    UIPopoverPresentationController *popover = actionSheet.popoverPresentationController;
+    popover.barButtonItem = button;
 }
 
 
@@ -447,7 +413,6 @@
         _survey = survey;
         [Settings manager].activeSurveyURL = survey.url;
         [self openSurvey];
-        [self updateSelectSurveyViewControllerWithNewSurvey:survey];
     }
 }
 
@@ -463,69 +428,17 @@
     _map = map;
     [Settings manager].activeMapPropertiesURL = map.plistURL;
     [self openMap];
-    [self updateSelectMapViewControllerWithNewMap:map];
-}
-
-- (void)newProtocolAvailable:(SProtocol *)protocol
-{
-    if (protocol) {
-        ProtocolSelectViewController *vc = nil;
-        UINavigationController *nav = nil;
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
-        } else {
-            nav = self.navigationController;
-        }
-        for (UIViewController *vc1 in nav.viewControllers) {
-            if ([vc1 isKindOfClass:[ProtocolSelectViewController class]]) {
-                vc = (ProtocolSelectViewController *)vc1;
-                break;
-            }
-        }
-        [vc addProtocol:protocol];
-    }
 }
 
 
 
 
-#pragma mark - Public Interface = private support
+#pragma mark - Delegate Methods: UIPopoverPresentationControllerDelegate
 
-- (void)updateSelectSurveyViewControllerWithNewSurvey:(Survey *)survey
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
 {
-    if (survey) {
-        SurveySelectViewController *vc = nil;
-        UINavigationController *nav = nil;
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            nav = (UINavigationController *)self.surveysPopoverController.contentViewController;
-        } else {
-            nav = self.navigationController;
-        }
-        for (UIViewController *vc1 in nav.viewControllers) {
-            if ([vc1 isKindOfClass:[SurveySelectViewController class]]) {
-                vc = (SurveySelectViewController *)vc1;
-                break;
-            }
-        }
-        [vc addSurvey:survey];
-    }
-}
-
-- (void)updateSelectMapViewControllerWithNewMap:(Map *)map
-{
-    if (map) {
-        MapSelectViewController *vc = nil;
-        UINavigationController *nav = nil;
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            nav = (UINavigationController *)self.mapsPopoverController.contentViewController;
-        } else {
-            nav = self.navigationController;
-        }
-        if ([nav.topViewController isKindOfClass:[MapSelectViewController class]]) {
-            vc = (MapSelectViewController *)nav.topViewController;
-        }
-        [vc addMap:map];
-    }
+    //Only the attribute collector is using the delegate
+    [self saveAttributes];
 }
 
 
@@ -552,7 +465,7 @@
     if (self.gpsFailed) {
         self.gpsFailed = NO;
         [self enableControls];
-        [[[UIAlertView alloc] initWithTitle:nil message:@"@GPS is back!" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+        [self alert:nil message:@"@GPS is back!"];
     }
 }
 
@@ -564,7 +477,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    [[[UIAlertView alloc] initWithTitle:@"Location Failure" message:error.localizedDescription delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    [self alert:@"Location Failure" message:error.localizedDescription];
     self.gpsFailed = YES;
     [self enableControls];
 }
@@ -581,7 +494,7 @@
     [self.survey clearMapMapViewSpatialReference];
     [self configureObservationButtons];
     [self decrementBusy];
-    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to load map" delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    [self alert:nil message:@"Unable to load map"];
 }
 
 
@@ -683,17 +596,17 @@
                     self.movingObservation = [self.survey observationFromEntity:entity];
                     if (self.movingMissionProperty) {
                         //TODO: support moving mission properties
-                        [[[UIAlertView alloc] initWithTitle:nil message:@"Can't move mission properties yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                        [self alert:nil message:@"Can't move mission properties yet."];
                         self.movingMissionProperty = nil;
                     }
                     if (self.movingObservation.angleDistanceLocation) {
                         //TODO: Support moving Angle/Distance located observations
-                        [[[UIAlertView alloc] initWithTitle:nil message:@"Can't move angle/distance features yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                        [self alert:nil message:@"Can't move angle/distance features yet."];
                         self.movingObservation = nil;
                     }
                     if (self.movingObservation.gpsPoint) {
                         //TODO: support moving GPS located observations
-                        [[[UIAlertView alloc] initWithTitle:nil message:@"Can't move GPS located features yet." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                        [self alert:nil message:@"Can't move GPS located features yet."];
                         self.movingObservation = nil;
                     }
                     if (self.movingMissionProperty || self.movingObservation) {
@@ -702,13 +615,13 @@
                     break;
                 }
                 default:
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Zoom in to select a single feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                    [self alert:nil message:@"Zoom in to select a single feature."];
                     break;
             }
             break;
         }
         default:
-            [[[UIAlertView alloc] initWithTitle:nil message:@"Zoom in to select a single feature." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            [self alert:nil message:@"Zoom in to select a single feature."];
             break;
     }
     AKRLog(@"moving %@",self.movingGraphic);
@@ -752,89 +665,14 @@
 
 
 
-#pragma mark - Delegate Methods: UIPopoverControllerDelegate
+#pragma mark - Alert Helper
 
-//This is not called if the popover is programatically dismissed.
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+- (void) alert:(NSString *)title message:(NSString *)message
 {
-    if (popoverController == self.surveysPopoverController) {
-        self.surveysPopoverController = nil;
-    }
-    if (popoverController == self.angleDistancePopoverController) {
-        self.angleDistancePopoverController = nil;
-    }
-    if (popoverController == self.mapsPopoverController) {
-        self.mapsPopoverController = nil;
-    }
-    if (popoverController == self.reviewAttributePopoverController) {
-        self.reviewAttributePopoverController = nil;
-    }
-    if (popoverController == self.editAttributePopoverController) {
-        [self saveAttributes:nil];
-        self.editAttributePopoverController = nil;
-    }
-}
-
-
-
-
-#pragma mark - Delegate Methods: UIAlertViewDelegate
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (alertView.tag) {
-        case kAlertViewLocationServices:
-            if (buttonIndex == 1) {
-                // Send the user to the Settings for this app
-                NSURL *settingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-                [[UIApplication sharedApplication] openURL:settingsURL];
-            }
-        default:
-            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %ld",(long)alertView.tag);
-            break;
-    }
-}
-
-
-
-
-#pragma mark - Delegate Methods: UIActionSheetDelegate
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    AKRLog(@"ActionSheet %ld was dismissed with Button %ld click", (long)actionSheet.tag, (long)buttonIndex);
-    if (buttonIndex < 0) {
-        return;
-    }
-    switch (actionSheet.tag) {
-        case kActionSheetSelectLocation: {
-            ProtocolFeature *feature = self.currentProtocolFeature;
-            NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
-            WaysToLocateFeature locationMethod = [ProtocolFeatureAllowedLocations locationMethodForName:buttonTitle];
-            feature.preferredLocationMethod = locationMethod;
-            [self addFeature:feature withNonTouchLocationMethod:locationMethod];
-            break;
-        }
-        case kActionSheetSelectFeature: {
-            NSString *featureName = [actionSheet buttonTitleAtIndex:buttonIndex];
-            __block ProtocolFeature *feature = nil;
-            [self.survey.protocol.featuresWithLocateByTouch enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                if ([featureName isEqualToString:((ProtocolFeature *)obj).name]) {
-                    *stop = YES;
-                    feature = obj;
-                }
-            }];
-            if (feature) {
-                [self addFeature:feature atMapPoint:self.mapPointAtAddSelectedFeature];
-            } else {
-                AKRLog(@"Oh No!, Selected feature not found in survey protocol");
-            }
-            break;
-        }
-        default:
-            AKRLog(@"Oh No!, Action sheet delegate called for an unknown action sheet (tag = %ld",(long)actionSheet.tag);
-            break;
-    }
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:kOKButtonText style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:okAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 
@@ -872,7 +710,6 @@
 {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     BOOL authorized = (status == kCLAuthorizationStatusAuthorizedWhenInUse ||
-                       status == kCLAuthorizationStatusAuthorized ||
                        status == kCLAuthorizationStatusAuthorizedAlways);
 
     return authorized;
@@ -885,7 +722,6 @@
     }
     return _addFeatureBarButtonItems;
 }
-
 
 
 
@@ -986,7 +822,7 @@
 
     self.panButton.enabled = self.mapView.loaded;
 
-    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady && self.locationServicesAvailable && !self.gpsFailed;
+    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady && self.mapView.loaded && self.locationServicesAvailable && !self.gpsFailed;
     self.startStopObservingBarButtonItem.enabled = self.survey.isRecording && !self.gpsFailed;
     self.editEnvironmentBarButton.enabled = self.survey.isRecording && self.survey.protocol.missionFeature.attributes.count > 0 && !self.gpsFailed;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
@@ -1042,7 +878,7 @@
 {
     //TODO: provide more helpful error message.  Why can't I get the location?  What can the user do about it?
     //This is a low priority, since the buttons that activate this should not be enabled unless location services are available.
-    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get your location.  Please try again later." delegate:nil cancelButtonTitle:kOKButtonText otherButtonTitles:nil] show];
+    [self alert:nil message:@"Unable to get your location.  Please try again later."];
 }
 
 - (void)requestAuthorizationForAlwaysOnLocationServices
@@ -1060,14 +896,22 @@
         NSString *title;
         title = (status == kCLAuthorizationStatusDenied) ? @"Location services are off" : @"Background location is not enabled";
         NSString *message = @"To make observations you must turn on 'Always' in the Location Services Settings";
-
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title
-                                                            message:message
-                                                           delegate:self
-                                                  cancelButtonTitle:@"Cancel"
-                                                  otherButtonTitles:@"Settings", nil];
-        alertView.tag = kAlertViewLocationServices;
-        [alertView show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
+                                                                       message:message
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *abortAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                              style:UIAlertActionStyleCancel
+                                                            handler:nil];
+        UIAlertAction *settingAction = [UIAlertAction actionWithTitle:@"Settings"
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action){
+                                                                  // Send the user to the Settings for this app
+                                                                  NSURL *settingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+                                                                  [[UIApplication sharedApplication] openURL:settingsURL options:@{} completionHandler:nil];
+                                                              }];
+        [alert addAction:abortAction];
+        [alert addAction:settingAction];
+        [self presentViewController:alert animated:YES completion:nil];
     }
     // The user has not enabled any location services. Request background authorization.
     else if (status == kCLAuthorizationStatusNotDetermined) {
@@ -1187,7 +1031,7 @@
             [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
             //adding a layer is async. See AGSLayerDelegate layerDidLoad or layerDidFailToLoad for additional action taken when opening a map
         } else {
-            [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the map." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            [self alert:nil message:@"Unable to open the map."];
         }
     }
 }
@@ -1196,7 +1040,7 @@
 {
     self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
     self.mapView.locationDisplay.wanderExtentFactor = 0.0;
-    self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
+    //self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
     [self.mapView.locationDisplay startDataSource];
     [self startStopLocationServicesForPanMode];
 }
@@ -1250,7 +1094,7 @@
                     //[self.survey logStats];
                     [self configureObservationButtons];
                 } else {
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to open the survey." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                    [self alert:nil message:@"Unable to open the survey."];
                 }
                 [self updateTitleBar];
                 [self decrementBusy];
@@ -1276,7 +1120,7 @@
                 if (!success) {
                     //This happens if I deleted the active survey (and there are unsaved changes).  Due to the asyncronity
                     //the delete can happen before the close can finish.  But I don't really care, because it is deleted.
-                    [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to close the survey. (Did you just delete it?)" delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                    [self alert:nil message:@"Unable to close the survey. (Did you just delete it?)"];
                 }
                 if (!concurrentOpen) {
                     [self updateTitleBar];
@@ -1285,7 +1129,7 @@
             }];
         } else if (survey.document.documentState != UIDocumentStateClosed) {
             AKRLog(@"Survey (%@) is in an abnormal state: %lu", survey.title, (unsigned long)survey.document.documentState);
-            [[[UIAlertView alloc] initWithTitle:nil message:@"Survey is not in a closable state." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            [self alert:nil message:@"Survey is not in a closable state."];
             return NO;
         }
     }
@@ -1379,19 +1223,37 @@
 - (void)presentProtocolFeatureSelector:(NSArray *)features atPoint:(CGPoint)screenpoint mapPoint:(AGSPoint *)mapPoint
 {
     self.mapPointAtAddSelectedFeature = mapPoint;
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    sheet.tag = kActionSheetSelectFeature;
-
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil
+                                                                         message:nil
+                                                                  preferredStyle:UIAlertControllerStyleActionSheet];
     [features enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSString *name = ((ProtocolFeature *)obj).name;
-        [sheet addButtonWithTitle:name];
+        NSString *choiceText = ((ProtocolFeature *)obj).name;
+        UIAlertAction *featureChoice = [UIAlertAction actionWithTitle:choiceText
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action){
+                                                                  __block ProtocolFeature *actionFeature = nil;
+                                                                  [self.survey.protocol.featuresWithLocateByTouch enumerateObjectsUsingBlock:^(id obj2, NSUInteger idx2, BOOL *stop2) {
+                                                                      if ([choiceText isEqualToString:((ProtocolFeature *)obj2).name]) {
+                                                                          *stop2 = YES;
+                                                                          actionFeature = obj2;
+                                                                      }
+                                                                  }];
+                                                                  if (actionFeature) {
+                                                                      [self addFeature:actionFeature atMapPoint:self.mapPointAtAddSelectedFeature];
+                                                                  } else {
+                                                                      AKRLog(@"Oh No!, Selected feature not found in survey protocol");
+                                                                  }
+                                                              }];
+        [actionSheet addAction:featureChoice];
     }];
-    // Fix for iOS bug.  See https://devforums.apple.com/message/857939#857939
-    [sheet addButtonWithTitle:kCancelButtonText];
-    sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
-
-    CGRect rect = CGRectMake(screenpoint.x, screenpoint.y, 1, 1);
-    [sheet showFromRect:rect inView:self.mapView animated:NO];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:kCancelButtonText style:UIAlertActionStyleCancel handler:nil];
+    [actionSheet addAction:cancelAction];
+    // Present the action sheet in a popover at the feature's screen point in the mapview
+    actionSheet.modalPresentationStyle = UIModalPresentationPopover;
+    [self presentViewController:actionSheet animated:YES completion:nil];
+    UIPopoverPresentationController *popover = actionSheet.popoverPresentationController;
+    popover.sourceView = self.mapView;
+    popover.sourceRect = CGRectMake(screenpoint.x, screenpoint.y, 1, 1);
 }
 
 //called by map touch and action sheet
@@ -1412,12 +1274,18 @@
         //New in iOS 8, popover on top of popover is not allowed (it was bad form anyway)
         //now we need to dismiss the FeatureSelectorTableView (if it is visible) before presenting this feature
         //FIXME: a better solution would be to put this inside a navigation view controller inside the popover
-        [self.featureSelectorPopoverController dismissPopoverAnimated:FALSE];
+        [self dismissViewControllerAnimated:YES completion:nil];
         [self presentFeature:graphic fromLayer:layerName atMapPoint:mapPoint];
     };
     //TODO: reduce popover size
-    self.featureSelectorPopoverController = [[UIPopoverController alloc] initWithContentViewController:vc];
-    [self.featureSelectorPopoverController presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    vc.modalPresentationStyle = UIModalPresentationPopover;
+    [self presentViewController:vc animated:YES completion:nil];
+    UIPopoverPresentationController *popover = vc.popoverPresentationController;
+    popover.sourceView = self.mapView;
+    CGPoint screenPoint = [self.mapView nearestScreenPoint:mapPoint];
+    popover.sourceRect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
+
+
     self.popoverMapPoint = mapPoint;
 }
 
@@ -1457,6 +1325,9 @@
 
 - (void)showTrackLogAttributeEditor:(TrackLogSegment *)tracklog
 {
+    if (self.presentedViewController) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
     NSManagedObject *entity = tracklog.missionProperty;
     NSManagedObject *template = tracklog.missionProperty;
     ProtocolFeature *feature = self.survey.protocol.missionFeature;
@@ -1546,9 +1417,8 @@
                 GpsPointTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"GpsPointTableViewController"];
                 vc.gpsPoint = [self.survey gpsPointFromEntity:entity];
                 vc.adhocLocation = [self.survey adhocLocationFromEntity:entity];
-                CGSize contentSize = self.editAttributePopoverController ? self.editAttributePopoverController.popoverContentSize : self.reviewAttributePopoverController.popoverContentSize;
-                vc.preferredContentSize = contentSize;
-                [self.modalAttributeCollector pushViewController:vc animated:YES];
+                //TODO Resize popover
+                [self.attributeCollector.navigationController pushViewController:vc animated:YES];
             };
         }
         [[root.sections lastObject] addElement:locationButton];
@@ -1582,7 +1452,7 @@
                         // all graphics for observations should be a POGraphic; do nothing if something went wrong
                         if ([graphic isKindOfClass:[POGraphic class]]) {
                             AGSGraphic *newGraphic = [(POGraphic *)graphic redraw:observation survey:self.survey];
-                            UINavigationController *nav = (UINavigationController *)[self.editAttributePopoverController contentViewController];
+                            UINavigationController *nav = (UINavigationController *)self.presentedViewController;
                             AttributeViewController *dialog = (AttributeViewController *)[nav topViewController];
                             dialog.graphic = newGraphic;
                             // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
@@ -1593,7 +1463,6 @@
             }
         }
     }
-
 
     //Delete/Cancel Button
     //TODO: support delete/cancel on a mission property
@@ -1615,8 +1484,7 @@
                 [graphic.layer removeGraphic:graphic];
             }
             [self.survey deleteEntity:entity];
-            [self.editAttributePopoverController dismissPopoverAnimated:YES];
-            self.editAttributePopoverController = nil;
+            [self dismissViewControllerAnimated:YES completion:nil];
         };
         if (self.survey.protocol.cancelOnTop) {
             [[root.sections firstObject] insertElement:deleteButton atIndex:0];
@@ -1629,35 +1497,36 @@
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
     dialog.graphic = graphic;
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
-        dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
-        UIPopoverController *popover = [[UIPopoverController alloc] initWithContentViewController:self.modalAttributeCollector];
-        popover.delegate = self;
-        if (isEditing) {
-            self.editAttributePopoverController = popover;
-        } else {
-            self.reviewAttributePopoverController = popover;
-        }
-        [popover presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-        self.popoverMapPoint = mapPoint;
-    } else {
-        //TODO: test behavior for iPhone idiom
-        self.modalAttributeCollector = [[UINavigationController alloc] initWithRootViewController:dialog];
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAttributes:)];
-        dialog.toolbarItems = @[doneButton];
-        self.modalAttributeCollector.toolbarHidden = NO;
-        self.modalAttributeCollector.modalPresentationStyle = UIModalPresentationFormSheet;
-        [self presentViewController:self.modalAttributeCollector animated:YES completion:nil];
-    }
+
+    // Present VC
+    self.attributeCollector = dialog;
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:dialog];
+    dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissAttributeCollector:)];
+    dialog.toolbarItems = @[doneButton];
+    nav.toolbarHidden = NO;
+    nav.modalPresentationStyle = UIModalPresentationPopover;
+    [self presentViewController:nav animated:YES completion:nil];
+    UIPopoverPresentationController *popover = nav.popoverPresentationController;
+    popover.sourceView = self.mapView;
+    CGPoint screenPoint = [self.mapView nearestScreenPoint:mapPoint];
+    popover.sourceRect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
+    popover.delegate = self;
+}
+
+- (void) dismissAttributeCollector:(UIBarButtonItem *)sender
+{
+    [self saveAttributes];
+    [self dismissViewControllerAnimated:YES completion:nil];
+    self.attributeCollector = nil;
 }
 
 // Called when editing popover is dismissed (or maybe when save/done button is tapped)
-- (void)saveAttributes:(UIBarButtonItem *)sender
+- (void)saveAttributes
 {
-    AKRLog(@"Saving attributes from the recently dismissed modalAttributeCollector VC");
+    AKRLog(@"Saving attributes from the recently dismissed Attribute Collector VC");
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    AttributeViewController *dialog = [self.modalAttributeCollector.viewControllers firstObject];
+    AttributeViewController *dialog = self.attributeCollector;
     [dialog.root fetchValueUsingBindingsIntoObject:dict];
     NSManagedObject *obj = dialog.managedObject;
     @try {
@@ -1670,7 +1539,7 @@
     }
     @catch (NSException *ex) {
         NSString *msg = [NSString stringWithFormat:@"%@\nCheck the protocol file.", ex.description];
-        [[[UIAlertView alloc] initWithTitle:@"Save Failed" message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        [self alert:@"Save Failed" message:msg];
     }
     //For observations, redraw the graphic and label with the new attributes
     if ([dialog.managedObject isKindOfClass:[Observation class]]) {
@@ -1681,9 +1550,7 @@
     }
     //For Mission properties currently do nothing (no labels or attribute based symbology supported)
 
-    //[self.modalAttributeCollector dismissViewControllerAnimated:YES completion:nil];
-    [self dismissViewControllerAnimated:YES completion:nil];
-    self.modalAttributeCollector = nil;
+    //Update Totalizer
     if ([obj isKindOfClass:[MissionProperty class]]) {
         if (self.survey.isRecording) {
             [self.survey.totalizer missionPropertyChanged:(MissionProperty *)obj];
@@ -1700,12 +1567,6 @@
 //Called programatically by feature bar button when creating a new Angle/Distance observation
 - (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature fromButton:(UIBarButtonItem *)button
 {
-    if (self.angleDistancePopoverController) {
-        [self.angleDistancePopoverController dismissPopoverAnimated:YES];
-        self.angleDistancePopoverController = nil;
-        return;
-    }
-
     CLLocation *recentlocation = self.mostRecentLocation;
     if (!recentlocation.timestamp) {
         [self showNoLocationAlert];
@@ -1722,47 +1583,34 @@
         }
     }
     if (!location) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Unable to get current course/heading for Angle/Distance." delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        [self alert:nil message:@"Unable to get current course/heading for Angle/Distance."];
         return;
     }
 
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
     vc.location = location;
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
-        self.angleDistancePopoverController = nil;
         AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
         Observation *observation = [self.survey createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
         AGSGraphic *graphic = [self.survey drawObservation:observation];
         [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
     };
-    vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
-        self.angleDistancePopoverController = nil;
-    };
 
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        self.angleDistancePopoverController = [[UIPopoverController alloc] initWithContentViewController:nav];
-        vc.popover = self.angleDistancePopoverController;
-        vc.popover.delegate = self;
-        [self.angleDistancePopoverController presentPopoverFromBarButtonItem:button permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-    } else {
-        [self.navigationController pushViewController:vc animated:YES];
-    }
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalPresentationStyle = UIModalPresentationPopover;
+    [self presentViewController:nav animated:YES completion:nil];
+    nav.popoverPresentationController.barButtonItem = button;
 }
 
 // This is called by the feature editor (setAttributesForFeatureType:), when the user wants to edit the Angle/Distance of an observation.
 - (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic
 {
-    UINavigationController *nav = self.navigationController;
-    if (!nav) {
-        nav = (UINavigationController *)[self.editAttributePopoverController contentViewController];
-    }
+    UINavigationController *nav = (UINavigationController *)self.presentedViewController;
     AngleDistanceLocation *angleDistance = [self.survey angleDistanceLocationFromEntity:entity];
     LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:angleDistance.direction protocolFeature:feature absoluteAngle:angleDistance.angle distance:angleDistance.distance];;
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
     vc.location = location;
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
-        self.angleDistancePopoverController = nil;
         Observation *observation = [self.survey observationFromEntity:entity];
         [self.survey updateAngleDistanceObservation:observation withAngleDistance:controller.location];
         // "Move" the observation; put the new graphic in the dialog for other attribute changes

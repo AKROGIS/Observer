@@ -10,7 +10,6 @@
 #import "Survey+CsvExport.h"
 #import "Survey+ZipExport.h"
 
-#define kAlertViewReplaceSurvey    1
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 
 @interface SurveyUploadTableViewController ()
@@ -71,43 +70,13 @@
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
 {
     if (error) {
-        [[[UIAlertView alloc] initWithTitle:@"Send Error" message:error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        [self alert:@"Send Error" message:error.localizedDescription];
     } else {
         [self dismissViewControllerAnimated:YES completion:^{
             if (result == MFMailComposeResultSent) {
                 [self.navigationController popViewControllerAnimated:YES];
             }
         }];
-    }
-}
-
-
-
-
-#pragma mark - Delegate Methods: UIAlertViewDelegate
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (alertView.tag) {
-        case kAlertViewReplaceSurvey: {
-            //0 = NO - do not replace; 1=YES - replace existing survey
-            if (buttonIndex == 1) {
-                NSError *error;
-                if ([self.survey exportToDiskWithForce:YES error:&error]) {
-                    [self.navigationController popViewControllerAnimated:YES];
-                } else {
-                    NSString *msg = @"Unable to create export file.";
-                    if (error) {
-                        msg = [NSString stringWithFormat:@"%@.\n%@", msg, error.localizedDescription];
-                    }
-                    [[[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
-                }
-            }
-            break;
-        }
-        default:
-            AKRLog(@"Oh No!, Alert View delegate called for an unknown alert view (tag = %ld",(long)alertView.tag);
-            break;
     }
 }
 
@@ -125,7 +94,7 @@
             [self.syncActivityIndicator stopAnimating];
             [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
             if (error) {
-                [[[UIAlertView alloc] initWithTitle:@"Sync Failed" message:error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+                [self alert:@"Sync Failed" message:error.localizedDescription];
             } else {
                 [self.navigationController popViewControllerAnimated:YES];
             }
@@ -144,19 +113,45 @@
     } else {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Unable to zip up the survey.\n%@", error.localizedDescription];
-            [[[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+            [self alert:nil message:msg];
         } else {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"Do you want to replace the existing export file?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
-            alertView.tag = kAlertViewReplaceSurvey;
-            [alertView show];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
+                                                                           message:@"Do you want to replace the existing export file?"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *abortAction = [UIAlertAction actionWithTitle:@"No"
+                                                                 style:UIAlertActionStyleCancel
+                                                               handler:nil];
+            UIAlertAction *replaceAction = [UIAlertAction actionWithTitle:@"Yes"
+                                                                   style:UIAlertActionStyleDestructive
+                                                                 handler:^(UIAlertAction * action){
+                                                                     [self replaceExportedSurvey];
+                                                                 }];
+            [alert addAction:abortAction];
+            [alert addAction:replaceAction];
+            [self presentViewController:alert animated:YES completion:nil];
         }
     }
+}
+
+-(void)replaceExportedSurvey
+{
+    NSError *error;
+    if ([self.survey exportToDiskWithForce:YES error:&error]) {
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        NSString *msg = @"Unable to create export file.";
+        if (error) {
+            msg = [NSString stringWithFormat:@"%@.\n%@", msg, error.localizedDescription];
+        }
+        [self alert:nil message:msg];
+    }
+
 }
 
 - (void)mailSurvey
 {
     if (![MFMailComposeViewController canSendMail]) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"This device is not configured to send mail" delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        [self alert:nil message:@"This device is not configured to send mail"];
         return;
     }
 
@@ -169,7 +164,7 @@
         if (error) {
             msg = [NSString stringWithFormat:@"%@.\n%@", msg, error.localizedDescription];
         }
-        [[[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        [self alert:nil message:msg];
     } else {
         MFMailComposeViewController *mailVC = [[MFMailComposeViewController alloc] init];
         NSString *subject = [NSString stringWithFormat:@"Park Observer Survey Data"];
@@ -196,7 +191,7 @@
 - (void)mailCsvIncludeGps:(BOOL)includeGps
 {
     if (![MFMailComposeViewController canSendMail]) {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"This device is not configured to send mail" delegate:nil cancelButtonTitle:nil otherButtonTitles:kOKButtonText, nil] show];
+        [self alert:nil message:@"This device is not configured to send mail"];
         return;
     }
     MFMailComposeViewController *mailVC = [[MFMailComposeViewController alloc] init];
@@ -220,6 +215,14 @@
     }
     mailVC.mailComposeDelegate = self;
     [self presentViewController:mailVC animated:YES completion:nil];
+}
+
+- (void) alert:(NSString *)title message:(NSString *)message
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:kOKButtonText style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:okAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 @end

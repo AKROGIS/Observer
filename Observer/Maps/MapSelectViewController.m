@@ -253,7 +253,7 @@
     if (indexPath.section == 1) {
         if (self.isBackgroundRefreshing)
         {
-            [[[UIAlertView alloc] initWithTitle:@"Try Again" message:@"Can not download while refreshing.  Please try again when refresh is complete." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            [self alert:@"Try Again" message:@"Cannot download while refreshing.  Please try again when refresh is complete."];
         } else {
             [self startStopDownloadItem:indexPath];
         }
@@ -294,7 +294,7 @@
     }
     if (self.isBackgroundRefreshing)
     {
-        [[[UIAlertView alloc] initWithTitle:@"Try Again" message:@"Could not make changes while refreshing.  Please try again when refresh is complete." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        [self alert:@"Try Again" message:@"Could not make changes while refreshing.  Please try again when refresh is complete."];
         return;
     }
     if (fromIndexPath.section == 0) {
@@ -309,7 +309,7 @@
 {
     if (self.isBackgroundRefreshing)
     {
-        [[[UIAlertView alloc] initWithTitle:@"Try Again" message:@"Could not make changes while refreshing.  Please try again when refresh is complete." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        [self alert:@"Try Again" message:@"Could not make changes while refreshing.  Please try again when refresh is complete."];
         return;
     }
     if (editingStyle == UITableViewCellEditingStyleDelete) {
@@ -367,7 +367,7 @@
                     [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:UITableViewRowAnimationAutomatic];
                 }
             } else {
-                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't get the map list from the server" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+                [self alert:nil message:@"Can't get the map list from the server"];
             }
             [self setFooterText];
             self.items.delegate = nil;
@@ -401,7 +401,7 @@
         [items insertLocalMap:map atIndex:0];
         [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
     } else {
-        [[[UIAlertView alloc] initWithTitle:nil message:@"Can't download map." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        [self alert:nil message:@"Can't download map."];
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 
@@ -416,6 +416,14 @@
             self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumDateFormat]];
         }
     }
+}
+
+- (void) alert:(NSString *)title message:(NSString *)message
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:okAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 @end
