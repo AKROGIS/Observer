@@ -64,8 +64,9 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    AKRLog(@"Entering Background.  Synchronizing User Defaults");
+    AKRLog(@"Entering Background.  Synchronizing User Defaults, dismissing popovers/alerts");
     [[NSUserDefaults standardUserDefaults] synchronize];
+    [self.observerMapViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -137,7 +138,6 @@
     if ([ProtocolCollection collectsURL:url]) {
         SProtocol *newProtocol = [[SProtocol alloc] initWithURL:newUrl];
         if ([newProtocol isValid]) {
-            [self.observerMapViewController newProtocolAvailable:newProtocol];
             self.protocolForSurveyCreation = newProtocol;
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Protocol"
                                                                            message:@"Do you want to open a new survey file with this protocol?"
