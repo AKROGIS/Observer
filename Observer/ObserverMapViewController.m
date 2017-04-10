@@ -98,7 +98,6 @@
 @property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;  //maintain state for UIActionSheetDelegate callback
 
 //Must maintain a reference to popover controllers, otherwise they are GC'd after they are presented
-@property (strong, nonatomic) UIPopoverController *reviewAttributePopoverController;
 @property (strong, nonatomic) UIPopoverController *editAttributePopoverController;
 
 @property (strong, nonatomic) AGSPoint *popoverMapPoint;  //maintain popover location while rotating device (did/willRotateToInterfaceOrientation:)
@@ -664,9 +663,6 @@
 //This is not called if the popover is programatically dismissed.
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
 {
-    if (popoverController == self.reviewAttributePopoverController) {
-        self.reviewAttributePopoverController = nil;
-    }
     if (popoverController == self.editAttributePopoverController) {
         [self saveAttributes:nil];
         self.editAttributePopoverController = nil;
@@ -1428,8 +1424,7 @@
                 GpsPointTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"GpsPointTableViewController"];
                 vc.gpsPoint = [self.survey gpsPointFromEntity:entity];
                 vc.adhocLocation = [self.survey adhocLocationFromEntity:entity];
-                CGSize contentSize = self.editAttributePopoverController ? self.editAttributePopoverController.popoverContentSize : self.reviewAttributePopoverController.popoverContentSize;
-                vc.preferredContentSize = contentSize;
+                //TODO Resize popover
                 [self.modalAttributeCollector pushViewController:vc animated:YES];
             };
         }
@@ -1518,8 +1513,6 @@
         popover.delegate = self;
         if (isEditing) {
             self.editAttributePopoverController = popover;
-        } else {
-            self.reviewAttributePopoverController = popover;
         }
         [popover presentPopoverFromMapPoint:mapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         self.popoverMapPoint = mapPoint;
