@@ -22,7 +22,6 @@
 @interface ObserverAppDelegate()
 
 @property (nonatomic,strong) ObserverMapViewController *observerMapViewController;
-@property (nonatomic,strong) SProtocol *protocolForSurveyCreation;
 
 @end
 
@@ -161,7 +160,6 @@
     if ([ProtocolCollection collectsURL:url]) {
         SProtocol *newProtocol = [[SProtocol alloc] initWithURL:newUrl];
         if ([newProtocol isValid]) {
-            self.protocolForSurveyCreation = newProtocol;
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Protocol"
                                                                            message:@"Do you want to open a new survey file with this protocol?"
                                                                     preferredStyle:UIAlertControllerStyleAlert];
@@ -171,7 +169,7 @@
             UIAlertAction *openAction = [UIAlertAction actionWithTitle:@"Yes"
                                                                  style:UIAlertActionStyleDefault
                                                                handler:^(UIAlertAction * action){
-                                                                   Survey *newSurvey = [[Survey alloc] initWithProtocol:self.protocolForSurveyCreation];
+                                                                   Survey *newSurvey = [[Survey alloc] initWithProtocol:newProtocol];
                                                                    if ([newSurvey isValid]) {
                                                                        self.observerMapViewController.survey = newSurvey;
                                                                    } else {
