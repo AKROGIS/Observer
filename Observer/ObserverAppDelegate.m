@@ -92,7 +92,11 @@
     //   be a file type that I have registered interest in (app configuration plist)
     // The user will expect a short delay to open the file
     AKRLog(@"Asked to open %@", url);
+    return [self open:url];
+}
 
+- (BOOL)open:(NSURL *)url
+{
     //The url may contain a resource (e.g. a tile package) that we already have in the documents directory.
     //  This is unlikely, and while we could try to determine equality and return the existing resource if
     //  the new resource is a duplicate, there is a chance for false positives, which would frustrate the user.
