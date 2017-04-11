@@ -74,7 +74,6 @@
 		39955E55178334C000D225D7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39955E53178334C000D225D7 /* InfoPlist.strings */; };
 		39955E57178334C000D225D7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955E56178334C000D225D7 /* main.m */; };
 		39955E5B178334C000D225D7 /* ObserverAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39955E5A178334C000D225D7 /* ObserverAppDelegate.m */; };
-		39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39955E62178334C000D225D7 /* MainStoryboard_iPhone.storyboard */; };
 		39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39955E65178334C000D225D7 /* MainStoryboard_iPad.storyboard */; };
 		39955E941783377E00D225D7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E931783377E00D225D7 /* CoreLocation.framework */; };
 		39955E961783379400D225D7 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39955E951783379400D225D7 /* CoreText.framework */; };
@@ -193,7 +192,6 @@
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
 		393E8AFD17A30012009AD0AC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		393E8AFF17A318F5009AD0AC /* Enumerations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Enumerations.h; path = Model/Enumerations.h; sourceTree = "<group>"; };
-		39449F1718ADAC8C00A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		39449F1818ADAC8C00A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		39449F1918AE8A1800A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		39449F1A18AE8AFB00A1F8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -617,7 +615,6 @@
 			children = (
 				39955E59178334C000D225D7 /* ObserverAppDelegate.h */,
 				39955E5A178334C000D225D7 /* ObserverAppDelegate.m */,
-				39955E62178334C000D225D7 /* MainStoryboard_iPhone.storyboard */,
 				39955E65178334C000D225D7 /* MainStoryboard_iPad.storyboard */,
 				39955EC6178732B500D225D7 /* Models */,
 				398908521857ED27007B3F67 /* Categories */,
@@ -887,7 +884,6 @@
 				39C53E6B1885D98400C0CECE /* SurveyDocumentIcon.png in Resources */,
 				39C53E6E1885D9DF00C0CECE /* ProtocolDocumentIcon.png in Resources */,
 				391401451975A03A0055F2E1 /* LICENSE in Resources */,
-				39955E64178334C000D225D7 /* MainStoryboard_iPhone.storyboard in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
 				39C53E701885DAB000C0CECE /* TilePackageDocumentIcon.png in Resources */,
 				393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */,
@@ -1057,14 +1053,6 @@
 				39449F1A18AE8AFB00A1F8FE /* Base */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		39955E62178334C000D225D7 /* MainStoryboard_iPhone.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				39449F1718ADAC8C00A1F8FE /* Base */,
-			);
-			name = MainStoryboard_iPhone.storyboard;
 			sourceTree = "<group>";
 		};
 		39955E65178334C000D225D7 /* MainStoryboard_iPad.storyboard */ = {
