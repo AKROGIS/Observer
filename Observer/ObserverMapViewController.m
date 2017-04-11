@@ -899,10 +899,7 @@
     }
     // The user has not enabled any location services. Request background authorization.
     else if (status == kCLAuthorizationStatusNotDetermined) {
-        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
-        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-            [self.locationManager requestAlwaysAuthorization];
-        }
+        [self.locationManager requestAlwaysAuthorization];
     }
 }
 
