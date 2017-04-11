@@ -91,13 +91,6 @@
 @property (strong, nonatomic) Observation *movingObservation;  //maintain state between AGSMapViewTouchDelegate calls
 @property (strong, nonatomic) MissionProperty *movingMissionProperty;  //maintain state between AGSMapViewTouchDelegate calls
 
-//Used to save state for delegate callbacks (alertview, actionsheet and segue)
-@property (strong, nonatomic) ProtocolFeature *currentProtocolFeature;
-@property (strong, nonatomic) SProtocol *protocolForSurveyCreation;
-@property (strong, nonatomic) AGSPoint *mapPointAtAddSelectedFeature;  //maintain state for UIActionSheetDelegate callback
-
-@property (strong, nonatomic) AGSPoint *popoverMapPoint;  //maintain popover location while rotating device (did/willRotateToInterfaceOrientation:)
-
 //Simplify dealing with the presentation, push/pop, dismissal of the VC (it will be embedded in a UINavigationController
 @property (strong, nonatomic) AttributeViewController *attributeCollector;
 
@@ -177,7 +170,6 @@
         vc.title = segue.identifier;
         __weak ObserverMapViewController *weakSelf = self;
         vc.mapSelectedAction = ^(Map *map){
-            //Dismiss the VC before assigning to self.map, to avoid re-adding the map to the VC
             [weakSelf dismissViewControllerAnimated:YES completion:nil];
             weakSelf.map = map;
         };
@@ -190,24 +182,6 @@
     }
 }
 
-/*
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    self.mapView.locationDisplay.interfaceOrientation = toInterfaceOrientation;
-    //popovers not presented from a UIBarButtonItem must close and reopen in the new orientation
-    [self.editAttributePopoverController dismissPopoverAnimated:NO];
-    [self.reviewAttributePopoverController dismissPopoverAnimated:NO];
-    [self.featureSelectorPopoverController dismissPopoverAnimated:NO];
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    //re-present popovers not presented from a UIBarButtonItem in the new orientation
-    [self.editAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
-    [self.reviewAttributePopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
-    [self.featureSelectorPopoverController presentPopoverFromMapPoint:self.popoverMapPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
-}
-*/
 
 
 
@@ -1218,7 +1192,6 @@
 
 - (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
 {
-    self.currentProtocolFeature = feature;
     //Find the barbutton item with the feature to attach the popover.
     AddFeatureBarButtonItem *button = nil;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
@@ -1250,7 +1223,6 @@
 //called by map touch
 - (void)presentProtocolFeatureSelector:(NSArray *)features atPoint:(CGPoint)screenpoint mapPoint:(AGSPoint *)mapPoint
 {
-    self.mapPointAtAddSelectedFeature = mapPoint;
     UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil
                                                                          message:nil
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
@@ -1267,7 +1239,7 @@
                                                                       }
                                                                   }];
                                                                   if (actionFeature) {
-                                                                      [self addFeature:actionFeature atMapPoint:self.mapPointAtAddSelectedFeature];
+                                                                      [self addFeature:actionFeature atMapPoint:mapPoint];
                                                                   } else {
                                                                       AKRLog(@"Oh No!, Selected feature not found in survey protocol");
                                                                   }
@@ -1312,9 +1284,6 @@
     popover.sourceView = self.mapView;
     CGPoint screenPoint = [self.mapView nearestScreenPoint:mapPoint];
     popover.sourceRect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
-
-
-    self.popoverMapPoint = mapPoint;
 }
 
 //called by map touch and feature selector popover
@@ -1650,7 +1619,6 @@
             // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
             //AGSPoint *toPoint = (AGSPoint *)newGraphic.geometry;
             //[self.editAttributePopoverController presentPopoverFromMapPoint:toPoint inMapView:self.mapView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-            //self.popoverMapPoint = toPoint;
         }
         [nav popViewControllerAnimated:YES];
     };
