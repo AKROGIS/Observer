@@ -16,14 +16,12 @@
 #import <Crashlytics/Crashlytics.h>
 #import <ArcGIS/ArcGIS.h>
 
-#define kAppDistributionPlist      @"https://akrgis.nps.gov/observer/Park_Observer.plist"
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 
 
 @interface ObserverAppDelegate()
 
 @property (nonatomic,strong) ObserverMapViewController *observerMapViewController;
-@property (nonatomic,strong) SProtocol *protocolForSurveyCreation;
 
 @end
 
@@ -77,7 +75,6 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    [self checkForUpdates];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -94,7 +91,32 @@
     //   be a file type that I have registered interest in (app configuration plist)
     // The user will expect a short delay to open the file
     AKRLog(@"Asked to open %@", url);
+    return [self open:url];
+}
 
+
+
+
+#pragma mark - Private properties/methods
+
+- (ObserverMapViewController *)observerMapViewController
+{
+    id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+    if([rootViewController isKindOfClass:[UINavigationController class]])
+    {
+        rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
+    }
+    if([rootViewController isKindOfClass:[UITabBarController class]])
+    {
+        rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
+    }
+    // In a more generic function we would want to check UISplitViewController and other custom Container ViewControllers
+    // Fail early if my main (non-container VC) is not what I expect
+    return (ObserverMapViewController *)rootViewController;
+}
+
+- (BOOL)open:(NSURL *)url
+{
     //The url may contain a resource (e.g. a tile package) that we already have in the documents directory.
     //  This is unlikely, and while we could try to determine equality and return the existing resource if
     //  the new resource is a duplicate, there is a chance for false positives, which would frustrate the user.
@@ -138,7 +160,6 @@
     if ([ProtocolCollection collectsURL:url]) {
         SProtocol *newProtocol = [[SProtocol alloc] initWithURL:newUrl];
         if ([newProtocol isValid]) {
-            self.protocolForSurveyCreation = newProtocol;
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Protocol"
                                                                            message:@"Do you want to open a new survey file with this protocol?"
                                                                     preferredStyle:UIAlertControllerStyleAlert];
@@ -148,7 +169,7 @@
             UIAlertAction *openAction = [UIAlertAction actionWithTitle:@"Yes"
                                                                  style:UIAlertActionStyleDefault
                                                                handler:^(UIAlertAction * action){
-                                                                   Survey *newSurvey = [[Survey alloc] initWithProtocol:self.protocolForSurveyCreation];
+                                                                   Survey *newSurvey = [[Survey alloc] initWithProtocol:newProtocol];
                                                                    if ([newSurvey isValid]) {
                                                                        self.observerMapViewController.survey = newSurvey;
                                                                    } else {
@@ -168,67 +189,6 @@
     return NO;
 }
 
-- (ObserverMapViewController *)observerMapViewController
-{
-    UIViewController *vc;
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        vc = self.window.rootViewController;
-    } else {
-        UINavigationController *nav = (UINavigationController *)self.window.rootViewController;
-        vc = [nav.viewControllers  firstObject];;
-    }
-    if ([vc isKindOfClass:[ObserverMapViewController class]]) {
-        return (ObserverMapViewController *)vc;
-    }
-    return nil;
-}
-
-- (void)checkForUpdates
-{
-    [self checkForUpdateWithCallback:^(BOOL found) {
-        if (found) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Version Waiting"
-                                                                           message:@"Are you ready to upgrade?"
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *waitAction = [UIAlertAction actionWithTitle:@"No"
-                                                                 style:UIAlertActionStyleCancel
-                                                               handler:nil];
-            UIAlertAction *openAction = [UIAlertAction actionWithTitle:@"Yes"
-                                                                 style:UIAlertActionStyleDefault
-                                                               handler:^(UIAlertAction * action){
-                                                                   NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@",kAppDistributionPlist]];
-                                                                   [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-                                                               }];
-            [alert addAction:waitAction];
-            [alert addAction:openAction];
-            [self presentAlert:alert];
-        }
-    }];
-}
-
-- (void)checkForUpdateWithCallback:(void (^)(BOOL found))callback
-{
-    if (!callback)
-        return;
-
-    BOOL updateAvailable = NO;
-    NSDictionary *updateDictionary = [NSDictionary dictionaryWithContentsOfURL:
-                                      [NSURL URLWithString:kAppDistributionPlist]];
-
-    if(updateDictionary)
-    {
-        NSArray *items = [updateDictionary objectForKey:@"items"];
-        NSDictionary *itemDict = [items lastObject];
-
-        NSDictionary *metaData = [itemDict objectForKey:@"metadata"];
-        NSString *newversion = [metaData valueForKey:@"bundle-version"];
-        NSString *currentversion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-
-        updateAvailable = [newversion compare:currentversion options:NSNumericSearch] == NSOrderedDescending;
-    }
-    callback(updateAvailable);
-}
-
 
 
 
@@ -245,16 +205,7 @@
 - (void)presentAlert:(UIAlertController *)alert
 {
     // self is not a UIVeiwController, so we need to find the root view controller and ask it to display the Alert
-    id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
-    if([rootViewController isKindOfClass:[UINavigationController class]])
-    {
-        rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
-    }
-    if([rootViewController isKindOfClass:[UITabBarController class]])
-    {
-        rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
-    }
-    [rootViewController presentViewController:alert animated:YES completion:nil];
+    [self.observerMapViewController presentViewController:alert animated:YES completion:nil];
 }
 
 @end
