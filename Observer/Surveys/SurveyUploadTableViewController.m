@@ -13,29 +13,51 @@
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 
 @interface SurveyUploadTableViewController ()
-
+{
+    BOOL _mineToClose;
+}
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *syncActivityIndicator;
 @end
 
 @implementation SurveyUploadTableViewController
 
-- (void) dealloc
+-(void)dealloc
 {
-    [self.survey closeDocumentWithCompletionHandler:nil];
-    self.survey = nil;
+    //FIXME: This VC is owned by a nav controller, which might not dealloc this VC until after the same survey is passed to and opened by the mainVC.  This is probably a race condition that need to be investigated
+    //FIXME: Some export tasks happen on a background thread which may not be complete when this VC is deallocated.  This is probably bad and should be investigated.
+    if (_mineToClose) {
+        NSString *title = self.survey.title;
+        [self.survey closeDocumentWithCompletionHandler:^(BOOL success) {
+            if (!success) {
+                AKRLog(@"Error - Failed to close survey %@ in Export VC", title);
+                // Continue anyway...
+            }
+            AKRLog(@"Closed survey %@ in Export VC", title);
+        }];
+    }
 }
 
 - (void)setSurvey:(Survey *)survey
 {
-    [_survey closeDocumentWithCompletionHandler:nil];
-    _survey = nil;
-    [survey openDocumentWithCompletionHandler:^(BOOL success) {
-        if (success) {
-            self->_survey = survey;
-            self.title = survey.title;
-            self.navigationController.title = survey.title;
-        }
-    }];
+    if (survey.isReady) {
+        _survey = survey;
+        self.title = survey.title;
+        self.navigationController.title = survey.title;
+        _mineToClose = NO;
+    } else {
+        AKRLog(@"Opening survey %@ for Export VC", survey.title);
+        [survey openDocumentWithCompletionHandler:^(BOOL success) {
+            if (success) {
+                self->_survey = survey;
+                self.title = survey.title;
+                self.navigationController.title = survey.title;
+                self->_mineToClose = YES;
+            } else {
+                AKRLog(@"Error - Failed to open survey %@ in Export VC", survey.title);
+                self->_mineToClose = NO;
+            }
+        }];
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

@@ -117,8 +117,8 @@
     [self requestLocationServices];
     [self configureGpsButton];
     [self configureObservationButtons];
-    [self openMap];
-    [self openSurvey];
+    [self openMap:self.map];  // load in survey setter may fail if the view isn't ready.
+    [self openSurvey:self.survey];  // load in survey setter may fail if the view isn't ready.
     self.statusMessage.text = nil;
     self.totalizerMessage.text = nil;
 }
@@ -143,6 +143,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     //auto-save current survey in case user wants to mail or export it;
     //ignore the callback; because we can assume the auto-save will be done before the users gets that far
+    //I might not have a survey or an open document, which would be ok, as there would be no need to save
     [self.survey.document autosaveWithCompletionHandler:nil];
     UIViewController *vc1 = [segue destinationViewController];
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
@@ -256,11 +257,16 @@
 
 - (IBAction)startRecording:(UIBarButtonItem *)sender
 {
-    if(!self.map) {
+    if (self.survey.isRecording) {
+        AKRLog(@"Whaaaat ... How did I try to start recording when I am already recording?");
+        return;
+    }
+    if(!self.mapView.loaded) {
         [self alert:nil message:@"You need to select a map before you can begin."];
         return;
     }
-    if (self.survey.isRecording) {
+    if(!self.survey.isReady) {
+        [self alert:nil message:@"You need to select a survey before you can begin."];
         return;
     }
     CLLocation *location = self.mostRecentLocation;
@@ -282,6 +288,7 @@
 - (IBAction)startObserving:(UIBarButtonItem *)sender
 {
     if (self.survey.isObserving || !self.survey.isRecording) {
+        AKRLog(@"Whaaaat ... How did I try to start observing when I am not ready?");
         return;
     }
     CLLocation *location = self.mostRecentLocation;
@@ -306,7 +313,8 @@
         TrackLogSegment *tracklog = [self.survey startNewTrackLogSegment:location];
         [self showTrackLogAttributeEditor:tracklog];
     } else {
-        //TODO: This currently not an accessible code path, because ad Hoc mission properties are not supported.
+        AKRLog(@"Unsupported code path.  Mission Properties without GPS points are not supported");
+        //TODO: Evaulate the need, and support or remove this code
         MissionProperty *missionProperty = [self.survey createMissionPropertyAtMapLocation:self.mapView.mapAnchor];
         [self showMissionPropertyAttributeEditor:missionProperty];
     }
@@ -318,6 +326,7 @@
 - (void)stopRecording:(UIBarButtonItem *)sender
 {
     if (!self.survey.isRecording) {
+        AKRLog(@"Whaaaat ... How did I try to stop recording when I am not recording?");
         return;
     }
     BOOL wasObserving = self.survey.isObserving;
@@ -336,6 +345,7 @@
 - (void)stopObserving:(UIBarButtonItem *)sender
 {
     if (!self.survey.isObserving) {
+        AKRLog(@"Whaaaat ... How did I try to stop observing when I am not observing?");
         return;
     }
     CLLocation *location = self.mostRecentLocation;
@@ -403,31 +413,30 @@
 
 - (void)setSurvey:(Survey *)survey
 {
-    if (!survey && !_survey) {  //covers case where survey is nil
-        return;
-    }
     if ([survey isEqualToSurvey:_survey]) {
         return;
     }
-    if ([self closeSurveyWithConcurrentOpen:(survey != nil)]) {
-        _survey = survey;
-        [Settings manager].activeSurveyURL = survey.url;
-        [self openSurvey];
+    if (survey == nil && _survey == nil) {  //fails isEqual test
+        return;
     }
+    [self closeSurvey:_survey];
+    _survey = survey;
+    [self openSurvey:survey];
+    [Settings manager].activeSurveyURL = survey.url;
 }
 
 - (void)setMap:(Map *)map
 {
-    if (map == _map) {  //covers case where map is nil
-        return;
-    }
     if ([map isEqualToMap:_map]) {
         return;
     }
-    [self closeMap];
+    if (map == nil && _map == nil) {  //fails isEqual test
+        return;
+    }
+    [self closeMap:_map];
     _map = map;
+    [self openMap:map];
     [Settings manager].activeMapPropertiesURL = map.plistURL;
-    [self openMap];
 }
 
 
@@ -761,7 +770,7 @@
     [toolbarButtons removeObjectsInArray:self.addFeatureBarButtonItems];
 
     [self.addFeatureBarButtonItems removeAllObjects];
-    if (self.survey) {
+    if (self.survey.protocol) {
         for (ProtocolFeature *feature in self.survey.protocol.features) {
             feature.allowedLocations.locationPresenter = self;
             if (feature.allowedLocations.countOfNonTouchChoices > 0) {
@@ -1008,8 +1017,16 @@
 
 #pragma mark - Private Methods - support for map delegate
 
-- (void)closeMap
+- (void)closeMap:(Map *)map
 {
+    if (!self.isViewLoaded) {
+        AKRLog(@"Cannot close the map becasue the view is not ready yet.");
+        return;
+    }
+    if (!map) {
+        AKRLog(@"Cannot close the map because none was provided.");
+        return;
+    }
     [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
     [self.survey clearMap];
     [self.survey clearMapMapViewSpatialReference];
@@ -1017,22 +1034,29 @@
     self.panButton.enabled = NO;
 }
 
-- (void)openMap
+- (void)openMap:(Map *)map
 {
-    if (self.map && self.isViewLoaded) {
-        //Alert: calling the tilecahce property may block for IO
-        if (self.map.tileCache)
-        {
-            [self incrementBusy];
-            self.noMapView.hidden = YES;
-            self.panButton.enabled = YES;
-            self.map.tileCache.delegate = self;
-            AKRLog(@"Loading the basemap %@", self.map);
-            [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
-            //adding a layer is async. See AGSLayerDelegate layerDidLoad or layerDidFailToLoad for additional action taken when opening a map
-        } else {
-            [self alert:nil message:@"Unable to open the map."];
-        }
+    if (!self.isViewLoaded) {
+        AKRLog(@"Cannot open the map becasue the view is not ready yet.");
+        return;
+    }
+    if (!map) {
+        AKRLog(@"Cannot open the map because none was provided.");
+        return;
+    }
+    AKRLog(@"Opening the map %@", map);
+    //Alert: calling the tilecache property will block for IO
+    if (map.tileCache)
+    {
+        [self incrementBusy];
+        self.noMapView.hidden = YES;
+        self.panButton.enabled = YES;
+        self.map.tileCache.delegate = self;
+        AKRLog(@"Loading the basemap %@", map);
+        [self.mapView addMapLayer:map.tileCache withName:@"tilecache basemap"];
+        //adding a layer is async. See AGSLayerDelegate layerDidLoad or layerDidFailToLoad for additional action taken when opening a map
+    } else {
+        [self alert:nil message:@"Unable to open the map."];
     }
 }
 
@@ -1047,8 +1071,12 @@
 
 - (void)loadGraphics
 {
-    if (!self.survey.isReady || !self.mapView.loaded) {
-        AKRLog(@"Loading graphics - can't because %@.", self.survey.isReady ? @"map isn't loaded" : (self.mapView.loaded ? @"survey isn't loaded" : @"map AND survey are null! - how did that happen?"));
+    if (!self.survey.isReady) {
+        AKRLog(@"Cannot load graphics because the survey isn't ready yet");
+        return;
+    }
+    if (!self.mapView.loaded) {
+        AKRLog(@"Cannot load graphics because the map isn't loaded yet");
         return;
     }
     [self.survey setMap:self.map];
@@ -1080,62 +1108,65 @@
 
 #pragma mark - Private Methods - support for data model - Surveys
 
-- (void)openSurvey
+- (void)closeSurvey:(Survey *)survey
 {
-    if (self.survey && self.isViewLoaded) {
-        AKRLog(@"Opening survey document (%@)", self.survey.title);
-        [self incrementBusy];
-        self.selectSurveyButton.title = @"Loading survey...";
-        [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
-            //do any other background work;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (success) {
-                    [self loadGraphics];
-                    //[self.survey logStats];
-                    [self configureObservationButtons];
-                } else {
-                    [self alert:nil message:@"Unable to open the survey."];
-                }
-                [self updateTitleBar];
-                [self decrementBusy];
-            });
-        }];
+    if (!self.isViewLoaded) {
+        AKRLog(@"Cannot close the survey because the view isn't loaded yet");
+        return;
     }
-}
-
-- (BOOL)closeSurveyWithConcurrentOpen:(BOOL)concurrentOpen
-{
-    if (self.survey && self.isViewLoaded) {
-        Survey *survey = self.survey;  //make a copy, since self.survey may be changed before I finish.
-        if (survey.document.documentState == UIDocumentStateNormal) {
-            AKRLog(@"Closing survey document (%@)", survey.title);
-            [self incrementBusy];  //closing the survey document may block
-            self.selectSurveyButton.title = @"Closing survey...";
-            if (self.survey.isRecording) {
-                [self stopRecording:nil];
-            }
-            [self.mapView clearGraphicsLayers];
-            [survey closeDocumentWithCompletionHandler:^(BOOL success) {
-                //this completion handler runs on the main queue;
-                if (!success) {
-                    //This happens if I deleted the active survey (and there are unsaved changes).  Due to the asyncronity
-                    //the delete can happen before the close can finish.  But I don't really care, because it is deleted.
-                    [self alert:nil message:@"Unable to close the survey. (Did you just delete it?)"];
-                }
-                if (!concurrentOpen) {
-                    [self updateTitleBar];
-                }
-                [self decrementBusy];
-            }];
-        } else if (survey.document.documentState != UIDocumentStateClosed) {
-            AKRLog(@"Survey (%@) is in an abnormal state: %lu", survey.title, (unsigned long)survey.document.documentState);
-            [self alert:nil message:@"Survey is not in a closable state."];
-            return NO;
+    if (!survey) {
+        AKRLog(@"Cannot close the survey, because there is none");
+        return;
+    }
+    if (survey.document.documentState != UIDocumentStateNormal) {
+        AKRLog(@"Survey (%@) is in an abnormal state: %lu", survey.title, (unsigned long)survey.document.documentState);
+        //There is really nothing I can do but continue...
+    }
+    AKRLog(@"Closing survey document (%@)", survey.title);
+    [self incrementBusy];  //closing the survey document may block
+    self.selectSurveyButton.title = @"Closing survey...";
+    if (survey.isRecording) {
+        [self stopRecording:nil];
+    }
+    [self.mapView clearGraphicsLayers];
+    [survey closeDocumentWithCompletionHandler:^(BOOL success) {
+        //this completion handler runs on the main thread;
+        if (!success) {
+            AKRLog(@"Survey (%@) failed to close", survey.title);
+            //There is really nothing I can do but continue...
         }
-    }
-    return YES;
+        [self updateTitleBar];  //WARNING: references self.survey, which might be different than local survey when this runs.
+        [self decrementBusy];
+    }];
 }
 
+- (void)openSurvey:(Survey *)survey
+{
+    if (!self.isViewLoaded) {
+        AKRLog(@"Cannot open the survey because the view isn't loaded yet");
+        return;
+    }
+    if (!survey) {
+        AKRLog(@"Cannot open the survey, because there is none");
+        return;
+    }
+    AKRLog(@"Opening survey document (%@)", self.survey.title);
+    [self incrementBusy];
+    self.selectSurveyButton.title = @"Loading survey...";
+    [self.survey openDocumentWithCompletionHandler:^(BOOL success) {
+        //do any other background work;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (!success) {
+                [self alert:nil message:@"Unable to open the survey."];
+            } else {
+                [self loadGraphics];
+            }
+            [self configureObservationButtons];
+            [self updateTitleBar];
+            [self decrementBusy];
+        });
+    }];
+}
 
 
 
@@ -1143,9 +1174,6 @@
 
 
 //FIXME: Cleanup the following code
-
-
-
 
 
 
