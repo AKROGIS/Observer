@@ -95,6 +95,27 @@
     return [self open:url];
 }
 
+
+
+
+#pragma mark - Private properties/methods
+
+- (ObserverMapViewController *)observerMapViewController
+{
+    id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+    if([rootViewController isKindOfClass:[UINavigationController class]])
+    {
+        rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
+    }
+    if([rootViewController isKindOfClass:[UITabBarController class]])
+    {
+        rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
+    }
+    // In a more generic function we would want to check UISplitViewController and other custom Container ViewControllers
+    // Fail early if my main (non-container VC) is not what I expect
+    return (ObserverMapViewController *)rootViewController;
+}
+
 - (BOOL)open:(NSURL *)url
 {
     //The url may contain a resource (e.g. a tile package) that we already have in the documents directory.
@@ -170,21 +191,6 @@
     return NO;
 }
 
-- (ObserverMapViewController *)observerMapViewController
-{
-    UIViewController *vc;
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        vc = self.window.rootViewController;
-    } else {
-        UINavigationController *nav = (UINavigationController *)self.window.rootViewController;
-        vc = [nav.viewControllers  firstObject];;
-    }
-    if ([vc isKindOfClass:[ObserverMapViewController class]]) {
-        return (ObserverMapViewController *)vc;
-    }
-    return nil;
-}
-
 
 
 
@@ -201,16 +207,7 @@
 - (void)presentAlert:(UIAlertController *)alert
 {
     // self is not a UIVeiwController, so we need to find the root view controller and ask it to display the Alert
-    id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
-    if([rootViewController isKindOfClass:[UINavigationController class]])
-    {
-        rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
-    }
-    if([rootViewController isKindOfClass:[UITabBarController class]])
-    {
-        rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
-    }
-    [rootViewController presentViewController:alert animated:YES completion:nil];
+    [self.observerMapViewController presentViewController:alert animated:YES completion:nil];
 }
 
 @end
