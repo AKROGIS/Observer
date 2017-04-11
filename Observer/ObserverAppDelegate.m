@@ -16,7 +16,6 @@
 #import <Crashlytics/Crashlytics.h>
 #import <ArcGIS/ArcGIS.h>
 
-#define kAppDistributionPlist      @"https://akrgis.nps.gov/observer/Park_Observer.plist"
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 
 
@@ -77,7 +76,6 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    [self checkForUpdates];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -181,52 +179,6 @@
         return (ObserverMapViewController *)vc;
     }
     return nil;
-}
-
-- (void)checkForUpdates
-{
-    [self checkForUpdateWithCallback:^(BOOL found) {
-        if (found) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Version Waiting"
-                                                                           message:@"Are you ready to upgrade?"
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *waitAction = [UIAlertAction actionWithTitle:@"No"
-                                                                 style:UIAlertActionStyleCancel
-                                                               handler:nil];
-            UIAlertAction *openAction = [UIAlertAction actionWithTitle:@"Yes"
-                                                                 style:UIAlertActionStyleDefault
-                                                               handler:^(UIAlertAction * action){
-                                                                   NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@",kAppDistributionPlist]];
-                                                                   [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-                                                               }];
-            [alert addAction:waitAction];
-            [alert addAction:openAction];
-            [self presentAlert:alert];
-        }
-    }];
-}
-
-- (void)checkForUpdateWithCallback:(void (^)(BOOL found))callback
-{
-    if (!callback)
-        return;
-
-    BOOL updateAvailable = NO;
-    NSDictionary *updateDictionary = [NSDictionary dictionaryWithContentsOfURL:
-                                      [NSURL URLWithString:kAppDistributionPlist]];
-
-    if(updateDictionary)
-    {
-        NSArray *items = [updateDictionary objectForKey:@"items"];
-        NSDictionary *itemDict = [items lastObject];
-
-        NSDictionary *metaData = [itemDict objectForKey:@"metadata"];
-        NSString *newversion = [metaData valueForKey:@"bundle-version"];
-        NSString *currentversion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-
-        updateAvailable = [newversion compare:currentversion options:NSNumericSearch] == NSOrderedDescending;
-    }
-    callback(updateAvailable);
 }
 
 
