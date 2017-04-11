@@ -110,8 +110,8 @@
     [self requestLocationServices];
     [self configureGpsButton];
     [self configureObservationButtons];
-    [self openMap:self.map];  // load in survey setter may fail if the view isn't ready.
-    [self openSurvey:self.survey];  // load in survey setter may fail if the view isn't ready.
+    [self openMap:self.map];  // open in map setter may fail if the view isn't ready.
+    [self openSurvey:self.survey];  // open in survey setter may fail if the view isn't ready.
     self.statusMessage.text = nil;
     self.totalizerMessage.text = nil;
 }
@@ -134,7 +134,7 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    //auto-save current survey in case user wants to mail or export it;
+    //auto-save current survey in case user wants to mail or export it;  This will likely be in a new context
     //ignore the callback; because we can assume the auto-save will be done before the users gets that far
     //I might not have a survey or an open document, which would be ok, as there would be no need to save
     [self.survey.document autosaveWithCompletionHandler:nil];
@@ -390,7 +390,7 @@
     if ([survey isEqualToSurvey:_survey]) {
         return;
     }
-    if (survey == nil && _survey == nil) {  //fails isEqual test
+    if (survey == nil && _survey == nil) {  //[nil isEqualToSurvey:nil] returns false in check above, but we want true.
         return;
     }
     [self closeSurvey:_survey];
@@ -404,7 +404,7 @@
     if ([map isEqualToMap:_map]) {
         return;
     }
-    if (map == nil && _map == nil) {  //fails isEqual test
+    if (map == nil && _map == nil) {  //[nil isEqualToMap:nil] returns false in check above, but we want true.
         return;
     }
     [self closeMap:_map];
@@ -420,7 +420,7 @@
 
 - (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
 {
-    //Only the attribute collector is using the delegate
+    //Only the attribute collector is using PopoverPresentationController delegate
     [self saveAttributes];
 }
 
@@ -675,6 +675,7 @@
 
 - (BOOL)mapIsProjected
 {
+    //TODO: I think this is always true.  Can it be false?
     return self.mapView.isProjected;
 }
 
@@ -716,7 +717,7 @@
     self.mapView.touchDelegate = self;
     self.mapView.callout.delegate = self;
     //the remaining configuration will occur after a layer is loaded
-    //Alert: calling the tilecahce property may block for IO
+    //Alert: calling the tilecache property may block for IO
     if (self.map.tileCache) {
         [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
         //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
@@ -1019,7 +1020,7 @@
         return;
     }
     AKRLog(@"Opening the map %@", map);
-    //Alert: calling the tilecache property will block for IO
+    //Alert: calling the tilecache property may block for IO
     if (map.tileCache)
     {
         [self incrementBusy];
@@ -1038,7 +1039,6 @@
 {
     self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
     self.mapView.locationDisplay.wanderExtentFactor = 0.0;
-    //self.mapView.locationDisplay.interfaceOrientation = self.interfaceOrientation;
     [self.mapView.locationDisplay startDataSource];
     [self startStopLocationServicesForPanMode];
 }
@@ -1109,7 +1109,7 @@
             AKRLog(@"Survey (%@) failed to close", survey.title);
             //There is really nothing I can do but continue...
         }
-        [self updateTitleBar];  //WARNING: references self.survey, which might be different than local survey when this runs.
+        [self updateTitleBar];  //FIXME: references self.survey, which might be different than local survey when this runs.
         [self decrementBusy];
     }];
 }
@@ -1192,7 +1192,7 @@
 
 - (void)addFeatureAtAngleDistance:(ProtocolFeature *)feature
 {
-    //Find the barbutton item with the feature to attach the popover.
+    //Find the bar button item with the feature to attach the popover.
     AddFeatureBarButtonItem *button = nil;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
         if (item.feature == feature) {
@@ -1202,6 +1202,7 @@
     }
     if (button) {
         // It is not possible (AFIK) to set the anchor for a manual popover seque, hence I must do the "segue" with code
+        //TODO: Use the uipopoverpresentationcontrollerdelegate prepareForPopoverPresentation
         [self performAngleDistanceSequeWithFeature:feature fromButton:button];
     } else {
         AKRLog(@"Oh No! I couldn't find the calling button for the segue");
@@ -1271,8 +1272,6 @@
     vc.features = features;
     vc.protocol = self.survey.protocol;
     vc.featureSelectedCallback = ^(NSString *layerName, id<AGSFeature> graphic) {
-        //New in iOS 8, popover on top of popover is not allowed (it was bad form anyway)
-        //now we need to dismiss the FeatureSelectorTableView (if it is visible) before presenting this feature
         //FIXME: a better solution would be to put this inside a navigation view controller inside the popover
         [self dismissViewControllerAnimated:YES completion:nil];
         [self presentFeature:graphic fromLayer:layerName atMapPoint:mapPoint];
