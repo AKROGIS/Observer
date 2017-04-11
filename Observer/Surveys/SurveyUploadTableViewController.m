@@ -24,6 +24,8 @@
 
 -(void)dealloc
 {
+    //FIXME: This VC is owned by a nav controller, which might not dealloc this VC until after the same survey is passed to and opened by the mainVC.  This is probably a race condition that need to be investigated
+    //FIXME: Some export tasks happen on a background thread which may not be complete when this VC is deallocated.  This is probably bad and should be investigated.
     if (_mineToClose) {
         NSString *title = self.survey.title;
         [self.survey closeDocumentWithCompletionHandler:^(BOOL success) {
