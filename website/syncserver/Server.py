@@ -113,5 +113,7 @@ class SyncHandler(BaseHTTPRequestHandler):
 
 if not os.path.exists(SyncHandler.upload_folder):
     os.makedirs(SyncHandler.upload_folder)
-server = HTTPServer(('', 8080), SyncHandler)
+# For more info on https see: https://gist.github.com/dergachev/7028596
+server = HTTPServer(('', 8443), SyncHandler)
+server.socket = ssl.wrap_socket (server.socket, certfile='./akrgis.pem', server_side=True)
 server.serve_forever()

@@ -12,7 +12,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>http://akrgis.nps.gov/observer/maps/maplist.json</string>
+			<string>https://akrgis.nps.gov/observer/maps/maplist.json</string>
 			<key>Key</key>
 			<string>url_for_maps</string>
 			<key>Title</key>
@@ -22,11 +22,21 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>http://akrgis.nps.gov/observer/protocols/list.json</string>
+			<string>https://akrgis.nps.gov/observer/protocols/list.json</string>
 			<key>Key</key>
 			<string>url_for_protocols</string>
 			<key>Title</key>
 			<string>Protocols</string>
+			<key>Type</key>
+			<string>PSTextFieldSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<string>https://akrgis.nps.gov:8443/sync</string>
+			<key>Key</key>
+			<string>url_for_survey_upload</string>
+			<key>Title</key>
+			<string>Survey Upload</string>
 			<key>Type</key>
 			<string>PSTextFieldSpecifier</string>
 		</dict>

@@ -15,6 +15,7 @@
 #import "NSDate+Formatting.h"
 #import "ObserverModel.h"
 #import "POGraphic.h"
+#import "Settings.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
@@ -378,7 +379,7 @@
 
     //send the survey to the server
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    NSURL *syncURL = [NSURL URLWithString:@"http://akrgis.nps.gov:8080/sync"];
+    NSURL *syncURL = [Settings manager].urlForSurveyUpload;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:syncURL];
     request.HTTPMethod = @"POST";
     NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request

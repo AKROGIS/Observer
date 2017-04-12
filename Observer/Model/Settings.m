@@ -44,6 +44,9 @@
 #define DEFAULTS_KEY_URL_FOR_PROTOCOLS @"url_for_protocols"
 #define DEFAULTS_DEFAULT_URL_FOR_PROTOCOLS nil
 
+#define DEFAULTS_KEY_URL_FOR_SURVEY_UPLOAD @"url_for_survey_upload"
+#define DEFAULTS_DEFAULT_URL_FOR_SURVEY_UPLOAD nil
+
 #define DEFAULTS_KEY_AUTOPAN_MODE @"autopan_mode"
 #define DEFAULTS_DEFAULT_AUTOPAN_MODE kNoAutoPanNoAutoRotateNorthUp
 
@@ -299,6 +302,27 @@
     }
 }
 
+
+@synthesize urlForSurveyUpload = _urlForSurveyUpload;
+
+- (NSURL *)urlForSurveyUpload
+{
+    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_SURVEY_UPLOAD];
+    if ([value isKindOfClass:[NSString class]]) {
+        value = [NSURL URLWithString:value];
+    }
+    return value ? value : DEFAULTS_DEFAULT_URL_FOR_SURVEY_UPLOAD;
+}
+
+- (void)setUrlForSurveyUpload:(NSURL *)urlForSurveyUpload
+{
+    NSString *string = urlForSurveyUpload.absoluteString;
+    if ([string isEqual:DEFAULTS_DEFAULT_URL_FOR_SURVEY_UPLOAD]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_SURVEY_UPLOAD];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_SURVEY_UPLOAD];
+    }
+}
 
 
 @synthesize autoPanMode = _autoPanMode;
