@@ -40,6 +40,7 @@
 
 @property (nonatomic) NSURL *urlForMaps;
 @property (nonatomic) NSURL *urlForProtocols;
+@property (nonatomic) NSURL *urlForSurveyUpload;
 
 @property (nonatomic) MapAutoPanState autoPanMode;
 @property (nonatomic) double maxSpeedForBearing;
