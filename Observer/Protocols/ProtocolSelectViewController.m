@@ -349,6 +349,7 @@
     SProtocol *protocol = [self.items remoteProtocolAtIndex:indexPath.urow];
     if (protocol.isDownloading) {
         [protocol cancelDownload];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     } else {
         ProtocolTableViewCell *cell = (ProtocolTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
@@ -360,6 +361,7 @@
         protocol.downloadCompletionAction = ^(SProtocol *newProtocol) {
             //on background thread
             dispatch_async(dispatch_get_main_queue(), ^{
+                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
                 if (newProtocol) {
                     [self.items removeRemoteProtocolAtIndex:indexPath.urow];
                     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -371,6 +373,7 @@
                 }
             });
         };
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         [protocol startDownload];
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
