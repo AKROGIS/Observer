@@ -32,9 +32,7 @@
 
 - (void)awakeFromNib
 {
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        self.preferredContentSize = CGSizeMake(320.0, 216.0);
-    }
+    self.preferredContentSize = CGSizeMake(320.0, 216.0);
     [super awakeFromNib];
 }
 

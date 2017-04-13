@@ -32,10 +32,8 @@
 
 - (void)awakeFromNib
 {
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        self.clearsSelectionOnViewWillAppear = NO;
-        self.preferredContentSize = CGSizeMake(380.0, 480.0);
-    }
+    self.clearsSelectionOnViewWillAppear = NO;
+    self.preferredContentSize = CGSizeMake(380.0, 480.0);
     [super awakeFromNib];
 }
 

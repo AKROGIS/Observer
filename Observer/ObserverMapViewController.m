@@ -138,10 +138,14 @@
     //ignore the callback; because we can assume the auto-save will be done before the users gets that far
     //I might not have a survey or an open document, which would be ok, as there would be no need to save
     [self.survey.document autosaveWithCompletionHandler:nil];
-    UIViewController *vc1 = [segue destinationViewController];
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        UINavigationController *nav = [segue destinationViewController];
-        vc1 = [nav.viewControllers firstObject];
+    id vc1 = [segue destinationViewController];
+    if([vc1 isKindOfClass:[UINavigationController class]])
+    {
+        vc1 = ((UINavigationController *)vc1).viewControllers.firstObject;
+    }
+    if([vc1 isKindOfClass:[UITabBarController class]])
+    {
+        vc1 = ((UITabBarController *)vc1).selectedViewController;
     }
     if ([segue.identifier isEqualToString:@"Select Survey"]){
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
