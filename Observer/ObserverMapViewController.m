@@ -1495,8 +1495,10 @@
     self.attributeCollector = dialog;
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:dialog];
     dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissAttributeCollector:)];
-    dialog.toolbarItems = @[doneButton];
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissAttributeCollector:)];
+    UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAndDismissAttributeCollector:)];
+    dialog.toolbarItems = @[cancelButton, flex, doneButton];
     nav.toolbarHidden = NO;
     nav.modalPresentationStyle = UIModalPresentationPopover;
     [self presentViewController:nav animated:YES completion:nil];
@@ -1507,9 +1509,14 @@
     popover.delegate = self;
 }
 
-- (void) dismissAttributeCollector:(UIBarButtonItem *)sender
+- (void) saveAndDismissAttributeCollector:(UIBarButtonItem *)sender
 {
     [self saveAttributes];
+    [self dismissAttributeCollector:sender];
+}
+
+- (void) dismissAttributeCollector:(UIBarButtonItem *)sender
+    {
     [self dismissViewControllerAnimated:YES completion:nil];
     self.attributeCollector = nil;
 }
