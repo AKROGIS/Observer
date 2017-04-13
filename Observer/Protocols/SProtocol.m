@@ -152,7 +152,7 @@
 
 - (NSString *)versionString
 {
-    return self.version ? [self.version stringValue] : @"Unknown";
+    return self.version != nil ? [self.version stringValue] : @"Unknown";
 }
 
 

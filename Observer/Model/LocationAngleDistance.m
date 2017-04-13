@@ -192,7 +192,7 @@
 
 - (double) doubleFromAngle:(NSNumber*)angle
 {
-    if (!angle)
+    if (angle == nil)
         return -1.0;
 
     double referenceAngle = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleBaseline : [Settings manager].angleDistanceDeadAhead;
@@ -208,7 +208,7 @@
 
 - (double) doubleFromDistance:(NSNumber *)distance
 {
-    if (!distance || [distance doubleValue] <= 0)
+    if (distance == nil || [distance doubleValue] <= 0)
         return -1.0;
     
     AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : [Settings manager].distanceUnitsForSightings;

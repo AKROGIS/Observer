@@ -207,14 +207,14 @@
 
 - (void) updateDefaultValues
 {
-    if (self.location.defaultAngle) {
+    if (self.location.defaultAngle != nil) {
         self.initialAngle = [NSString stringWithFormat:@"%@", self.location.angle];
     } else {
         self.initialAngle = nil;
     }
     self.angleTextField.text = self.initialAngle;
     
-    if (self.location.defaultDistance) {
+    if (self.location.defaultDistance != nil) {
         self.initialDistance = [NSString stringWithFormat:@"%@", self.location.distance];
     } else {
         self.initialDistance = nil;
