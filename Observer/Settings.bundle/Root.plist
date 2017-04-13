@@ -48,33 +48,11 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<integer>9001</integer>
-			<key>Key</key>
-			<string>uom_distance_sighting</string>
-			<key>Title</key>
-			<string>Distance (Sighting)</string>
-			<key>Titles</key>
-			<array>
-				<string>Meters</string>
-				<string>Feet</string>
-				<string>Yards</string>
-			</array>
-			<key>Type</key>
-			<string>PSMultiValueSpecifier</string>
-			<key>Values</key>
-			<array>
-				<integer>9001</integer>
-				<integer>9002</integer>
-				<integer>109001</integer>
-			</array>
-		</dict>
-		<dict>
-			<key>DefaultValue</key>
 			<integer>9093</integer>
 			<key>Key</key>
 			<string>uom_distance_measure</string>
 			<key>Title</key>
-			<string>Distance (Measuring)</string>
+			<string>Distance</string>
 			<key>Titles</key>
 			<array>
 				<string>Meters</string>
@@ -95,56 +73,8 @@
 			</array>
 		</dict>
 		<dict>
-			<key>Title</key>
-			<string>Angle Distance Observations</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>DefaultValue</key>
-			<integer>0</integer>
-			<key>Key</key>
-			<string>angle_distance_angle_direction</string>
-			<key>Title</key>
-			<string>Angles Increase</string>
-			<key>Titles</key>
-			<array>
-				<string>Clockwise</string>
-				<string>Counter Clockwise</string>
-			</array>
-			<key>Type</key>
-			<string>PSMultiValueSpecifier</string>
-			<key>Values</key>
-			<array>
-				<integer>0</integer>
-				<integer>1</integer>
-			</array>
-		</dict>
-		<dict>
-			<key>DefaultValue</key>
-			<integer>0</integer>
-			<key>Key</key>
-			<string>angle_distance_dead_ahead</string>
-			<key>Title</key>
-			<string>Dead Ahead</string>
-			<key>Titles</key>
-			<array>
-				<string>0 Degrees</string>
-				<string>90 Degrees</string>
-				<string>180 Degrees</string>
-			</array>
-			<key>Type</key>
-			<string>PSMultiValueSpecifier</string>
-			<key>Values</key>
-			<array>
-				<integer>0</integer>
-				<integer>90</integer>
-				<integer>180</integer>
-			</array>
-		</dict>
-		<dict>
 			<key>FooterText</key>
-			<string>Copyright © 2014 National Park Service</string>
+			<string>Copyright © 2017 National Park Service</string>
 			<key>Title</key>
 			<string></string>
 			<key>Type</key>

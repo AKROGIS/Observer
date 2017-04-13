@@ -89,7 +89,6 @@
 		39A836CB185FDAB8008BF4E3 /* AttributeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A836CA185FDAB8008BF4E3 /* AttributeViewController.m */; };
 		39A9EF90196F5BD80059FC0F /* Archiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A9EF8F196F5BD80059FC0F /* Archiver.m */; };
 		39A9EF94197066120059FC0F /* NSURL+isEqualToURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A9EF93197066120059FC0F /* NSURL+isEqualToURL.m */; };
-		39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */; };
 		39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */; };
 		39BA8FC2196F33F800F90A77 /* Survey+ZipExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BA8FC1196F33F800F90A77 /* Survey+ZipExport.m */; };
 		39C3B84B18B816020041FF36 /* FeatureSelectorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C3B84A18B816020041FF36 /* FeatureSelectorTableViewController.m */; };
@@ -325,8 +324,6 @@
 		39A9EF8F196F5BD80059FC0F /* Archiver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Archiver.m; path = Model/Archiver.m; sourceTree = "<group>"; };
 		39A9EF92197066120059FC0F /* NSURL+isEqualToURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURL+isEqualToURL.h"; path = "Categories/NSURL+isEqualToURL.h"; sourceTree = "<group>"; };
 		39A9EF93197066120059FC0F /* NSURL+isEqualToURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURL+isEqualToURL.m"; path = "Categories/NSURL+isEqualToURL.m"; sourceTree = "<group>"; };
-		39B92FCE17A73F5700C62145 /* AngleDistanceSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AngleDistanceSettingsTableViewController.h; sourceTree = "<group>"; };
-		39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AngleDistanceSettingsTableViewController.m; sourceTree = "<group>"; };
 		39B92FD117A869B500C62145 /* RadioStyleTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadioStyleTableViewCell.h; sourceTree = "<group>"; };
 		39B92FD217A869B500C62145 /* RadioStyleTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RadioStyleTableViewCell.m; sourceTree = "<group>"; };
 		39BA8FC0196F33F800F90A77 /* Survey+ZipExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Survey+ZipExport.h"; path = "Surveys/Survey+ZipExport.h"; sourceTree = "<group>"; };
@@ -443,8 +440,6 @@
 		391D0EE217F4F9A000D8C5DF /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				39B92FCE17A73F5700C62145 /* AngleDistanceSettingsTableViewController.h */,
-				39B92FCF17A73F5700C62145 /* AngleDistanceSettingsTableViewController.m */,
 				396775C617A1C7B5009ECD34 /* AngleDistanceViewController.h */,
 				396775C717A1C7B5009ECD34 /* AngleDistanceViewController.m */,
 				39A836C9185FDAB8008BF4E3 /* AttributeViewController.h */,
@@ -927,7 +922,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "version=`/usr/libexec/PlistBuddy -c \"Print CFBundleShortVersionString\" \"$INFOPLIST_FILE\"`\nbuild=`/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$INFOPLIST_FILE\"`\nbuild=$(($build + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build\" \"$INFOPLIST_FILE\"\ndisplaytext=\"$version ($build)\"\n/usr/libexec/PlistBuddy \"$SRCROOT/Observer/Settings.bundle/Root.plist\" -c \"set PreferenceSpecifiers:11:DefaultValue $displaytext\"\n";
+			shellScript = "version=`/usr/libexec/PlistBuddy -c \"Print CFBundleShortVersionString\" \"$INFOPLIST_FILE\"`\nbuild=`/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$INFOPLIST_FILE\"`\nbuild=$(($build + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build\" \"$INFOPLIST_FILE\"\ndisplaytext=\"$version ($build)\"\n/usr/libexec/PlistBuddy \"$SRCROOT/Observer/Settings.bundle/Root.plist\" -c \"set PreferenceSpecifiers:7:DefaultValue $displaytext\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -976,7 +971,6 @@
 				393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */,
 				394CC24A1858F11800FA859C /* AdhocLocation.m in Sources */,
 				398908221857EB2F007B3F67 /* Map.m in Sources */,
-				39B92FD017A73F5700C62145 /* AngleDistanceSettingsTableViewController.m in Sources */,
 				39C53E65187F4B5E00C0CECE /* AutoPanButton.m in Sources */,
 				394CC23E1858EF5800FA859C /* ObserverModel.xcdatamodeld in Sources */,
 				39B92FD317A869B500C62145 /* RadioStyleTableViewCell.m in Sources */,
