@@ -139,7 +139,7 @@
 
 - (BOOL)saveCopyToURL:(NSURL *)url
 {
-    return [[NSData dataWithContentsOfURL:self.url] writeToURL:url options:0 error:nil];
+    return [[NSData dataWithContentsOfURL:self.url] writeToURL:url options:(NSDataWritingOptions)0 error:nil];
 }
 
 
@@ -220,7 +220,7 @@
     self.parsedJSON = YES;
     NSData *data = [NSData dataWithContentsOfURL:self.url];
     if (data) {
-        id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        id json = [NSJSONSerialization JSONObjectWithData:data options:(NSJSONReadingOptions)0 error:nil];
         if ([json isKindOfClass:[NSDictionary class]])
         {
             if ([@"NPS-Protocol-Specification" isEqual:json[@"meta-name"]]) {

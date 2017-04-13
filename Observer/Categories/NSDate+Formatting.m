@@ -64,7 +64,7 @@
 - (NSDate *)dateOnly
 {
     NSCalendar *cal = [NSCalendar currentCalendar];
-    NSDateComponents *components = [cal components:(NSCalendarUnitEra|NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay) fromDate:self];
+    NSDateComponents *components = [cal components:(NSCalendarUnit)(NSCalendarUnitEra|NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay) fromDate:self];
     return [cal dateFromComponents:components];
 }
 
