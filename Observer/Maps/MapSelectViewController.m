@@ -378,14 +378,17 @@
     Map *map = [self.items remoteMapAtIndex:indexPath.urow];
     if (map.isDownloading) {
         [map cancelDownload];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     } else {
         __weak Map *weakMap = map;
         map.downloadCompletionAction = ^(BOOL success) {
             dispatch_async(dispatch_get_main_queue(), ^{
+                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
                 [self downloadSucceeded:success forMap:weakMap inCollection:self.items atIndex:indexPath];
             });
         };
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         [map startDownload];
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }

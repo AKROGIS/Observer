@@ -419,7 +419,13 @@ static int _downloadsInProgress = 0;
 + (NSMutableArray *)fetchMapListFromURL:(NSURL *)url
 {
     NSMutableArray *maps = nil;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    });
     NSData *data = [NSData dataWithContentsOfURL:url];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    });
     if (data) {
         id json = [NSJSONSerialization JSONObjectWithData:data options:(NSJSONReadingOptions)0 error:nil];
         if ([json isKindOfClass:[NSArray class]])
