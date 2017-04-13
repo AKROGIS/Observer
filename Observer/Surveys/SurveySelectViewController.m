@@ -35,10 +35,8 @@
 
 - (void)awakeFromNib
 {
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        self.clearsSelectionOnViewWillAppear = NO;
-        self.preferredContentSize = CGSizeMake(380.0, 480.0);
-    }
+    self.clearsSelectionOnViewWillAppear = NO;
+    self.preferredContentSize = CGSizeMake(380.0, 480.0);
     [super awakeFromNib];
 }
 
@@ -51,37 +49,23 @@
 - (void)configureControlsEnableAddButton:(BOOL)enableAdd
 {
     if (enableAdd) {
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            self.navigationItem.leftBarButtonItem = self.addButton;
-            self.navigationItem.rightBarButtonItem = self.editButtonItem;
-        } else {
-            UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-            self.toolbarItems = @[self.editButtonItem,spacer,self.addButton];
-        }
+        self.navigationItem.leftBarButtonItem = self.addButton;
+        self.navigationItem.rightBarButtonItem = self.editButtonItem;
     } else {
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            self.navigationItem.leftBarButtonItem = nil;
-            self.navigationItem.rightBarButtonItem = self.editButtonItem;
-        } else {
-            self.toolbarItems = @[self.editButtonItem];
-        }
-
+        self.navigationItem.leftBarButtonItem = nil;
+        self.navigationItem.rightBarButtonItem = self.editButtonItem;
     }
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        [self.navigationController setToolbarHidden:NO animated:NO];
-    }
+    [self.navigationController setToolbarHidden:NO animated:NO];
 }
 
 -(void)viewWillDisappear:(BOOL)animated
 {
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        [self.navigationController setToolbarHidden:YES animated:NO];
-    }
+    [self.navigationController setToolbarHidden:YES animated:NO];
     [super viewWillDisappear:animated];
 }
 

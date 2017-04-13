@@ -138,10 +138,14 @@
     //ignore the callback; because we can assume the auto-save will be done before the users gets that far
     //I might not have a survey or an open document, which would be ok, as there would be no need to save
     [self.survey.document autosaveWithCompletionHandler:nil];
-    UIViewController *vc1 = [segue destinationViewController];
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        UINavigationController *nav = [segue destinationViewController];
-        vc1 = [nav.viewControllers firstObject];
+    id vc1 = [segue destinationViewController];
+    if([vc1 isKindOfClass:[UINavigationController class]])
+    {
+        vc1 = ((UINavigationController *)vc1).viewControllers.firstObject;
+    }
+    if([vc1 isKindOfClass:[UITabBarController class]])
+    {
+        vc1 = ((UITabBarController *)vc1).selectedViewController;
     }
     if ([segue.identifier isEqualToString:@"Select Survey"]){
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
@@ -1495,8 +1499,10 @@
     self.attributeCollector = dialog;
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:dialog];
     dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissAttributeCollector:)];
-    dialog.toolbarItems = @[doneButton];
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissAttributeCollector:)];
+    UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAndDismissAttributeCollector:)];
+    dialog.toolbarItems = @[cancelButton, flex, doneButton];
     nav.toolbarHidden = NO;
     nav.modalPresentationStyle = UIModalPresentationPopover;
     [self presentViewController:nav animated:YES completion:nil];
@@ -1507,9 +1513,14 @@
     popover.delegate = self;
 }
 
-- (void) dismissAttributeCollector:(UIBarButtonItem *)sender
+- (void) saveAndDismissAttributeCollector:(UIBarButtonItem *)sender
 {
     [self saveAttributes];
+    [self dismissAttributeCollector:sender];
+}
+
+- (void) dismissAttributeCollector:(UIBarButtonItem *)sender
+    {
     [self dismissViewControllerAnimated:YES completion:nil];
     self.attributeCollector = nil;
 }
