@@ -330,7 +330,10 @@
     } else {
         //TODO: do this transfer in an NSOperation Queue
         //TODO: need to deal with various network errors
-        return [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:url]];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:url]];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        return image;
     }
 }
 
