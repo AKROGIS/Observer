@@ -53,7 +53,7 @@
     if ([name isEqualToString:NSLocalizedString(@"At Touch Location", @"Locations are at the touch on the map")]) {
         return LocateFeatureWithMapTouch;
     }
-    return 0;
+    return LocateFeatureUndefined;
 }
 
 
@@ -188,7 +188,7 @@
 
 - (WaysToLocateFeature)nonTouchChoices
 {
-    WaysToLocateFeature bitmask = 0;
+    WaysToLocateFeature bitmask = LocateFeatureUndefined;
     if (_gpsLocation && self.hasGPS) bitmask |= LocateFeatureWithGPS;
     if (_mapTarget && self.hasMap) bitmask |= LocateFeatureWithMapTarget;
     if (_angleDistance  && self.hasGPS && self.mapIsProjected) bitmask |= LocateFeatureWithAngleDistance;
@@ -197,7 +197,7 @@
 
 - (WaysToLocateFeature)touchChoices
 {
-    WaysToLocateFeature bitmask = 0;
+    WaysToLocateFeature bitmask = LocateFeatureUndefined;
     if (_mapTouch && self.hasMap) bitmask |= LocateFeatureWithMapTouch;
     return bitmask;
 }
@@ -213,7 +213,7 @@
     if (self.hasGPS && self.mapIsProjected && [self dictionary:_angleDistance hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
         return LocateFeatureWithAngleDistance;
     }
-    return 0;
+    return LocateFeatureUndefined;
 }
 
 - (WaysToLocateFeature)initialNonTouchChoice
@@ -227,7 +227,7 @@
     if (_angleDistance && self.hasGPS && self.mapIsProjected) {
         return LocateFeatureWithAngleDistance;
     }
-    return 0;
+    return LocateFeatureUndefined;
 }
 
 - (BOOL)allowsAngleDistanceLocations
