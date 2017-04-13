@@ -53,7 +53,7 @@
     if ([name isEqualToString:NSLocalizedString(@"At Touch Location", @"Locations are at the touch on the map")]) {
         return LocateFeatureWithMapTouch;
     }
-    return 0;
+    return LocateFeatureUndefined;
 }
 
 
@@ -188,7 +188,7 @@
 
 - (WaysToLocateFeature)nonTouchChoices
 {
-    WaysToLocateFeature bitmask = 0;
+    WaysToLocateFeature bitmask = LocateFeatureUndefined;
     if (_gpsLocation && self.hasGPS) bitmask |= LocateFeatureWithGPS;
     if (_mapTarget && self.hasMap) bitmask |= LocateFeatureWithMapTarget;
     if (_angleDistance  && self.hasGPS && self.mapIsProjected) bitmask |= LocateFeatureWithAngleDistance;
@@ -197,7 +197,7 @@
 
 - (WaysToLocateFeature)touchChoices
 {
-    WaysToLocateFeature bitmask = 0;
+    WaysToLocateFeature bitmask = LocateFeatureUndefined;
     if (_mapTouch && self.hasMap) bitmask |= LocateFeatureWithMapTouch;
     return bitmask;
 }
@@ -213,7 +213,7 @@
     if (self.hasGPS && self.mapIsProjected && [self dictionary:_angleDistance hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
         return LocateFeatureWithAngleDistance;
     }
-    return 0;
+    return LocateFeatureUndefined;
 }
 
 - (WaysToLocateFeature)initialNonTouchChoice
@@ -227,7 +227,7 @@
     if (_angleDistance && self.hasGPS && self.mapIsProjected) {
         return LocateFeatureWithAngleDistance;
     }
-    return 0;
+    return LocateFeatureUndefined;
 }
 
 - (BOOL)allowsAngleDistanceLocations
@@ -245,22 +245,25 @@
 - (BOOL)hasGPS
 {
     //default is YES, if there is no location presenter, or it doesn't implement the optional method
-    BOOL noResponse = !self.locationPresenter || ![self.locationPresenter respondsToSelector:@selector(hasGPS)];
-    return (noResponse || self.locationPresenter.hasGPS);
+    id<LocationPresenter> locationPresenter = self.locationPresenter;
+    BOOL noResponse = !locationPresenter || ![locationPresenter respondsToSelector:@selector(hasGPS)];
+    return (noResponse || locationPresenter.hasGPS);
 }
 
 - (BOOL)hasMap
 {
     //default is YES if there is no location presenter, or it doesn't implement the optional method
-    BOOL noResponse = !self.locationPresenter || ![self.locationPresenter respondsToSelector:@selector(hasMap)];
-    return (noResponse || self.locationPresenter.hasMap);
+    id<LocationPresenter> locationPresenter = self.locationPresenter;
+    BOOL noResponse = !locationPresenter || ![locationPresenter respondsToSelector:@selector(hasMap)];
+    return (noResponse || locationPresenter.hasMap);
 }
 
 - (BOOL)mapIsProjected
 {
     //default is YES, if there is no location presenter, or it doesn't implement the optional method
-    BOOL noResponse = !self.locationPresenter || ![self.locationPresenter respondsToSelector:@selector(mapIsProjected)];
-    return (noResponse || self.locationPresenter.mapIsProjected);
+    id<LocationPresenter> locationPresenter = self.locationPresenter;
+    BOOL noResponse = !locationPresenter || ![locationPresenter respondsToSelector:@selector(mapIsProjected)];
+    return (noResponse || locationPresenter.mapIsProjected);
 }
 
 

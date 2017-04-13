@@ -16,6 +16,7 @@ typedef NS_ENUM(NSUInteger, AngleDirection) {
 };
 
 typedef NS_OPTIONS(NSUInteger, WaysToLocateFeature) {
+    LocateFeatureUndefined         = 0,
     LocateFeatureWithGPS           = 1<<0,
     LocateFeatureWithAngleDistance = 1<<1,
     LocateFeatureWithMapTouch      = 1<<2,

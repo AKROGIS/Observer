@@ -357,7 +357,7 @@ static int _downloadsInProgress = 0;
     }
     //update cache
     if (0 < indexesOfLocalMapsToRemove.count || 0 < mapsToAdd.count) {
-        if (self.delegate) {
+        if (delegate) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self saveCache];
             });
@@ -421,7 +421,7 @@ static int _downloadsInProgress = 0;
     NSMutableArray *maps = nil;
     NSData *data = [NSData dataWithContentsOfURL:url];
     if (data) {
-        id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        id json = [NSJSONSerialization JSONObjectWithData:data options:(NSJSONReadingOptions)0 error:nil];
         if ([json isKindOfClass:[NSArray class]])
         {
             maps = [NSMutableArray new];
@@ -530,7 +530,7 @@ static int _downloadsInProgress = 0;
     }
     //update cache
     if (0 < indexesOfRemoteMapsToRemove.count || 0 < mapsToAdd.count ) {
-        if (self.delegate) {
+        if (delegate) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self saveCache];
             });

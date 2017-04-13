@@ -152,13 +152,15 @@
         vc.title = segue.identifier;
         __weak ObserverMapViewController *weakSelf = self;
         vc.surveySelectedAction = ^(Survey *survey){
-            [weakSelf dismissViewControllerAnimated:YES completion:nil];
-            weakSelf.survey = survey;
+            ObserverMapViewController *me = weakSelf;
+            [me dismissViewControllerAnimated:YES completion:nil];
+            me.survey = survey;
         };
         vc.surveyUpdatedAction = ^(Survey *survey){
             if ([survey isEqualToSurvey:self.survey]) {
-                weakSelf.survey.title = survey.title;
-                [weakSelf updateTitleBar];
+                ObserverMapViewController *me = weakSelf;
+                me.survey.title = survey.title;
+                [me updateTitleBar];
             }
         };
         vc.surveyDeletedAction = ^(Survey *survey){
@@ -174,8 +176,9 @@
         vc.title = segue.identifier;
         __weak ObserverMapViewController *weakSelf = self;
         vc.mapSelectedAction = ^(Map *map){
-            [weakSelf dismissViewControllerAnimated:YES completion:nil];
-            weakSelf.map = map;
+            ObserverMapViewController *me = weakSelf;
+            [me dismissViewControllerAnimated:YES completion:nil];
+            me.map = map;
         };
         vc.mapDeletedAction = ^(Map *map){
             if ([map isEqualToMap:map]) {

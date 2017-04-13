@@ -428,23 +428,34 @@
 
     //Metadata equality
     //Equal if the title, author and date are the same. (even if the content (URL/size) maybe different)
-    id item = remoteMapProperties[kDateKey];
-    NSDate *remoteDate = [item isKindOfClass:[NSDate class]] ? item : ([item isKindOfClass:[NSString class]] ? [AKRFormatter dateFromISOString:item] : nil);
-    if ([self.title isEqualToString:remoteMapProperties[kTitleKey]] &&
-        [self.author isEqualToString:remoteMapProperties[kAuthorKey]] &&
-        [self.date isEqualToDate:remoteDate]) {
-        return YES;
+    id remoteTitle = remoteMapProperties[kTitleKey];
+    BOOL titleMatch = (remoteTitle != nil && self.title != nil && [self.title isEqualToString:remoteTitle]) || (remoteTitle == nil && self.title == nil);
+    if (titleMatch) { // Check Author
+        id remoteAuthor = remoteMapProperties[kAuthorKey];
+        BOOL authorMatch = (remoteAuthor != nil && self.author != nil && [self.author isEqualToString:remoteAuthor]) || (remoteAuthor == nil && self.author == nil);
+        if (authorMatch) {  //Check Date
+            id item = remoteMapProperties[kDateKey];
+            NSDate *remoteDate = [item isKindOfClass:[NSDate class]] ? item : ([item isKindOfClass:[NSString class]] ? [AKRFormatter dateFromISOString:item] : nil);
+            BOOL dateMatch = (remoteDate != nil && self.date != nil && [self.date isEqualToDate:remoteDate]) || (remoteDate == nil && self.date == nil);
+            if (dateMatch) {
+                return YES;
+            }
+        }
     }
     //Content equality
     //Equal if the name (last componenet of the URL) and the bytecount are the same. (even if the Title/Author/Date are different)
-    item = remoteMapProperties[kSizeKey];
-    unsigned long long remoteByteCount = [item isKindOfClass:[NSNumber class]] ? [item unsignedLongLongValue] : 0;
-    NSString *thisName = [self.tileCacheURL lastPathComponent];
-    item = remoteMapProperties[kUrlKey];
-    NSURL *remoteURL = [item isKindOfClass:[NSString class]] ? [NSURL URLWithString:item] : nil;
-    NSString *remoteName = [remoteURL lastPathComponent];
-    if ([thisName isEqualToString:remoteName] && self.byteCount == remoteByteCount) {
-        return YES;
+    id remoteSize = remoteMapProperties[kSizeKey];
+    unsigned long long remoteByteCount = [remoteSize isKindOfClass:[NSNumber class]] ? [remoteSize unsignedLongLongValue] : 0;
+    BOOL byteCountMatch = self.byteCount == remoteByteCount;
+    if (byteCountMatch) { // Check Name
+        NSString *thisName = [self.tileCacheURL lastPathComponent];
+        id item = remoteMapProperties[kUrlKey];
+        NSURL *remoteURL = [item isKindOfClass:[NSString class]] ? [NSURL URLWithString:item] : nil;
+        NSString *remoteName = [remoteURL lastPathComponent];
+        BOOL nameMatch = (remoteName != nil && thisName != nil && [thisName isEqualToString:remoteName]) || (remoteName == nil && thisName == nil);
+        if (nameMatch) {
+            return YES;
+        }
     }
     return NO;
 }

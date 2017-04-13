@@ -23,7 +23,7 @@
 {
     [super viewDidLoad];
     self.nameLabel.preferredMaxLayoutWidth = self.preferredContentSize.width - TEXTMARGINS;
-    self.nameLabel.text = self.protocol.version ? [NSString stringWithFormat:@"%@, v. %@", self.protocol.title, self.protocol.version] : self.protocol.title;
+    self.nameLabel.text = self.protocol.version != nil ? [NSString stringWithFormat:@"%@, v. %@", self.protocol.title, self.protocol.version] : self.protocol.title;
     self.dateLabel.text = self.protocol.dateString;
     self.descriptionLabel.preferredMaxLayoutWidth = self.preferredContentSize.width - TEXTMARGINS;
     self.descriptionLabel.text = self.protocol.isLocal ? self.protocol.details : @"Download the protocol for more details.";
