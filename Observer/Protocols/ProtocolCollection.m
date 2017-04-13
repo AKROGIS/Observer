@@ -355,7 +355,7 @@ static BOOL _isLoaded = NO;
     }
     //update cache
     if (0 < itemsToRemove.count || 0 < protocolsToAdd.count) {
-        if (self.delegate) {
+        if (delegate) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self saveCache];
             });
@@ -517,7 +517,7 @@ static BOOL _isLoaded = NO;
     }
     //update cache
     if (modelChanged) {
-        if (self.delegate) {
+        if (delegate) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self saveCache];
             });

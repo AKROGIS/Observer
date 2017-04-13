@@ -357,7 +357,7 @@ static int _downloadsInProgress = 0;
     }
     //update cache
     if (0 < indexesOfLocalMapsToRemove.count || 0 < mapsToAdd.count) {
-        if (self.delegate) {
+        if (delegate) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self saveCache];
             });
@@ -530,7 +530,7 @@ static int _downloadsInProgress = 0;
     }
     //update cache
     if (0 < indexesOfRemoteMapsToRemove.count || 0 < mapsToAdd.count ) {
-        if (self.delegate) {
+        if (delegate) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self saveCache];
             });

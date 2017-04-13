@@ -245,22 +245,25 @@
 - (BOOL)hasGPS
 {
     //default is YES, if there is no location presenter, or it doesn't implement the optional method
-    BOOL noResponse = !self.locationPresenter || ![self.locationPresenter respondsToSelector:@selector(hasGPS)];
-    return (noResponse || self.locationPresenter.hasGPS);
+    id<LocationPresenter> locationPresenter = self.locationPresenter;
+    BOOL noResponse = !locationPresenter || ![locationPresenter respondsToSelector:@selector(hasGPS)];
+    return (noResponse || locationPresenter.hasGPS);
 }
 
 - (BOOL)hasMap
 {
     //default is YES if there is no location presenter, or it doesn't implement the optional method
-    BOOL noResponse = !self.locationPresenter || ![self.locationPresenter respondsToSelector:@selector(hasMap)];
-    return (noResponse || self.locationPresenter.hasMap);
+    id<LocationPresenter> locationPresenter = self.locationPresenter;
+    BOOL noResponse = !locationPresenter || ![locationPresenter respondsToSelector:@selector(hasMap)];
+    return (noResponse || locationPresenter.hasMap);
 }
 
 - (BOOL)mapIsProjected
 {
     //default is YES, if there is no location presenter, or it doesn't implement the optional method
-    BOOL noResponse = !self.locationPresenter || ![self.locationPresenter respondsToSelector:@selector(mapIsProjected)];
-    return (noResponse || self.locationPresenter.mapIsProjected);
+    id<LocationPresenter> locationPresenter = self.locationPresenter;
+    BOOL noResponse = !locationPresenter || ![locationPresenter respondsToSelector:@selector(mapIsProjected)];
+    return (noResponse || locationPresenter.mapIsProjected);
 }
 
 
