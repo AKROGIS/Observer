@@ -84,8 +84,6 @@
 
 
 
-@synthesize activeMapPropertiesURL = _activeMapPropertiesURL;
-
 - (NSURL *)activeMapPropertiesURL
 {
     id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES];
@@ -107,8 +105,6 @@
 
 
 
-@synthesize activeSurveyURL = _activeSurveyURL;
-
 - (NSURL *)activeSurveyURL
 {
     id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY];
@@ -129,8 +125,6 @@
 }
 
 
-
-@synthesize maps = _maps;
 
 - (NSArray *) maps
 {
@@ -158,8 +152,6 @@
 
 
 
-@synthesize surveys = _surveys;
-
 - (NSArray *) surveys
 {
     NSArray *value = [[NSUserDefaults standardUserDefaults] arrayForKey:DEFAULTS_KEY_SORTED_SURVEY_LIST];
@@ -186,8 +178,6 @@
 
 
 
-@synthesize mapRefreshDate = _mapRefreshDate;
-
 - (NSDate *)mapRefreshDate
 {
     NSDate *value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_MAP_REFRESH_DATE];
@@ -203,8 +193,6 @@
 }
 
 
-
-@synthesize hideRemoteMaps = _hideRemoteMaps;
 
 - (BOOL) hideRemoteMaps
 {
@@ -222,8 +210,6 @@
 
 
 
-@synthesize hideRemoteProtocols = _hideRemoteProtocols;
-
 - (BOOL) hideRemoteProtocols
 {
     bool value = [[NSUserDefaults standardUserDefaults] boolForKey:DEFAULTS_KEY_HIDE_REMOTE_PROTOCOLS];
@@ -239,8 +225,6 @@
 }
 
 
-
-@synthesize urlForMaps = _urlForMaps;
 
 - (NSURL *)urlForMaps
 {
@@ -263,8 +247,6 @@
 
 
 
-@synthesize urlForProtocols = _urlForProtocols;
-
 - (NSURL *)urlForProtocols
 {
     id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_PROTOCOLS];
@@ -284,8 +266,6 @@
     }
 }
 
-
-@synthesize urlForSurveyUpload = _urlForSurveyUpload;
 
 - (NSURL *)urlForSurveyUpload
 {
@@ -307,8 +287,6 @@
 }
 
 
-@synthesize autoPanMode = _autoPanMode;
-
 - (MapAutoPanState) autoPanMode
 {
     NSInteger archivedInt = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_AUTOPAN_MODE];
@@ -325,8 +303,6 @@
 }
 
 
-
-@synthesize distanceUnitsForMeasuring = _distanceUnitsForMeasuring;
 
 - (AGSSRUnit) distanceUnitsForMeasuring
 {
