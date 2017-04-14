@@ -7,7 +7,6 @@
 //
 
 #import "AngleDistanceViewController.h"
-#import "AngleDistanceSettingsTableViewController.h"
 
 #define TEXTMARGINS 60  //2*30pts
 
@@ -61,19 +60,6 @@
     self.isViewLayout = YES;
 }
 
-- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:@"PushAngleDistanceSettings"]) {
-        self.modalInPopover = YES; //disable tap outside popover when sub VC is shown
-        AngleDistanceSettingsTableViewController *vc = (AngleDistanceSettingsTableViewController *)segue.destinationViewController;
-        vc.completionBlock = ^(AngleDistanceSettingsTableViewController *controller) {
-            BOOL userHasProgressed = self.location.isValid && [self anyInputFieldHasChanged];
-            self.modalInPopover = userHasProgressed;
-            [self updateLabel];
-            [self resizeView];
-        };
-    }
-}
 
 
 #pragma mark - IBActions

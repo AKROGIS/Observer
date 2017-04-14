@@ -50,26 +50,8 @@
 #define DEFAULTS_KEY_AUTOPAN_MODE @"autopan_mode"
 #define DEFAULTS_DEFAULT_AUTOPAN_MODE kNoAutoPanNoAutoRotateNorthUp
 
-#define DEFAULTS_KEY_MAX_SPEED_FOR_BEARING @"max_speed_for_bearing"
-#define DEFAULTS_DEFAULT_MAX_SPEED_FOR_BEARING 0.0
-
-#define DEFAULTS_KEY_UOM_DISTANCE_SIGHTING @"uom_distance_sighting"
-#define DEFAULTS_DEFAULT_UOM_DISTANCE_SIGHTING AGSSRUnitMeter
-
 #define DEFAULTS_KEY_UOM_DISTANCE_MEASURE @"uom_distance_measure"
 #define DEFAULTS_DEFAULT_UOM_DISTANCE_MEASURE AGSSRUnitStatuteMile
-
-#define DEFAULTS_KEY_ANGLE_DISTANCE_ANGLE_DIRECTION @"angle_distance_angle_direction"
-#define DEFAULTS_DEFAULT_ANGLE_DISTANCE_ANGLE_DIRECTION 0
-
-#define DEFAULTS_KEY_ANGLE_DISTANCE_DEAD_AHEAD @"angle_distance_dead_ahead"
-#define DEFAULTS_DEFAULT_ANGLE_DISTANCE_DEAD_AHEAD 0
-
-#define DEFAULTS_KEY_ANGLE_DISTANCE_LAST_DISTANCE @"angle_distance_last_distance"
-#define DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_DISTANCE nil
-
-#define DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE @"angle_distance_last_angle"
-#define DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_ANGLE nil
 
 
 @implementation Settings
@@ -344,43 +326,6 @@
 
 
 
-@synthesize maxSpeedForBearing = _maxSpeedForBearing;
-
-- (double)maxSpeedForBearing
-{
-    double value = [[NSUserDefaults standardUserDefaults] doubleForKey:DEFAULTS_KEY_MAX_SPEED_FOR_BEARING];
-    return (value > 0) ? value : DEFAULTS_DEFAULT_MAX_SPEED_FOR_BEARING;
-}
-
-- (void)setMaxSpeedForBearing:(double)maxSpeedForBearing
-{
-    if (maxSpeedForBearing == DEFAULTS_DEFAULT_MAX_SPEED_FOR_BEARING)
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_MAX_SPEED_FOR_BEARING];
-    else
-        [[NSUserDefaults standardUserDefaults] setDouble:maxSpeedForBearing forKey:DEFAULTS_KEY_MAX_SPEED_FOR_BEARING];
-}
-
-
-
-@synthesize distanceUnitsForSightings = _distanceUnitsForSightings;
-
-- (AGSSRUnit) distanceUnitsForSightings
-{
-    NSInteger archivedInt = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_UOM_DISTANCE_SIGHTING];
-    AGSSRUnit value = archivedInt <= 0 ? DEFAULTS_DEFAULT_UOM_DISTANCE_SIGHTING : (NSUInteger)archivedInt;
-    return value;
-}
-
-- (void) setDistanceUnitsForSightings:(AGSSRUnit)distanceUnitsForSightings
-{
-    if (distanceUnitsForSightings == DEFAULTS_DEFAULT_UOM_DISTANCE_SIGHTING)
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_UOM_DISTANCE_SIGHTING];
-    else
-        [[NSUserDefaults standardUserDefaults] setInteger:distanceUnitsForSightings forKey:DEFAULTS_KEY_UOM_DISTANCE_SIGHTING];
-}
-
-
-
 @synthesize distanceUnitsForMeasuring = _distanceUnitsForMeasuring;
 
 - (AGSSRUnit) distanceUnitsForMeasuring
@@ -398,78 +343,6 @@
         [[NSUserDefaults standardUserDefaults] setInteger:distanceUnitsForMeasuring forKey:DEFAULTS_KEY_UOM_DISTANCE_MEASURE];
 }
 
-
-
-@synthesize angleDistanceAngleDirection = _angleDistanceAngleDirection;
-
-- (AngleDirection) angleDistanceAngleDirection
-{
-    NSInteger archivedInt = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_ANGLE_DISTANCE_ANGLE_DIRECTION];
-    AngleDirection value = archivedInt <= 0 ? DEFAULTS_DEFAULT_ANGLE_DISTANCE_ANGLE_DIRECTION : (NSUInteger)archivedInt;
-    return value;
-}
-
-- (void) setAngleDistanceAngleDirection:(AngleDirection)angleDistanceAngleDirection
-{
-    if (angleDistanceAngleDirection == DEFAULTS_DEFAULT_ANGLE_DISTANCE_ANGLE_DIRECTION)
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_ANGLE_DISTANCE_ANGLE_DIRECTION];
-    else
-        [[NSUserDefaults standardUserDefaults] setInteger:angleDistanceAngleDirection forKey:DEFAULTS_KEY_ANGLE_DISTANCE_ANGLE_DIRECTION];
-}
-
-
-
-@synthesize angleDistanceDeadAhead = _angleDistanceDeadAhead;
-
-- (double) angleDistanceDeadAhead
-{
-    double value = [[NSUserDefaults standardUserDefaults] doubleForKey:DEFAULTS_KEY_ANGLE_DISTANCE_DEAD_AHEAD];
-    return (value > 0) ? value : DEFAULTS_DEFAULT_ANGLE_DISTANCE_DEAD_AHEAD;
-}
-
-- (void) setAngleDistanceDeadAhead:(double)angleDistanceDeadAhead
-{
-    if (angleDistanceDeadAhead == DEFAULTS_DEFAULT_ANGLE_DISTANCE_DEAD_AHEAD)
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_ANGLE_DISTANCE_DEAD_AHEAD];
-    else
-        [[NSUserDefaults standardUserDefaults] setDouble:angleDistanceDeadAhead forKey:DEFAULTS_KEY_ANGLE_DISTANCE_DEAD_AHEAD];
-}
-
-
-
-@synthesize angleDistanceLastDistance = _angleDistanceLastDistance;
-
-- (NSNumber *) angleDistanceLastDistance
-{
-    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_DISTANCE];
-    return [value isKindOfClass:[NSNumber class]] ? (NSNumber *)value: DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_DISTANCE;
-}
-
-- (void) setAngleDistanceLastDistance:(NSNumber *)angleDistanceLastDistance
-{
-    if (angleDistanceLastDistance == DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_DISTANCE)
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_DISTANCE];
-    else
-        [[NSUserDefaults standardUserDefaults] setObject:angleDistanceLastDistance forKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_DISTANCE];
-}
-
-
-
-@synthesize angleDistanceLastAngle = _angleDistanceLastAngle;
-
-- (NSNumber *) angleDistanceLastAngle
-{
-    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE];
-    return [value isKindOfClass:[NSNumber class]] ? (NSNumber *)value: DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_ANGLE;
-}
-
-- (void) setAngleDistanceLastAngle:(NSNumber *)angleDistanceLastAngle
-{
-    if (angleDistanceLastAngle == DEFAULTS_DEFAULT_ANGLE_DISTANCE_LAST_ANGLE)
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE];
-    else
-        [[NSUserDefaults standardUserDefaults] setObject:angleDistanceLastAngle forKey:DEFAULTS_KEY_ANGLE_DISTANCE_LAST_ANGLE];
-}
 
 
 #pragma mark - Seed NSDefaults from Settings.Bundle
