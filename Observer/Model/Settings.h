@@ -43,10 +43,7 @@
 @property (nonatomic) NSURL *urlForSurveyUpload;
 
 @property (nonatomic) MapAutoPanState autoPanMode;
-@property (nonatomic) double maxSpeedForBearing;
 
 @property (nonatomic) AGSSRUnit distanceUnitsForMeasuring;
-@property (nonatomic) NSNumber *angleDistanceLastDistance;
-@property (nonatomic) NSNumber *angleDistanceLastAngle;
 
 @end
