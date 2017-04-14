@@ -35,6 +35,10 @@
 #import "Map.h"
 #import "SProtocol.h"
 
+#define kAngleDistanceDistanceUnits      AGSSRUnitMeter;
+#define kAngleDistanceAngleDirection     AngleDirectionClockwise;
+#define kAngleDistanceDeadAhead          0.0;
+
 #define kAttributePrefix                 @"A_"
 #define kObservationPrefix               @"O_"
 #define kObservationEntityName           @"Observation"

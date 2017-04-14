@@ -45,10 +45,7 @@
 @property (nonatomic) MapAutoPanState autoPanMode;
 @property (nonatomic) double maxSpeedForBearing;
 
-@property (nonatomic) AGSSRUnit distanceUnitsForSightings;
 @property (nonatomic) AGSSRUnit distanceUnitsForMeasuring;
-@property (nonatomic) AngleDirection angleDistanceAngleDirection;
-@property (nonatomic) double angleDistanceDeadAhead;
 @property (nonatomic) NSNumber *angleDistanceLastDistance;
 @property (nonatomic) NSNumber *angleDistanceLastAngle;
 

@@ -9,6 +9,7 @@
 #import "LocationAngleDistance.h"
 #import "AGSPoint+AKRAdditions.h"
 #import "Settings.h"
+#import "ObserverModel.h"
 
 @interface LocationAngleDistance ()
 
@@ -47,13 +48,13 @@
 
 - (NSString *)basisDescription
 {
-    double referenceAngle = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleBaseline : [Settings manager].angleDistanceDeadAhead;
-    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : [Settings manager].distanceUnitsForSightings;
-    AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleDirection : [Settings manager].angleDistanceAngleDirection;
+    double referenceAngle = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleBaseline : kAngleDistanceDeadAhead;
+    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : kAngleDistanceDistanceUnits;
+    AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleDirection : kAngleDistanceAngleDirection;
     
     NSString *description =
     [NSString stringWithFormat:@"Angle increases %@ with dead ahead equal to %u degrees. Distance is in %@.",
-     angleDirection == 0 ? @"clockwise" : @"counter-clockwise",
+     angleDirection == AngleDirectionClockwise ? @"clockwise" : @"counter-clockwise",
      (int)referenceAngle,
      distanceUnits == AGSSRUnitMeter ? @"meters" :
      distanceUnits == AGSSRUnitFoot ? @"feet" :
@@ -172,8 +173,8 @@
     if (angle < 0)
         return nil;
 
-    double referenceAngle = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleBaseline : [Settings manager].angleDistanceDeadAhead;
-    AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleDirection : [Settings manager].angleDistanceAngleDirection;
+    double referenceAngle = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleBaseline : kAngleDistanceDeadAhead;
+    AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleDirection : kAngleDistanceAngleDirection;
     double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
     double localAngle = referenceAngle + direction * (angle - self.deadAhead);
     localAngle = fmod(localAngle, 360.0);
@@ -185,7 +186,7 @@
     if (distance <= 0)
         return nil;
 
-    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : [Settings manager].distanceUnitsForSightings;
+    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : kAngleDistanceDistanceUnits;
     double localDistance = [self.srWithMeters convertValue:distance toUnit:distanceUnits];
     return [NSNumber numberWithDouble:localDistance];
 }
@@ -195,8 +196,8 @@
     if (angle == nil)
         return -1.0;
 
-    double referenceAngle = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleBaseline : [Settings manager].angleDistanceDeadAhead;
-    AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleDirection : [Settings manager].angleDistanceAngleDirection;
+    double referenceAngle = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleBaseline : kAngleDistanceDeadAhead;
+    AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleDirection : kAngleDistanceAngleDirection;
     double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
     double absoluteAngle = self.deadAhead + direction * ([angle doubleValue] - referenceAngle);
     if (absoluteAngle < 0)
@@ -211,7 +212,7 @@
     if (distance == nil || [distance doubleValue] <= 0)
         return -1.0;
     
-    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : [Settings manager].distanceUnitsForSightings;
+    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : kAngleDistanceDistanceUnits;
     //Despite working in the debugger, the following fails with EXC_BAD_ACCESS in production.
     //return [self.srWithMeters convertValue:[distance doubleValue] fromUnit:distanceUnits];
     //My simple workaround

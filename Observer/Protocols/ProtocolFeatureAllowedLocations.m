@@ -7,6 +7,7 @@
 //
 
 #import "ProtocolFeatureAllowedLocations.h"
+#import "ObserverModel.h"
 
 @interface ProtocolFeatureAllowedLocations()
 
@@ -113,12 +114,12 @@
             continue;
         }
     }
-    
+
     if (_angleDistance) {
         //default Angle/Distance parameters
-        _distanceUnits = AGSSRUnitMeter;
-        _angleBaseline = 0.0;
-        _angleDirection = AngleDirectionClockwise;
+        _distanceUnits = kAngleDistanceDistanceUnits;
+        _angleBaseline = kAngleDistanceDeadAhead;
+        _angleDirection = kAngleDistanceAngleDirection;
 
         //distanceUnits
         NSString *key = [self keyForDictionary:_angleDistance possibleKeys:@[@"units", @"distanceunits", @"distance-units"]];
