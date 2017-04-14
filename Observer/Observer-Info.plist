@@ -65,7 +65,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>710</string>
+	<string>721</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -83,6 +83,8 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Location services are required to record your observation locations.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location services are required to record your observation locations.</string>
 	<key>UIBackgroundModes</key>
 	<array>
