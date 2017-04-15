@@ -1467,16 +1467,11 @@
     //Delete/Cancel Button
     //TODO: support delete/cancel on a mission property
     if (![feature isKindOfClass:[ProtocolMissionFeature class]]) {
-        NSString *buttonText = isNew ? @"Cancel" : @"Delete";
+        NSString *buttonText = @"Delete";
         QButtonElement *deleteButton = [[QButtonElement alloc] initWithTitle:buttonText];
         deleteButton.appearance = [[QFlatAppearance alloc] init];
         deleteButton.appearance.buttonAlignment = NSTextAlignmentCenter;
-        if (!isNew) {
-            deleteButton.appearance.actionColorEnabled = [UIColor redColor];
-        } else {
-            //TODO: self.view.tintColor is gray after Angle/Distance
-            deleteButton.appearance.actionColorEnabled = self.view.tintColor;
-        }
+        deleteButton.appearance.actionColorEnabled = [UIColor redColor];
         deleteButton.onSelected = ^(){
             if ([graphic isKindOfClass:[POGraphic class]]) {
                 [(POGraphic *)graphic remove];
