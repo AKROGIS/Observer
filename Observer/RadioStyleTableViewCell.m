@@ -16,7 +16,8 @@
 
 
 @implementation RadioStyleTableViewCell
-UIColor *_buttonBlue;
+
+static UIColor *_buttonBlue;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
