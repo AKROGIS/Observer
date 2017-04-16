@@ -243,11 +243,11 @@
         return;
     }
     if(!self.mapView.loaded) {
-        [self alert:nil message:@"You need to select a map before you can begin."];
+        AKRLog(@"Whaaaat ... How did I try to start recording when I don't have a map?");
         return;
     }
     if(!self.survey.isReady) {
-        [self alert:nil message:@"You need to select a survey before you can begin."];
+        AKRLog(@"Whaaaat ... How did I try to start recording when I don't have a survey?");
         return;
     }
     CLLocation *location = self.mostRecentLocation;
