@@ -896,9 +896,7 @@
         UIAlertAction *settingAction = [UIAlertAction actionWithTitle:@"Settings"
                                                                 style:UIAlertActionStyleDefault
                                                               handler:^(UIAlertAction * action){
-                                                                  // Send the user to the Settings for this app
-                                                                  NSURL *settingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-                                                                  [[UIApplication sharedApplication] openURL:settingsURL options:@{} completionHandler:nil];
+                                                                  [self gotoSettings];
                                                               }];
         [alert addAction:abortAction];
         [alert addAction:settingAction];
@@ -1146,6 +1144,28 @@
     }];
 }
 
+- (void)gotoSettings
+{
+    [self openScheme:UIApplicationOpenSettingsURLString];
+}
+
+- (void)openScheme:(NSString *)scheme {
+    UIApplication *application = [UIApplication sharedApplication];
+    NSURL *URL = [NSURL URLWithString:scheme];
+    if ([application respondsToSelector:@selector(openURL:options:completionHandler:)]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
+        //iOS 10.0+
+        [application openURL:URL options:@{} completionHandler:^(BOOL success) {
+            NSLog(@"Open %@: %d", scheme, success);
+        }];
+#pragma clang diagnostic pop
+    } else {
+        //iOS < 10
+        BOOL success = [application openURL:URL];
+        NSLog(@"Open %@: %d",scheme,success);
+    }
+}
 
 
 
