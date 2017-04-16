@@ -106,6 +106,9 @@
 
 - (id)initWithURL:(NSURL *)url
 {
+    if ([url.pathExtension isEqualToString:SURVEY_EXT]) {
+        return [self initWithArchive:url];
+    }
     return [self initWithURL:url title:nil state:kUnborn date:[NSDate date]];
 }
 
@@ -131,6 +134,9 @@
 
 - (id)initWithArchive:(NSURL *)archive
 {
+    if (![archive.pathExtension isEqualToString:SURVEY_EXT]) {
+        return nil;
+    }
     NSString *name = [[archive lastPathComponent] stringByDeletingPathExtension];
     NSURL *newDocument = [Survey privateDocumentFromName:name];
     if ([Archiver unpackSurvey:newDocument fromArchive:archive]) {

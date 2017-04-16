@@ -226,12 +226,24 @@ static BOOL _isLoaded = NO;
         modelChanged = YES;
     }
 
-    //Add any other Surveys in filesystem (maybe added via iTunes) to end of list from cached list
-    for (NSString *localSurveyFileName in localSurveyFileNames) {
+    //Add surveys in our private folder that are not in our URL cache
+    //This should be impossible now because only the app can add to the private folder.
+    //previously we needed this check when the surveys were in the public folder.
+    if (surveyUrls.count < self.items.count) {
+        AKRLog(@"Whaaat ... Somebody created a private survey without telling me!!!");
+    }
+
+    //Add surveys that were added to the public (iTunes) folder;
+    //First check for raw (private extensions) surveys.  This will probably only be done by developers.
+    //The survey init method will move the survey from the public iTunes folder to the private folder.
+    for (NSString *localSurveyFileName in [SurveyCollection existingPublicSurveyNames]) {
         NSURL *surveyUrl = [[SurveyCollection documentsDirectory] URLByAppendingPathComponent:localSurveyFileName];
         [self.items addObject:[[Survey alloc] initWithURL:surveyUrl]];
         modelChanged = YES;
     }
+
+    // I cannot add importable surveys in the public (iTues) folder because they are likely exports.
+    // See Issue #90 (https://github.com/regan-sarwas/Observer/issues/90) for a discussion of options.
 
     if (modelChanged) {
         [self saveCache];
@@ -255,10 +267,32 @@ static BOOL _isLoaded = NO;
         }
         return [NSMutableSet setWithArray:localFileNames];;
     }
+    AKRLog(@"Unable to enumerate %@: %@",[[Survey privateDocumentsDirectory] lastPathComponent], error.localizedDescription);
+    return nil;
+}
+
++ (NSMutableSet *) /* of NSString */ existingPublicSurveyNames
+{
+    NSError *error = nil;
+    NSArray *documents = [[NSFileManager defaultManager]
+                          contentsOfDirectoryAtURL:self.documentsDirectory
+                          includingPropertiesForKeys:nil
+                          options:NSDirectoryEnumerationSkipsHiddenFiles
+                          error:&error];
+    if (documents) {
+        NSMutableArray *localFileNames = [NSMutableArray new];
+        for (NSURL *url in documents) {
+            if ([SurveyCollection isPrivateURL:url]) {
+                [localFileNames addObject:[url lastPathComponent]];
+            }
+        }
+        return [NSMutableSet setWithArray:localFileNames];;
+    }
     AKRLog(@"Unable to enumerate %@: %@",[self.documentsDirectory lastPathComponent], error.localizedDescription);
     return nil;
 }
 
+// Currently not used.  Save for Issue #90 (https://github.com/regan-sarwas/Observer/issues/90)
 + (NSMutableSet *) /* of NSString */ importableSurveyNames
 {
     NSError *error = nil;
