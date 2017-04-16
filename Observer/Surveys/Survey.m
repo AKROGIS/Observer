@@ -19,7 +19,6 @@
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
-#define kUrlKey           @"url"
 #define kSTitleKey        @"title"
 #define kStateKey         @"state"
 #define kDateKey          @"date"

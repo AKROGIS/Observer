@@ -18,7 +18,6 @@
 #define kPTitleKey         @"title"
 #define kVersionKey       @"version"
 #define kDateKey          @"date"
-#define kJsonDateFormat   @""
 
 
 @interface SProtocol() {
