@@ -101,18 +101,22 @@
 
 - (ObserverMapViewController *)observerMapViewController
 {
-    id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
-    if([rootViewController isKindOfClass:[UINavigationController class]])
-    {
-        rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
+
+    if (!_observerMapViewController) {
+        id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+        if([rootViewController isKindOfClass:[UINavigationController class]])
+        {
+            rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
+        }
+        if([rootViewController isKindOfClass:[UITabBarController class]])
+        {
+            rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
+        }
+        // In a more generic function we would want to check UISplitViewController and other custom Container ViewControllers
+        // Fail early if my main (non-container VC) is not what I expect
+        _observerMapViewController = (ObserverMapViewController *)rootViewController;
     }
-    if([rootViewController isKindOfClass:[UITabBarController class]])
-    {
-        rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
-    }
-    // In a more generic function we would want to check UISplitViewController and other custom Container ViewControllers
-    // Fail early if my main (non-container VC) is not what I expect
-    return (ObserverMapViewController *)rootViewController;
+    return _observerMapViewController;
 }
 
 - (BOOL)open:(NSURL *)url

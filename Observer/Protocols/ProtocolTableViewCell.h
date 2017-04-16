@@ -11,6 +11,8 @@
 @interface ProtocolTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *subtitleLabel;
-@property (nonatomic) float percentComplete;
 @property (nonatomic) BOOL downloading;
+
+- (void)setPercentComplete:(float)percentComplete;
+
 @end

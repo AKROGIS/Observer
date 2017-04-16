@@ -13,7 +13,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *subtitle1Label;
 @property (weak, nonatomic) IBOutlet UILabel *subtitle2Label;
 @property (weak, nonatomic) IBOutlet UIImageView *thumbnailImageView;
-@property (nonatomic) float percentComplete;
 @property (nonatomic) BOOL downloading;
+
+- (void)setPercentComplete:(float)percentComplete;
 
 @end

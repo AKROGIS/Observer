@@ -79,7 +79,7 @@
 
 //Support
 @property (nonatomic) int  busyCount;
-@property (nonatomic) BOOL locationServicesAvailable;
+@property (nonatomic, readonly) BOOL locationServicesAvailable;
 @property (nonatomic) BOOL userWantsLocationUpdates;
 @property (nonatomic) BOOL userWantsHeadingUpdates;
 @property (nonatomic) BOOL gpsFailed;
