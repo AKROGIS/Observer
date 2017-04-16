@@ -182,7 +182,7 @@
     return [item isKindOfClass:[NSString class]] ? item : @"Unknown";
 }
 
-- (NSString *)date
+- (NSDate *)date
 {
     id item = self.properties[kDateKey];
     return [item isKindOfClass:[NSDate class]] ? item : ([item isKindOfClass:[NSString class]] ? [AKRFormatter dateFromISOString:item] : nil);
