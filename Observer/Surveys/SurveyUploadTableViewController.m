@@ -163,7 +163,7 @@
     } else {
         NSString *msg = @"Unable to create export file.";
         if (error) {
-            msg = [NSString stringWithFormat:@"%@.\n%@", msg, error.localizedDescription];
+            msg = [NSString stringWithFormat:@"%@\n%@", msg, error.localizedDescription];
         }
         [self alert:nil message:msg];
     }
@@ -184,7 +184,7 @@
     if (!attachmentData) {
         NSString *msg = @"Unable to create an email-able export of the survey.";
         if (error) {
-            msg = [NSString stringWithFormat:@"%@.\n%@", msg, error.localizedDescription];
+            msg = [NSString stringWithFormat:@"%@\n%@", msg, error.localizedDescription];
         }
         [self alert:nil message:msg];
     } else {

@@ -251,7 +251,6 @@
     if (indexPath.section == 1) {
         if (self.isBackgroundRefreshing)
         {
-            [self alert:@"Try Again" message:@"Cannot download while refreshing.  Please try again when refresh is complete."];
         } else {
             [self startStopDownloadItem:indexPath];
         }
@@ -292,7 +291,6 @@
     }
     if (self.isBackgroundRefreshing)
     {
-        [self alert:@"Try Again" message:@"Could not make changes while refreshing.  Please try again when refresh is complete."];
         return;
     }
     if (fromIndexPath.section == 0) {
@@ -307,7 +305,6 @@
 {
     if (self.isBackgroundRefreshing)
     {
-        [self alert:@"Try Again" message:@"Could not make changes while refreshing.  Please try again when refresh is complete."];
         return;
     }
     if (editingStyle == UITableViewCellEditingStyleDelete) {
@@ -365,7 +362,7 @@
                     [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)] withRowAnimation:UITableViewRowAnimationAutomatic];
                 }
             } else {
-                [self alert:nil message:@"Can't get the map list from the server"];
+                [self alert:nil message:@"Can't connect to server"];
             }
             [self setFooterText];
             self.items.delegate = nil;
@@ -402,7 +399,7 @@
         [items insertLocalMap:map atIndex:0];
         [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
     } else {
-        [self alert:nil message:@"Can't download map."];
+        [self alert:nil message:@"Can't download map"];
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 
