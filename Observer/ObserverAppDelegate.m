@@ -133,7 +133,7 @@
     }
 
     if ([SurveyCollection collectsURL:newUrl]) {
-        Survey *newSurvey = [[Survey alloc] initWithArchive:newUrl];
+        Survey *newSurvey = [[Survey alloc] initWithURL:newUrl];
         [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
         if ([newSurvey isValid]) {
             self.observerMapViewController.survey = newSurvey;
