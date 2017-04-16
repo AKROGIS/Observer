@@ -1502,6 +1502,7 @@
         case UIDocumentStateSavingError:
             AKRLog(@"  Document has an error saving state");
             break;
+        case UIDocumentStateProgressAvailable:
         default:
             AKRLog(@"  Document has an unexpected state: %lu",(unsigned long)self.document.documentState);
     }

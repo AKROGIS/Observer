@@ -1175,6 +1175,8 @@
         case LocateFeatureWithAngleDistance:
             [self addFeatureAtAngleDistance:feature];
             break;
+        case LocateFeatureWithMapTouch:
+        case LocateFeatureUndefined:
         default:
             AKRLog(@"Location method (%lu) specified is not valid",(unsigned long)locationMethod);
     }
