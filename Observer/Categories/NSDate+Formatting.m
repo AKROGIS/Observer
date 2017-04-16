@@ -47,13 +47,15 @@
     }
     if (seconds < 3570) {
         NSString *units = NSLocalizedString(@"Minutes", @"Relative time for 2 to 59 minutes");
-        return [NSString stringWithFormat:@"%d %@",(int)floor((seconds/60)+0.5), units];
+        double minutes = floor((seconds/60.0)+0.5);
+        return [NSString stringWithFormat:@"%d %@",(int)minutes, units];
     }
     if (seconds < 5400) {
         return NSLocalizedString(@"1 Hour", @"Relative time for 59.5 minutes to 1.5 hours");
     }
     NSString *units = NSLocalizedString(@"Hours", @"Relative time for 1.5 to 24 hours");
-    return [NSString stringWithFormat:@"%d %@",(int)floor((seconds/3600)+0.5), units];
+    double hours = floor((seconds/3600.0)+0.5);
+    return [NSString stringWithFormat:@"%d %@",(int)hours, units];
 }
 
 - (BOOL)isToday
