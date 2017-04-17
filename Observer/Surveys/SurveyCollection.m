@@ -261,8 +261,9 @@ static BOOL _isLoaded = NO;
     if (documents) {
         NSMutableArray *localFileNames = [NSMutableArray new];
         for (NSURL *url in documents) {
-            if ([SurveyCollection isPrivateURL:url]) {
-                [localFileNames addObject:[url lastPathComponent]];
+            NSString *name = url.lastPathComponent;
+            if (name != nil && [SurveyCollection isPrivateURL:url]) {
+                [localFileNames addObject:name];
             }
         }
         return [NSMutableSet setWithArray:localFileNames];;
@@ -282,8 +283,9 @@ static BOOL _isLoaded = NO;
     if (documents) {
         NSMutableArray *localFileNames = [NSMutableArray new];
         for (NSURL *url in documents) {
-            if ([SurveyCollection isPrivateURL:url]) {
-                [localFileNames addObject:[url lastPathComponent]];
+            NSString *name = url.lastPathComponent;
+            if (name != nil && [SurveyCollection isPrivateURL:url]) {
+                [localFileNames addObject:name];
             }
         }
         return [NSMutableSet setWithArray:localFileNames];;
@@ -304,8 +306,9 @@ static BOOL _isLoaded = NO;
     if (documents) {
         NSMutableArray *localFileNames = [NSMutableArray new];
         for (NSURL *url in documents) {
-            if ([SurveyCollection isImportURL:url]) {
-                [localFileNames addObject:[url lastPathComponent]];
+            NSString *name = url.lastPathComponent;
+            if (name != nil && [SurveyCollection isImportURL:url]) {
+                [localFileNames addObject:name];
             }
         }
         return [NSMutableSet setWithArray:localFileNames];;

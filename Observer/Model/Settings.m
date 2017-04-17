@@ -363,7 +363,8 @@
     // <https://developer.apple.com/library/ios/#documentation/PreferenceSettings/Conceptual/SettingsApplicationSchemaReference/Introduction/Introduction.html>.
     
     // Create an NSDictionary from the plist file.
-    NSDictionary *settingsDict = [NSDictionary dictionaryWithContentsOfURL:[settingsBundleURL URLByAppendingPathComponent:plistName]];
+    NSURL *url = [settingsBundleURL URLByAppendingPathComponent:plistName];
+    NSDictionary *settingsDict = (url == nil) ? nil : [NSDictionary dictionaryWithContentsOfURL:url];
     
     // The elements defined in a settings page are contained within an array
     // that is associated with the root-level PreferenceSpecifiers key.

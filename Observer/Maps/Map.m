@@ -75,7 +75,8 @@
 
 - (id)initWithTileCacheURL:(NSURL *)url
 {
-    NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:url.path error:nil];
+    NSString *path = url.path;
+    NSDictionary *fileAttributes = (path == nil) ? nil : [[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil];
     if (!fileAttributes) {
         return nil;
     }
@@ -142,7 +143,9 @@
 {
     NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     NSURL *folder = [library URLByAppendingPathComponent:@"Map Properties" isDirectory:YES];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:[folder path]]) {
+    NSString *path = folder.path;
+    BOOL fileExistsAtPath = (path == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:path];
+    if (path != nil && !fileExistsAtPath) {
         [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
     }
     return [[folder URLByAppendingPathComponent:@"map.plist"] URLByUniquingPath];
@@ -155,18 +158,25 @@
     NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     //remove the old folder
     NSURL *oldFolder = [library URLByAppendingPathComponent:@"mapthumbs" isDirectory:YES];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:[oldFolder path]]) {
+    NSString *oldPath = oldFolder.path;
+    BOOL fileExistsAtOldPath = (oldPath == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:oldPath];
+    if (fileExistsAtOldPath) {
         [[NSFileManager defaultManager] removeItemAtURL:oldFolder error:nil];
     }
     //create the new folder
     NSURL *folder = [library URLByAppendingPathComponent:@"Map Thumbnails" isDirectory:YES];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:[folder path]]) {
+    NSString *path = folder.path;
+    BOOL fileExistsAtPath = (path == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:path];
+    if (path != nil && !fileExistsAtPath) {
         [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
     }
     NSURL *newUrl = [[folder URLByAppendingPathComponent:@"thumbnail.png"] URLByUniquingPath];
     //Since thumbnails will not be written right away, and new maps may get created in between,
     //we need to write a sentinal to disk at this URL, so another map will not try to us the same URL
-    [[NSFileManager defaultManager] createFileAtPath:newUrl.path contents:nil attributes:nil];
+    path = newUrl.path;
+    if (path != nil) {
+        [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
+    }
     return newUrl;
 }
 
@@ -314,7 +324,8 @@
 //Alert: will block for IO
 - (void)loadThumbnail {
     UIImage *thumbnail = nil;
-    if ([[NSFileManager defaultManager] fileExistsAtPath:self.cachedThumbnailURL.path]) {
+    NSString *path = self.cachedThumbnailURL.path;
+    if (path != nil && [[NSFileManager defaultManager] fileExistsAtPath:path]) {
         thumbnail = [Map loadThumbnailAtURL:self.cachedThumbnailURL];
     }
     if (!thumbnail) {
@@ -331,14 +342,15 @@
 + (UIImage *)loadThumbnailAtURL:(NSURL *)url
 {
     if (url.isFileURL) {
-        return [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:url]];
+        NSData *data = [NSData dataWithContentsOfURL:url];
+        return (data == nil) ? nil : [[UIImage alloc] initWithData:data];
     } else {
         //TODO: do this transfer in an NSOperation Queue
         //TODO: need to deal with various network errors
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-        UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:url]];
+        NSData *data = [NSData dataWithContentsOfURL:url];
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        return image;
+        return (data == nil) ? nil : [[UIImage alloc] initWithData:data];
     }
 }
 
@@ -394,7 +406,8 @@
     //We do the sanity check now to avoid any surprises later.
     //July 2016 Update: this is not always true.  I'm getting some crash reports on the alloc/init line
     //So I am moving it inside the try/catch
-    if ([[NSFileManager defaultManager] fileExistsAtPath:url.path]) {
+    NSString *path = url.path;
+    if (path != nil && [[NSFileManager defaultManager] fileExistsAtPath:path]) {
         @try {
             AGSLocalTiledLayer *tiles = [[AGSLocalTiledLayer alloc] initWithPath:url.path];
             if (tiles.fullEnvelope && !tiles.fullEnvelope.isEmpty) {
@@ -491,8 +504,10 @@
     //clear the contents of the thumbnail, so it will be reloaded;
     //do not remove the file, else the saved name may get re-used
     [[NSFileManager defaultManager] removeItemAtURL:self.cachedThumbnailURL error:nil];
-    [[NSFileManager defaultManager] createFileAtPath:self.cachedThumbnailURL.path contents:nil attributes:nil];
-
+    NSString *path = self.cachedThumbnailURL.path;
+    if (path != nil) {
+        [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
+    }
     _thumbnail = nil;
     self.isThumbnailLoaded = NO;
     _extents = nil;
@@ -601,16 +616,19 @@
     if (!self.destinationURL) {
         NSURL *documentsDirectory = [[fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
         NSURL *originalURL = downloadTask.originalRequest.URL;
-        self.destinationURL = [documentsDirectory URLByAppendingPathComponent:originalURL.lastPathComponent];
+        NSString *name = originalURL.lastPathComponent;
+        self.destinationURL = (name == nil) ? nil : [documentsDirectory URLByAppendingPathComponent:name];
     }
-    if ([[NSFileManager defaultManager] fileExistsAtPath:[self.destinationURL path]]) {
+    NSString *path = self.destinationURL.path;
+    BOOL fileExistsAtPath = (path == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:path];
+    if (self.destinationURL != nil && fileExistsAtPath) {
         if (self.canReplace) {
             [fileManager removeItemAtURL:self.destinationURL error:NULL];
         } else {
             self.destinationURL = [self.destinationURL URLByUniquingPath];
         }
     }
-    BOOL success = [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];
+    BOOL success = (location == nil || self.destinationURL == nil) ? NO : [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];
     [MapCollection finishedDownloading];
     if (success) {
         self.tileCacheURL = self.destinationURL;

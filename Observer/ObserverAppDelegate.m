@@ -126,8 +126,12 @@
     //  the new resource is a duplicate, there is a chance for false positives, which would frustrate the user.
     //  It is better to just do what the user asked - They can then determine equality and remove the duplicate.
 
+    NSString *name = url.lastPathComponent;
+    if (name == nil) {
+        return NO;
+    }
     NSURL *documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
-    NSURL *newUrl = [documentsDirectory URLByAppendingPathComponent:url.lastPathComponent];
+    NSURL *newUrl = [documentsDirectory URLByAppendingPathComponent:name];
     newUrl = [newUrl URLByUniquingPath];
     NSError *error = nil;
     [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
