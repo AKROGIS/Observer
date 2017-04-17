@@ -28,7 +28,9 @@
 {
     NSString *name = [self getExportFileName];
     NSString *exportPath = [[self.documentsDirectory URLByAppendingPathComponent:name] path];
-
+    if (exportPath == nil) {
+        return NO;
+    }
     // Check if file already exists (unless we force the write)
     if (!force && [[NSFileManager defaultManager] fileExistsAtPath:exportPath]) {
         return FALSE;

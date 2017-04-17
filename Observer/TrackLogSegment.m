@@ -82,6 +82,9 @@
 
 - (void)addGpsPoint:(GpsPoint *)gpsPoint
 {
+    if (gpsPoint == nil) {
+        return;
+    }
     [self.points addObject:gpsPoint];
     AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];
     AGSPoint *point = [AGSPoint pointFromLocation:gpsPoint.locationOfGps spatialReference:wgs84];

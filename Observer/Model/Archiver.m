@@ -87,8 +87,8 @@
 {
     if ([url isFileURL]) {
         NSString *path = url.path;
-        BOOL isDir;
-        BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
+        BOOL isDir = false;
+        BOOL exists = (path == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
         if (exists) {
             if (isDir) {
                 [archive deflateDirectory:path relativeToPath:[path stringByDeletingLastPathComponent] usingResourceFork:NO];
@@ -113,7 +113,7 @@
 
 + (BOOL)exportData:(NSData *)data toDiskWithName:(NSString *)exportPath error:(NSError * __autoreleasing *)error
 {
-    if (data == nil) return NO;
+    if (data == nil || exportPath == nil) return NO;
     if ([data writeToFile:exportPath atomically:YES]) {
         return YES;
     } else {

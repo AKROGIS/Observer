@@ -490,6 +490,7 @@
 
 - (BOOL)loadProperties
 {
+    // self.propertiesUrl is guaranteed non-null; go ahead and fail if that isn't true.
     NSDictionary *plist = [NSDictionary dictionaryWithContentsOfURL:self.propertiesUrl];
     NSInteger version = [plist[kCodingVersionKey] integerValue];
     switch (version) {
