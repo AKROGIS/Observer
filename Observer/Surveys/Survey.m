@@ -202,9 +202,6 @@
             status = @"Saved";
             dateString = [self.syncDate stringWithMediumDateTimeFormat];
             break;
-        default:
-            status = @"Unknown State";
-            break;
     }
     return [NSString stringWithFormat:@"%@: %@",status, dateString];
 }
@@ -1504,8 +1501,7 @@
             AKRLog(@"  Document has an error saving state");
             break;
         case UIDocumentStateProgressAvailable:
-        default:
-            AKRLog(@"  Document has an unexpected state: %lu",(unsigned long)self.document.documentState);
+            AKRLog(@"  Document is busy loading or saving");
     }
 }
 

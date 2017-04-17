@@ -59,9 +59,6 @@
             self.state = kNoAutoPanNoAutoRotateNorthUp;
             [autoPanModeButton turnOff];
             break;
-        default:
-            AKRLog(@"Unexpected MapAutoPanState (%lu) in AutoPanStateMachine.userPannedMap", (unsigned long)self.state);
-            break;
     }
 }
 
@@ -89,9 +86,6 @@
         case kNoAutoPanNoAutoRotateNorthUp:
             self.state = kNoAutoPanNoAutoRotate;
             [self showCompassRoseButton];
-            break;
-        default:
-            AKRLog(@"Unexpected MapAutoPanState (%lu) in AutoPanStateMachine.userRotatedMap", (unsigned long)self.state);
             break;
     }
 }
@@ -126,9 +120,6 @@
             mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
             [autoPanModeButton turnOff];
             break;
-        default:
-            AKRLog(@"Unexpected MapAutoPanState (%lu) in AutoPanStateMachine.userClickedAutoPanButton", (unsigned long)self.state);
-            break;
     }
 }
 
@@ -158,9 +149,6 @@
             [autoPanModeButton turnOnWithoutRotate];
             mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
             break;
-        default:
-            AKRLog(@"Unexpected MapAutoPanState (%lu) in AutoPanStateMachine.userClickedCompassRoseButton", (unsigned long)self.state);
-            break;
     }
 }
 
@@ -184,9 +172,6 @@
                 self.state = kAutoPanAutoRotateByBearing;
                 mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
             }
-            break;
-        default:
-            AKRLog(@"Unexpected MapAutoPanState (%lu) in AutoPanStateMachine.speedUpdate", (unsigned long)self.state);
             break;
     }
     self.priorSpeed = newSpeed;
