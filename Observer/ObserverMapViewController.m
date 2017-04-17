@@ -55,7 +55,7 @@
 
 
 @interface ObserverMapViewController () {
-    CGFloat _initialRotationOfViewAtGestureStart;
+    double _initialRotationOfViewAtGestureStart;
 }
 
 //Views
@@ -79,7 +79,7 @@
 
 //Support
 @property (nonatomic) int  busyCount;
-@property (nonatomic) BOOL locationServicesAvailable;
+@property (nonatomic, readonly) BOOL locationServicesAvailable;
 @property (nonatomic) BOOL userWantsLocationUpdates;
 @property (nonatomic) BOOL userWantsHeadingUpdates;
 @property (nonatomic) BOOL gpsFailed;
@@ -201,10 +201,10 @@
 {
     if (sender.state == UIGestureRecognizerStateBegan) {
         [self.autoPanController userRotatedMap];
-        _initialRotationOfViewAtGestureStart = atan2(self.compassRoseButton.transform.b, self.compassRoseButton.transform.a);
+        _initialRotationOfViewAtGestureStart = (double)atan2(self.compassRoseButton.transform.b, self.compassRoseButton.transform.a);
     }
-    CGFloat radians = _initialRotationOfViewAtGestureStart + sender.rotation;
-    CGFloat degrees = (CGFloat)(radians * (180 / M_PI));
+    double radians = _initialRotationOfViewAtGestureStart + (double)sender.rotation;
+    double degrees = radians * (180 / M_PI);
     self.compassRoseButton.transform = CGAffineTransformMakeRotation(radians);
     [self.mapView setRotationAngle:-1*degrees];
 }
@@ -565,7 +565,7 @@
     //   then flash the gps observation point and open the angle distance dialog on that point (try not to hide observation)
     //   move the feature when the dialog is dismissed.
 
-    AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
+    AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", (double)screen.x, (double)screen.y, mapPoint, features);
     self.movingObservation = nil;
     self.movingMissionProperty = nil;
     self.movingGraphic = nil;
@@ -632,7 +632,7 @@
 
 - (void) mapView:(AGSMapView *)mapView didEndTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint features:(NSDictionary *)features
 {
-    AKRLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
+    AKRLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", (double)screen.x, (double)screen.y, mapPoint, features);
 
     //Move Adhoc location
     [self.survey updateAdhocLocation:self.movingObservation.adhocLocation withMapPoint:mapPoint];
@@ -896,9 +896,7 @@
         UIAlertAction *settingAction = [UIAlertAction actionWithTitle:@"Settings"
                                                                 style:UIAlertActionStyleDefault
                                                               handler:^(UIAlertAction * action){
-                                                                  // Send the user to the Settings for this app
-                                                                  NSURL *settingsURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-                                                                  [[UIApplication sharedApplication] openURL:settingsURL options:@{} completionHandler:nil];
+                                                                  [self gotoSettings];
                                                               }];
         [alert addAction:abortAction];
         [alert addAction:settingAction];
@@ -1146,6 +1144,28 @@
     }];
 }
 
+- (void)gotoSettings
+{
+    [self openScheme:UIApplicationOpenSettingsURLString];
+}
+
+- (void)openScheme:(NSString *)scheme {
+    UIApplication *application = [UIApplication sharedApplication];
+    NSURL *URL = [NSURL URLWithString:scheme];
+    if ([application respondsToSelector:@selector(openURL:options:completionHandler:)]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
+        //iOS 10.0+
+        [application openURL:URL options:@{} completionHandler:^(BOOL success) {
+            NSLog(@"Open %@: %d", scheme, success);
+        }];
+#pragma clang diagnostic pop
+    } else {
+        //iOS < 10
+        BOOL success = [application openURL:URL];
+        NSLog(@"Open %@: %d",scheme,success);
+    }
+}
 
 
 
@@ -1175,7 +1195,8 @@
         case LocateFeatureWithAngleDistance:
             [self addFeatureAtAngleDistance:feature];
             break;
-        default:
+        case LocateFeatureWithMapTouch:
+        case LocateFeatureUndefined:
             AKRLog(@"Location method (%lu) specified is not valid",(unsigned long)locationMethod);
     }
 }

@@ -79,8 +79,10 @@
 }
 
 - (IBAction)textFieldEditingDidChange:(UITextField *)sender {
-    self.location.angle = [self.parser numberFromString:self.angleTextField.text];
-    self.location.distance = [self.parser numberFromString:self.distanceTextField.text];
+    NSString *angleText = self.angleTextField.text;
+    NSString *distanceText = self.distanceTextField.text;
+    self.location.angle = (angleText == nil) ? nil : [self.parser numberFromString:angleText];
+    self.location.distance = (distanceText == nil) ? nil : [self.parser numberFromString:distanceText];
     [self updateControlState:sender];
 }
 

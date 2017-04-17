@@ -309,7 +309,8 @@ static int _downloadsInProgress = 0;
         //This check will remove remote maps from the local items list
         if (map.isLocal) {
             // A local file is the same as a map if the last path component is the same as the maps (local) tilecache URL
-            NSUInteger index = [localMapFileNames indexOfObject:[map.tileCacheURL lastPathComponent]];
+            NSString *name = map.tileCacheURL.lastPathComponent;
+            NSUInteger index = (name == nil) ? NSNotFound : [localMapFileNames indexOfObject:name];
             if (index == NSNotFound) {
                 [indexesOfLocalMapsToRemove addIndex:i];
                 //make sure any other cached data about the map file is also deleted
@@ -378,8 +379,9 @@ static int _downloadsInProgress = 0;
     if (documents) {
         NSMutableArray *localFileNames = [NSMutableArray new];
         for (NSURL *url in documents) {
-            if ([MapCollection collectsURL:url]) {
-                [localFileNames addObject:[url lastPathComponent]];
+            NSString *name = url.lastPathComponent;
+            if (name != nil && [MapCollection collectsURL:url]) {
+                [localFileNames addObject:name];
             }
         }
         return localFileNames;

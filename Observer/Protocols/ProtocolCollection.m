@@ -313,7 +313,8 @@ static BOOL _isLoaded = NO;
     for (uint i = 0; i < self.localItems.count; i++) {
         SProtocol *p = self.localItems[i];
         if (p.isLocal) {
-            NSUInteger index = [localProtocolFileNames indexOfObject:[p.url lastPathComponent]];
+            NSString *name = p.url.lastPathComponent;
+            NSUInteger index = (name == nil) ? NSNotFound : [localProtocolFileNames indexOfObject:name];
             if (index == NSNotFound || !p.isValid) {
                 [itemsToRemove addIndex:i];
             } else {
@@ -376,8 +377,9 @@ static BOOL _isLoaded = NO;
     if (documents) {
         NSMutableArray *localFileNames = [NSMutableArray new];
         for (NSURL *url in documents) {
-            if ([ProtocolCollection collectsURL:url]) {
-                [localFileNames addObject:[url lastPathComponent]];
+            NSString *name = url.lastPathComponent;
+            if (name != nil && [ProtocolCollection collectsURL:url]) {
+                [localFileNames addObject:name];
             }
         }
         return localFileNames;
@@ -432,10 +434,12 @@ static BOOL _isLoaded = NO;
             for (id jsonItem in items) {
                 if ([jsonItem isKindOfClass:[NSDictionary class]]) {
                     NSDictionary *item = jsonItem;
-                    SProtocol *protocol = [[SProtocol alloc] initWithURL:[NSURL URLWithString:item[@"url"]]
-                                                                     title:item[@"name"]
-                                                                   version:item[@"version"]
-                                                                      date:item[@"date"]];
+                    NSString *path = item[@"url"];
+                    NSURL *url = (path == nil) ? nil : [NSURL URLWithString:path];
+                    SProtocol *protocol = [[SProtocol alloc] initWithURL:url
+                                                                   title:item[@"name"]
+                                                                 version:item[@"version"]
+                                                                    date:item[@"date"]];
                     if (protocol) {
                         [protocols addObject:protocol];
                     }
@@ -501,7 +505,8 @@ static BOOL _isLoaded = NO;
     if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             for (id key in [protocolsToUpdate allKeys]) {
-                self.remoteItems[[key unsignedIntegerValue]] = [protocolsToUpdate objectForKey:key];
+                id protocol = [protocolsToUpdate objectForKey:key];
+                self.remoteItems[[key unsignedIntegerValue]] = protocol;
                 [delegate collection:self changedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:[key unsignedIntegerValue]]];
             }
             if (0 < itemsToRemove.count) {
@@ -516,7 +521,8 @@ static BOOL _isLoaded = NO;
         });
     } else {
         for (id key in [protocolsToUpdate allKeys]) {
-            self.remoteItems[[key unsignedIntegerValue]] = [protocolsToUpdate objectForKey:key];
+            id protocol = [protocolsToUpdate objectForKey:key];
+            self.remoteItems[[key unsignedIntegerValue]] = protocol;
         }
         [self.remoteItems removeObjectsAtIndexes:itemsToRemove];
         [self.remoteItems addObjectsFromArray:protocolsToAdd];

@@ -12,7 +12,8 @@
 
 - (id)initWithLabelJSON:(id)json version:(NSInteger) version
 {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         if ([json isKindOfClass:[NSDictionary class]]) {
             switch (version) {
                 case 2:
@@ -72,7 +73,7 @@
     NSScanner *scanner = [NSScanner scannerWithString:hexString];
     [scanner setScanLocation:1]; // bypass '#' character
     if ([scanner scanHexInt:&rgbValue]) {
-        return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0f green:((rgbValue & 0xFF00) >> 8)/255.0f blue:(rgbValue & 0xFF)/255.0f alpha:1.0f];
+        return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
     } else {
         return nil;
     }

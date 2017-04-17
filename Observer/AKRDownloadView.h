@@ -12,7 +12,7 @@
 
 @interface AKRDownloadView : UIView
 
-@property (nonatomic) float percentComplete;
+@property (nonatomic) double percentComplete;
 @property (nonatomic) BOOL downloading;
 
 @end

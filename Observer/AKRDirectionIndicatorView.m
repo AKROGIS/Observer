@@ -19,11 +19,11 @@
     return self;
 }
 
-- (void)setAzimuth:(CGFloat)azimuth
+- (void)setAzimuth:(double)azimuth
 {
     if (fabs(azimuth - _azimuth) < 0.02)
         return;
-    CGFloat oldAzimuth = _azimuth;
+    double oldAzimuth = _azimuth;
     _azimuth = azimuth;
     if (2.0 < (fabs(azimuth - oldAzimuth))) {
         [self setNeedsDisplay];
@@ -50,9 +50,9 @@
         double radians = -1 * self.azimuth * M_PI / 180.0; //radians
         
         //create a rotated coordinate system with origin in center and +y up
-        CGFloat width = self.bounds.size.width;
-        CGFloat height = self.bounds.size.height;
-        CGContextTranslateCTM(context, width/2.0f, height/2.0f);
+        double width = (double)self.bounds.size.width;
+        double height = (double)self.bounds.size.height;
+        CGContextTranslateCTM(context, width/2.0, height/2.0);
         CGContextScaleCTM(context, 1, -1);
         CGContextRotateCTM(context, (CGFloat)radians); //angle in radians with + = CCW
         

@@ -16,7 +16,8 @@
 
 
 @implementation RadioStyleTableViewCell
-UIColor *_buttonBlue;
+
+static UIColor *_buttonBlue;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -31,7 +32,7 @@ UIColor *_buttonBlue;
 {
     if (!_buttonBlue) {
         //_buttonBlue = [[[UIButton alloc] init] titleColorForState: UIControlStateNormal];
-        _buttonBlue = [UIColor colorWithRed:0.1960784346f green:0.3098039329f blue:0.521568656f alpha:1.0f]; //From the story board file for a default button
+        _buttonBlue = [UIColor colorWithRed:0.1960784346 green:0.3098039329 blue:0.521568656 alpha:1.0]; //From the story board file for a default button
         //AKRLog(@"Set Blue = %@", _buttonBlue);
     }
     return _buttonBlue;

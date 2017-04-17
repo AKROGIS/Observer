@@ -11,11 +11,12 @@
 
 @implementation ProtocolFeature
 
-NSUInteger currentUniqueId = 0;
+static NSUInteger currentUniqueId = 0;
 
 - (id)initWithJSON:(id)json version:(NSInteger) version
 {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         if ([json isKindOfClass:[NSDictionary class]]) {
             switch (version) {
                 case 1:

@@ -18,7 +18,6 @@
 #define kPTitleKey         @"title"
 #define kVersionKey       @"version"
 #define kDateKey          @"date"
-#define kJsonDateFormat   @""
 
 
 @interface SProtocol() {
@@ -40,7 +39,8 @@
     if (!url) {
         return nil;
     }
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         _url = url;
         _title = ([title isKindOfClass:[NSString class]] ? title : nil);
         _version = ([version isKindOfClass:[NSNumber class]] ? version : nil);
@@ -382,16 +382,19 @@
     if (!self.destinationURL) {
         NSURL *documentsDirectory = [[fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
         NSURL *originalURL = downloadTask.originalRequest.URL;
-        self.destinationURL = [documentsDirectory URLByAppendingPathComponent:originalURL.lastPathComponent];
+        NSString *name = originalURL.lastPathComponent;
+        self.destinationURL = (name == nil) ? nil : [documentsDirectory URLByAppendingPathComponent:name];
     }
-    if ([[NSFileManager defaultManager] fileExistsAtPath:[self.destinationURL path]]) {
+    NSString *path = self.destinationURL.path;
+    BOOL pathExists = (path == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:path];
+    if (self.destinationURL != nil && pathExists) {
         if (self.canReplace) {
             [fileManager removeItemAtURL:self.destinationURL error:NULL];
         } else {
             self.destinationURL = [self.destinationURL URLByUniquingPath];
         }
     }
-    BOOL success = [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];
+    BOOL success = (location == nil || self.destinationURL == nil) ? NO : [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];
     SProtocol *newProtocol = nil;
     if (success) {
         newProtocol = [[SProtocol alloc] initWithURL:self.destinationURL title:self.title version:self.version date:self.date];

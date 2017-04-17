@@ -21,7 +21,8 @@
 
 - (id)init
 {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         _priorSpeed = 0;
         _maxSpeedForBearing = MINIMUM_NAVIGATION_SPEED;
         _state = [Settings manager].autoPanMode;
@@ -58,9 +59,6 @@
             self.state = kNoAutoPanNoAutoRotateNorthUp;
             [autoPanModeButton turnOff];
             break;
-        default:
-            AKRLog(@"Unexpected MapAutoPanState (%lu) in AutoPanStateMachine.userPannedMap", (unsigned long)self.state);
-            break;
     }
 }
 
@@ -88,9 +86,6 @@
         case kNoAutoPanNoAutoRotateNorthUp:
             self.state = kNoAutoPanNoAutoRotate;
             [self showCompassRoseButton];
-            break;
-        default:
-            AKRLog(@"Unexpected MapAutoPanState (%lu) in AutoPanStateMachine.userRotatedMap", (unsigned long)self.state);
             break;
     }
 }
@@ -125,9 +120,6 @@
             mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
             [autoPanModeButton turnOff];
             break;
-        default:
-            AKRLog(@"Unexpected MapAutoPanState (%lu) in AutoPanStateMachine.userClickedAutoPanButton", (unsigned long)self.state);
-            break;
     }
 }
 
@@ -157,9 +149,6 @@
             [autoPanModeButton turnOnWithoutRotate];
             mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
             break;
-        default:
-            AKRLog(@"Unexpected MapAutoPanState (%lu) in AutoPanStateMachine.userClickedCompassRoseButton", (unsigned long)self.state);
-            break;
     }
 }
 
@@ -183,9 +172,6 @@
                 self.state = kAutoPanAutoRotateByBearing;
                 mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
             }
-            break;
-        default:
-            AKRLog(@"Unexpected MapAutoPanState (%lu) in AutoPanStateMachine.speedUpdate", (unsigned long)self.state);
             break;
     }
     self.priorSpeed = newSpeed;
@@ -227,8 +213,9 @@
     } else {
         mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
     }
-    //Initilaizer assumed a mapView rotation of zero; correct if that assumption was wrong
-    if (mapView.rotationAngle != 0) {
+    //Initilaizer assumed a mapView rotation of zero; correct if that assumption was wrong; convert to an int, so we do not compare floats
+    int rotation = (int)mapView.rotationAngle;
+    if (rotation != 0) {
         if (_state == kAutoPanNoAutoRotateNorthUp) {
             _state = kAutoPanNoAutoRotate;
         }

@@ -12,7 +12,9 @@
 
 - (NSURL *)URLByUniquingPath
 {
-    if (!self.isFileURL || ![[NSFileManager defaultManager] fileExistsAtPath:[self path]])
+    NSString *path = self.path;
+    BOOL pathExists = (path == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:path];
+    if (!self.isFileURL || !pathExists)
         return self;
 
     int i = 1;
@@ -21,10 +23,14 @@
     NSString *extension = [self pathExtension];
 
     NSURL *newURL;
+    NSString *newPath = nil;
+    BOOL newPathExists = YES; //Assume it exists; It will get set in loop before real check
     do {
         NSString *newName = [NSString stringWithFormat:@"%@-%d.%@",originalName,i++,extension];
         newURL = [directory URLByAppendingPathComponent:newName];
-    } while ([[NSFileManager defaultManager] fileExistsAtPath:[newURL path]]);
+        NSString *newPath = newURL.path;
+        newPathExists = (newPath == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:newPath];
+    } while (newPath == nil || newPathExists);
     return newURL;
 }
 

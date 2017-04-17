@@ -13,7 +13,7 @@
 @interface AKRDirectionIndicatorView : UIView
 
 //azimuth is an angle in degrees with 0 = north, and + = clockwise
-@property (nonatomic) CGFloat azimuth;
+@property (nonatomic) double azimuth;
 @property (nonatomic) BOOL azimuthUnknown;
 
 @end

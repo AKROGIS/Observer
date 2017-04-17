@@ -34,7 +34,10 @@
     id key;
     while ((key = [keyEnumerator nextObject])) {
         [self.layerNames addObject:key];
-        [self.graphics addObject:features[key]];
+        id feature = features[key];
+        if (feature != nil) {
+            [self.graphics addObject:feature];
+        }
     }
     self.preferredContentSize = CGSizeMake(kPopoverWidth, [self heightForTableContents]);
 }

@@ -101,18 +101,22 @@
 
 - (ObserverMapViewController *)observerMapViewController
 {
-    id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
-    if([rootViewController isKindOfClass:[UINavigationController class]])
-    {
-        rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
+
+    if (!_observerMapViewController) {
+        id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+        if([rootViewController isKindOfClass:[UINavigationController class]])
+        {
+            rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
+        }
+        if([rootViewController isKindOfClass:[UITabBarController class]])
+        {
+            rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
+        }
+        // In a more generic function we would want to check UISplitViewController and other custom Container ViewControllers
+        // Fail early if my main (non-container VC) is not what I expect
+        _observerMapViewController = (ObserverMapViewController *)rootViewController;
     }
-    if([rootViewController isKindOfClass:[UITabBarController class]])
-    {
-        rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
-    }
-    // In a more generic function we would want to check UISplitViewController and other custom Container ViewControllers
-    // Fail early if my main (non-container VC) is not what I expect
-    return (ObserverMapViewController *)rootViewController;
+    return _observerMapViewController;
 }
 
 - (BOOL)open:(NSURL *)url
@@ -122,8 +126,12 @@
     //  the new resource is a duplicate, there is a chance for false positives, which would frustrate the user.
     //  It is better to just do what the user asked - They can then determine equality and remove the duplicate.
 
+    NSString *name = url.lastPathComponent;
+    if (name == nil) {
+        return NO;
+    }
     NSURL *documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
-    NSURL *newUrl = [documentsDirectory URLByAppendingPathComponent:url.lastPathComponent];
+    NSURL *newUrl = [documentsDirectory URLByAppendingPathComponent:name];
     newUrl = [newUrl URLByUniquingPath];
     NSError *error = nil;
     [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];

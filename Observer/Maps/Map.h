@@ -121,7 +121,7 @@
 // A block to execute when the file as been stored at
 @property (nonatomic, copy) void(^downloadCompletionAction)(BOOL success);
 // The percent complete of the download, saved incase the the popover is dismissed, and then re-presented
-@property (nonatomic) float downloadPercentComplete;
+@property (nonatomic) double downloadPercentComplete;
 
 //Delete all map data, thumbnails, and cached properties from the file system.
 - (void)deleteFromFileSystem;

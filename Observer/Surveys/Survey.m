@@ -19,7 +19,6 @@
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"
-#define kUrlKey           @"url"
 #define kSTitleKey        @"title"
 #define kStateKey         @"state"
 #define kDateKey          @"date"
@@ -68,7 +67,8 @@
 
 - (id)initWithURL:(NSURL *)url title:(NSString *)title state:(SurveyState)state date:(NSDate *)date
 {
-    if (!url || ![url isFileURL]) {
+    NSString *name = url.lastPathComponent;
+    if (name == nil || !url.isFileURL) {
         return nil;
     }
     if (![url.pathExtension isEqualToString:INTERNAL_SURVEY_EXT]) {
@@ -78,11 +78,16 @@
     //versions 0.9.2(build 440) and below created the survey docs in the public Documents directory
     NSURL *folder = [url URLByDeletingLastPathComponent];
     if (![folder isEqualToURL:[Survey privateDocumentsDirectory]]) {
-        NSURL *newUrl = [[Survey privateDocumentsDirectory] URLByAppendingPathComponent:[url lastPathComponent]];
+        NSURL *newUrl = [[Survey privateDocumentsDirectory] URLByAppendingPathComponent:name];
         //Check if the url is out of date (cached by SurveyCollection)
-        if (![[NSFileManager defaultManager] fileExistsAtPath:[url path]] && [[NSFileManager defaultManager] fileExistsAtPath:[newUrl path]]) {
+        NSString *oldPath = url.path;
+        NSString *newPath = newUrl.path;
+        BOOL fileExistsAtOldPath = (oldPath == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:oldPath];
+        BOOL fileExistsAtNewPath = (newPath == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:newPath];
+        if (!fileExistsAtOldPath && fileExistsAtNewPath) {
             url = newUrl;
         } else {
+            //TODO: We need to cover the case where oldPath == nil or fileExistsAtNewPath
             AKRLog(@"Moving Survey %@ from %@ to %@",[url lastPathComponent],folder,[Survey privateDocumentsDirectory]);
             if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:newUrl error:nil]) {
                 AKRLog(@"ERROR! - Move failed");
@@ -93,7 +98,8 @@
         }
     }
 
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         _url = url;
         _state = state;
         _date = date;
@@ -201,9 +207,6 @@
         case kSaved:
             status = @"Saved";
             dateString = [self.syncDate stringWithMediumDateTimeFormat];
-            break;
-        default:
-            status = @"Unknown State";
             break;
     }
     return [NSString stringWithFormat:@"%@: %@",status, dateString];
@@ -314,7 +317,8 @@
     }
     //UIDocument is a "oneshot" object; it cannot be opened/closed multiple times, so create a new one.
     self.document = [[SurveyCoreDataDocument alloc] initWithFileURL:self.documentUrl];
-    BOOL documentExists = [[NSFileManager defaultManager] fileExistsAtPath:[self.documentUrl path]];
+    NSString *path = self.documentUrl.path;
+    BOOL documentExists = (path == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:path];
     if (documentExists) {
         [self.document openWithCompletionHandler:handler];
     } else {
@@ -515,7 +519,8 @@
 - (BOOL)loadThumbnail
 {
     self.thumbnailIsLoaded = YES;
-    _thumbnail = [[UIImage alloc] initWithContentsOfFile:[self.thumbnailUrl path]];
+    NSString *path = self.thumbnailUrl.path;
+    _thumbnail = (path == nil) ? nil : [[UIImage alloc] initWithContentsOfFile:path];
     if (!_thumbnail)
         _thumbnail = [UIImage imageNamed:@"SurveyDoc"];
     return !_thumbnail;
@@ -550,7 +555,8 @@
 
 - (BOOL)saveThumbnail
 {
-    return [UIImagePNGRepresentation(self.thumbnail) writeToFile:[self.thumbnailUrl path] atomically:YES];
+    NSString *path = self.thumbnailUrl.path;
+    return (path == nil) ? NO : [UIImagePNGRepresentation(self.thumbnail) writeToFile:path atomically:YES];
 }
 
 - (NSString *)description
@@ -1164,7 +1170,7 @@
     }
     if (symbol == nil) {
          symbol = [AGSTextSymbol textSymbolWithText:labelText color:labelSpec.color];
-        symbol.fontSize = [labelSpec.size floatValue];
+        symbol.fontSize = [labelSpec.size doubleValue];
         // make lable anchor at lower left with offset for 15pt round marker; Doing more would require a rendering engine
         symbol.vAlignment = AGSTextSymbolVAlignmentBottom;
         symbol.hAlignment = AGSTextSymbolHAlignmentLeft;
@@ -1503,8 +1509,8 @@
         case UIDocumentStateSavingError:
             AKRLog(@"  Document has an error saving state");
             break;
-        default:
-            AKRLog(@"  Document has an unexpected state: %lu",(unsigned long)self.document.documentState);
+        case UIDocumentStateProgressAvailable:
+            AKRLog(@"  Document is busy loading or saving");
     }
 }
 
