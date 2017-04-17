@@ -55,7 +55,7 @@
 
 
 @interface ObserverMapViewController () {
-    CGFloat _initialRotationOfViewAtGestureStart;
+    double _initialRotationOfViewAtGestureStart;
 }
 
 //Views
@@ -201,10 +201,10 @@
 {
     if (sender.state == UIGestureRecognizerStateBegan) {
         [self.autoPanController userRotatedMap];
-        _initialRotationOfViewAtGestureStart = atan2(self.compassRoseButton.transform.b, self.compassRoseButton.transform.a);
+        _initialRotationOfViewAtGestureStart = (double)atan2(self.compassRoseButton.transform.b, self.compassRoseButton.transform.a);
     }
-    CGFloat radians = _initialRotationOfViewAtGestureStart + sender.rotation;
-    CGFloat degrees = (CGFloat)(radians * (180 / M_PI));
+    double radians = _initialRotationOfViewAtGestureStart + (double)sender.rotation;
+    double degrees = radians * (180 / M_PI);
     self.compassRoseButton.transform = CGAffineTransformMakeRotation(radians);
     [self.mapView setRotationAngle:-1*degrees];
 }
@@ -565,7 +565,7 @@
     //   then flash the gps observation point and open the angle distance dialog on that point (try not to hide observation)
     //   move the feature when the dialog is dismissed.
 
-    AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
+    AKRLog(@"mapView:didTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", (double)screen.x, (double)screen.y, mapPoint, features);
     self.movingObservation = nil;
     self.movingMissionProperty = nil;
     self.movingGraphic = nil;
@@ -632,7 +632,7 @@
 
 - (void) mapView:(AGSMapView *)mapView didEndTapAndHoldAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint features:(NSDictionary *)features
 {
-    AKRLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
+    AKRLog(@"mapView:didEndTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", (double)screen.x, (double)screen.y, mapPoint, features);
 
     //Move Adhoc location
     [self.survey updateAdhocLocation:self.movingObservation.adhocLocation withMapPoint:mapPoint];

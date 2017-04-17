@@ -13,6 +13,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *subtitleLabel;
 @property (nonatomic) BOOL downloading;
 
-- (void)setPercentComplete:(float)percentComplete;
+- (void)setPercentComplete:(double)percentComplete;
 
 @end

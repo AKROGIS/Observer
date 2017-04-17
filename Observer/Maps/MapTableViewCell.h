@@ -15,6 +15,6 @@
 @property (weak, nonatomic) IBOutlet UIImageView *thumbnailImageView;
 @property (nonatomic) BOOL downloading;
 
-- (void)setPercentComplete:(float)percentComplete;
+- (void)setPercentComplete:(double)percentComplete;
 
 @end

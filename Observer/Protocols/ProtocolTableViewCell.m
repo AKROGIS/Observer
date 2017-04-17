@@ -16,7 +16,7 @@
 
 @implementation ProtocolTableViewCell
 
-- (void)setPercentComplete:(float)percentComplete
+- (void)setPercentComplete:(double)percentComplete
 {
     self.downloadProgressView.percentComplete = percentComplete;
 }

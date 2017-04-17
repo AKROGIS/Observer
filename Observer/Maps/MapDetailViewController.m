@@ -122,7 +122,7 @@
     AKRAngleDistance *angleDistance = [self.map angleDistanceFromLocation:location];
     NSString *distanceString = [self distanceInPreferredUnitsFromKilometers:angleDistance.kilometers];
     self.locationLabel.text = distanceString;
-    self.directionIndicatorView.azimuth = (CGFloat)angleDistance.azimuth;
+    self.directionIndicatorView.azimuth = angleDistance.azimuth;
     self.directionIndicatorView.azimuthUnknown = angleDistance.kilometers <= 0;
 }
 

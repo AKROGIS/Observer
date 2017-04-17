@@ -238,22 +238,22 @@
         if (![item isKindOfClass:[NSNumber class]]) {
             return nil;
         }
-        CGFloat xmin = [item floatValue];
+        double xmin = [item doubleValue];
         item =  self.properties[kYminKey];
         if (![item isKindOfClass:[NSNumber class]]) {
             return nil;
         }
-        CGFloat ymin = [item floatValue];
+        double ymin = [item doubleValue];
         item =  self.properties[kXmaxKey];
         if (![item isKindOfClass:[NSNumber class]]) {
             return nil;
         }
-        CGFloat xmax = [item floatValue];
+        double xmax = [item doubleValue];
         item =  self.properties[kYmaxKey];
         if (![item isKindOfClass:[NSNumber class]]) {
             return nil;
         }
-        CGFloat ymax = [item floatValue];
+        double ymax = [item doubleValue];
         if (xmin != xmax && ymin != ymax) {
             _extents = [[AGSEnvelope alloc] initWithXmin:xmin ymin:ymin xmax:xmax ymax:ymax spatialReference:[AGSSpatialReference wgs84SpatialReference]];
         }

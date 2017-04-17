@@ -20,7 +20,7 @@
     return self;
 }
 
-- (void)setPercentComplete:(float)percentComplete
+- (void)setPercentComplete:(double)percentComplete
 {
     if (fabs(percentComplete - _percentComplete) < 0.02)
         return;
@@ -51,9 +51,9 @@
         //Set color
         [self.tintColor set];
  
-        CGFloat width = self.bounds.size.width;
-        CGFloat height = self.bounds.size.height;
-        CGContextTranslateCTM(context, width/2.0f, height/2.0f);
+        double width = (double)self.bounds.size.width;
+        double height = (double)self.bounds.size.height;
+        CGContextTranslateCTM(context, width/2.0, height/2.0);
 
         //Inner Square
         CGContextMoveToPoint(context, -4,-4);

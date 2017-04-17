@@ -224,7 +224,7 @@
         cell.percentComplete = map.downloadPercentComplete;
         map.downloadProgressAction = ^(double bytesWritten, double bytesExpected) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                cell.percentComplete = (float)(bytesWritten/bytesExpected);
+                cell.percentComplete = bytesWritten/bytesExpected;
             });
         };
         __weak Map *weakMap = map;
