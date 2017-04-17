@@ -28,7 +28,7 @@
     do {
         NSString *newName = [NSString stringWithFormat:@"%@-%d.%@",originalName,i++,extension];
         newURL = [directory URLByAppendingPathComponent:newName];
-        NSString *newPath = newURL.path;
+        newPath = newURL.path;
         newPathExists = (newPath == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:newPath];
     } while (newPath == nil || newPathExists);
     return newURL;

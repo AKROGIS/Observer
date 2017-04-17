@@ -435,8 +435,8 @@ static BOOL _isLoaded = NO;
                 if ([jsonItem isKindOfClass:[NSDictionary class]]) {
                     NSDictionary *item = jsonItem;
                     NSString *path = item[@"url"];
-                    NSURL *url = (path == nil) ? nil : [NSURL URLWithString:path];
-                    SProtocol *protocol = [[SProtocol alloc] initWithURL:url
+                    NSURL *protocolUrl = (path == nil) ? nil : [NSURL URLWithString:path];
+                    SProtocol *protocol = [[SProtocol alloc] initWithURL:protocolUrl
                                                                    title:item[@"name"]
                                                                  version:item[@"version"]
                                                                     date:item[@"date"]];
