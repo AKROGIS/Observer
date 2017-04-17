@@ -128,8 +128,55 @@ CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES
 CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES
 CLANG_ANALYZER_SECURITY_INSECUREAPI_VFORK = YES
 
+
+
 // Another option that turns on many more warnings that should be investigated.
 // -Weverything - This turns on all the visible Xcode warnings, along with other Clang compiler warnings that Apple has not made visible in the Xcode project settings.
 // -Weverything overrides settings above, so we need to turn off warnings we do not want explicitly
-//OTHER_CFLAGS = -Weverything -Wno-unused-parameter -Wno-objc-missing-property-synthesis
+OTHER_CFLAGS = -Weverything -Wno-unused-parameter -Wno-objc-missing-property-synthesis -Wno-direct-ivar-access -Wno-auto-import -Wno-documentation -Wno-documentation-unknown-command -Wno-objc-interface-ivars -Wno-super-class-method-mismatch -Wno-overriding-method-mismatch
+
+//-Wno-unused-parameter
+//warning: unused parameter A
+// Warn whenever a function parameter is unused aside from its declaration.
+// This is turned off because IBActions, delegates, and callbacks often provide parameters (i.e. sender) that are not needed
+
+//-Wno-objc-missing-property-synthesis
+//warning: auto property synthesis is synthesizing property not explicitly synthesized
+// Warn about implicit property synthesis.
+// This is a useful compiler feature (since Xcode 4.4). The warning is for backwards compatibility
+
+//-Wno-direct-ivar-access
+//warning: instance variable A is being directly accessed
+// 139 Issues in my code
+// These are OK, typically lazy initialization of ivars; almost all cases are setting the ivar.
+// Ignore this warning.
+
+//-Wno-auto-import
+//warning: treating #import as an import of module ‘B‘
+//Replacing #import <UIKit/UIKit.h> with @import UIKit is nice but not required.
+//It also generates a lot more errors, saying modules are not enabled, but they are.  Turn off this warning.
+
+//-Wno-newline-eof
+//warning: no newline at end of file
+//many ArcGIS header files are missing a newline at the end of the file.
+
+//-Wno-documentation
+//lots of different warnings
+//ArcGIS Header files have many (63) documentation errors
+
+//-Wno-documentation-unknown-command
+//warning: unknown command tag name
+//11 issues in AGSPoint.h and AGSMapView.h
+
+//-Wno-objc-interface-ivars
+//warning: declaration of instance variables in the interface is deprecated
+//88 Issues in Quick dialog, ZipKit, and ArcGIS
+
+//-Wno-overriding-method-mismatch
+//warning: conflicting parameter types in declaration of A: B vs C
+//2 issues in AGSGDBFeatureTable.h;; 1 issue in QuickDialog/QBadgeElement.h
+
+//-Wno-super-class-method-mismatch
+//warning: Method parameter type does not match super class method parameter type
+//2 issues in AGSGDBFeatureTable.h
 
