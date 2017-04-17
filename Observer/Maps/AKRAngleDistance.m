@@ -12,7 +12,8 @@
 
 - (id)initWithAzimuth:(double)azimuth kilometer:(double)kilometers
 {
-    if (self = [super init])
+    self = [super init];
+    if (self)
     {
         _azimuth = azimuth;
         _kilometers = kilometers;

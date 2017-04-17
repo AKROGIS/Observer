@@ -25,7 +25,8 @@
     if (!missionProperty || !missionProperty.gpsPoint) {
         return nil;
     }
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         _missionProperty = missionProperty;
         _points = [NSMutableArray arrayWithObject:missionProperty.gpsPoint];
         AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];

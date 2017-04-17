@@ -92,7 +92,8 @@
         }
     }
 
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         _url = url;
         _state = state;
         _date = date;

@@ -21,7 +21,8 @@
 
 - (id)init
 {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         _priorSpeed = 0;
         _maxSpeedForBearing = MINIMUM_NAVIGATION_SPEED;
         _state = [Settings manager].autoPanMode;

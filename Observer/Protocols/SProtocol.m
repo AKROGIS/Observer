@@ -39,7 +39,8 @@
     if (!url) {
         return nil;
     }
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         _url = url;
         _title = ([title isKindOfClass:[NSString class]] ? title : nil);
         _version = ([version isKindOfClass:[NSNumber class]] ? version : nil);

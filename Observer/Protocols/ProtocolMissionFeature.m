@@ -12,7 +12,8 @@
 
 - (id)initWithJSON:(id)json version:(NSInteger) version
 {
-    if (self = [super initWithJSON:json version:version]) {
+    self = [super initWithJSON:json version:version];
+    if (self) {
         if ([json isKindOfClass:[NSDictionary class]]) {
             switch (version) {
                 case 1:

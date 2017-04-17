@@ -13,7 +13,8 @@
 
 - (id)initWithSymbologyJSON:(id)json version:(NSInteger) version
 {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         if ([json isKindOfClass:[NSDictionary class]]) {
             switch (version) {
                 case 1:

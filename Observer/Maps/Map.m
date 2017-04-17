@@ -41,7 +41,8 @@
     if (!properties) {
         return nil;
     }
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         _properties = properties;
     }
     return self;
@@ -53,7 +54,8 @@
         return nil;
     }
 
-    if (self = [self initWithProperties:[NSDictionary dictionaryWithContentsOfURL:url]]) {
+    self = [self initWithProperties:[NSDictionary dictionaryWithContentsOfURL:url]];
+    if (self) {
          _plistURL = url;
     }
     return self;
@@ -63,7 +65,8 @@
 {
     NSMutableDictionary *newProperties = [NSMutableDictionary dictionaryWithDictionary:properties];
     newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].absoluteString;
-    if (self = [self initWithProperties:[newProperties copy]]) {
+    self = [self initWithProperties:[newProperties copy]];
+    if (self) {
         _plistURL = [Map generatePlistURL];
         [newProperties writeToURL:_plistURL atomically:YES];
     }
@@ -98,7 +101,8 @@
     newProperties[kXmaxKey] = [NSNumber numberWithDouble:extents.xmax];
     newProperties[kYmaxKey] = [NSNumber numberWithDouble:extents.ymax];
 
-    if (self = [self initWithProperties:[newProperties copy]]) {
+    self = [self initWithProperties:[newProperties copy]];
+    if (self) {
         _tileCache = tileCache;
         self.isTileCacheLoaded = YES;
         _thumbnail = tileCache.thumbnail;
@@ -112,7 +116,8 @@
 
 - (id)initWithTileCacheURL:(NSURL *)url name:(NSString *)name author:(NSString *)author date:(NSDate *)date description:(NSString *)description
 {
-    if (self = [self initWithTileCacheURL:url]) {
+    self = [self initWithTileCacheURL:url];
+    if (self) {
         NSMutableDictionary *newProperties = [NSMutableDictionary dictionaryWithDictionary:self.properties];
         if (name) {
             newProperties[kTitleKey] = name;
