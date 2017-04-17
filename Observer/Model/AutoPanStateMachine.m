@@ -213,8 +213,9 @@
     } else {
         mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
     }
-    //Initilaizer assumed a mapView rotation of zero; correct if that assumption was wrong
-    if (mapView.rotationAngle != 0) {
+    //Initilaizer assumed a mapView rotation of zero; correct if that assumption was wrong; convert to an int, so we do not compare floats
+    int rotation = (int)mapView.rotationAngle;
+    if (rotation != 0) {
         if (_state == kAutoPanNoAutoRotateNorthUp) {
             _state = kAutoPanNoAutoRotate;
         }

@@ -259,7 +259,7 @@
             return nil;
         }
         double ymax = [item doubleValue];
-        if (xmin != xmax && ymin != ymax) {
+        if (xmin < xmax && ymin < ymax) {
             _extents = [[AGSEnvelope alloc] initWithXmin:xmin ymin:ymin xmax:xmax ymax:ymax spatialReference:[AGSSpatialReference wgs84SpatialReference]];
         }
     }

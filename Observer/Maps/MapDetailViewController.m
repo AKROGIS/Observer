@@ -135,10 +135,13 @@
 
 - (NSString *)distanceInPreferredUnitsFromKilometers:(double)kilometers
 {
+    //kilometers is set to -1 if there was a problem determining the distance from our current location to the map;
     if (kilometers < 0) {
         return @"Unknown";
     }
-    if (kilometers == 0) {
+    //kilometers is set to 0.0 if we are on the map; convert to an int, so we do not compare floats
+    int distance = (int)kilometers;
+    if (distance == 0) {
         return @"On map!";
     }
     AGSSRUnit units = [Settings manager].distanceUnitsForMeasuring;
@@ -154,7 +157,8 @@
 {
     double areakm = self.map.areaInKilometers;
     
-    if (areakm == -1) {
+    //self.map.areaInKilometers is set to -1 if there was a problem determining the map area;
+    if (areakm < 0) {
         return @"Unknown";
     }
     AGSSRUnit units = [Settings manager].distanceUnitsForMeasuring;
