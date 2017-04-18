@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
+#import <ArcGIS/ArcGIS.h>
+#import <CoreLocation/CoreLocation.h>
 #import "GpsPoint.h"
 
 @interface GpsPoint (Location)

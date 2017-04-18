@@ -11,6 +11,7 @@
 #import "NSArray+map.h"
 #import "NSDate+Formatting.h"
 #import "NSURL+unique.h"
+#import "AKRLog.h"
 
 #define kCodingVersion    1
 #define kCodingVersionKey @"codingversion"

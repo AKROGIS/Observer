@@ -6,10 +6,12 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
-#import "TrackLogSegment.h"
-#import "ObserverModel.h"
+#import "AGSPoint+AKRAdditions.h"
 #import "AKRFormatter.h"
+#import "CommonDefines.h"
+#import "GpsPoint+Location.h"
 #import "NSString+csvEscape.h"
+#import "TrackLogSegment.h"
 
 @interface TrackLogSegment ()
 

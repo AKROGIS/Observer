@@ -15,6 +15,9 @@
 // gpsPoint && adhocLocation          gpsPoint          gpsPoint at adhocLocation Timestamp
 // gpsPoint && angleDistanceLocation  calculated        gpsPoint
 
+#import <ArcGIS/ArcGIS.h>
+#import <CoreLocation/CoreLocation.h>
+#import <Foundation/Foundation.h>
 #import "Observation.h"
 
 @interface Observation (Location)

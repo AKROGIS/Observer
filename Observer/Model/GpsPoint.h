@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import <Foundation/Foundation.h>
 
 @class Mission, MissionProperty, Observation;
 

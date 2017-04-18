@@ -6,8 +6,10 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
+#import <CoreData/CoreData.h>
+#import "AKRLog.h"
+#import "CommonDefines.h"
 #import "ProtocolFeature.h"
-#import "ObserverModel.h"
 
 @implementation ProtocolFeature
 

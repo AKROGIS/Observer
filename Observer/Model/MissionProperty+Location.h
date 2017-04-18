@@ -6,6 +6,9 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
+#import <ArcGIS/ArcGIS.h>
+#import <CoreLocation/CoreLocation.h>
+#import <Foundation/Foundation.h>
 #import "MissionProperty.h"
 
 @interface MissionProperty (Location)

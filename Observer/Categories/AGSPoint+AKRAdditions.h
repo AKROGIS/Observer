@@ -7,6 +7,7 @@
 //
 
 #import <ArcGIS/ArcGIS.h>
+#import <CoreLocation/CoreLocation.h>
 
 @interface AGSPoint (AKRAdditions)
 

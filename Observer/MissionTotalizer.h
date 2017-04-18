@@ -6,9 +6,10 @@
 //  Copyright © 2016 GIS Team. All rights reserved.
 //
 
+#import <CoreLocation/CoreLocation.h>
 #import <Foundation/Foundation.h>
+#import "MissionProperty.h"
 #import "SProtocol.h"
-#import "ObserverModel.h"
 
 @interface MissionTotalizer : NSObject
 

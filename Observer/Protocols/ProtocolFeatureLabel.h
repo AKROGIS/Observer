@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 // This immutable class is a protocol support object and is only created by a protocol feature
 // It is highly dependent on the specification for a protocol document.

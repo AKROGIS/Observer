@@ -6,10 +6,13 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
-#import "Observation+Location.h"
-#import "ObserverModel.h"
-#import "GpsPoint+Location.h"
+#import "AdhocLocation.h"
 #import "AGSPoint+AKRAdditions.h"
+#import "AngleDistanceLocation.h"
+#import "CommonDefines.h"
+#import "GpsPoint+Location.h"
+#import "LocationAngleDistance.h"
+#import "Observation+Location.h"
 
 @implementation Observation (Location)
 

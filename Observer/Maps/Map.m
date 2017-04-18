@@ -12,6 +12,7 @@
 #import "NSDate+Formatting.h"
 #import "NSURL+isEqualToURL.h"
 #import "NSURL+unique.h"
+#import "AKRLog.h"
 
 @interface Map()
 

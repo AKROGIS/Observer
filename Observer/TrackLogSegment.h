@@ -6,9 +6,11 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
+#import <ArcGIS/ArcGIS.h>
 #import <Foundation/Foundation.h>
 #import "MissionProperty.h"
 #import "SProtocol.h"
+#import "GpsPoint.h"
 
 @interface TrackLogSegment : NSObject
 

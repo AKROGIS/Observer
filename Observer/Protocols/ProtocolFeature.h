@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
+#import <ArcGIS/ArcGIS.h>
 #import <Foundation/Foundation.h>
 #import "ProtocolFeatureAllowedLocations.h"
 #import "ProtocolFeatureSymbology.h"

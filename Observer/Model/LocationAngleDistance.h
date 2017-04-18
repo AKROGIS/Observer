@@ -39,6 +39,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ArcGIS/ArcGIS.h>
+#import <CoreLocation/CoreLocation.h>
 #import "ProtocolFeature.h"
 #import "Enumerations.h"
 

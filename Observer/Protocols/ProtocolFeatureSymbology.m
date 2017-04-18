@@ -7,6 +7,7 @@
 //
 
 #import "ProtocolFeatureSymbology.h"
+#import "AKRLog.h"
 #import <ArcGIS/ArcGIS.h>
 
 @implementation ProtocolFeatureSymbology

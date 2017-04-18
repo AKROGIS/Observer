@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 #import "Observation.h"
 #import "ProtocolFeature.h"
 

@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
+#import "CommonDefines.h"
 #import "SurveyObjectModel.h"
-#import "ObserverModel.h"
 
 @implementation SurveyObjectModel
 

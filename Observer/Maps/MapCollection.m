@@ -10,6 +10,7 @@
 #import "NSArray+map.h"
 #import "NSURL+unique.h"
 #import "Settings.h"
+#import "AKRLog.h"
 
 @interface MapCollection()
 @property (nonatomic, strong) NSMutableArray *localItems;  // of Map

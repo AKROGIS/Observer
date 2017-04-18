@@ -9,6 +9,7 @@
 #import "SurveyUploadTableViewController.h"
 #import "Survey+CsvExport.h"
 #import "Survey+ZipExport.h"
+#import "AKRLog.h"
 
 #define kOKButtonText              NSLocalizedString(@"OK", @"OK button text")
 

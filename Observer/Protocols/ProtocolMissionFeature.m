@@ -7,6 +7,7 @@
 //
 
 #import "ProtocolMissionFeature.h"
+#import "AKRLog.h"
 
 @implementation ProtocolMissionFeature
 

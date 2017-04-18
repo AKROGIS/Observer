@@ -10,6 +10,7 @@
 #import "NSArray+map.h"
 #import "NSURL+unique.h"
 #import "Settings.h"
+#import "AKRLog.h"
 
 @interface SurveyCollection()
 @property (nonatomic, strong) NSMutableArray *items;

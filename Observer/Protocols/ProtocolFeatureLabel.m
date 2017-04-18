@@ -7,6 +7,7 @@
 //
 
 #import "ProtocolFeatureLabel.h"
+#import "AKRLog.h"
 
 @implementation ProtocolFeatureLabel
 

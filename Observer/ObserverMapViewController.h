@@ -6,8 +6,11 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
+#import <ArcGIS/ArcGIS.h>
+#import <CoreLocation/CoreLocation.h>
 #import <UIKit/UIKit.h>
-#import "ObserverModel.h"
+#import "Survey.h"
+#import "Map.h"
 
 @interface ObserverMapViewController : UIViewController <CLLocationManagerDelegate, AGSLayerDelegate, AGSMapViewLayerDelegate, AGSMapViewTouchDelegate, AGSCalloutDelegate, LocationPresenter, UIPopoverPresentationControllerDelegate>
 

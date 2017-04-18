@@ -8,6 +8,7 @@
 
 #import "AutoPanStateMachine.h"
 #import "Settings.h"
+#import "AKRLog.h"
 
 @interface AutoPanStateMachine ()
 

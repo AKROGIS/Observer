@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import <ArcGIS/ArcGIS.h>
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "AutoPanButton.h"
 
 #define MINIMUM_NAVIGATION_SPEED 1.0  //speed in meters per second (1mps = 2.2mph) at which to switch map orientation from compass heading to course direction

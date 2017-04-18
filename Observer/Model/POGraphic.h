@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <ArcGIS/ArcGIS.h>
-#import "ObserverModel.h"
+#import "Observation.h"
+#import "Survey.h"
 
 @interface POGraphic : AGSGraphic
 

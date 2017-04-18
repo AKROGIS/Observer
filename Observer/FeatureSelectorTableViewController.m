@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
-#import "ObserverModel.h"
 #import "FeatureSelectorTableViewController.h"
 #import "NSIndexPath+unsignedAccessors.h"
 #import "NSDate+Formatting.h"
+#import "CommonDefines.h"
 
 #define kPopoverMaxHeight 500
 #define kPopoverWidth     320

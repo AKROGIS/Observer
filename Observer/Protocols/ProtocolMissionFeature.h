@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
+#import <ArcGIS/ArcGIS.h>
+#import <UIKit/UIKit.h>
 #import "ProtocolFeature.h"
 
 @interface ProtocolMissionFeature : ProtocolFeature

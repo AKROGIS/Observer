@@ -6,13 +6,20 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
+#import <ArcGIS/ArcGIS.h>
+#import <CoreLocation/CoreLocation.h>
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <ZipKit/ZipKit.h>
+
 #import "AKRTableViewItem.h"
+#import "AngleDistanceLocation.h"
+#import "LocationAngleDistance.h"
+#import "Observation.h"
+#import "MissionTotalizer.h"
 #import "SProtocol.h"
 #import "SurveyCoreDataDocument.h"
-#import "ObserverModel.h"
-#import "MissionTotalizer.h"
+#import "TrackLogSegment.h"
 
 #define INTERNAL_SURVEY_EXT @"obssurv"
 #define SURVEY_EXT @"poz"

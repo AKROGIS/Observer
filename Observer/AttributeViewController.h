@@ -6,6 +6,9 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
+#import <ArcGIS/ArcGIS.h>
+#import <CoreData/CoreData.h>
+#import <Foundation/Foundation.h>
 #import "QuickDialogController.h"
 
 @interface AttributeViewController : QuickDialogController

@@ -1,39 +1,12 @@
 //
-//  ObserverModel.h
+//  CommonDefines.h
 //  Observer
 //
-//  Created by Regan Sarwas on 8/14/13.
-//  Copyright (c) 2013 GIS Team. All rights reserved.
+//  Created by Regan Sarwas on 4/17/17.
+//  Copyright © 2017 GIS Team. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
-
-//CoreData entities
-#import "Mission.h"
-#import "AdhocLocation.h"
-#import "AngleDistanceLocation.h"
-#import "GpsPoint.h"
-#import "GpsPoint+Location.h"
-#import "LocationAngleDistance.h"
-#import "Observation.h"
-#import "Observation+Location.h"
-#import "MissionProperty.h"
-#import "MissionProperty+Location.h"
-#import "MapReference.h"
-
-#import "TrackLogSegment.h"
-
-#import "AGSPoint+AKRAdditions.h"
-#import "NSArray+map.h"
-
-#import "Enumerations.h"
-#import "Settings.h"
-
-#import "Survey.h"
-
-#import "Map.h"
-#import "SProtocol.h"
+#ifndef CommonDefines_h
 
 #define kAngleDistanceDistanceUnits      AGSSRUnitMeter;
 #define kAngleDistanceAngleDirection     AngleDirectionClockwise;
@@ -55,3 +28,7 @@
 #define kTrackOn                         @"On"
 
 #define kStaleInterval                   5 //Seconds before lastGpsPoint is considered too old to use.
+
+#define CommonDefines_h
+
+#endif /* CommonDefines_h */

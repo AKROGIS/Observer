@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ArcGIS/ArcGIS.h>
+#import <CoreLocation/CoreLocation.h>
 
 @interface AKRAngleDistance : NSObject
 

@@ -6,8 +6,10 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import <ArcGIS/ArcGIS.h>
+#import <CoreLocation/CoreLocation.h>
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "AKRTableViewItem.h"
 #import "AKRAngleDistance.h"
 

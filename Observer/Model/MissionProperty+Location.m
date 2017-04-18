@@ -7,9 +7,9 @@
 //
 
 #import "MissionProperty+Location.h"
-#import "ObserverModel.h"
 #import "GpsPoint+Location.h"
 #import "AGSPoint+AKRAdditions.h"
+#import "AdhocLocation.h"
 
 @implementation MissionProperty (Location)
 

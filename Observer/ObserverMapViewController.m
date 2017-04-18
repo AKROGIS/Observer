@@ -31,7 +31,6 @@
 #import "AttributeViewController.h"
 #import "FeatureSelectorTableViewController.h"
 #import "GpsPointTableViewController.h"
-#import "POGraphic.h"
 
 //Views
 #import "AutoPanButton.h"
@@ -44,6 +43,14 @@
 #import "NSDate+Formatting.h"
 
 //Support sub-system
+#import "AKRLog.h"
+#import "CommonDefines.h"
+#import "GpsPoint.h"
+#import "GpsPoint+Location.h"
+#import "MissionProperty.h"
+#import "MissionProperty+Location.h"
+#import "POGraphic.h"
+#import "Settings.h"
 #import "QuickDialog.h"
 
 //Constants and Magic Numbers/Strings

@@ -15,6 +15,7 @@
 #import "SProtocol.h"
 #import "Survey.h"
 #import "NSIndexPath+unsignedAccessors.h"
+#import "AKRLog.h"
 
 @interface SurveySelectViewController ()
 @property (nonatomic, strong) SurveyCollection *items; //Model

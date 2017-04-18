@@ -9,7 +9,7 @@
 #import "LocationAngleDistance.h"
 #import "AGSPoint+AKRAdditions.h"
 #import "Settings.h"
-#import "ObserverModel.h"
+#import "CommonDefines.h"
 
 @interface LocationAngleDistance ()
 

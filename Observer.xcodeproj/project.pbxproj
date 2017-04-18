@@ -342,7 +342,6 @@
 		39D1D94A17B464B40014C68F /* LocationAngleDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocationAngleDistance.h; path = Model/LocationAngleDistance.h; sourceTree = "<group>"; };
 		39D1D94B17B464B40014C68F /* LocationAngleDistance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LocationAngleDistance.m; path = Model/LocationAngleDistance.m; sourceTree = "<group>"; };
 		39D1D95917BC21D00014C68F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		39D1D97B17BC51630014C68F /* ObserverModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObserverModel.h; path = Model/ObserverModel.h; sourceTree = "<group>"; };
 		39D9479918BEA79E0069DB31 /* ObserverTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObserverTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		39D9479F18BEA79E0069DB31 /* ObserverTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ObserverTests-Info.plist"; sourceTree = "<group>"; };
 		39D947A118BEA79E0069DB31 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -355,6 +354,8 @@
 		598083891D0CE41900E4B2E8 /* NSString+csvEscape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+csvEscape.m"; path = "Categories/NSString+csvEscape.m"; sourceTree = "<group>"; };
 		59954F831D146175006C32B4 /* POGraphic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = POGraphic.h; path = Model/POGraphic.h; sourceTree = "<group>"; };
 		59954F841D146175006C32B4 /* POGraphic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = POGraphic.m; path = Model/POGraphic.m; sourceTree = "<group>"; };
+		59B962E71EA5B0B50084D018 /* AKRLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AKRLog.h; path = Model/AKRLog.h; sourceTree = "<group>"; };
+		59B962E81EA5C7340084D018 /* CommonDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CommonDefines.h; path = Model/CommonDefines.h; sourceTree = "<group>"; };
 		59C60FE6185ABF9400470791 /* AKRDirectionIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRDirectionIndicatorView.h; sourceTree = "<group>"; };
 		59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDirectionIndicatorView.m; sourceTree = "<group>"; };
 		59C60FED1863FDBF00470791 /* AKRFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRFormatter.h; sourceTree = "<group>"; };
@@ -688,7 +689,6 @@
 				394BDD19191D4867000C8A4B /* Observation+Location.m */,
 				394CC2511858F11800FA859C /* Observation.h */,
 				394CC2521858F11800FA859C /* Observation.m */,
-				39D1D97B17BC51630014C68F /* ObserverModel.h */,
 				394CC23C1858EF5800FA859C /* ObserverModel.xcdatamodeld */,
 				393E8AFA17A2E1D8009AD0AC /* Settings.h */,
 				393E8AFB17A2E1D8009AD0AC /* Settings.m */,
@@ -698,6 +698,8 @@
 				398A97361CCFD11800143160 /* MissionTotalizer.m */,
 				59954F831D146175006C32B4 /* POGraphic.h */,
 				59954F841D146175006C32B4 /* POGraphic.m */,
+				59B962E71EA5B0B50084D018 /* AKRLog.h */,
+				59B962E81EA5C7340084D018 /* CommonDefines.h */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1085,8 +1087,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Observer/Observer-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"AKR_DEBUG=1",
 					"DEBUG=1",
@@ -1123,8 +1123,6 @@
 				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/SDKs/ArcGIS/iOS/**";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Observer/Observer-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (

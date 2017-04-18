@@ -13,6 +13,7 @@
 #import "SurveyCollection.h"
 #import "MapCollection.h"
 #import "ProtocolCollection.h"
+#import "AKRLog.h"
 #import <Crashlytics/Crashlytics.h>
 #import <ArcGIS/ArcGIS.h>
 

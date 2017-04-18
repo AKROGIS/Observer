@@ -8,6 +8,8 @@
 
 #import "MissionTotalizer.h"
 #import "TrackLogSegment.h"
+#import "NSArray+map.h"
+#import "CommonDefines.h"
 
 typedef NS_OPTIONS(NSUInteger, TotalizerUnits) {
     TotalizerUnitsKilometers = 0,

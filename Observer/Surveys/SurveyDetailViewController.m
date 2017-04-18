@@ -12,6 +12,7 @@
 #import "AKRFormatter.h"
 #import "ProtocolDetailViewController.h"
 #import "GpsPointTableViewController.h"
+#import "AKRLog.h"
 
 @interface SurveyDetailViewController ()
 {

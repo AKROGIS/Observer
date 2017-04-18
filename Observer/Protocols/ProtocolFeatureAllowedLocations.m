@@ -6,8 +6,10 @@
 //  Copyright (c) 2014 GIS Team. All rights reserved.
 //
 
+
+#import "AKRLog.h"
+#import "CommonDefines.h"
 #import "ProtocolFeatureAllowedLocations.h"
-#import "ObserverModel.h"
 
 @interface ProtocolFeatureAllowedLocations()
 
