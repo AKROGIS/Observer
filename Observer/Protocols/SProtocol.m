@@ -26,7 +26,7 @@
 }
 @property (nonatomic) BOOL parsedJSON;
 
-//TODO: move to NSOperation
+//TODO: #6 move to NSOperation
 @property (nonatomic) BOOL downloading;
 @property (nonatomic, strong) NSURLSession *session;
 @property (nonatomic, strong) NSURLSessionTask *downloadTask;
@@ -311,7 +311,7 @@
 
 
 #pragma mark - download
-//TODO: move this to a NSOperation
+//TODO: #6 move this to a NSOperation
 
 - (NSURLSession *)session
 {
@@ -361,7 +361,7 @@
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
 {
-    //TODO: implement method to support resume download (for paused or lost connection)
+    //TODO: #6 implement method to support resume download (for paused or lost connection)
     AKRLog(@"did resume download");
 }
 

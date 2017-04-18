@@ -94,7 +94,7 @@
         if (!fileExistsAtOldPath && fileExistsAtNewPath) {
             url = newUrl;
         } else {
-            //TODO: We need to cover the case where oldPath == nil or fileExistsAtNewPath
+            //TODO: #180 We need to cover the case where oldPath == nil or fileExistsAtNewPath
             AKRLog(@"Moving Survey %@ from %@ to %@",[url lastPathComponent],folder,[Survey privateDocumentsDirectory]);
             if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:newUrl error:nil]) {
                 AKRLog(@"ERROR! - Move failed");
@@ -455,12 +455,12 @@
     }
     //gps points
     csvData = [[self csvForGpsPointsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
-    csvName = @"GpsPoints.csv"; //TODO: get this from the survey protocol
+    csvName = @"GpsPoints.csv"; //TODO: #129 get this from the survey protocol
     [archive deflateData:csvData withFilename:csvName andAttributes:nil];
 
     //tracklog
     csvData = [[self csvForTrackLogsSince:startDate] dataUsingEncoding:NSUTF8StringEncoding];
-    csvName = @"TrackLogs.csv"; //TODO: get this from the survey protocol
+    csvName = @"TrackLogs.csv"; //TODO: #129 get this from the survey protocol
     [archive deflateData:csvData withFilename:csvName andAttributes:nil];
 
     //protocol
@@ -866,7 +866,7 @@
 - (GpsPoint *)addGpsPointAtLocation:(CLLocation *)location
 {
     NSAssert(location.timestamp, @"Can't save a GPS Point without a timestamp: %@",location);
-    //TODO: many callers (in VC and in Survey) assume location is good.
+    //TODO: #175 many callers (in VC and in Survey) assume location is good.
     //Should we check here and sleep if necessary to wait for a current GPS point?
     
     //Adds a GPS point definitively.
@@ -1360,7 +1360,6 @@
     [[self graphicsLayerForGpsPoints] addGraphic:graphic];
 }
 
-//TODO: add attributes and label like drawObservation to support symbology and labels
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
 {
     NSDate *timestamp = [missionProperty timestamp];

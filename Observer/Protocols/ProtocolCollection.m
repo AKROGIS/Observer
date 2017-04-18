@@ -240,7 +240,7 @@ static BOOL _isLoaded = NO;
 #pragma mark - Cache operations
 
 
-//TODO: - consider NSDefaults as it does memory mapping and defered writes
+//TODO: #39 consider NSDefaults as it does memory mapping and defered writes
 //       this also make the class a singleton object
 
 + (NSURL *)cacheFile

@@ -212,8 +212,7 @@ static NSUInteger currentUniqueId = 0;
         return [[AGSUniqueValueRenderer alloc] initWithJSON:json];
     }
     return [[AGSRenderer alloc] initWithJSON:json];
-    //TODO: starting in version 100 (quartz) replace this method with
-    //return [AGSRenderer fromJSON:json]
+    //return [AGSRenderer fromJSON:json]  //ArcGIS version 100 (quartz)
 }
 
 @end

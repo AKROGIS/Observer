@@ -45,14 +45,13 @@ static BOOL _isLoaded = NO;
 }
 
 + (void)releaseSharedCollection {
-    //TODO: setting _sharedCollection to nil, only releases the class' copy of the instance.
+    //TODO: #164 setting _sharedCollection to nil, only releases the class' copy of the instance.
     //The instance will remain alive if something (i.e. a callback block) has retained a copy.
     //if _sharedCollection is nil, I might end up creating a second collection (leading to chaos)
     //for now, it is safer to just prohibit releasing, especially with a async downloading.
     return;
 
 //    if (self.isDownloading) {
-//        //TODO: keep track of request to release, so we can release when downloading is done.
 //        return;
 //    }
 //    @synchronized(self) {
@@ -326,7 +325,7 @@ static int _downloadsInProgress = 0;
     NSMutableArray *mapsToAdd = [NSMutableArray new];
     for (NSString *localMapFileName in localMapFileNames) {
         NSURL *mapUrl = [[MapCollection documentsDirectory] URLByAppendingPathComponent:localMapFileName];
-        // TODO: Put up a modal, asking for details on the tile cache, i.e. name, author, date, description
+        //TODO: #92 Put up a modal, asking for details on the tile cache, i.e. name, author, date, description
         //       explain the importance of the attributes in identifying the map for reference for non-gps points
         //       maybe get the defaults from the esriinfo.xml file in the zipped tpk
         //       Map *newMap = [[Map alloc] initWithTileCacheURL:newUrl name:name author:author date:date description:description;

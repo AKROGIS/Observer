@@ -28,7 +28,7 @@
 @property (nonatomic, strong, readwrite) UIImage *thumbnail;
 @property (nonatomic, strong, readwrite) AGSLocalTiledLayer *tileCache;
 
-//TODO: move to NSOperation
+//TODO: #6 move to NSOperation
 @property (nonatomic) BOOL isDownloading;
 @property (nonatomic, strong) NSURLSession *session;
 @property (nonatomic, strong) NSURLSessionTask *downloadTask;
@@ -90,12 +90,12 @@
     NSMutableDictionary *newProperties = [NSMutableDictionary new];
     newProperties[kTitleKey] = [[url lastPathComponent] stringByDeletingPathExtension];
     newProperties[kAuthorKey] = @"Unknown";
-    newProperties[kDateKey] = [fileAttributes fileCreationDate];  //TODO: Get the date from the esriinfo.xml file in the zipped tpk
+    newProperties[kDateKey] = [fileAttributes fileCreationDate];  //TODO: #92 Get the date from the esriinfo.xml file in the zipped tpk
     newProperties[kSizeKey] = [NSNumber numberWithUnsignedLongLong:[fileAttributes fileSize]];
     newProperties[kUrlKey] = url.absoluteString;
     //kRemoteThumbUrlKey - not available or required
     newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].absoluteString;
-    newProperties[kDescriptionKey] = @"Not available."; //TODO: get the description from the esriinfo.xml file in the zipped tpk
+    newProperties[kDescriptionKey] = @"Not available."; //TODO: #92 get the description from the esriinfo.xml file in the zipped tpk
     AGSEnvelope *extents = (AGSEnvelope *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:tileCache.fullEnvelope
                                                                                   toSpatialReference:[AGSSpatialReference wgs84SpatialReference]];
     newProperties[kXminKey] = [NSNumber numberWithDouble:extents.xmin];
@@ -346,8 +346,8 @@
         NSData *data = [NSData dataWithContentsOfURL:url];
         return (data == nil) ? nil : [[UIImage alloc] initWithData:data];
     } else {
-        //TODO: do this transfer in an NSOperation Queue
-        //TODO: need to deal with various network errors
+        //TODO: #6 do this transfer in an NSOperation Queue
+        //TODO: #6 need to deal with various network errors
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         NSData *data = [NSData dataWithContentsOfURL:url];
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
@@ -379,9 +379,9 @@
     return _tileCache;
 }
 
-//FIXME: This method is never called
+//FIXME: #173 This method is never called
 //Alert: will call a mutating function
-//FIXME: instead of mutating, return an optional(tilecache) in the completion handler
+//FIXME: #173 instead of mutating, return an optional(tilecache) in the completion handler
 - (void)loadTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler {
     dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
         [self loadTileCache];
@@ -393,7 +393,7 @@
 
 //Alert: Mutating function
 //Alert: will block for IO
-//FIXME: instead of mutating, return an optional(tilecache) in the completion handler
+//FIXME: #173 instead of mutating, return an optional(tilecache) in the completion handler
 - (void)loadTileCache {
     _tileCache = [Map loadTileCacheAtURL:self.tileCacheURL];
     self.isTileCacheLoaded = _tileCache != nil;
@@ -549,7 +549,7 @@
 
 
 #pragma mark - download
-//TODO: move this to a NSOperation
+//TODO: #6 move this to a NSOperation
 
 - (NSURLSession *)session
 {
@@ -595,7 +595,7 @@
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
 {
-    //TODO: implement method to support resume download (for pause or lost connection)
+    //TODO: #6 implement method to support resume download (for pause or lost connection)
     AKRLog(@"did resume download");
 }
 

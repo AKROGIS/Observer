@@ -45,8 +45,10 @@
     [csv appendString:@"\n"];
     NSString *entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,feature.name];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entityName];
-    //TODO: sort descriptor is gpsPoint.timestamp || adhocLocation.timestamp
-    //    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:kTimestampKey ascending:YES]];
+    // WRONG: request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:kTimestampKey ascending:YES]];
+    // Sort descriptor should be gpsPoint.timestamp || adhocLocation.timestamp, but I'm not sure how to support that.
+    // Sort descriptor is not required - Items are retrieved in input/creation order, which matches the timestamp.
+
     request.predicate = predicate;
     NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
     for (Observation *observation in results) {
