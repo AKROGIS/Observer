@@ -302,7 +302,7 @@
         [self showTrackLogAttributeEditor:tracklog];
     } else {
         AKRLog(@"Unsupported code path.  Mission Properties without GPS points are not supported");
-        //TODO: Evaulate the need, and support or remove this code
+        //TODO: #181 Evaluate the need, and support or remove this code
         MissionProperty *missionProperty = [self.survey createMissionPropertyAtMapLocation:self.mapView.mapAnchor];
         [self showMissionPropertyAttributeEditor:missionProperty];
     }
@@ -592,18 +592,18 @@
                     self.movingMissionProperty = [self.survey missionPropertyFromEntity:entity];
                     self.movingObservation = [self.survey observationFromEntity:entity];
                     if (self.movingMissionProperty) {
-                        //TODO: support moving mission properties
+                        //TODO: #11 support moving mission properties
                         [self alert:nil message:@"Can't move mission properties yet."];
                         self.movingMissionProperty = nil;
                     }
                     if (self.movingObservation.angleDistanceLocation) {
-                        //TODO: Support moving Angle/Distance located observations
-                        [self alert:nil message:@"Can't move angle/distance features yet."];
+                        //Moving Angle/Distance observations is done in the Angle/DistanceVC
+                        [self alert:nil message:@"Can't move angle/distance features."];
                         self.movingObservation = nil;
                     }
                     if (self.movingObservation.gpsPoint) {
-                        //TODO: support moving GPS located observations
-                        [self alert:nil message:@"Can't move GPS located features yet."];
+                        //Per Issue #69, Moving GPS Points is not a useful feature.
+                        [self alert:nil message:@"Can't move GPS located features."];
                         self.movingObservation = nil;
                     }
                     if (self.movingMissionProperty || self.movingObservation) {
@@ -628,7 +628,7 @@
 {
     //AKRLog(@"mapView:didMoveTapAndHoldAtPoint:(%f,%f)=(%@) with Graphics:%@", screen.x, screen.y, mapPoint, features);
 
-    //TODO: If the moving feature is based on a GPS point, then snap to the closest GPS point
+    //Only moving AdHoc locations, so they can go anywhere
     if (self.movingGraphic) {
         [self.movingGraphic setGeometry:mapPoint];
         if ([self.movingGraphic isKindOfClass:[POGraphic class]]) {
@@ -648,11 +648,11 @@
     }
 
     //Move GPS location
-    //TODO: If the feature is based on a GPS point, then snap to the closest GPS point
+    //Per Issue #69, Moving GPS Points is not a useful feature.
 
     //Move Mission Property
     //[self.survey updateAdhocLocation:self.movingMissionProperty.adhocLocation withMapPoint:mapPoint];
-    //TODO: if this was a mission property, then we need to update the tracklogs.
+    //TODO: #11 if this was a mission property, then we need to update the tracklogs.
 
     self.movingObservation = nil;
     self.movingMissionProperty = nil;
@@ -689,7 +689,6 @@
 
 - (BOOL)mapIsProjected
 {
-    //TODO: I think this is always true.  Can it be false?
     return self.mapView.isProjected;
 }
 
@@ -700,7 +699,7 @@
 
 - (CLLocation *)mostRecentLocation
 {
-    //FIXME: make sure that this is a current/good location
+    //FIXME: #175 make sure that this is a current/good location
     return self.locationManager.location;
 }
 
@@ -763,7 +762,7 @@
         for (ProtocolFeature *feature in self.survey.protocol.features) {
             feature.allowedLocations.locationPresenter = self;
             if (feature.allowedLocations.countOfNonTouchChoices > 0) {
-                //TODO: feature names may be too long for buttons, use a short name, or an icon
+                //feature names (from protocol file) should be short enough to fit on a button
                 AddFeatureBarButtonItem *addFeatureButton = [[AddFeatureBarButtonItem alloc] initWithTitle:feature.name style:UIBarButtonItemStylePlain target:self action:@selector(pleaseAddFeature:)];
                 addFeatureButton.feature = feature;
                 if (feature.allowedLocations.countOfNonTouchChoices > 1) {
@@ -795,6 +794,10 @@
 
 -(void)updateTitleBar
 {
+    // This is called by the Survey VC when editing to catch a name change of self.survey
+    // It is also called by the completion handlers in close/open survey methods (called by viewDidLoad and setSurvey.
+    // Using self.survey solves a problem where the close completion handler ends up on the main queue after open handler.
+    // This must be called in handlers because open/close sets the self.selectSurveyButton.title to 'working...'
     self.selectSurveyButton.title = (self.survey.isReady ? self.survey.title : @"Select Survey");
 }
 
@@ -874,7 +877,7 @@
 
 - (void)showNoLocationAlert
 {
-    //TODO: provide more helpful error message.  Why can't I get the location?  What can the user do about it?
+    //TODO: #175 provide more helpful error message.  Why can't I get the location?  What can the user do about it?
     //This is a low priority, since the buttons that activate this should not be enabled unless location services are available.
     [self alert:nil message:@"Unable to get your location.  Please try again later."];
 }
@@ -1118,7 +1121,7 @@
             AKRLog(@"Survey (%@) failed to close", survey.title);
             //There is really nothing I can do but continue...
         }
-        [self updateTitleBar];  //FIXME: references self.survey, which might be different than local survey when this runs.
+        [self updateTitleBar];
         [self decrementBusy];
     }];
 }
@@ -1178,7 +1181,7 @@
 
 
 
-//FIXME: Cleanup the following code
+//TODO: #183 Cleanup the following code
 
 
 
@@ -1234,7 +1237,7 @@
     }
     if (button) {
         // It is not possible (AFIK) to set the anchor for a manual popover seque, hence I must do the "segue" with code
-        //TODO: Use the uipopoverpresentationcontrollerdelegate prepareForPopoverPresentation
+        //TODO: #144 Use the uipopoverpresentationcontrollerdelegate prepareForPopoverPresentation
         [self performAngleDistanceSequeWithFeature:feature fromButton:button];
     } else {
         AKRLog(@"Oh No! I couldn't find the calling button for the segue");
@@ -1304,11 +1307,11 @@
     vc.features = features;
     vc.protocol = self.survey.protocol;
     vc.featureSelectedCallback = ^(NSString *layerName, id<AGSFeature> graphic) {
-        //FIXME: a better solution would be to put this inside a navigation view controller inside the popover
+        //TODO: 185 a better solution would be to put this inside a navigation view controller inside the popover
         [self dismissViewControllerAnimated:YES completion:nil];
         [self presentFeature:graphic fromLayer:layerName atMapPoint:mapPoint];
     };
-    //TODO: reduce popover size
+    //TODO: #168 reduce popover size
     vc.modalPresentationStyle = UIModalPresentationPopover;
     [self presentViewController:vc animated:YES completion:nil];
     UIPopoverPresentationController *popover = vc.popoverPresentationController;
@@ -1326,7 +1329,7 @@
 
     //NOTE: entityNamed:atTimestamp: only works with layers that have a gpspoint or an adhoc, so missionProperties and Observations
     //NOTE: gpsPoints do not have a QuickDialog definition; tracklogs would need to use the related missionProperty
-    //TODO: expand to work on gpsPoints and tracklog segments
+    //TODO: #184 expand to work on gpsPoints and tracklog segments
     if (![self.survey isSelectableLayerName:layerName]) {
         AKRLog(@"  Bailing. layer type is not supported");
     }
@@ -1342,7 +1345,6 @@
         return;
     }
 
-    //TODO: When do I implement readonly features
     [self setAttributesForFeatureType:feature entity:entity graphic:(AGSGraphic *)agsFeature defaults:entity atPoint:mapPoint isNew:NO isEditing:YES];
 }
 
@@ -1375,10 +1377,10 @@
 
 - (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint isNew:(BOOL)isNew isEditing:(BOOL)isEditing
 {
-    //TODO: refactor this ugly and overly complicated method
+    //TODO: #183 Cleanup, isEditing parameter is never used. We always allow editing. Callers all use YES
+    //TODO: #183 refactor this ugly and overly complicated method
 
-    //TODO: can we support observations that have no attributes (no dialog)?
-    //TODO: if I can't edit, then I should change the behavior of the controls on the form to reflect that
+    //TODO: #53 can we support observations that have no attributes (no dialog)?
 
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
@@ -1400,7 +1402,7 @@
         //AKRLog(@"default data attributes %@", data);
     }
     NSDictionary *config = feature.dialogJSON;
-    //TODO: do not send data which might null out the radio buttons (some controls require a non-null default
+    //TODO: #53 do not send data which might null out the radio buttons (some controls require a non-null default).
     if (data.count == 0) {
         data = nil;
     }
@@ -1424,15 +1426,13 @@
         [[[root.sections firstObject] elements] insertObject:label atIndex:0];  //works unless elements is nil
     }
 
-    //TODO: if we are reviewing/editing an existing record, show the observing status
-
     //Show a Location Button only when editing/reviewing
     if (!isNew) {
         AngleDistanceLocation *angleDistanceLocation = [self.survey angleDistanceLocationFromEntity:entity];
         QButtonElement *locationButton = [[QButtonElement alloc] init];
         locationButton.appearance = [[QFlatAppearance alloc] init];
         locationButton.appearance.buttonAlignment = NSTextAlignmentCenter;
-        //TODO: self.view.tintColor is gray after feature selector ViewControllers
+        //TODO: #75 self.view.tintColor is gray after feature selector ViewControllers
         locationButton.appearance.actionColorEnabled = self.view.tintColor;
         if (angleDistanceLocation) {
             locationButton.title = @"Change Location";
@@ -1445,7 +1445,7 @@
                 GpsPointTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"GpsPointTableViewController"];
                 vc.gpsPoint = [self.survey gpsPointFromEntity:entity];
                 vc.adhocLocation = [self.survey adhocLocationFromEntity:entity];
-                //TODO Resize popover
+                //TODO: #168 Resize popover
                 [self.attributeCollector.navigationController pushViewController:vc animated:YES];
             };
         }
@@ -1492,8 +1492,8 @@
         }
     }
 
-    //Delete/Cancel Button
-    //TODO: support delete/cancel on a mission property
+    //Delete Button
+    //You cannot delete a mission property (cancel is done on VC Nav controls).
     if (![feature isKindOfClass:[ProtocolMissionFeature class]]) {
         NSString *buttonText = @"Delete";
         QButtonElement *deleteButton = [[QButtonElement alloc] initWithTitle:buttonText];

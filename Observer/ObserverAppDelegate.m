@@ -153,7 +153,7 @@
         }
     }
     if ([MapCollection collectsURL:url]) {
-        // TODO: Put up a modal, asking for details on the tile cache, i.e. name, author, date, description
+        //TODO: #92 Put up a modal, asking for details on the tile cache, i.e. name, author, date, description
         //       explain the importance of the attributes in identifying the map for reference for non-gps points
         //       maybe get the defaults from the esriinfo.xml file in the zipped tpk
         //       Map *newMap = [[Map alloc] initWithTileCacheURL:newUrl name:name author:author date:date description:description;

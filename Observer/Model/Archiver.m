@@ -58,7 +58,7 @@
     NSString *parentFolder = [[[outputUrl URLByDeletingLastPathComponent] filePathURL] path];
     NSString *folder = outputUrl.lastPathComponent;
     //ZKDataArchive ignores the withFolderName parameter.
-    //FIXME: This only worked for surveys if there is a folder in the archive that matches the name of the (uniquified) archive
+    //FIXME: #176 This only worked for surveys if there is a folder in the archive that matches the name of the (uniquified) archive
     NSUInteger errorCode = [archive inflateInFolder:parentFolder withFolderName:folder usingResourceFork:NO];
     if (errorCode == (NSUInteger)zkSucceeded) {
         return YES;
