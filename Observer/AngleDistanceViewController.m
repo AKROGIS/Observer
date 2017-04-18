@@ -13,7 +13,6 @@
 @interface AngleDistanceViewController ()
 
 @property (weak, nonatomic) IBOutlet UILabel *detailsLabel;
-@property (weak, nonatomic) IBOutlet UIButton *basisButton;
 @property (weak, nonatomic) IBOutlet UITextField *angleTextField;
 @property (weak, nonatomic) IBOutlet UITextField *distanceTextField;
 @property (strong, nonatomic) NSPredicate *angleRegex;
@@ -43,7 +42,6 @@
 
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(settingsDidChange:) name:NSUserDefaultsDidChangeNotification object:nil];
     self.detailsLabel.preferredMaxLayoutWidth = self.preferredContentSize.width - TEXTMARGINS;
     [self resizeView];
     [[self.view viewWithTag:1] becomeFirstResponder];
@@ -179,16 +177,9 @@
     return _textFields;
 }
 
-- (void) settingsDidChange:(NSNotification *)notification
-{
-    [self updateLabel];
-    [self resizeView];
-}
-
 - (void) updateView
 {
     [self updateDefaultValues];
-    [self updateBasisButton];
     [self updateLabel];
     [self updateControlState:[self.textFields lastObject]];
 }
@@ -208,31 +199,6 @@
         self.initialDistance = nil;
     }
     self.distanceTextField.text = self.initialDistance;
-}
-
-- (void) updateBasisButton
-{
-    if (self.location.usesProtocol) {
-        if ([self.basisButton isDescendantOfView:self.view]) {
-            [self removeButton];
-        }
-    }
-    else {
-        if (![self.basisButton isDescendantOfView:self.view]) {
-            [self addButton];
-        }
-    }
-}
-
-- (void) addButton
-{
-    //add update basis button to view heirarchy (add constraints?, resize view?)
-    //Currently, We never present the VC with a protocol, and then change the model such that we would re-add the button
-}
-
-- (void) removeButton
-{
-    [self.basisButton removeFromSuperview];
 }
 
 - (void) updateLabel
@@ -267,13 +233,7 @@
 {
     [self.view layoutSubviews];
     CGRect frame = self.view.frame;
-    CGFloat height;
-    if ([self.basisButton isDescendantOfView:self.view]) {
-        height = self.basisButton.frame.origin.y + self.basisButton.frame.size.height + 20;
-    }
-    else {
-        height = self.detailsLabel.frame.origin.y + self.detailsLabel.frame.size.height + 20;
-    }
+    CGFloat height = self.detailsLabel.frame.origin.y + self.detailsLabel.frame.size.height + 20;
     frame.size.height = height;
     self.view.frame = frame;
     //only if contentSizeForViewInPopover values change will the popover will resize
