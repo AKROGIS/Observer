@@ -84,6 +84,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *statusMessage;
 @property (weak, nonatomic) IBOutlet UILabel *totalizerMessage;
 
+@property (weak, nonatomic) IBOutlet UIView *scalebar;
+@property (weak, nonatomic) IBOutlet UILabel *scalebarEndLabel;
+
 //Support
 @property (nonatomic) int  busyCount;
 @property (nonatomic, readonly) BOOL locationServicesAvailable;
@@ -121,6 +124,8 @@
     [self openSurvey:self.survey];  // open in survey setter may fail if the view isn't ready.
     self.statusMessage.text = nil;
     self.totalizerMessage.text = nil;
+    //Register map pan and zoom notifications for scale bar
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateScaleBar) name:AGSMapViewDidEndZoomingNotification object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -956,6 +961,35 @@
 }
 
 
+- (void)updateScaleBar
+{
+    //Get length of ScaleBar
+    CGPoint screenPointStart = CGPointMake(self.scalebar.frame.origin.x, self.scalebar.frame.origin.y);
+    AGSPoint *mapPointStart = [self.mapView toMapPoint:screenPointStart];
+
+    CGPoint screenPointEnd = CGPointMake(self.scalebar.frame.origin.x + self.scalebar.frame.size.width, self.scalebar.frame.origin.y);
+    AGSPoint *mapPointEnd = [self.mapView toMapPoint:screenPointEnd];
+
+    AGSGeometryEngine *ge = [AGSGeometryEngine defaultGeometryEngine];
+    
+    double distance = [ge distanceFromGeometry:mapPointStart toGeometry:mapPointEnd];
+    //TODO: #146 respect SR of mapView, and Distance units from settings
+    //   Or use a Google style scale bar with both SI/metric
+
+    //FIXME: #146 scale is off by a factor of 2 (compared to west high track in image)
+    distance = distance/2.0;
+
+    if(distance > 10000) //10km
+    {
+        //show the labels in km
+        self.scalebarEndLabel.text = [NSString stringWithFormat:@"%0.0f km", distance/1000];
+    }
+    else
+    {
+        //show the labels in meters
+        self.scalebarEndLabel.text = [NSString stringWithFormat:@"%0.0f m", distance];
+    }
+}
 
 
 #pragma mark - Private Methods - support for location delegate
