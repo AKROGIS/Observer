@@ -306,7 +306,9 @@
 - (UIImage *)thumbnail
 {
     if (!_thumbnail && !self.isThumbnailLoaded) {
+        AKRLog(@"Start load tthumbnail %@ %@", self.cachedThumbnailURL, self.remoteThumbnailURL);
         [self loadThumbnail];
+        AKRLog(@"Done load thumbnail");
     }
     return _thumbnail;
 }
@@ -374,7 +376,9 @@
 - (AGSLocalTiledLayer *)tileCache
 {
     if (!_tileCache && !self.isTileCacheLoaded) {
+        AKRLog(@"Start load tile cache %@", self.tileCacheURL);
         [self loadTileCache];
+        AKRLog(@"Done load tile cache");
     }
     return _tileCache;
 }
