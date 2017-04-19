@@ -308,9 +308,9 @@
         return;
     }
     if (editingStyle == UITableViewCellEditingStyleDelete) {
+        Map *map = [self.items localMapAtIndex:indexPath.urow];
         [self.items removeLocalMapAtIndex:indexPath.urow];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-        Map *map = [self.items localMapAtIndex:indexPath.urow];
         if (self.mapDeletedAction) {
             self.mapDeletedAction(map);
         }

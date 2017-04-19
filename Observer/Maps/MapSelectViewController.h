@@ -17,7 +17,7 @@
 // This will NOT be called if the user deletes the current map.
 @property (copy, nonatomic) void (^mapSelectedAction)(Map *map);
 
-// A block to execute when a map is deleted
+// A block to execute when a map is deleted; map is the deleted map
 @property (nonatomic, copy) void (^mapDeletedAction)(Map *map);
 
 // Add the map to the TableView

@@ -193,8 +193,10 @@
             me.map = map;
         };
         vc.mapDeletedAction = ^(Map *map){
-            if ([map isEqualToMap:map]) {
-                weakSelf.map = nil;
+            //map is the map that was deleted
+            ObserverMapViewController *me = weakSelf;
+            if ([me.map isEqualToMap:map]) {
+                me.map = nil;
             };
         };
         return;
