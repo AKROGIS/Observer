@@ -76,15 +76,18 @@
 {
     NSString *name = url.lastPathComponent;
     if (name == nil || !url.isFileURL) {
+        AKRLog(@"Aborting open of survey %@. Not a file.", url);
         return nil;
     }
-    if (![url.pathExtension isEqualToString:INTERNAL_SURVEY_EXT]) {
+    NSString *ext = url.pathExtension;
+    if (![ext isEqualToString:INTERNAL_SURVEY_EXT]) {
+        AKRLog(@"Aborting open of survey %@. Extension %@ does not match %@",url, ext, INTERNAL_SURVEY_EXT);
         return nil;
     }
     //If the document is not in our privateDocumentDirectory then move it and use the new url
-    //versions 0.9.2(build 440) and below created the survey docs in the public Documents directory
+    //   versions 0.9.2(build 440) and below created the survey docs in the public Documents directory
     NSURL *folder = [url URLByDeletingLastPathComponent];
-    if (![folder isEqualToURL:[Survey privateDocumentsDirectory]]) {
+    if (folder != nil && ![folder isEqualToURL:[Survey privateDocumentsDirectory]]) {
         NSURL *newUrl = [[Survey privateDocumentsDirectory] URLByAppendingPathComponent:name];
         //Check if the url is out of date (cached by SurveyCollection)
         NSString *oldPath = url.path;
@@ -92,15 +95,22 @@
         BOOL fileExistsAtOldPath = (oldPath == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:oldPath];
         BOOL fileExistsAtNewPath = (newPath == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:newPath];
         if (!fileExistsAtOldPath && fileExistsAtNewPath) {
+            //It has already been moved, just update the cached url to reflect the correct location
             url = newUrl;
         } else {
-            //TODO: #180 We need to cover the case where oldPath == nil or fileExistsAtNewPath
-            AKRLog(@"Moving Survey %@ from %@ to %@",[url lastPathComponent],folder,[Survey privateDocumentsDirectory]);
-            if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:newUrl error:nil]) {
-                AKRLog(@"ERROR! - Move failed");
-                return nil;
-            } else {
-                url = newUrl;
+            // fileExistsAtOldPath OR !fileExistsAtNewPath;  It should be impossible for newPath == nil 
+            if (fileExistsAtOldPath && fileExistsAtNewPath) {
+                //Same name exists at both locations.  Assume the new public version is different from the private, and find a unique name
+                newUrl = [newUrl URLByUniquingPath];
+            }
+            if (fileExistsAtOldPath && newUrl != nil) {  //We already know that url != nil
+                AKRLog(@"Moving Survey %@ from %@ to %@",url.lastPathComponent, folder, [Survey privateDocumentsDirectory]);
+                if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:newUrl error:nil]) {
+                    AKRLog(@"ERROR! - Move failed");
+                    return nil;
+                } else {
+                    url = newUrl;
+                }
             }
         }
     }
