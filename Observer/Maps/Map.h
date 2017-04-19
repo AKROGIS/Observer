@@ -86,7 +86,6 @@
 @property (nonatomic,         readonly) BOOL isThumbnailLoaded;
 @property (nonatomic,         readonly) BOOL isTileCacheLoaded;
 - (void)loadThumbnailWithCompletionHandler:(void (^)(BOOL success))completionHandler;
-- (void)loadTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 
 

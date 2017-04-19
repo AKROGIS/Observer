@@ -81,7 +81,7 @@
     if (!fileAttributes) {
         return nil;
     }
-    AGSLocalTiledLayer *tileCache =[Map loadTileCacheAtURL:url];
+    AGSLocalTiledLayer *tileCache =[Map loadTileCacheAtURL:url]; // 2%
     // loadTileCacheAtURL will check tilecache properties and return nil if invalid.
     if (!tileCache) {
         return nil;
@@ -94,7 +94,7 @@
     newProperties[kSizeKey] = [NSNumber numberWithUnsignedLongLong:[fileAttributes fileSize]];
     newProperties[kUrlKey] = url.absoluteString;
     //kRemoteThumbUrlKey - not available or required
-    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].absoluteString;
+    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].absoluteString;  // 47% ~0.3sec
     newProperties[kDescriptionKey] = @"Not available."; //TODO: #92 get the description from the esriinfo.xml file in the zipped tpk
     AGSEnvelope *extents = (AGSEnvelope *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:tileCache.fullEnvelope
                                                                                   toSpatialReference:[AGSSpatialReference wgs84SpatialReference]];
@@ -109,9 +109,9 @@
         self.isTileCacheLoaded = YES;
         _thumbnail = tileCache.thumbnail;
         self.isThumbnailLoaded = YES;
-        [Map saveImage:_thumbnail toURL:self.cachedThumbnailURL];
-        _plistURL = [Map generatePlistURL];
-        [newProperties writeToURL:_plistURL atomically:YES];
+        [Map saveImage:_thumbnail toURL:self.cachedThumbnailURL]; //  3%
+        _plistURL = [Map generatePlistURL];                       // 47% ~0.3sec
+        [newProperties writeToURL:_plistURL atomically:YES];      //  2%
     }
     return self;
 }
@@ -324,6 +324,7 @@
 //Alert: Mutating function
 //Alert: will block for IO
 - (void)loadThumbnail {
+    AKRLog(@"Start load thumbnail %@ %@", self.cachedThumbnailURL, self.remoteThumbnailURL);
     UIImage *thumbnail = nil;
     NSString *path = self.cachedThumbnailURL.path;
     if (path != nil && [[NSFileManager defaultManager] fileExistsAtPath:path]) {
@@ -337,19 +338,24 @@
     }
     _thumbnail = thumbnail;
     self.isThumbnailLoaded = YES;
+    AKRLog(@"Done load thumbnail");
 }
 
 //Alert: will block for IO
 + (UIImage *)loadThumbnailAtURL:(NSURL *)url
 {
     if (url.isFileURL) {
+        AKRLog(@"Start loading local data");
         NSData *data = [NSData dataWithContentsOfURL:url];
+        AKRLog(@"Done");
         return (data == nil) ? nil : [[UIImage alloc] initWithData:data];
     } else {
         //TODO: #6 do this transfer in an NSOperation Queue
         //TODO: #6 need to deal with various network errors
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        AKRLog(@"Start loading local data");
         NSData *data = [NSData dataWithContentsOfURL:url];
+        AKRLog(@"Done");
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         return (data == nil) ? nil : [[UIImage alloc] initWithData:data];
     }
@@ -379,34 +385,22 @@
     return _tileCache;
 }
 
-//FIXME: #173 This method is never called
-//Alert: will call a mutating function
-//FIXME: #173 instead of mutating, return an optional(tilecache) in the completion handler
-- (void)loadTileCacheWithCompletionHandler:(void (^)(BOOL success))completionHandler {
-    dispatch_async(dispatch_queue_create("gov.nps.akr.observer", DISPATCH_QUEUE_CONCURRENT), ^{
-        [self loadTileCache];
-        if (completionHandler) {
-            completionHandler(self.tileCache != nil);
-        }
-    });
-}
-
 //Alert: Mutating function
 //Alert: will block for IO
-//FIXME: #173 instead of mutating, return an optional(tilecache) in the completion handler
 - (void)loadTileCache {
     _tileCache = [Map loadTileCacheAtURL:self.tileCacheURL];
     self.isTileCacheLoaded = _tileCache != nil;
 }
 
-//Alert: will block for IO
+//Alert: will block for IO; Timing on an iPad Air2 was <.03 seconds
 + (AGSLocalTiledLayer *)loadTileCacheAtURL:(NSURL *)url
 {
-    //with ArcGIS 10.2 tilecache is non-null even when initilazing with a bad file
+    //with ArcGIS 10.2.5 tilecache is non-null even when initilazing with a bad file
     //However accessing properties like fullEnvelope will yield an EXC_BAD_ACCESS if it is invalid
     //We do the sanity check now to avoid any surprises later.
     //July 2016 Update: this is not always true.  I'm getting some crash reports on the alloc/init line
-    //So I am moving it inside the try/catch
+    //So I am moving it inside the try/catch. The online documentation is silent on this:
+    //https://developers.arcgis.com/ios/10-2/api-reference/interface_a_g_s_local_tiled_layer.html
     NSString *path = url.path;
     if (path != nil && [[NSFileManager defaultManager] fileExistsAtPath:path]) {
         @try {
