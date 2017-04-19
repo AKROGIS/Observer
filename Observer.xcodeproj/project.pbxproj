@@ -301,7 +301,6 @@
 		39955E4E178334BF00D225D7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		39955E52178334C000D225D7 /* Observer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Observer-Info.plist"; sourceTree = "<group>"; };
 		39955E56178334C000D225D7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		39955E58178334C000D225D7 /* Observer-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Observer-Prefix.pch"; sourceTree = "<group>"; };
 		39955E59178334C000D225D7 /* ObserverAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObserverAppDelegate.h; sourceTree = "<group>"; };
 		39955E5A178334C000D225D7 /* ObserverAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObserverAppDelegate.m; sourceTree = "<group>"; };
 		39955E931783377E00D225D7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -633,7 +632,6 @@
 				391401441975A03A0055F2E1 /* LICENSE */,
 				3914014A1975AA1D0055F2E1 /* ACKNOWLEDGEMENTS */,
 				39955E56178334C000D225D7 /* main.m */,
-				39955E58178334C000D225D7 /* Observer-Prefix.pch */,
 				396E1E8B18984EFF00B735EF /* Warnings.xcconfig */,
 				39955E52178334C000D225D7 /* Observer-Info.plist */,
 				39955E53178334C000D225D7 /* InfoPlist.strings */,
