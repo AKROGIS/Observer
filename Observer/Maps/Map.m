@@ -81,7 +81,7 @@
     if (!fileAttributes) {
         return nil;
     }
-    AGSLocalTiledLayer *tileCache =[Map loadTileCacheAtURL:url]; // 2%
+    AGSLocalTiledLayer *tileCache =[Map loadTileCacheAtURL:url];
     // loadTileCacheAtURL will check tilecache properties and return nil if invalid.
     if (!tileCache) {
         return nil;
@@ -94,7 +94,7 @@
     newProperties[kSizeKey] = [NSNumber numberWithUnsignedLongLong:[fileAttributes fileSize]];
     newProperties[kUrlKey] = url.absoluteString;
     //kRemoteThumbUrlKey - not available or required
-    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].absoluteString;  // 47% ~0.3sec
+    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].absoluteString;
     newProperties[kDescriptionKey] = @"Not available."; //TODO: #92 get the description from the esriinfo.xml file in the zipped tpk
     AGSEnvelope *extents = (AGSEnvelope *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:tileCache.fullEnvelope
                                                                                   toSpatialReference:[AGSSpatialReference wgs84SpatialReference]];
@@ -109,9 +109,9 @@
         self.isTileCacheLoaded = YES;
         _thumbnail = tileCache.thumbnail;
         self.isThumbnailLoaded = YES;
-        [Map saveImage:_thumbnail toURL:self.cachedThumbnailURL]; //  3%
-        _plistURL = [Map generatePlistURL];                       // 47% ~0.3sec
-        [newProperties writeToURL:_plistURL atomically:YES];      //  2%
+        [Map saveImage:_thumbnail toURL:self.cachedThumbnailURL];
+        _plistURL = [Map generatePlistURL];
+        [newProperties writeToURL:_plistURL atomically:YES];
     }
     return self;
 }
