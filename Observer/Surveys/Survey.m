@@ -845,6 +845,7 @@
 - (void)clearMap
 {
     self.currentMapEntity = nil;
+    _graphicsLayersByName = nil;
 }
 
 - (void)clearMapMapViewSpatialReference
@@ -1269,6 +1270,9 @@
 
 - (void)loadGraphics
 {
+    //Warning, this should not be called unless the cached graphics layers (self.graphicsLayersByName) are new, or have been cleared.
+    //Currently This is being coordinating in the mainVC.  See Issue #167 for detailed discussion.
+
     AKRLog(@"Loading graphics from coredata");
 
     NSFetchRequest *request;
