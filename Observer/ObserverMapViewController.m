@@ -1157,6 +1157,7 @@
             AKRLog(@"Survey (%@) failed to close", survey.title);
             //There is really nothing I can do but continue...
         }
+        [self configureObservationButtons];
         [self updateTitleBar];
         [self decrementBusy];
     }];
