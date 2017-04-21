@@ -758,6 +758,27 @@
     self.autoPanController.autoPanModeButton = self.panButton;
 }
 
+- (void)addMissionPropertiesButton
+{
+    // Adds button at the end of the toolbar, so call before adding observation buttons
+    if (![self.toolbar.items containsObject:self.editEnvironmentBarButton]) {
+        // self.toolbar.items is immutable, so we need to get a copy to change it
+        NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
+        [toolbarButtons addObject:self.editEnvironmentBarButton];
+        [self setToolbarItems:toolbarButtons animated:YES];
+    }
+}
+
+- (void)removeMissionPropertiesButton
+{
+    if ([self.toolbar.items containsObject:self.editEnvironmentBarButton]) {
+        // self.toolbar.items is immutable, so we need to get a copy to change it
+        NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
+        [toolbarButtons removeObject:self.editEnvironmentBarButton];
+        [self setToolbarItems:toolbarButtons animated:YES];
+    }
+}
+
 - (void)configureObservationButtons
 {
     NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
@@ -1157,6 +1178,7 @@
             AKRLog(@"Survey (%@) failed to close", survey.title);
             //There is really nothing I can do but continue...
         }
+        [self removeMissionPropertiesButton];
         [self configureObservationButtons];
         [self updateTitleBar];
         [self decrementBusy];
@@ -1184,6 +1206,7 @@
             } else {
                 [self loadGraphics];
             }
+            [self addMissionPropertiesButton];
             [self configureObservationButtons];
             [self updateTitleBar];
             [self decrementBusy];
