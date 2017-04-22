@@ -77,7 +77,7 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectSurveyButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopRecordingBarButtonItem;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopObservingBarButtonItem;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
 
 @property (strong, nonatomic) NSMutableArray *addFeatureBarButtonItems;  //NSArray of AddFeatureBarButtonItem
 
@@ -119,6 +119,7 @@
     [self configureMapView];
     [self requestLocationServices];
     [self configureGpsButton];
+    [self removeMissionPropertiesButton];
     [self configureObservationButtons];
     [self openMap:self.map];  // open in map setter may fail if the view isn't ready.
     [self openSurvey:self.survey];  // open in survey setter may fail if the view isn't ready.
@@ -761,11 +762,12 @@
 - (void)addMissionPropertiesButton
 {
     // Adds button at the end of the toolbar, so call before adding observation buttons
-    if (![self.toolbar.items containsObject:self.editEnvironmentBarButton]) {
+    if (![self.toolbar.items containsObject:self.editEnvironmentBarButton] &&
+        self.survey.protocol.missionFeature.attributes.count > 0) {
         // self.toolbar.items is immutable, so we need to get a copy to change it
         NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
         [toolbarButtons addObject:self.editEnvironmentBarButton];
-        [self setToolbarItems:toolbarButtons animated:YES];
+        [self.toolbar setItems:toolbarButtons animated:YES];
     }
 }
 
@@ -775,7 +777,7 @@
         // self.toolbar.items is immutable, so we need to get a copy to change it
         NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
         [toolbarButtons removeObject:self.editEnvironmentBarButton];
-        [self setToolbarItems:toolbarButtons animated:YES];
+        [self.toolbar setItems:toolbarButtons animated:YES];
     }
 }
 
