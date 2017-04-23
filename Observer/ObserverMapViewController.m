@@ -1443,7 +1443,7 @@
 
     if (isNew && feature.attributes.count == 0) {
         //Do not present an attribute editor for a new feature with no attributes
-        //If the featuer is not new, then we need to present the user with the delete/move and other options even if there are no attributes
+        //If the feature is not new, then we need to present the user with the delete/move and other options even if there are no attributes
         return;
     }
     //get data from entity attributes (unobscure the key names)
@@ -1466,7 +1466,7 @@
         //AKRLog(@"default data attributes %@", data);
     }
     NSDictionary *config = feature.dialogJSON;
-    //TODO: #53 do not send data which might null out the radio buttons (some controls require a non-null default).
+    //Sending an empty dict causes all defaults to be nil.  nil data is ignored, and protocol defaults are used.
     if (data.count == 0) {
         data = nil;
     }
