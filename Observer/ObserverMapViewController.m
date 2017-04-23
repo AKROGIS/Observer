@@ -1417,18 +1417,17 @@
 
 - (void)showTrackLogAttributeEditor:(TrackLogSegment *)tracklog
 {
-    if (self.presentedViewController) {
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }
-    NSManagedObject *entity = tracklog.missionProperty;
-    NSManagedObject *template = tracklog.missionProperty;
-    ProtocolFeature *feature = self.survey.protocol.missionFeature;
-    AGSPoint *mapPoint = [tracklog.missionProperty pointOfMissionPropertyWithSpatialReference:self.mapView.spatialReference];
-    [self setAttributesForFeatureType:feature entity:entity graphic:nil defaults:template atPoint:mapPoint isNew:YES isEditing:YES];
+    [self showMissionPropertyAttributeEditor:tracklog.missionProperty];
 }
 
 - (void)showMissionPropertyAttributeEditor:(MissionProperty *)missionProperty
 {
+    if (self.survey.protocol.missionFeature.attributes.count == 0) {
+        return;
+    }
+    if (self.presentedViewController) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
     NSManagedObject *entity = missionProperty;
     NSManagedObject *template = missionProperty;
     ProtocolFeature *feature = self.survey.protocol.missionFeature;
