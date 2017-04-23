@@ -1441,8 +1441,11 @@
     //TODO: #183 Cleanup, isEditing parameter is never used. We always allow editing. Callers all use YES
     //TODO: #183 refactor this ugly and overly complicated method
 
-    //TODO: #53 can we support observations that have no attributes (no dialog)?
-
+    if (isNew && feature.attributes.count == 0) {
+        //Do not present an attribute editor for a new feature with no attributes
+        //If the featuer is not new, then we need to present the user with the delete/move and other options even if there are no attributes
+        return;
+    }
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
     if (template || entity) {
