@@ -77,7 +77,7 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectSurveyButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopRecordingBarButtonItem;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *startStopObservingBarButtonItem;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *editEnvironmentBarButton;
 
 @property (strong, nonatomic) NSMutableArray *addFeatureBarButtonItems;  //NSArray of AddFeatureBarButtonItem
 
@@ -119,6 +119,7 @@
     [self configureMapView];
     [self requestLocationServices];
     [self configureGpsButton];
+    [self removeMissionPropertiesButton];
     [self configureObservationButtons];
     [self openMap:self.map];  // open in map setter may fail if the view isn't ready.
     [self openSurvey:self.survey];  // open in survey setter may fail if the view isn't ready.
@@ -758,6 +759,28 @@
     self.autoPanController.autoPanModeButton = self.panButton;
 }
 
+- (void)addMissionPropertiesButton
+{
+    // Adds button at the end of the toolbar, so call before adding observation buttons
+    if (![self.toolbar.items containsObject:self.editEnvironmentBarButton] &&
+        self.survey.protocol.missionFeature.attributes.count > 0) {
+        // self.toolbar.items is immutable, so we need to get a copy to change it
+        NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
+        [toolbarButtons addObject:self.editEnvironmentBarButton];
+        [self.toolbar setItems:toolbarButtons animated:YES];
+    }
+}
+
+- (void)removeMissionPropertiesButton
+{
+    if ([self.toolbar.items containsObject:self.editEnvironmentBarButton]) {
+        // self.toolbar.items is immutable, so we need to get a copy to change it
+        NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
+        [toolbarButtons removeObject:self.editEnvironmentBarButton];
+        [self.toolbar setItems:toolbarButtons animated:YES];
+    }
+}
+
 - (void)configureObservationButtons
 {
     NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
@@ -1157,6 +1180,7 @@
             AKRLog(@"Survey (%@) failed to close", survey.title);
             //There is really nothing I can do but continue...
         }
+        [self removeMissionPropertiesButton];
         [self configureObservationButtons];
         [self updateTitleBar];
         [self decrementBusy];
@@ -1184,6 +1208,7 @@
             } else {
                 [self loadGraphics];
             }
+            [self addMissionPropertiesButton];
             [self configureObservationButtons];
             [self updateTitleBar];
             [self decrementBusy];
@@ -1392,18 +1417,17 @@
 
 - (void)showTrackLogAttributeEditor:(TrackLogSegment *)tracklog
 {
-    if (self.presentedViewController) {
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }
-    NSManagedObject *entity = tracklog.missionProperty;
-    NSManagedObject *template = tracklog.missionProperty;
-    ProtocolFeature *feature = self.survey.protocol.missionFeature;
-    AGSPoint *mapPoint = [tracklog.missionProperty pointOfMissionPropertyWithSpatialReference:self.mapView.spatialReference];
-    [self setAttributesForFeatureType:feature entity:entity graphic:nil defaults:template atPoint:mapPoint isNew:YES isEditing:YES];
+    [self showMissionPropertyAttributeEditor:tracklog.missionProperty];
 }
 
 - (void)showMissionPropertyAttributeEditor:(MissionProperty *)missionProperty
 {
+    if (self.survey.protocol.missionFeature.attributes.count == 0) {
+        return;
+    }
+    if (self.presentedViewController) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
     NSManagedObject *entity = missionProperty;
     NSManagedObject *template = missionProperty;
     ProtocolFeature *feature = self.survey.protocol.missionFeature;
@@ -1417,8 +1441,11 @@
     //TODO: #183 Cleanup, isEditing parameter is never used. We always allow editing. Callers all use YES
     //TODO: #183 refactor this ugly and overly complicated method
 
-    //TODO: #53 can we support observations that have no attributes (no dialog)?
-
+    if (isNew && feature.attributes.count == 0) {
+        //Do not present an attribute editor for a new feature with no attributes
+        //If the feature is not new, then we need to present the user with the delete/move and other options even if there are no attributes
+        return;
+    }
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
     if (template || entity) {
@@ -1439,7 +1466,7 @@
         //AKRLog(@"default data attributes %@", data);
     }
     NSDictionary *config = feature.dialogJSON;
-    //TODO: #53 do not send data which might null out the radio buttons (some controls require a non-null default).
+    //Sending an empty dict causes all defaults to be nil.  nil data is ignored, and protocol defaults are used.
     if (data.count == 0) {
         data = nil;
     }
