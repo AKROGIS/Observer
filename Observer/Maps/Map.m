@@ -16,6 +16,8 @@
 
 @interface Map()
 
+@property (nonatomic, strong, readonly) NSURL *plistURL;
+
 //A private dictionary of map properties
 @property (nonatomic, strong) NSDictionary *properties;
 
@@ -49,9 +51,30 @@
     return self;
 }
 
-- (id)initWithCachedPropertiesURL:(NSURL *)url
+- (id)initWithCachedPropertiesName:(NSString *)name
 {
-    if (!url) {
+    // Prior to version 1.0.0, name was an absolute path URL cached in settings.
+    // This URL was wrong after an update (the app directory gets renamed).
+    // Since this method is only called with a name from settings (that the app wrote), we know what it will look like
+    // if it has a "/" it is an absolute path, remove all but the last component
+    if (name == nil || name.length == 0) {
+        AKRLog(@"Aborting initWithCachedPropertiesName: No name was provided");
+        return nil;
+    }
+    if ([name containsString:@"/"]) {
+        NSURL *url = [NSURL URLWithString:name];
+        NSString *lastPathComponent = url.lastPathComponent;
+        if (lastPathComponent == nil) {
+            AKRLog(@"Aborting initWithCachedPropertiesName: %@. Name (%@) has a '/' but is not a valid URL.", url, name);
+            return nil;
+        }
+        name = lastPathComponent;
+    }
+    NSURL *url = [[Map plistLocation] URLByAppendingPathComponent:name];
+    NSString *path = url.path;
+    BOOL fileExistsAtPath = (path == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:path];
+    if (!fileExistsAtPath) {
+        AKRLog(@"Aborting initWithCachedPropertiesURL: %@. File not found.", url);
         return nil;
     }
 
@@ -142,8 +165,7 @@
 //Alert: will block for filesystem IO
 + (NSURL *)generatePlistURL
 {
-    NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
-    NSURL *folder = [library URLByAppendingPathComponent:@"Map Properties" isDirectory:YES];
+    NSURL *folder = [Map plistLocation];
     NSString *path = folder.path;
     BOOL fileExistsAtPath = (path == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:path];
     if (path != nil && !fileExistsAtPath) {
@@ -151,6 +173,18 @@
     }
     return [[folder URLByAppendingPathComponent:@"map.plist"] URLByUniquingPath];
     //The new URL will be written to right away.
+}
+
++ (NSURL *)plistLocation
+{
+    NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+    NSURL *folder = [library URLByAppendingPathComponent:@"Map Properties" isDirectory:YES];
+    return folder;
+}
+
+- (NSString *)plistName
+{
+    return self.plistURL.lastPathComponent;
 }
 
 //Alert: will block for filesystem IO

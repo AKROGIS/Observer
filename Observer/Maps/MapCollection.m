@@ -267,11 +267,11 @@ static int _downloadsInProgress = 0;
 
 - (void)loadCache
 {
-    NSArray *mapURLs = [Settings manager].maps;
+    NSArray *mapPlistNames = [Settings manager].maps;  //NSArray of NSString (may be a path or name)
     [self.localItems removeAllObjects];
     [self.remoteItems removeAllObjects];
-    for (NSURL *mapURL in mapURLs) {
-        Map *map = [[Map alloc] initWithCachedPropertiesURL:mapURL];
+    for (NSString *name in mapPlistNames) {
+        Map *map = [[Map alloc] initWithCachedPropertiesName:name];
         if (map) {
             if (map.isLocal) {
                 [self.localItems addObject:map];
@@ -287,7 +287,7 @@ static int _downloadsInProgress = 0;
     NSArray *items = [NSArray arrayWithArray:self.localItems];
     items = [items arrayByAddingObjectsFromArray:self.remoteItems];
     [Settings manager].maps = [items mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return [obj plistURL];
+        return [obj plistName];
     }];
 }
 

@@ -42,7 +42,7 @@
         NSLog(@"Error using client ID : %@",[error localizedDescription]);
     }
 
-    Map *savedMap = [[Map alloc] initWithCachedPropertiesURL:[Settings manager].activeMapPropertiesURL];
+    Map *savedMap = [[Map alloc] initWithCachedPropertiesName:[Settings manager].activeMapPropertiesName];
     if (savedMap) {
         self.observerMapViewController.map = savedMap;
     }

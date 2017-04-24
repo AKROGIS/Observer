@@ -432,7 +432,7 @@
     [self closeMap:_map];
     _map = map;
     [self openMap:map];
-    [Settings manager].activeMapPropertiesURL = map.plistURL;
+    [Settings manager].activeMapPropertiesName = map.plistName;
 }
 
 
