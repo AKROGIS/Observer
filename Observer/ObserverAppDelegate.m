@@ -87,10 +87,10 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
-    // Called when this app is asked to open a resource (url) by a different app
-    // The url is a local file resource (typically in Documents/Inbox), and can only
-    //   be a file type that I have registered interest in (app configuration plist)
-    // The user will expect a short delay to open the file
+    // Asks the delegate to open a resource specified by a URL, and provides a dictionary of launch options.
+    // The URL resource to open. This resource can be a network resource or a file. For information about the Apple-registered URL schemes, see Apple URL Scheme Reference.
+    // This will only be called for URLs that match the UTIs that your app registers to receive.
+    // If this is a file provided by email or Safari, The file is moved to a unique name in the App's Documents folder before this method is called.
     AKRLog(@"Asked to open %@", url);
     return [self open:url];
 }

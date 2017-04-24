@@ -99,6 +99,7 @@
 
 - (id)initWithTileCacheURL:(NSURL *)url
 {
+    //This will only be called by the app delegate or the map collection with a File URL in the Documents folder
     NSString *path = url.path;
     NSDictionary *fileAttributes = (path == nil) ? nil : [[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil];
     if (!fileAttributes) {
@@ -115,7 +116,7 @@
     newProperties[kAuthorKey] = @"Unknown";
     newProperties[kDateKey] = [fileAttributes fileCreationDate];  //TODO: #92 Get the date from the esriinfo.xml file in the zipped tpk
     newProperties[kSizeKey] = [NSNumber numberWithUnsignedLongLong:[fileAttributes fileSize]];
-    newProperties[kUrlKey] = url.absoluteString;
+    newProperties[kUrlKey] = url.lastPathComponent;
     //kRemoteThumbUrlKey - not available or required
     newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].lastPathComponent;
     newProperties[kDescriptionKey] = @"Not available."; //TODO: #92 get the description from the esriinfo.xml file in the zipped tpk
@@ -257,10 +258,43 @@
     return [item isKindOfClass:[NSNumber class]] ? [item unsignedLongLongValue] : 0;
 }
 
+@synthesize tileCacheURL = _tileCacheURL;
+
 - (NSURL *)tileCacheURL
 {
-    id item = self.properties[kUrlKey];
-    return [item isKindOfClass:[NSString class]] ? [NSURL URLWithString:item] : nil;
+    if (_tileCacheURL == nil) {
+        id item = self.properties[kUrlKey];
+        // item is either a string rep of an absolute path to a remote URL, OR
+        // the absolute path file URL to a local TPK, which is invalid after an update (< v1.0.0), OR
+        // the lastPathComponent (v1.0.0+)
+        if (item == nil || ![item isKindOfClass:[NSString class]]) {
+            AKRLog(@"A string property for the cachedTpkURL could not be found");
+            return nil;
+        }
+        NSString * name = (NSString *)item;
+        if (name.length == 0) {
+            AKRLog(@"The name of the cachedTpkURL is empty");
+            return nil;
+        }
+        NSURL *localRoot = [MapCollection documentsDirectory];
+        if ([name containsString:@"/"]) {
+            // could be an old style local name, or a remote URL
+            NSURL *url = [NSURL URLWithString:name];
+            if (url.isFileURL) {
+                NSString *lastPathComponent = url.lastPathComponent;
+                if (lastPathComponent == nil) {
+                    AKRLog(@"Bad cachedTpkURL: %@. Name (%@) has a '/' but is not a valid URL.", url, name);
+                    return nil;
+                }
+                _tileCacheURL = [localRoot URLByAppendingPathComponent:lastPathComponent];
+            } else {
+                _tileCacheURL = url;
+            }
+        } else {
+            _tileCacheURL = [localRoot URLByAppendingPathComponent:name];
+        }
+    }
+    return _tileCacheURL;
 }
 
 //Alert: Mutating function
@@ -269,9 +303,10 @@
 {
     if (![tileCacheURL isEqualToURL:self.tileCacheURL]) {
         NSMutableDictionary *newProperties = [NSMutableDictionary dictionaryWithDictionary:self.properties];
-        newProperties[kUrlKey] = tileCacheURL.absoluteString;
+        newProperties[kUrlKey] = tileCacheURL.isFileURL ? tileCacheURL.lastPathComponent : tileCacheURL.absoluteString;
         self.properties = [newProperties copy];
         [newProperties writeToURL:self.plistURL atomically:YES];
+        _tileCacheURL = tileCacheURL;
     }
 }
 

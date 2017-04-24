@@ -69,4 +69,6 @@
 + (void)canceledDownloading;
 + (BOOL)isDownloading;
 
++ (NSURL *)documentsDirectory;
+
 @end

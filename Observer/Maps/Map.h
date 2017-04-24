@@ -20,7 +20,7 @@
 #define kAuthorKey          @"author"         //NSString
 #define kDateKey            @"date"           //NSDate or NSString as yyyy-mm-dd
 #define kSizeKey            @"size"           //NSNumber -> NSUInteger
-#define kUrlKey             @"url"            //NSString -> NSURL
+#define kUrlKey             @"url"            //NSString -> NSURL: local tpk name (in Documents folder) or file URL with full tpk path (< v1.0.0) or remote tpk URL
 #define kRemoteThumbUrlKey  @"thumbnail"      //NSString -> NSURL
 #define kCachedThumbUrlKey  @"localThumbnail" //NSString -> NSURL (not in remote plist);  (local file name or local file path (< v1.0.0)
 #define kDescriptionKey     @"description"    //NSString
