@@ -88,7 +88,7 @@
 - (id)initWithRemoteProperties:(NSDictionary *)properties
 {
     NSMutableDictionary *newProperties = [NSMutableDictionary dictionaryWithDictionary:properties];
-    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].absoluteString;
+    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].lastPathComponent;
     self = [self initWithProperties:[newProperties copy]];
     if (self) {
         _plistURL = [Map generatePlistURL];
@@ -117,7 +117,7 @@
     newProperties[kSizeKey] = [NSNumber numberWithUnsignedLongLong:[fileAttributes fileSize]];
     newProperties[kUrlKey] = url.absoluteString;
     //kRemoteThumbUrlKey - not available or required
-    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].absoluteString;
+    newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].lastPathComponent;
     newProperties[kDescriptionKey] = @"Not available."; //TODO: #92 get the description from the esriinfo.xml file in the zipped tpk
     AGSEnvelope *extents = (AGSEnvelope *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:tileCache.fullEnvelope
                                                                                   toSpatialReference:[AGSSpatialReference wgs84SpatialReference]];
@@ -190,16 +190,15 @@
 //Alert: will block for filesystem IO
 + (NSURL *)generateThumbnailURL
 {
-    NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     //remove the old folder
-    NSURL *oldFolder = [library URLByAppendingPathComponent:@"mapthumbs" isDirectory:YES];
+    NSURL *oldFolder = [Map oldThumbsLocation];
     NSString *oldPath = oldFolder.path;
     BOOL fileExistsAtOldPath = (oldPath == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:oldPath];
     if (fileExistsAtOldPath) {
         [[NSFileManager defaultManager] removeItemAtURL:oldFolder error:nil];
     }
     //create the new folder
-    NSURL *folder = [library URLByAppendingPathComponent:@"Map Thumbnails" isDirectory:YES];
+    NSURL *folder = [Map thumbsLocation];
     NSString *path = folder.path;
     BOOL fileExistsAtPath = (path == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:path];
     if (path != nil && !fileExistsAtPath) {
@@ -213,6 +212,20 @@
         [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
     }
     return newUrl;
+}
+
++ (NSURL *)oldThumbsLocation
+{
+    NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+    NSURL *folder = [library URLByAppendingPathComponent:@"mapthumbs" isDirectory:YES];
+    return folder;
+}
+
++ (NSURL *)thumbsLocation
+{
+    NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+    NSURL *folder = [library URLByAppendingPathComponent:@"Map Thumbnails" isDirectory:YES];
+    return folder;
 }
 
 
@@ -271,7 +284,26 @@
 - (NSURL *)cachedThumbnailURL
 {
     id item = self.properties[kCachedThumbUrlKey];
-    return [item isKindOfClass:[NSString class]] ? [NSURL URLWithString:item] : nil;
+    // item is the lastPathComponent; prior to v1.0.0, it was the absolute path (which is invalid after an update)
+    if (item == nil || ![item isKindOfClass:[NSString class]]) {
+        AKRLog(@"A string property for the cachedThumbnailURL could not be found");
+        return nil;
+    }
+    NSString * name = (NSString *)item;
+    if (name.length == 0) {
+        AKRLog(@"The name of the cachedThumbnailURL is empty");
+        return nil;
+    }
+    if ([name containsString:@"/"]) {
+        NSURL *url = [NSURL URLWithString:name];
+        NSString *lastPathComponent = url.lastPathComponent;
+        if (lastPathComponent == nil) {
+            AKRLog(@"Bad cachedThumbnailURL: %@. Name (%@) has a '/' but is not a valid URL.", url, name);
+            return nil;
+        }
+        name = lastPathComponent;
+    }
+    return [[Map thumbsLocation] URLByAppendingPathComponent:name];
 }
 
 - (NSString *)mapNotes

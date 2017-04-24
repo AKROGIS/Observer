@@ -22,7 +22,7 @@
 #define kSizeKey            @"size"           //NSNumber -> NSUInteger
 #define kUrlKey             @"url"            //NSString -> NSURL
 #define kRemoteThumbUrlKey  @"thumbnail"      //NSString -> NSURL
-#define kCachedThumbUrlKey  @"localThumbnail" //NSString -> NSURL (not in remote plist)
+#define kCachedThumbUrlKey  @"localThumbnail" //NSString -> NSURL (not in remote plist);  (local file name or local file path (< v1.0.0)
 #define kDescriptionKey     @"description"    //NSString
 #define kXminKey            @"xmin"           //NSNumber -> float (WGS84 decimal degrees)
 #define kXmaxKey            @"xmax"           //NSNumber -> float (WGS84 decimal degrees)
