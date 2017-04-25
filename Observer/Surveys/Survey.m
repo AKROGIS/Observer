@@ -292,6 +292,11 @@
     return _totalizer;
 }
 
+- (NSString *)lastPathComponent
+{
+    return self.url.lastPathComponent;
+}
+
 
 
 #pragma mark - public methods
@@ -490,6 +495,24 @@
         [[NSFileManager defaultManager] createDirectoryAtURL:_privateDocumentsDirectory withIntermediateDirectories:YES attributes:nil error:nil];
     }
     return _privateDocumentsDirectory;
+}
+
++ (NSURL *)urlFromCachedName:(NSString *)name
+{
+    if (name == nil) {
+        return nil;
+    }
+    // Old style cached names were absolute URL file paths; which became invalid after an update (the app folder changes)
+    if ([name containsString:@"/"]) {
+        NSURL *url = [NSURL URLWithString:name];
+        NSString *lastPathComponent = url.lastPathComponent;
+        if (lastPathComponent == nil) {
+            AKRLog(@"Bad cachedSurveyURL: %@. Name (%@) has a '/' but is not a valid URL.", url, name);
+            return nil;
+        }
+        name = lastPathComponent;
+    }
+    return [[Survey privateDocumentsDirectory] URLByAppendingPathComponent:name];
 }
 
 

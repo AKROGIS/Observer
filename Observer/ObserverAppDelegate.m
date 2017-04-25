@@ -46,7 +46,7 @@
     if (savedMap) {
         self.observerMapViewController.map = savedMap;
     }
-    Survey *savedSurvey = [[Survey alloc] initWithURL:[Settings manager].activeSurveyURL];
+    Survey *savedSurvey = [[Survey alloc] initWithURL:[Survey urlFromCachedName:[Settings manager].activeSurveyName]];
     if (savedSurvey.isValid) {
         self.observerMapViewController.survey = savedSurvey;
     }

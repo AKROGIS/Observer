@@ -28,10 +28,10 @@
 //other views) need to subscribe to NSUserDefaultsDidChangeNotification
 
 @property (nonatomic) NSString *activeMapPropertiesName;
-@property (nonatomic) NSURL *activeSurveyURL;
+@property (nonatomic) NSString *activeSurveyName;
 
 @property (nonatomic, strong) NSArray *maps;    //of NSString
-@property (nonatomic, strong) NSArray *surveys; //of NSURL
+@property (nonatomic, strong) NSArray *surveys; //of NSString
 
 @property (nonatomic, strong) NSDate *mapRefreshDate;
 

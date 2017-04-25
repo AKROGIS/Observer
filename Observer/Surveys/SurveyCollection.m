@@ -185,16 +185,18 @@ static BOOL _isLoaded = NO;
 
 - (void)loadCache
 {
-    NSArray *surveyUrls = [Settings manager].surveys;
-    self.items = [surveyUrls mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return [[Survey alloc] initWithURL:obj];
+    NSArray *surveyNames = [Settings manager].surveys;
+    self.items = [surveyNames mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
+        NSString *name = (NSString *)obj;
+        return [[Survey alloc] initWithURL:[Survey urlFromCachedName:name]];
     }];
 }
 
 - (void)saveCache
 {
     [Settings manager].surveys = [self.items mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return [obj url];
+        Survey *survey = (Survey *)obj;
+        return survey.lastPathComponent;
     }];
 }
 

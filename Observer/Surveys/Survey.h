@@ -40,6 +40,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 @interface Survey : NSObject <AKRTableViewItem>
 
 @property (nonatomic, strong, readonly) NSURL *url;
+@property (nonatomic, strong, readonly) NSString *lastPathComponent;
 @property (nonatomic, readonly) SurveyState state;
 @property (nonatomic, strong, readonly) NSString *subtitle;
 @property (nonatomic, strong, readonly) NSString *statusMessage;
@@ -86,6 +87,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (void)addCSVtoArchive:(ZKDataArchive *)archive since:(NSDate *)startDate;
 
 + (NSURL *)privateDocumentsDirectory;
++ (NSURL *)urlFromCachedName:(NSString *)name;
 
 // Info for details view
 - (NSUInteger)observationCount;

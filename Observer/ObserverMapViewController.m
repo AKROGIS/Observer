@@ -418,7 +418,7 @@
     [self closeSurvey:_survey];
     _survey = survey;
     [self openSurvey:survey];
-    [Settings manager].activeSurveyURL = survey.url;
+    [Settings manager].activeSurveyName = survey.lastPathComponent;
 }
 
 - (void)setMap:(Map *)map
