@@ -217,35 +217,39 @@ static BOOL _isLoaded = NO;
     
     // create (in order) surveys from cached urls IFF they are found in the Documents Folder
     [self.items removeAllObjects];
-    NSMutableSet *localSurveyFileNames = [SurveyCollection existingPrivateSurveyNames];
+    NSMutableSet *privateSurveyFileNames = [SurveyCollection existingPrivateSurveyNames];
     for (NSURL *surveyUrl in surveyUrls) {
         NSString *cachedSurveyFileName = [surveyUrl lastPathComponent];
-        if ([localSurveyFileNames containsObject:cachedSurveyFileName]) {
+        if ([privateSurveyFileNames containsObject:cachedSurveyFileName]) {
             [self.items addObject:[[Survey alloc] initWithURL:surveyUrl]];
-            [localSurveyFileNames removeObject:cachedSurveyFileName];
+            [privateSurveyFileNames removeObject:cachedSurveyFileName];
         }
     }
     if (self.items.count < surveyUrls.count) {
+        // There are surveyUrls in the cache that have been deleted.
+        // Ignore the deleted files, and update the cache.
         modelChanged = YES;
     }
 
-    //Add surveys in our private folder that are not in our URL cache
-    //This should be impossible now because only the app can add to the private folder.
-    //previously we needed this check when the surveys were in the public folder.
-    if (surveyUrls.count < self.items.count) {
-        AKRLog(@"Whaaat ... Somebody created a private survey without telling me!!!");
+    //Since we have removed any survey names in the cache from the list of actual surveys on disk,
+    //anything left in privateSurveyFileNames is a survey not in our list of items.
+    //This will happen when a user opens a *.poz file from email or safari.
+    for (NSString *surveyName in privateSurveyFileNames) {
+        NSURL *surveyUrl = [Survey urlFromCachedName:surveyName];
+        [self.items addObject:[[Survey alloc] initWithURL:surveyUrl]];
+        modelChanged = YES;
     }
 
     //Add surveys that were added to the public (iTunes) folder;
     //First check for raw (private extensions) surveys.  This will probably only be done by developers.
     //The survey init method will move the survey from the public iTunes folder to the private folder.
-    for (NSString *localSurveyFileName in [SurveyCollection existingPublicSurveyNames]) {
-        NSURL *surveyUrl = [[SurveyCollection documentsDirectory] URLByAppendingPathComponent:localSurveyFileName];
+    for (NSString *publicSurveyFileName in [SurveyCollection existingPublicSurveyNames]) {
+        NSURL *surveyUrl = [[SurveyCollection documentsDirectory] URLByAppendingPathComponent:publicSurveyFileName];
         [self.items addObject:[[Survey alloc] initWithURL:surveyUrl]];
         modelChanged = YES;
     }
 
-    // I cannot add importable surveys in the public (iTues) folder because they are likely exports.
+    // I cannot add importable (*.poz) surveys in the public (iTues) folder because they are likely exports.
     // See Issue #90 (https://github.com/regan-sarwas/Observer/issues/90) for a discussion of options.
 
     if (modelChanged) {
