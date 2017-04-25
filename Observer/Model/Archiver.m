@@ -15,6 +15,7 @@
 + (BOOL)unpackSurvey:(NSURL *)outputUrl fromArchive:(NSURL *)importUrl
 {
     //Create a unique extraction folder in the parent of outputURL; find *.obssurv in extraction folder; move it to outputUrl; remove extraction folder
+    //This is a work around for the fact that ZKDataArchive inflateInFolder:withFolderName:usingResourceFork: ignores the withFolderName: parameter
     ZKDataArchive *archive = [ZKDataArchive archiveWithArchivePath:importUrl.path];
     NSURL *surveyFolder = [[outputUrl URLByDeletingLastPathComponent] filePathURL];
     NSURL *extractionFolder = [[[[surveyFolder URLByAppendingPathComponent:@"temp_ext_folder"] URLByUniquingPath] URLByAppendingPathComponent:@"/"] filePathURL];
@@ -51,21 +52,6 @@
         }
     }
     return nil;
-}
-
-+ (BOOL)unpackArchive:(NSURL *)importUrl to:(NSURL *)outputUrl {
-    ZKDataArchive *archive = [ZKDataArchive archiveWithArchivePath:importUrl.path];
-    NSString *parentFolder = [[[outputUrl URLByDeletingLastPathComponent] filePathURL] path];
-    NSString *folder = outputUrl.lastPathComponent;
-    //ZKDataArchive ignores the withFolderName parameter.
-    //FIXME: #176 This only worked for surveys if there is a folder in the archive that matches the name of the (uniquified) archive
-    NSUInteger errorCode = [archive inflateInFolder:parentFolder withFolderName:folder usingResourceFork:NO];
-    if (errorCode == (NSUInteger)zkSucceeded) {
-        return YES;
-    } else {
-        NSLog(@"Error inflating zip at:%@ to %@", importUrl, outputUrl);
-        return NO;
-    };
 }
 
 + (NSData *)exportURL:(NSURL *)url toNSDataError:(NSError * __autoreleasing *)error

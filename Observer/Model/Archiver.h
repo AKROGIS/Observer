@@ -11,8 +11,6 @@
 
 @interface Archiver : NSObject
 
-+ (BOOL)unpackArchive:(NSURL *)importUrl to:(NSURL *)outputUrl;
-
 + (BOOL)unpackSurvey:(NSURL *)outputUrl fromArchive:(NSURL *)importUrl;
 
 // returns a zip data stream of the survey document at URL; used by the email client for the attachment
