@@ -20,9 +20,9 @@
 #define kAuthorKey          @"author"         //NSString
 #define kDateKey            @"date"           //NSDate or NSString as yyyy-mm-dd
 #define kSizeKey            @"size"           //NSNumber -> NSUInteger
-#define kUrlKey             @"url"            //NSString -> NSURL
+#define kUrlKey             @"url"            //NSString -> NSURL: local tpk name (in Documents folder) or file URL with full tpk path (< v1.0.0) or remote tpk URL
 #define kRemoteThumbUrlKey  @"thumbnail"      //NSString -> NSURL
-#define kCachedThumbUrlKey  @"localThumbnail" //NSString -> NSURL (not in remote plist)
+#define kCachedThumbUrlKey  @"localThumbnail" //NSString -> NSURL (not in remote plist);  (local file name or local file path (< v1.0.0)
 #define kDescriptionKey     @"description"    //NSString
 #define kXminKey            @"xmin"           //NSNumber -> float (WGS84 decimal degrees)
 #define kXmaxKey            @"xmax"           //NSNumber -> float (WGS84 decimal degrees)
@@ -42,9 +42,11 @@
 
 //Convenience
 //-----------
-//Initialize with a file URL to a plist with a dictionary of property values
+//Initialize with the name of a plist with a dictionary of property values
+//  This method is only called with string values read from the NSUserDefaults.
+//  Prior to version 1.0.0, these values were absolute URL values, now they are only the last path component.
 //  Will block while the property list is read from the filesystem
-- (id)initWithCachedPropertiesURL:(NSURL *)url;
+- (id)initWithCachedPropertiesName:(NSString *)name;
 //Initialize with a dictionary of remote property values
 //  Assumes that the remote properties describe a new map, and therefore it
 //  creates a local URL for caching the thumbnail, and caches the properties as a local plist
@@ -72,7 +74,7 @@
 @property (nonatomic, strong, readonly) NSString *mapNotes;
 @property (nonatomic, strong, readonly) AGSEnvelope *extents;
 
-@property (nonatomic, strong, readonly) NSURL *plistURL;
+@property (nonatomic, strong, readonly) NSString *plistName;
 
 //Accessing the following properties will block (loading resource) on the first call
 //  The properties may be preloaded in some initialization scenarios

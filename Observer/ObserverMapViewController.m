@@ -418,7 +418,7 @@
     [self closeSurvey:_survey];
     _survey = survey;
     [self openSurvey:survey];
-    [Settings manager].activeSurveyURL = survey.url;
+    [Settings manager].activeSurveyName = survey.lastPathComponent;
 }
 
 - (void)setMap:(Map *)map
@@ -432,7 +432,7 @@
     [self closeMap:_map];
     _map = map;
     [self openMap:map];
-    [Settings manager].activeMapPropertiesURL = map.plistURL;
+    [Settings manager].activeMapPropertiesName = map.plistName;
 }
 
 

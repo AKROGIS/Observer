@@ -17,11 +17,11 @@
  * a zero value, as it will always be replaced with your default
  */
 
-#define DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES @"url_for_active_map_properties"
-#define DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP_PROPERTIES nil
+#define DEFAULTS_KEY_NAME_OF_ACTIVE_MAP_PROPERTIES @"url_for_active_map_properties"
+#define DEFAULTS_DEFAULT_NAME_OF_ACTIVE_MAP_PROPERTIES nil
 
-#define DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY @"url_for_active_survey"
-#define DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY nil
+#define DEFAULTS_KEY_NAME_OF_ACTIVE_SURVEY @"url_for_active_survey"
+#define DEFAULTS_DEFAULT_NAME_OF_ACTIVE_SURVEY nil
 
 #define DEFAULTS_KEY_SORTED_MAP_LIST @"sorted_map_list"
 #define DEFAULTS_DEFAULT_SORTED_MAP_LIST nil
@@ -84,43 +84,35 @@
 
 
 
-- (NSURL *)activeMapPropertiesURL
+- (NSString *)activeMapPropertiesName
 {
-    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES];
-    if ([value isKindOfClass:[NSString class]]) {
-        value = [NSURL URLWithString:value];
-    }
-    return value ? value : DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP_PROPERTIES;
+    NSString *value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_NAME_OF_ACTIVE_MAP_PROPERTIES];
+    return value ? value : DEFAULTS_DEFAULT_NAME_OF_ACTIVE_MAP_PROPERTIES;
 }
 
-- (void)setActiveMapPropertiesURL:(NSURL *)activeMapPropertiesURL
+- (void)setActiveMapPropertiesName:(NSString *)activeMapPropertiesName
 {
-    NSString *string = activeMapPropertiesURL.absoluteString;
-    if ([string isEqual:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_MAP_PROPERTIES]) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES];
+    if ([activeMapPropertiesName isEqual:DEFAULTS_DEFAULT_NAME_OF_ACTIVE_MAP_PROPERTIES]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_NAME_OF_ACTIVE_MAP_PROPERTIES];
     } else {
-        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_ACTIVE_MAP_PROPERTIES];
+        [[NSUserDefaults standardUserDefaults] setObject:activeMapPropertiesName forKey:DEFAULTS_KEY_NAME_OF_ACTIVE_MAP_PROPERTIES];
     }
 }
 
 
 
-- (NSURL *)activeSurveyURL
+- (NSString *)activeSurveyName
 {
-    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY];
-    if ([value isKindOfClass:[NSString class]]) {
-        value = [NSURL URLWithString:value];
-    }
-    return value ? value : DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY;
+    id value = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULTS_KEY_NAME_OF_ACTIVE_SURVEY];
+    return value ? value : DEFAULTS_DEFAULT_NAME_OF_ACTIVE_SURVEY;
 }
 
-- (void)setActiveSurveyURL:(NSURL *)activeSurveyURL
+- (void)setActiveSurveyName:(NSString *)activeSurveyName
 {
-    NSString *string = activeSurveyURL.absoluteString;
-    if ([string isEqual:DEFAULTS_DEFAULT_URL_FOR_ACTIVE_SURVEY]) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY];
+    if ([activeSurveyName isEqual:DEFAULTS_DEFAULT_NAME_OF_ACTIVE_SURVEY]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_NAME_OF_ACTIVE_SURVEY];
     } else {
-        [[NSUserDefaults standardUserDefaults] setObject:string forKey:DEFAULTS_KEY_URL_FOR_ACTIVE_SURVEY];
+        [[NSUserDefaults standardUserDefaults] setObject:activeSurveyName forKey:DEFAULTS_KEY_NAME_OF_ACTIVE_SURVEY];
     }
 }
 
@@ -129,24 +121,16 @@
 - (NSArray *) maps
 {
     NSArray *value = [[NSUserDefaults standardUserDefaults] arrayForKey:DEFAULTS_KEY_SORTED_MAP_LIST];
-    //NSDefaults returns a NSArray of NSString, convert to a NSArray of NSURL
-    value = [value mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return [NSURL URLWithString:obj];
-    }];
+    //NSDefaults returns a NSArray of NSString
     return value ? value : DEFAULTS_DEFAULT_SORTED_MAP_LIST;
 }
 
 - (void) setMaps:(NSArray *)maps
 {
-    //NSURL is not a property list type (NSDefaults can't persist an array of NSURL
-    //I need to convert it to and array of NSString
-    NSArray *strings = [maps mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return ((NSURL *)obj).absoluteString;
-    }];
-    if ([strings isEqual:DEFAULTS_DEFAULT_SORTED_MAP_LIST]) {
+    if ([maps isEqual:DEFAULTS_DEFAULT_SORTED_MAP_LIST]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SORTED_MAP_LIST];
     } else {
-        [[NSUserDefaults standardUserDefaults] setObject:strings forKey:DEFAULTS_KEY_SORTED_MAP_LIST];
+        [[NSUserDefaults standardUserDefaults] setObject:maps forKey:DEFAULTS_KEY_SORTED_MAP_LIST];
     }
 }
 
@@ -155,24 +139,16 @@
 - (NSArray *) surveys
 {
     NSArray *value = [[NSUserDefaults standardUserDefaults] arrayForKey:DEFAULTS_KEY_SORTED_SURVEY_LIST];
-    //NSDefaults returns a NSArray of NSString, convert to a NSArray of NSURL
-    value = [value mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return [NSURL URLWithString:obj];
-    }];
+    //NSDefaults returns a NSArray of NSString
     return value ? value : DEFAULTS_DEFAULT_SORTED_SURVEY_LIST;
 }
 
 - (void) setSurveys:(NSArray *)surveys
 {
-    //NSURL is not a property list type (NSDefaults can't persist an array of NSURL
-    //I need to convert it to and array of NSString
-    NSArray *strings = [surveys mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return ((NSURL *)obj).absoluteString;
-    }];
-    if ([strings isEqual:DEFAULTS_DEFAULT_SORTED_SURVEY_LIST]) {
+    if ([surveys isEqual:DEFAULTS_DEFAULT_SORTED_SURVEY_LIST]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_SORTED_SURVEY_LIST];
     } else {
-        [[NSUserDefaults standardUserDefaults] setObject:strings forKey:DEFAULTS_KEY_SORTED_SURVEY_LIST];
+        [[NSUserDefaults standardUserDefaults] setObject:surveys forKey:DEFAULTS_KEY_SORTED_SURVEY_LIST];
     }
 }
 
