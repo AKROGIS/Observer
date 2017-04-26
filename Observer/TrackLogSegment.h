@@ -22,6 +22,7 @@
 //@property (nonatomic, strong, readonly) NSArray *gpsPoints;
 @property (nonatomic, strong, readonly) AGSPolyline *polyline;
 @property (nonatomic, readonly) BOOL hasOnlyOnePoint;
+@property (nonatomic, readonly) NSUInteger pointCount;
 @property (nonatomic, readonly) double length; //in meters
 @property (nonatomic, readonly) NSTimeInterval duration; //in seconds
 

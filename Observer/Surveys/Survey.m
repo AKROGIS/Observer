@@ -907,6 +907,9 @@
     if ([self isNewLocation:location]) {
         GpsPoint *gpsPoint = [self createGpsPoint:location];
         [[self lastTrackLogSegment] addGpsPoint:gpsPoint];
+        if ([self lastTrackLogSegment].pointCount > 1000) {  //about about 17 minutes at 1fix/sec
+            [self splitTrackLogSegmentAt:gpsPoint];
+        }
         [self drawGpsPoint:gpsPoint];
         if (self.lastGpsPoint) {
             [self drawLineFor:[self lastTrackLogSegment].missionProperty from:self.lastGpsPoint to:gpsPoint];
@@ -989,15 +992,23 @@
     GpsPoint *gpsPoint = [self addGpsPointAtLocation:locationOfGPS];
     if (priorMissionProperty.gpsPoint != nil && gpsPoint == priorMissionProperty.gpsPoint) {
         // The current tracklog has only one point so far, and we are still at the same time/location
+        // maybe because we started a new segment, at the same time as an automatic split was done.
         // return the current tracklog with an update in observing status.
         priorMissionProperty.observing = self.isObserving;
         return [self lastTrackLogSegment];
     }
     //we have a new unique gpsPoint, maybe because the priorMissionProperty was nil or adhoc (no GPS)
-    MissionProperty *missionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
-    [self copyAttributesForFeature:self.protocol.missionFeature fromEntity:priorMissionProperty toEntity:missionProperty];
-    [self drawMissionProperty:missionProperty];
-    TrackLogSegment *newTrackLog = [[TrackLogSegment alloc] initWithMissionProperty:missionProperty];
+    TrackLogSegment *newTrackLog = [self splitTrackLogSegmentAt:gpsPoint];
+    return newTrackLog;
+}
+
+- (TrackLogSegment *)splitTrackLogSegmentAt:(GpsPoint *)gpsPoint
+{
+    MissionProperty *priorMissionProperty = self.lastTrackLogSegment.missionProperty;
+    MissionProperty *newMissionProperty = [self createMissionPropertyAtGpsPoint:gpsPoint];
+    [self copyAttributesForFeature:self.protocol.missionFeature fromEntity:priorMissionProperty toEntity:newMissionProperty];
+    [self drawMissionProperty:newMissionProperty];
+    TrackLogSegment *newTrackLog = [[TrackLogSegment alloc] initWithMissionProperty:newMissionProperty];
     [self.trackLogSegments addObject:newTrackLog];
     [self.totalizer trackLogSegmentsChanged:self.trackLogSegments];
     return newTrackLog;

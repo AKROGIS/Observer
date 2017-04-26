@@ -115,4 +115,9 @@
     return self.points.count == 1;
 }
 
+- (NSUInteger)pointCount
+{
+    return self.points.count;
+}
+
 @end
