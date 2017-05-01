@@ -71,7 +71,7 @@ Each of these properties is define in the following sections. Complete details o
 		-	A feature type can have an optional list of attributes to be collected for each feature
 		-	A feature with no attributes, only collects a location (and the type of the feature)
 		-	Each attribute must have a "name" element
-		-	The name element must be unique
+		-	The name element must be unique within a feature.  Different features can have attributes with the same name, but if they do they must have the same type.  Mission property and feature attributes are unrelated -- they can have the same name with different types.
 		-	It will be used as a database column name, so it should be a simple ASCII name without spaces or special characters
 		-	It will be prefixed internally to avoid clashes with reserved words
 		-	Each attribute must have a "type" element

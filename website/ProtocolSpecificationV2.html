@@ -123,7 +123,9 @@
       <li class="li3">A feature with no attributes, only collects a location (and the type of the feature)</li>
       <li class="li3">Each attribute must have a "<span class="s4">name</span>" element</li>
       <ul class="ul2">
-        <li class="li3">The name element must be unique</li>
+        <li class="li3">The name element must be unique within a feature.  Different features can have attributes with
+          the same name, but if they do they must have the same type.  Mission property and feature attributes are
+          unrelated -- they can have the same name with different types.</li>
         <li class="li3">It will be used as a database column name, so it should be a simple ASCII name without spaces or special characters</li>
         <ul class="ul2">
           <li class="li3">It will be prefixed internally to avoid clashes with reserved words</li>

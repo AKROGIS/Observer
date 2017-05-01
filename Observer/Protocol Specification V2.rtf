@@ -232,7 +232,7 @@ The protocol file (*.obsprot) is just a text file in JSON (javascript object not
 \f1\fs22 \CocoaLigature0 name
 \f0\fs24 \CocoaLigature1 " element\
 \pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural\partightenfactor0
-\ls3\ilvl3\cf0 {\listtext	\uc0\u8259 	}The name element must be unique\
+\ls3\ilvl3\cf0 {\listtext	\uc0\u8259 	}The name element must be unique within a feature.  Different features can have attributes with the same name, but if they do they must have the same type.  Mission property and feature attributes are unrelated -- they can have the same name with different types.\
 {\listtext	\uc0\u8259 	}It will be used as a database column name, so it should be a simple ASCII name without spaces or special characters\
 \pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural\partightenfactor0
 \ls3\ilvl4\cf0 {\listtext	\uc0\u8259 	}It will be prefixed internally to avoid clashes with reserved words\
