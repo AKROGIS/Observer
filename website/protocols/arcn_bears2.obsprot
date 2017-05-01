@@ -2,8 +2,8 @@
 	"meta-name":"NPS-Protocol-Specification",
 	"meta-version":2,
 	"name":"ARCN Bears",
-	"version":1.3,
-	"date":"2016-12-28",
+	"version":2.0,
+	"date":"2017-04-30",
 	"description":"This protocol is for bear surveys in the Arctic Alaska I&M Network.  Contact kumi_rattenbury@nps.gov for more details.",
 	"observing": "ON Transect",
 	"notobserving": "Recording NOT observing",
@@ -65,7 +65,7 @@
         "type": "esriSMS",
         "style": "esriSMSSquare",
         "color": [171,235,198,255],
-        "size": 11,
+        "size": 20,
         "outline": {
           "color": [24,106,59,255],
           "width": 1
@@ -121,6 +121,7 @@
 				{"name":"VegCover2",     "type":700},
 				{"name":"Snow2",         "type":700},
 				{"name":"Waypoint",      "type":700},
+				{"name":"Unit",          "type":700},
 				{"name":"Photos",        "type":800},
 				{"name":"Notes",         "type":700}
  			],
@@ -150,8 +151,9 @@
 							{"type":"QSegmentedElement", "key":"v",  "bind":"selectedItem:VegCover2",    "items":["<10%", "10-30%", ">30%"]},
 							{"type":"QLabelElement",     "title":"Snow Cover"},
 							{"type":"QSegmentedElement", "key":"sn", "bind":"selectedItem:Snow2",        "items":["None", "Patchy", "Complete"]},
-							{"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",        "title":"Waypoint",              "placeholder":"ID", "autocorrectionType":"No"},
-							{"type":"QBooleanElement",   "key":"p",  "bind":"boolValue:Photos",          "title":"Photos?"},
+							{"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",        "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
+							{"type":"QEntryElement",     "key":"u",  "bind":"textValue:Unit",            "title":"Unit",     "placeholder":"ID", "autocorrectionType":"No"},
+							{"type":"QBooleanElement",   "key":"p",  "bind":"boolValue:Photos",          "title":"Photos?", "boolValue":0},
 							{"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",           "title":"Comments"}
 					    ]
 					}
@@ -159,8 +161,14 @@
 			},
 			"label":{
 				"field":"Waypoint",
-				"size":17,
-				"color":"#FFD700"
+				"symbol":{
+					"type":"esriTS",
+  				"color":[255,0,0,255],
+    			"font":{"family":"Arial", "size":24, "weight":"bold", "style":"normal", "decoration":"none"},
+					"verticalAlignment": "bottom",
+		      "horizontalAlignment": "left",
+		      "xoffset": 10, "yoffset": 20
+				}
 			},
 			"symbology":{
         "type": "simple",
@@ -168,7 +176,7 @@
           "type": "esriSMS",
           "style": "esriSMSCircle",
 					"color": [255,215,0,255],
-          "size": 15,
+          "size": 24,
 					"outline": {
 						"color": [0,0,0,255],
 						"width": 2
