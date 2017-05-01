@@ -62,7 +62,7 @@
 
 
 @interface ObserverMapViewController () {
-    double _initialRotationOfViewAtGestureStart;
+    CGFloat _initialRotationOfViewAtGestureStart;
 }
 
 //Views
@@ -216,10 +216,10 @@
 {
     if (sender.state == UIGestureRecognizerStateBegan) {
         [self.autoPanController userRotatedMap];
-        _initialRotationOfViewAtGestureStart = (double)atan2(self.compassRoseButton.transform.b, self.compassRoseButton.transform.a);
+        _initialRotationOfViewAtGestureStart = (CGFloat)atan2(self.compassRoseButton.transform.b, self.compassRoseButton.transform.a);
     }
-    double radians = _initialRotationOfViewAtGestureStart + (double)sender.rotation;
-    double degrees = radians * (180 / M_PI);
+    CGFloat radians = _initialRotationOfViewAtGestureStart + sender.rotation;
+    double degrees = (double)radians * (180 / M_PI);
     self.compassRoseButton.transform = CGAffineTransformMakeRotation(radians);
     [self.mapView setRotationAngle:-1*degrees];
 }

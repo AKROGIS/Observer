@@ -49,7 +49,7 @@
         }
     }
     if ([size isKindOfClass:[NSNumber class]]) {
-        double realSize = [(NSNumber *)size doubleValue];
+        CGFloat realSize = (CGFloat)[(NSNumber *)size doubleValue];
         symbol.size = CGSizeMake(realSize, realSize);
     }
     return symbol;
@@ -65,7 +65,7 @@
         }
     }
     if ([size isKindOfClass:[NSNumber class]]) {
-        double realSize = [(NSNumber *)size doubleValue];
+        CGFloat realSize = (CGFloat)[(NSNumber *)size doubleValue];
         symbol.width = realSize;
     }
     return symbol;
@@ -80,7 +80,8 @@
     NSScanner *scanner = [NSScanner scannerWithString:hexString];
     [scanner setScanLocation:1]; // bypass '#' character
     if ([scanner scanHexInt:&rgbValue]) {
-        return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
+        CGFloat max = 255.0;
+        return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/max green:((rgbValue & 0xFF00) >> 8)/max blue:(rgbValue & 0xFF)/max alpha:1.0];
     } else {
         return nil;
     }

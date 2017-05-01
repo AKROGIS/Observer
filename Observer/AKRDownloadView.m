@@ -51,9 +51,10 @@
         //Set color
         [self.tintColor set];
  
-        double width = (double)self.bounds.size.width;
-        double height = (double)self.bounds.size.height;
-        CGContextTranslateCTM(context, width/2.0, height/2.0);
+        CGFloat width = self.bounds.size.width;
+        CGFloat height = self.bounds.size.height;
+        CGFloat two = 2.0;
+        CGContextTranslateCTM(context, width/two, height/two);
 
         //Inner Square
         CGContextMoveToPoint(context, -4,-4);

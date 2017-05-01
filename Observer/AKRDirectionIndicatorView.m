@@ -50,9 +50,10 @@
         double radians = -1 * self.azimuth * M_PI / 180.0; //radians
         
         //create a rotated coordinate system with origin in center and +y up
-        double width = (double)self.bounds.size.width;
-        double height = (double)self.bounds.size.height;
-        CGContextTranslateCTM(context, width/2.0, height/2.0);
+        CGFloat width = self.bounds.size.width;
+        CGFloat height = self.bounds.size.height;
+        CGFloat two = 2.0;
+        CGContextTranslateCTM(context, width/two, height/two);
         CGContextScaleCTM(context, 1, -1);
         CGContextRotateCTM(context, (CGFloat)radians); //angle in radians with + = CCW
         

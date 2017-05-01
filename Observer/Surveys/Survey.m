@@ -1223,7 +1223,7 @@
     }
     if (symbol == nil) {
          symbol = [AGSTextSymbol textSymbolWithText:labelText color:labelSpec.color];
-        symbol.fontSize = [labelSpec.size doubleValue];
+        symbol.fontSize = (CGFloat)[labelSpec.size doubleValue];
         // make lable anchor at lower left with offset for 15pt round marker; Doing more would require a rendering engine
         symbol.vAlignment = AGSTextSymbolVAlignmentBottom;
         symbol.hAlignment = AGSTextSymbolHAlignmentLeft;

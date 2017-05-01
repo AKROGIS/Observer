@@ -33,7 +33,7 @@ static UIColor *_buttonBlue;
 {
     if (!_buttonBlue) {
         //_buttonBlue = [[[UIButton alloc] init] titleColorForState: UIControlStateNormal];
-        _buttonBlue = [UIColor colorWithRed:0.1960784346 green:0.3098039329 blue:0.521568656 alpha:1.0]; //From the story board file for a default button
+        _buttonBlue = [UIColor colorWithRed:(CGFloat)0.1960784346 green:(CGFloat)0.3098039329 blue:(CGFloat)0.521568656 alpha:1.0]; //From the story board file for a default button
         //AKRLog(@"Set Blue = %@", _buttonBlue);
     }
     return _buttonBlue;
