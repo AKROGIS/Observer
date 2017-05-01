@@ -1,126 +1,126 @@
 {
-	"meta-name":"NPS-Protocol-Specification",
-	"meta-version":1,
-	"name":"LACL Dall's Sheep Survey",
-	"version":1.01,
-	"date":"2014-07-01",
-	"description":"Data Protocol for Lake Clark Dall’s Sheep Surveys.  Contact buck_mangipane@nps.gov for more details.",
+  "meta-name":"NPS-Protocol-Specification",
+  "meta-version":1,
+  "name":"LACL Dall's Sheep Survey",
+  "version":1.01,
+  "date":"2014-07-01",
+  "description":"Data Protocol for Lake Clark Dall’s Sheep Surveys.  Contact buck_mangipane@nps.gov for more details.",
     "mission":{
-		"attributes":[
-			{"name":"Aircraft",      "type":700},
-			{"name":"Pilot",         "type":700},
-			{"name":"Observer",      "type":700},
-			{"name":"Temperature",   "type":100},
-			{"name":"SkyConditions", "type":100},
-			{"name":"Wind",          "type":700},
-			{"name":"Turbulence",    "type":100}
-		],
-		"dialog":{
-			"title":"Mission Properties",
-			"grouped":true,
-			"sections":[
-				{
-					"elements":[
-						{"type":"QEntryElement",   "key":"a",  "bind":"textValue:Aircraft",      "title":"Aircraft",        "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QEntryElement",   "key":"p",  "bind":"textValue:Pilot",         "title":"Pilot",           "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QEntryElement",   "key":"o",  "bind":"textValue:Observer",      "title":"Observer",        "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QDecimalElement", "key":"tp", "bind":"numberValue:Temperature", "title":"Temperature (F)", "fractionDigits":0},
-						{"type":"QRadioElement",   "key":"sc", "bind":"selected:SkyConditions",  "title":"Sky Conditions",  "items":["Not observed", "Clear", "< 50% scattered clouds", "> 50% broken clouds", "Overcast"]},
-						{"type":"QEntryElement",   "key":"w",  "bind":"textValue:Wind",          "title":"Wind",            "placeholder":"Speed and direction"},
-						{"type":"QRadioElement",   "key":"tb", "bind":"selected:Turbulence",     "title":"Turbulence",      "items":["Not observed", "None", "Light", "Moderate", "Severe"]}
-				  	]
-				}
-			]
-		},
-		"symbology":{
-			"color":"#00FF00",
-			"size":11
-		},
-		"on-symbology":{
-			"color":"#FF0000",
-			"size":2
-		},
-		"off-symbology":{
-			"color":"#C0C0C0",
-			"size":1.5
-		}
-	},
+    "attributes":[
+      {"name":"Aircraft",      "type":700},
+      {"name":"Pilot",         "type":700},
+      {"name":"Observer",      "type":700},
+      {"name":"Temperature",   "type":100},
+      {"name":"SkyConditions", "type":100},
+      {"name":"Wind",          "type":700},
+      {"name":"Turbulence",    "type":100}
+    ],
+    "dialog":{
+      "title":"Mission Properties",
+      "grouped":true,
+      "sections":[
+        {
+          "elements":[
+            {"type":"QEntryElement",   "key":"a",  "bind":"textValue:Aircraft",      "title":"Aircraft",        "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QEntryElement",   "key":"p",  "bind":"textValue:Pilot",         "title":"Pilot",           "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QEntryElement",   "key":"o",  "bind":"textValue:Observer",      "title":"Observer",        "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QDecimalElement", "key":"tp", "bind":"numberValue:Temperature", "title":"Temperature (F)", "fractionDigits":0},
+            {"type":"QRadioElement",   "key":"sc", "bind":"selected:SkyConditions",  "title":"Sky Conditions",  "items":["Not observed", "Clear", "< 50% scattered clouds", "> 50% broken clouds", "Overcast"]},
+            {"type":"QEntryElement",   "key":"w",  "bind":"textValue:Wind",          "title":"Wind",            "placeholder":"Speed and direction"},
+            {"type":"QRadioElement",   "key":"tb", "bind":"selected:Turbulence",     "title":"Turbulence",      "items":["Not observed", "None", "Light", "Moderate", "Severe"]}
+            ]
+        }
+      ]
+    },
+    "symbology":{
+      "color":"#00FF00",
+      "size":11
+    },
+    "on-symbology":{
+      "color":"#FF0000",
+      "size":2
+    },
+    "off-symbology":{
+      "color":"#C0C0C0",
+      "size":1.5
+    }
+  },
     "features":[
-		{
-    		"name":"Sheep",
-    		"attributes":[
-				{"name":"Subunit",        "type":700},
-				{"name":"CountEwes",      "type":100},
-				{"name":"CountLambs",     "type":100},
-				{"name":"CountYearlings", "type":100},
-				{"name":"CountEweLike",   "type":100},
-				{"name":"countUnknown",   "type":100},
-				{"name":"countRamsSmall", "type":100},
-				{"name":"countRams025",   "type":100},
-				{"name":"countRams050",   "type":100},
-				{"name":"countRams075",   "type":100},
-				{"name":"countRamsFull",  "type":100},
-				{"name":"Activity",       "type":700}
- 			],
- 			"locations":[
-				{"type":"gps",           "default":false, "allow":true},
-				{"type":"adhocTarget",   "default":false, "allow":true},
-				{"type":"adhocTouch",    "default":false, "allow":true},
-				{"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
-			],
-			"dialog":{
-				"title":"Sheep",
-				"grouped":false,
-				"sections":[
-					{
-					    "elements":[
-							{"type":"QEntryElement",     "key":"s", "bind":"textValue:Subunit",          "title":"Sub-unit",    "placeholder":"ADF&G GMU"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountEwes",      "title":"Ewes"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountLambs",     "title":"Lambs"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountYearlings", "title":"Yearlings"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountEweLike",   "title":"Ewe-like"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countUnknown",   "title":"Unknown"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRamsSmall", "title":"Rams <1/4 Curl"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams025",   "title":"Rams 1/4 Curl"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams050",   "title":"Rams 1/2 Curl"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams075",   "title":"Rams 3/4 Curl"},
-							{"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRamsFull",  "title":"Rams Full Curl"},
-							{"type":"QRadioElement",     "key":"a", "bind":"selectedItem:Activity",      "title":"Activity",    "items":["Standing", "Feeding", "Bedded", "Running", "Walking"]}
-					    ]
-					}
-				]
-			},
-			"symbology":{
-				"color":"#00BBBB",
-				"size":15
-			}
-		}
- 	],
-	"csv":{
-		"gps_points":{
-			"name":"GpsPoints",
-			"field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
-			"field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
-			"key_indexes":[0,2,1]
-		},
-		"track_logs":{
-			"name":"TrackLogs",
-			"field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
-			"field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
-			"start_key_indexes":[1,9,8],
-			"end_key_indexes":[5,11,10]
-		},
-		"features":{
-			"header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
-			"feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
-			"feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
-			"feature_field_map":[0,1,2,3,4,5,8],
-			"feature_key_indexes":[0,5,4],
-			"obs_name":"Observations",
-			"obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
-			"obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
-			"obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
-			"obs_key_indexes":[0,11,10]
-		}
-	}
+    {
+        "name":"Sheep",
+        "attributes":[
+        {"name":"Subunit",        "type":700},
+        {"name":"CountEwes",      "type":100},
+        {"name":"CountLambs",     "type":100},
+        {"name":"CountYearlings", "type":100},
+        {"name":"CountEweLike",   "type":100},
+        {"name":"countUnknown",   "type":100},
+        {"name":"countRamsSmall", "type":100},
+        {"name":"countRams025",   "type":100},
+        {"name":"countRams050",   "type":100},
+        {"name":"countRams075",   "type":100},
+        {"name":"countRamsFull",  "type":100},
+        {"name":"Activity",       "type":700}
+       ],
+       "locations":[
+        {"type":"gps",           "default":false, "allow":true},
+        {"type":"adhocTarget",   "default":false, "allow":true},
+        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Sheep",
+        "grouped":false,
+        "sections":[
+          {
+              "elements":[
+              {"type":"QEntryElement",     "key":"s", "bind":"textValue:Subunit",          "title":"Sub-unit",    "placeholder":"ADF&G GMU"},
+              {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountEwes",      "title":"Ewes"},
+              {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountLambs",     "title":"Lambs"},
+              {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountYearlings", "title":"Yearlings"},
+              {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountEweLike",   "title":"Ewe-like"},
+              {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countUnknown",   "title":"Unknown"},
+              {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRamsSmall", "title":"Rams <1/4 Curl"},
+              {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams025",   "title":"Rams 1/4 Curl"},
+              {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams050",   "title":"Rams 1/2 Curl"},
+              {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRams075",   "title":"Rams 3/4 Curl"},
+              {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:countRamsFull",  "title":"Rams Full Curl"},
+              {"type":"QRadioElement",     "key":"a", "bind":"selectedItem:Activity",      "title":"Activity",    "items":["Standing", "Feeding", "Bedded", "Running", "Walking"]}
+              ]
+          }
+        ]
+      },
+      "symbology":{
+        "color":"#00BBBB",
+        "size":15
+      }
+    }
+   ],
+  "csv":{
+    "gps_points":{
+      "name":"GpsPoints",
+      "field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+      "field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+      "key_indexes":[0,2,1]
+    },
+    "track_logs":{
+      "name":"TrackLogs",
+      "field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+      "field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+      "start_key_indexes":[1,9,8],
+      "end_key_indexes":[5,11,10]
+    },
+    "features":{
+      "header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+      "feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+      "feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+      "feature_field_map":[0,1,2,3,4,5,8],
+      "feature_key_indexes":[0,5,4],
+      "obs_name":"Observations",
+      "obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+      "obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+      "obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+      "obs_key_indexes":[0,11,10]
+    }
+  }
 }

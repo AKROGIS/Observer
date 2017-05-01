@@ -1,111 +1,111 @@
 [
 {
-	"name":"ARCN Bears",
-	"version":2.0,
-	"date":"2017-04-30",
-	"url":"https://akrgis.nps.gov/observer/protocols/arcn_bears2.obsprot"
+  "name":"ARCN Bears",
+  "version":2.0,
+  "date":"2017-04-30",
+  "url":"https://akrgis.nps.gov/observer/protocols/arcn_bears2.obsprot"
 }
 ,
 {
-	"name":"ARCN RTLO Survey",
-	"version":1.1,
-	"date":"2016-11-14",
-	"url":"https://akrgis.nps.gov/observer/protocols/arcn_rtlo.obsprot"
+  "name":"ARCN RTLO Survey",
+  "version":1.1,
+  "date":"2016-11-14",
+  "url":"https://akrgis.nps.gov/observer/protocols/arcn_rtlo.obsprot"
 }
 ,
 {
-	"name":"ARCN YBLO Survey",
-	"version":1.2,
-	"date":"2016-11-14",
-	"url":"https://akrgis.nps.gov/observer/protocols/arcn_yblo.obsprot"
+  "name":"ARCN YBLO Survey",
+  "version":1.2,
+  "date":"2016-11-14",
+  "url":"https://akrgis.nps.gov/observer/protocols/arcn_yblo.obsprot"
 }
 ,
 {
-	"name":"Sheep Transects Short",
-	"version":2.2,
-	"date":"2016-06-28",
-	"url":"https://akrgis.nps.gov/observer/protocols/sheep_short2.obsprot"
+  "name":"Sheep Transects Short",
+  "version":2.2,
+  "date":"2016-06-28",
+  "url":"https://akrgis.nps.gov/observer/protocols/sheep_short2.obsprot"
 }
 ,
 {
-	"name":"Sheep Transects Long",
-	"version":2.0,
-	"date":"2016-06-22",
-	"url":"https://akrgis.nps.gov/observer/protocols/sheep_long2.obsprot"
+  "name":"Sheep Transects Long",
+  "version":2.0,
+  "date":"2016-06-22",
+  "url":"https://akrgis.nps.gov/observer/protocols/sheep_long2.obsprot"
 }
 ,
 {
-	"name":"GLBA Whales",
-	"version":1.1,
-	"date":"2014-07-01",
-	"url":"https://akrgis.nps.gov/observer/protocols/glba_whales.obsprot"
+  "name":"GLBA Whales",
+  "version":1.1,
+  "date":"2014-07-01",
+  "url":"https://akrgis.nps.gov/observer/protocols/glba_whales.obsprot"
 }
 ,
 {
-	"name":"LACL Bear Trends",
-	"version":1.01,
-	"date":"2014-07-01",
-	"url":"https://akrgis.nps.gov/observer/protocols/lacl_bears.obsprot"
+  "name":"LACL Bear Trends",
+  "version":1.01,
+  "date":"2014-07-01",
+  "url":"https://akrgis.nps.gov/observer/protocols/lacl_bears.obsprot"
 }
 ,
 {
-	"name":"LACL Moose Surveys",
-	"version":1.00,
-	"date":"2014-10-24",
-	"url":"https://akrgis.nps.gov/observer/protocols/lacl_moose.obsprot"
+  "name":"LACL Moose Surveys",
+  "version":1.00,
+  "date":"2014-10-24",
+  "url":"https://akrgis.nps.gov/observer/protocols/lacl_moose.obsprot"
 }
 ,
 {
-	"name":"LACL Radio Tacking",
-	"version":1.00,
-	"date":"2015-04-09",
-	"url":"https://akrgis.nps.gov/observer/protocols/lacl_radio_tracking.obsprot"
+  "name":"LACL Radio Tacking",
+  "version":1.00,
+  "date":"2015-04-09",
+  "url":"https://akrgis.nps.gov/observer/protocols/lacl_radio_tracking.obsprot"
 }
 ,
 {
-	"name":"LACL Sheep",
-	"version":1.01,
-	"date":"2014-07-01",
-	"url":"https://akrgis.nps.gov/observer/protocols/lacl_sheep.obsprot"
+  "name":"LACL Sheep",
+  "version":1.01,
+  "date":"2014-07-01",
+  "url":"https://akrgis.nps.gov/observer/protocols/lacl_sheep.obsprot"
 }
 ,
 {
-	"name":"SEAN KIMU Protocol",
-	"version":2.0,
-	"date":"2016-06-20",
-	"url":"https://akrgis.nps.gov/observer/protocols/sean_kimu.obsprot"
+  "name":"SEAN KIMU Protocol",
+  "version":2.0,
+  "date":"2016-06-20",
+  "url":"https://akrgis.nps.gov/observer/protocols/sean_kimu.obsprot"
 }
 ,
-{	"name":"SWAN Eagle Occupancy",
-	"version":1.21,
-	"date":"2015-05-29",
-	"url":"https://akrgis.nps.gov/observer/protocols/swan-eagles.obsprot"
+{  "name":"SWAN Eagle Occupancy",
+  "version":1.21,
+  "date":"2015-05-29",
+  "url":"https://akrgis.nps.gov/observer/protocols/swan-eagles.obsprot"
 }
 ,
-{	"name":"SWAN Marine Survey",
-	"version":1.01,
-	"date":"2014-06-30",
-	"url":"https://akrgis.nps.gov/observer/protocols/swan-mbm.obsprot"
-}
-,
-{
-	"name":"YUCH Moose Surveys",
-	"version":1.00,
-	"date":"2015-11-05",
-	"url":"https://akrgis.nps.gov/observer/protocols/yuch_moose.obsprot"
+{  "name":"SWAN Marine Survey",
+  "version":1.01,
+  "date":"2014-06-30",
+  "url":"https://akrgis.nps.gov/observer/protocols/swan-mbm.obsprot"
 }
 ,
 {
-	"name":"Test Protocol",
-	"version":1.3,
-	"date":"2014-07-01",
-	"url":"https://akrgis.nps.gov/observer/protocols/sample.obsprot"
+  "name":"YUCH Moose Surveys",
+  "version":1.00,
+  "date":"2015-11-05",
+  "url":"https://akrgis.nps.gov/observer/protocols/yuch_moose.obsprot"
 }
 ,
 {
-	"name":"Test Protocol Version 2",
-	"version":2.1,
-	"date":"2016-06-20",
-	"url":"https://akrgis.nps.gov/observer/protocols/SampleProtocolV2.obsprot"
+  "name":"Test Protocol",
+  "version":1.3,
+  "date":"2014-07-01",
+  "url":"https://akrgis.nps.gov/observer/protocols/sample.obsprot"
+}
+,
+{
+  "name":"Test Protocol Version 2",
+  "version":2.1,
+  "date":"2016-06-20",
+  "url":"https://akrgis.nps.gov/observer/protocols/SampleProtocolV2.obsprot"
 }
 ]

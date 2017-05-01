@@ -1,142 +1,141 @@
 {
-	"meta-name":"NPS-Protocol-Specification",
-	"meta-version":1,
-	"name":"AKRO Trails",
-	"version":1.0,
-	"date":"2015-04-16",
-	"description":"Data Protocol for NPS/AKRO Trails Data Standard (sort of).  Contact regan_sarwas@nps.gov for more details.",
+  "meta-name":"NPS-Protocol-Specification",
+  "meta-version":1,
+  "name":"AKRO Trails",
+  "version":1.0,
+  "date":"2015-04-16",
+  "description":"Data Protocol for NPS/AKRO Trails Data Standard (sort of).  Contact regan_sarwas@nps.gov for more details.",
     "mission":{
-		"attributes":[
-			{"name":"Trail",    "type":700},
-			{"name":"Observer", "type":700},
-			{"name":"Vehicle",  "type":700},
-			{"name":"Weather",  "type":700}
-		],
-		"dialog":{
-			"title":"Mission Properties",
-			"grouped":true,
-			"sections":[
-				{
-					"elements":[
-						{"type":"QEntryElement", "key":"t", "bind":"textValue:Trail",      "title":"Trail",    "placeholder":"Name"},
-						{"type":"QEntryElement", "key":"o", "bind":"textValue:Observer",   "title":"Observer", "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-						{"type":"QRadioElement", "key":"v", "bind":"selectedItem:Vehicle", "title":"Vehicle",  "items":["Walking", "OHV", "Snowmachine", "Boat", "Other"]},
- 						{"type":"QEntryElement", "key":"w", "bind":"textValue:Weather",    "title":"Weather",  "placeholder":"Visibility"}
-				  	]
-				}
-			]
-		},
-		"symbology":{
-			"color":"#00FF00",
-			"size":11
-		},
-		"on-symbology":{
-			"color":"#FF0000",
-			"size":2
-		},
-		"off-symbology":{
-			"color":"#C0C0C0",
-			"size":1.5
-		}
-	},
+    "attributes":[
+      {"name":"Trail",    "type":700},
+      {"name":"Observer", "type":700},
+      {"name":"Vehicle",  "type":700},
+      {"name":"Weather",  "type":700}
+    ],
+    "dialog":{
+      "title":"Mission Properties",
+      "grouped":true,
+      "sections":[
+        {
+          "elements":[
+            {"type":"QEntryElement", "key":"t", "bind":"textValue:Trail",      "title":"Trail",    "placeholder":"Name"},
+            {"type":"QEntryElement", "key":"o", "bind":"textValue:Observer",   "title":"Observer", "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QRadioElement", "key":"v", "bind":"selectedItem:Vehicle", "title":"Vehicle",  "items":["Walking", "OHV", "Snowmachine", "Boat", "Other"]},
+            {"type":"QEntryElement", "key":"w", "bind":"textValue:Weather",    "title":"Weather",  "placeholder":"Visibility"}
+            ]
+        }
+      ]
+    },
+    "symbology":{
+      "color":"#00FF00",
+      "size":11
+    },
+    "on-symbology":{
+      "color":"#FF0000",
+      "size":2
+    },
+    "off-symbology":{
+      "color":"#C0C0C0",
+      "size":1.5
+    }
+  },
     "features":[
-		{
-    		"name":"Attributes",
-    		"attributes":[
-				{"name":"Width",     "type":200},
-				{"name":"Surface",   "type":700},
-				{"name":"Slope",     "type":500},
-				{"name":"Grade",     "type":200},
-				{"name":"ADA",       "type":800},
-				{"name":"Condition", "type":700},
-				{"name":"Comments",  "type":700}
- 			],
-			"locations":[
-				{"type":"gps",           "default":true, "allow":true},
-				{"type":"adhocTarget",   "default":false, "allow":false},
-				{"type":"adhocTouch",    "default":false, "allow":false},
-				{"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
-			],
-			"dialog":{
-				"title":"Animal",
-				"grouped":false,
-				"sections":[
-					{
-					    "elements":[
-							{"type":"QIntegerElement",   "key":"w", "bind":"numberValue:Width",      "title":"Width (ft)"},
-							{"type":"QRadioElement",     "key":"m", "bind":"selectedItem:Surface",   "title":"Material",      "items":["Gravel", "Asphalt", "Natural", "Wood", "Concrete", "Plastic", "Other"]},
-							{"type":"QDecimalElement",   "key":"s", "bind":"numberValue:Slope",      "title":"Side Slope(%)", "fractionDigits":1},
-							{"type":"QIntegerElement",   "key":"g", "bind":"numberValue:Grade",      "title":"Grade(%)",      "minimumValue":-100},
-							{"type":"QBooleanElement",   "key":"a", "bind":"boolValue:ADA",          "title":"Accessible"},
-							{"type":"QRadioElement",     "key":"c", "bind":"selectedItem:Condition", "title":"Condition",     "items":["New", "Good", "Fair", "Poor", "Failed"]},
-							{"type":"QMultilineElement", "key":"r", "bind":"textValue:Comments",     "title":"Notes"}
-					    ]
-					}
-				]
-			},
-			"symbology":{
-				"color":"#00BBBB",
-				"size":15
-			}
-		},
-    	{	"name":"Features",
-    		"attributes":[
-				{"name":"Type",         "type":700},
-				{"name":"Description",  "type":700},
-				{"name":"Condition",    "type":700},
-				{"name":"Comments",     "type":700}
- 			],
-			"locations":[
-				{"type":"gps",           "default":false, "allow":true},
-				{"type":"adhocTarget",   "default":false, "allow":true},
-				{"type":"adhocTouch",    "default":false, "allow":true},
-				{"type":"angleDistance", "default":false, "allow":true, "baseline":180.0, "units":"meters", "direction":"cw" }
-			],
-			"dialog":{
-				"title":"Trail Features",
-				"grouped":false,
-				"sections":[
-					{
-					    "elements":[
-							{"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:Type",      "title":"Type",        "items":["Sign", "Bench", "Bridge", "Culvert", "Other"]},
-						    {"type":"QEntryElement",     "key":"a",  "bind":"textValue:Description",  "title":"Description", "placeholder":"Name"},
-							{"type":"QRadioElement",     "key":"m",  "bind":"selectedItem:Condition", "title":"Condition",   "items":["New", "Good", "Fair", "Poor", "Failed"]},
-							{"type":"QMultilineElement", "key":"r",  "bind":"textValue:Comments",     "title":"Notes"}
-					    ]
-					}
-				]
-			},
-			"symbology":{
-				"color":"#BB00BB",
-				"size":15
-			}
-		}
- 	],
-	"csv":{
-		"gps_points":{
-			"name":"GpsPoints",
-			"field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
-			"field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
-			"key_indexes":[0,2,1]
-		},
-		"track_logs":{
-			"name":"TrackLogs",
-			"field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
-			"field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
-			"start_key_indexes":[1,9,8],
-			"end_key_indexes":[5,11,10]
-		},
-		"features":{
-			"header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
-			"feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
-			"feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
-			"feature_field_map":[0,1,2,3,4,5,8],
-			"feature_key_indexes":[0,5,4],
-			"obs_name":"Observations",
-			"obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
-			"obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
-			"obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
-			"obs_key_indexes":[0,11,10]
-		}
-	}
+    {
+        "name":"Attributes",
+        "attributes":[
+        {"name":"Width",     "type":200},
+        {"name":"Surface",   "type":700},
+        {"name":"Slope",     "type":500},
+        {"name":"Grade",     "type":200},
+        {"name":"ADA",       "type":800},
+        {"name":"Condition", "type":700},
+        {"name":"Comments",  "type":700}
+       ],
+      "locations":[
+        {"type":"gps",           "default":true, "allow":true},
+        {"type":"adhocTarget",   "default":false, "allow":false},
+        {"type":"adhocTouch",    "default":false, "allow":false},
+        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Animal",
+        "grouped":false,
+        "sections":[
+          {
+              "elements":[
+              {"type":"QIntegerElement",   "key":"w", "bind":"numberValue:Width",      "title":"Width (ft)"},
+              {"type":"QRadioElement",     "key":"m", "bind":"selectedItem:Surface",   "title":"Material",      "items":["Gravel", "Asphalt", "Natural", "Wood", "Concrete", "Plastic", "Other"]},
+              {"type":"QDecimalElement",   "key":"s", "bind":"numberValue:Slope",      "title":"Side Slope(%)", "fractionDigits":1},
+              {"type":"QIntegerElement",   "key":"g", "bind":"numberValue:Grade",      "title":"Grade(%)",      "minimumValue":-100},
+              {"type":"QBooleanElement",   "key":"a", "bind":"boolValue:ADA",          "title":"Accessible"},
+              {"type":"QRadioElement",     "key":"c", "bind":"selectedItem:Condition", "title":"Condition",     "items":["New", "Good", "Fair", "Poor", "Failed"]},
+              {"type":"QMultilineElement", "key":"r", "bind":"textValue:Comments",     "title":"Notes"}
+              ]
+          }
+        ]
+      },
+      "symbology":{
+        "color":"#00BBBB",
+        "size":15
+      }
+    },
+      { "name":"Features",
+        "attributes":[
+        {"name":"Type",         "type":700},
+        {"name":"Description",  "type":700},
+        {"name":"Condition",    "type":700},
+        {"name":"Comments",     "type":700}
+       ],
+      "locations":[
+        {"type":"gps",           "default":false, "allow":true},
+        {"type":"adhocTarget",   "default":false, "allow":true},
+        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"angleDistance", "default":false, "allow":true, "baseline":180.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Trail Features",
+        "grouped":false,
+        "sections":[
+          {"elements":[
+              {"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:Type",      "title":"Type",        "items":["Sign", "Bench", "Bridge", "Culvert", "Other"]},
+              {"type":"QEntryElement",     "key":"a",  "bind":"textValue:Description",  "title":"Description", "placeholder":"Name"},
+              {"type":"QRadioElement",     "key":"m",  "bind":"selectedItem:Condition", "title":"Condition",   "items":["New", "Good", "Fair", "Poor", "Failed"]},
+              {"type":"QMultilineElement", "key":"r",  "bind":"textValue:Comments",     "title":"Notes"}
+            ]
+          }
+        ]
+      },
+      "symbology":{
+        "color":"#BB00BB",
+        "size":15
+      }
+    }
+   ],
+  "csv":{
+    "gps_points":{
+      "name":"GpsPoints",
+      "field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+      "field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+      "key_indexes":[0,2,1]
+    },
+    "track_logs":{
+      "name":"TrackLogs",
+      "field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+      "field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+      "start_key_indexes":[1,9,8],
+      "end_key_indexes":[5,11,10]
+    },
+    "features":{
+      "header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+      "feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+      "feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+      "feature_field_map":[0,1,2,3,4,5,8],
+      "feature_key_indexes":[0,5,4],
+      "obs_name":"Observations",
+      "obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+      "obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+      "obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+      "obs_key_indexes":[0,11,10]
+    }
+  }
 }
