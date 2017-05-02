@@ -2,8 +2,8 @@
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
   "name":"Sheep Transects Long",
-  "version":2.0,
-  "date":"2016-06-22",
+  "version":2.1,
+  "date":"2017-05-02",
   "description":"This protocol is for sheep (and bear) surveys in the Alaska I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
   "observing": "ON Transect",
   "notobserving": "Recording NOT observing",
@@ -203,7 +203,7 @@
         ]
       },
       "label":{
-        "field":"Waypoint",
+        "field":"Waypoint2",
         "size":17,
         "color":"#FFD700"
       },
