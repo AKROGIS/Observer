@@ -37,8 +37,8 @@
 //============
 // Designated
 //-----------
-- (id)initWithProperties:(NSDictionary *)properties;
-- (id) init __attribute__((unavailable("Must use initWithProperties: or other initializer instead.")));
+- (instancetype)initWithProperties:(NSDictionary *)properties NS_DESIGNATED_INITIALIZER;
+- (instancetype) init __attribute__((unavailable("Must use initWithProperties: or other initializer instead.")));
 
 //Convenience
 //-----------
@@ -46,25 +46,24 @@
 //  This method is only called with string values read from the NSUserDefaults.
 //  Prior to version 1.0.0, these values were absolute URL values, now they are only the last path component.
 //  Will block while the property list is read from the filesystem
-- (id)initWithCachedPropertiesName:(NSString *)name;
+- (instancetype)initWithCachedPropertiesName:(NSString *)name;
 //Initialize with a dictionary of remote property values
 //  Assumes that the remote properties describe a new map, and therefore it
 //  creates a local URL for caching the thumbnail, and caches the properties as a local plist
 //  Will block while the plist is saved to disk
-- (id)initWithRemoteProperties:(NSDictionary *)properties;
+- (instancetype)initWithRemoteProperties:(NSDictionary *)properties;
 //Initialize with the URL to a local tile cache
 //Assumes that the tilecache is new, and creates new thumbnail and properties caches
 //  Creates a property list from the values in the tilecache, and caches the properties as a local plist
 //  Will return nil if the tileCache is not a valid local tilecache
 //  Will block while tileCache is loaded and the plist is written
-- (id)initWithTileCacheURL:(NSURL *)url;
+- (instancetype)initWithTileCacheURL:(NSURL *)url;
 //Initialize same as above, but with overrides for several properties not easily obtained from the tilecache
-- (id)initWithTileCacheURL:(NSURL *)url name:(NSString *)name author:(NSString *)author date:(NSDate *)date description:(NSString *)description;
+- (instancetype)initWithTileCacheURL:(NSURL *)url name:(NSString *)name author:(NSString *)author date:(NSDate *)date description:(NSString *)description;
 //============
 
 
 
-@property (nonatomic, strong, readonly) NSString *title;
 @property (nonatomic, strong, readonly) NSString *author;
 @property (nonatomic, strong, readonly) NSDate *date;
 @property (nonatomic,         readonly) unsigned long long byteCount;
@@ -103,14 +102,14 @@
 
 // Additional info for the view controllers
 - (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location;
-- (double)areaInKilometers;
+@property (nonatomic, readonly) double areaInKilometers;
 //YES if the Map is available locally, NO otherwise;
-- (BOOL)isLocal;
+@property (nonatomic, getter=isLocal, readonly) BOOL local;
 
 // download the Protocol from the remote URL to a local file...
 - (void)startDownload;
 - (void)cancelDownload;
-- (BOOL)isDownloading;
+@property (nonatomic, getter=isDownloading, readonly) BOOL downloading;
 
 // The download should continue if the app is put in the background
 @property (nonatomic) BOOL isBackground;

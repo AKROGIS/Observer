@@ -14,8 +14,8 @@
 
 - (void)clearGraphicsLayers;
 
-- (BOOL)isProjected;
+@property (nonatomic, getter=isProjected, readonly) BOOL projected;
 
-- (BOOL)isAutoRotating;
+@property (nonatomic, getter=isAutoRotating, readonly) BOOL autoRotating;
 
 @end

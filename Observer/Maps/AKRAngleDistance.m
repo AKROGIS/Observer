@@ -10,7 +10,7 @@
 
 @implementation AKRAngleDistance
 
-- (id)initWithAzimuth:(double)azimuth kilometer:(double)kilometers
+- (instancetype)initWithAzimuth:(double)azimuth kilometer:(double)kilometers
 {
     self = [super init];
     if (self)

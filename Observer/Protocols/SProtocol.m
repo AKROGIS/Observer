@@ -35,7 +35,7 @@
 @implementation SProtocol
 
 
-- (id) initWithURL:(NSURL *)url title:(id)title version:(id)version date:(id)date
+- (instancetype) initWithURL:(NSURL *)url title:(id)title version:(id)version date:(id)date
 {
     if (!url) {
         return nil;
@@ -43,7 +43,7 @@
     self = [super init];
     if (self) {
         _url = url;
-        _title = ([title isKindOfClass:[NSString class]] ? title : nil);
+        _title = ([title isKindOfClass:[NSString class]] ? [title copy] : nil);
         _version = ([version isKindOfClass:[NSNumber class]] ? version : nil);
         _date = [date isKindOfClass:[NSDate class]] ? date : ([date isKindOfClass:[NSString class]] ? [AKRFormatter dateFromISOString:date] : nil);
     }
@@ -51,7 +51,7 @@
 }
 
 
-- (id) initWithURL:(NSURL *)url
+- (instancetype) initWithURL:(NSURL *)url
 {
     return [self initWithURL:url
                        title:url.lastPathComponent
@@ -64,7 +64,7 @@
 
 #pragma mark - NSCoding
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     int version = [aDecoder decodeIntForKey:kCodingVersionKey];
     switch (version) {
@@ -148,12 +148,12 @@
 
 - (NSString *)dateString
 {
-    return self.date ? [self.date stringWithMediumDateFormat] : @"Unknown";
+    return self.date ? self.date.stringWithMediumDateFormat : @"Unknown";
 }
 
 - (NSString *)versionString
 {
-    return self.version != nil ? [self.version stringValue] : @"Unknown";
+    return self.version != nil ? self.version.stringValue : @"Unknown";
 }
 
 
@@ -227,7 +227,7 @@
             if ([@"NPS-Protocol-Specification" isEqual:json[@"meta-name"]]) {
                 id item = json[@"meta-version"];
                 if ([item isKindOfClass:[NSNumber class]]) {
-                    NSInteger version = [(NSNumber *)item integerValue];
+                    NSInteger version = ((NSNumber *)item).integerValue;
                     _metaversion = version;
                     switch (version) {
                         case 1:
@@ -261,12 +261,12 @@
     id observingMessage = json[@"observing"];
     _observingMessage = [observingMessage isKindOfClass:[NSString class]] ? observingMessage : nil;
     _observingMessage = [_observingMessage stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    _observingMessage = [_observingMessage length] == 0 ? nil : _observingMessage;
+    _observingMessage = _observingMessage.length == 0 ? nil : _observingMessage;
 
     id notObservingMessage = json[@"notobserving"];
     _notObservingMessage = [notObservingMessage isKindOfClass:[NSString class]] ? notObservingMessage : nil;
     _notObservingMessage = [_notObservingMessage stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    _notObservingMessage = [_notObservingMessage length] == 0 ? nil : _notObservingMessage;
+    _notObservingMessage = _notObservingMessage.length == 0 ? nil : _notObservingMessage;
 
     id totalizerConfig = json[@"mission"][@"totalizer"];
     _totalizerConfig = [totalizerConfig isKindOfClass:[NSDictionary class]] ? totalizerConfig : nil;
@@ -381,7 +381,7 @@
     }
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (!self.destinationURL) {
-        NSURL *documentsDirectory = [[fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+        NSURL *documentsDirectory = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
         NSURL *originalURL = downloadTask.originalRequest.URL;
         NSString *name = originalURL.lastPathComponent;
         self.destinationURL = (name == nil) ? nil : [documentsDirectory URLByAppendingPathComponent:name];
@@ -392,7 +392,7 @@
         if (self.canReplace) {
             [fileManager removeItemAtURL:self.destinationURL error:NULL];
         } else {
-            self.destinationURL = [self.destinationURL URLByUniquingPath];
+            self.destinationURL = self.destinationURL.URLByUniquingPath;
         }
     }
     BOOL success = (location == nil || self.destinationURL == nil) ? NO : [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];

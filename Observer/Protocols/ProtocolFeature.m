@@ -15,7 +15,7 @@
 
 static NSUInteger currentUniqueId = 0;
 
-- (id)initWithJSON:(id)json version:(NSInteger) version
+- (instancetype)initWithJSON:(id)json version:(NSInteger) version
 {
     self = [super init];
     if (self) {
@@ -72,23 +72,23 @@ static NSUInteger currentUniqueId = 0;
                 NSString *obscuredName;
                 if ([value isKindOfClass:[NSString class]]) {
                     obscuredName = [NSString stringWithFormat:@"%@%@",kAttributePrefix,value];
-                    [attributeDescription setName:obscuredName];
+                    attributeDescription.name = obscuredName;
                 }
                 value = item[@"type"];
                 if ([value isKindOfClass:[NSNumber class]]) {
-                    NSUInteger type = [(NSNumber*)value unsignedIntegerValue];
+                    NSUInteger type = ((NSNumber*)value).unsignedIntegerValue;
                     if (type == 0) {
                         type = 200;
                         _hasUniqueId = YES;
                         _uniqueIdName = obscuredName;
                     }
-                    [attributeDescription setAttributeType:type];
+                    attributeDescription.attributeType = type;
                 }
                 value = item[@"required"];
                 if ([value isKindOfClass:[NSNumber class]]) {
-                    [attributeDescription setOptional:[(NSNumber*)value boolValue]];
+                    attributeDescription.optional = ((NSNumber*)value).boolValue;
                 }
-                [attributeDescription setDefaultValue:item[@"default"]];
+                attributeDescription.defaultValue = item[@"default"];
                 value = item[@"constraints"];
                 if ([value isKindOfClass:[NSArray class]]) {
                     NSMutableArray *predicates = [[NSMutableArray alloc] init];
@@ -124,12 +124,12 @@ static NSUInteger currentUniqueId = 0;
 
 - (NSNumber *)nextUniqueId
 {
-    return [NSNumber numberWithUnsignedInteger:++currentUniqueId];
+    return @(++currentUniqueId);
 }
 
 - (void)initUniqueId:(NSNumber *)id
 {
-    currentUniqueId = [id unsignedIntegerValue];
+    currentUniqueId = id.unsignedIntegerValue;
 }
 
 - (WaysToLocateFeature) locationMethod
@@ -161,7 +161,7 @@ static NSUInteger currentUniqueId = 0;
                 AKRLog(@"Failed to create feature renderer (bad protocol): %@", exception);
                 //Create a simple default
                 AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor greenColor]];
-                [symbol setSize:CGSizeMake(12,12)];
+                symbol.size = CGSizeMake(12,12);
                 _pointRenderer = [AGSSimpleRenderer simpleRendererWithSymbol:symbol];
             }
             break;
@@ -187,7 +187,7 @@ static NSUInteger currentUniqueId = 0;
             AKRLog(@"Failed to create feature renderer (bad protocol): %@", exception);
             //Create a simple default
             AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor greenColor]];
-            [symbol setSize:CGSizeMake(12,12)];
+            symbol.size = CGSizeMake(12,12);
             _pointRenderer = [AGSSimpleRenderer simpleRendererWithSymbol:symbol];
         }
         break;

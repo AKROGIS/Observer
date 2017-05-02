@@ -12,7 +12,7 @@
 
 @interface GpsPoint (Location)
 
-- (CLLocationCoordinate2D)locationOfGps;
+@property (nonatomic, readonly) CLLocationCoordinate2D locationOfGps;
 - (AGSPoint *)pointOfGpsWithSpatialReference:(AGSSpatialReference*)spatialReference;
 
 @end

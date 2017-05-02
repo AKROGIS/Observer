@@ -44,8 +44,8 @@
 - (void) refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // UITableView DataSource Support
-- (NSUInteger)numberOfLocalMaps;
-- (NSUInteger)numberOfRemoteMaps;
+@property (nonatomic, readonly) NSUInteger numberOfLocalMaps;
+@property (nonatomic, readonly) NSUInteger numberOfRemoteMaps;
 // Returns nil if index out of bounds (semantics - there is no map at the index)
 - (Map *)localMapAtIndex:(NSUInteger)index;
 // Returns nil if index out of bounds (semantics - there is no map at the index)

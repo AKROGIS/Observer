@@ -14,6 +14,6 @@
 // otherwise, does nothing if the there is no file existing at the path,
 // otherwise mutates the last path component until the path is unique.
 // NOTE: the path may no longer be unique when the caller uses the url
-- (NSURL *)URLByUniquingPath;
+@property (nonatomic, readonly, copy) NSURL *URLByUniquingPath;
 
 @end

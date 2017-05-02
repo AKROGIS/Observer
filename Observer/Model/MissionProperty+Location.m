@@ -17,7 +17,7 @@
 {
     CLLocationCoordinate2D location;
     if (self.gpsPoint) {
-        location = [self.gpsPoint locationOfGps];
+        location = self.gpsPoint.locationOfGps;
     }
     else {
         location.latitude = self.adhocLocation.latitude;
@@ -28,7 +28,7 @@
 
 - (AGSPoint *)pointOfMissionPropertyWithSpatialReference:(AGSSpatialReference*)spatialReference
 {
-    CLLocationCoordinate2D location = [self locationOfMissionProperty];
+    CLLocationCoordinate2D location = self.locationOfMissionProperty;
     return [AGSPoint pointFromLocation:location spatialReference:spatialReference];
 }
 

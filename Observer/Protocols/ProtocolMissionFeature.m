@@ -11,7 +11,7 @@
 
 @implementation ProtocolMissionFeature
 
-- (id)initWithJSON:(id)json version:(NSInteger) version
+- (instancetype)initWithJSON:(id)json version:(NSInteger) version
 {
     self = [super initWithJSON:json version:version];
     if (self) {
@@ -38,7 +38,7 @@
 {
 
     AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
-    [symbol setSize:CGSizeMake(6,6)];
+    symbol.size = CGSizeMake(6,6);
     ProtocolFeatureSymbology *observingSymbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"on-symbology"] version:version];
     ProtocolFeatureSymbology *notObservingSymbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"off-symbology"] version:version];
     _lineRendererObserving = [AGSSimpleRenderer simpleRendererWithSymbol:observingSymbology.agsLineSymbol];
@@ -65,7 +65,7 @@
         symbol.width = 1.5;
         _lineRendererNotObserving = [AGSSimpleRenderer simpleRendererWithSymbol:symbol];
         AGSMarkerSymbol *msymbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
-        [msymbol setSize:CGSizeMake(6,6)];
+        msymbol.size = CGSizeMake(6,6);
         _pointRendererGps = [AGSSimpleRenderer simpleRendererWithSymbol:msymbol];
     }
 }

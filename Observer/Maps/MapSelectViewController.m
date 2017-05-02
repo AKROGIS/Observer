@@ -337,11 +337,11 @@
     if ([segue.identifier isEqualToString:@"Remote Map Details"] || [segue.identifier isEqualToString:@"Local Map Details"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
         Map *item = indexPath.section == 0 ? [self.items localMapAtIndex:indexPath.urow] :  [self.items remoteMapAtIndex:indexPath.urow];
-        MapDetailViewController *vc = (MapDetailViewController *)[segue destinationViewController];
+        MapDetailViewController *vc = (MapDetailViewController *)segue.destinationViewController;
         vc.title = segue.identifier;
         vc.map = item;
         //if we are in a popover, we want the popover to stay the same size.
-        [vc setPreferredContentSize:self.preferredContentSize];
+        vc.preferredContentSize = self.preferredContentSize;
     }
 }
 
@@ -408,10 +408,10 @@
 - (void)setFooterText
 {
     if (self.items.refreshDate) {
-        if ([self.items.refreshDate isToday]) {
-            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumTimeFormat]];
+        if (self.items.refreshDate.today) {
+            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",self.items.refreshDate.stringWithMediumTimeFormat];
         } else {
-            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumDateFormat]];
+            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",self.items.refreshDate.stringWithMediumDateFormat];
         }
     }
 }

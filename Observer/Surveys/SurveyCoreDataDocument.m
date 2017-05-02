@@ -15,7 +15,7 @@
 
 - (NSManagedObjectModel *)managedObjectModel
 {
-    Survey *survey = [[Survey alloc] initWithURL:[self.fileURL URLByDeletingLastPathComponent]];
+    Survey *survey = [[Survey alloc] initWithURL:self.fileURL.URLByDeletingLastPathComponent];
     return [SurveyObjectModel objectModelWithProtocol:survey.protocol];
 }
 

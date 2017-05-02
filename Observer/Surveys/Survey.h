@@ -42,17 +42,17 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, strong, readonly) NSString *lastPathComponent;
 @property (nonatomic, readonly) SurveyState state;
-@property (nonatomic, strong, readonly) NSString *subtitle;
 @property (nonatomic, strong, readonly) NSString *statusMessage;
 
 //title and date will block (reading values from the filessytem) if the state is unborn.
-@property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong, readonly) NSDate *date;   //Date of last change (create/edit)
 @property (nonatomic, strong, readonly) NSDate *syncDate;
 
 //The following methods will block (reading data from the filessytem)
 @property (nonatomic, strong, readonly) UIImage *thumbnail;
 @property (nonatomic, strong, readonly) SProtocol *protocol;
+
+- (void)setTitle:(NSString *)title;
 
 //document will return nil until openDocumentWithCompletionHandler is called with success
 @property (nonatomic, strong, readonly) UIManagedDocument *document;
@@ -62,20 +62,20 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 
 //Initializers
 // NOTE: The Designated Initializer is not public, THIS CLASS CANNOT BE SUB-CLASSED
-- (id)init __attribute__((unavailable("Must use initWithProtocol: or initWithURL: instead.")));
-- (id)initWithURL:(NSURL *)url;
+- (instancetype)init __attribute__((unavailable("Must use initWithProtocol: or initWithURL: instead.")));
+- (instancetype)initWithURL:(NSURL *)url;
 //This involve doing IO (to find and create the unused url), it should be called on a background thread
-- (id)initWithProtocol:(SProtocol *)protocol;
-- (id)initWithArchive:(NSURL *)archive;
+- (instancetype)initWithProtocol:(SProtocol *)protocol;
+- (instancetype)initWithArchive:(NSURL *)archive;
 
 //YES if two Surveys are the same (same url)
 - (BOOL)isEqualToSurvey:(Survey *)survey;
 
 //YES if the survey is valid
-- (BOOL)isValid;
+@property (nonatomic, getter=isValid, readonly) BOOL valid;
 
 //YES if the core data context is loaded and normal
-- (BOOL)isReady;
+@property (nonatomic, getter=isReady, readonly) BOOL ready;
 
 //other actions
 - (void)openDocumentWithCompletionHandler:(void (^)(BOOL success))handler;
@@ -90,12 +90,12 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 + (NSURL *)urlFromCachedName:(NSString *)name;
 
 // Info for details view
-- (NSUInteger)observationCount;
-- (NSUInteger)segmentCount;
-- (NSUInteger)gpsCount;
-- (NSUInteger)gpsCountSinceSync;
-- (NSDate *)firstGpsDate;
-- (NSDate *)lastGpsDate;
+@property (nonatomic, readonly) NSUInteger observationCount;
+@property (nonatomic, readonly) NSUInteger segmentCount;
+@property (nonatomic, readonly) NSUInteger gpsCount;
+@property (nonatomic, readonly) NSUInteger gpsCountSinceSync;
+@property (nonatomic, readonly, copy) NSDate *firstGpsDate;
+@property (nonatomic, readonly, copy) NSDate *lastGpsDate;
 
 
 
@@ -140,7 +140,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (void)stopObserving:(CLLocation *)locationOfGPS;
 - (TrackLogSegment *)startNewTrackLogSegment:(CLLocation *)locationOfGPS;
 - (NSArray *) trackLogSegmentsSince:(NSDate *)timestamp;
-- (TrackLogSegment *)lastTrackLogSegment;
+@property (nonatomic, readonly, strong) TrackLogSegment *lastTrackLogSegment;
 
 
 //Non-TrackLogging Mission Property

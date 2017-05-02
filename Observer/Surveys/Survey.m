@@ -72,7 +72,7 @@
 
 #pragma mark - initializers
 
-- (id)initWithURL:(NSURL *)url title:(NSString *)title state:(SurveyState)state date:(NSDate *)date
+- (instancetype)initWithURL:(NSURL *)url title:(NSString *)title state:(SurveyState)state date:(NSDate *)date
 {
     NSString *name = url.lastPathComponent;
     if (name == nil || !url.isFileURL) {
@@ -86,7 +86,7 @@
     }
     //If the document is not in our privateDocumentDirectory then move it and use the new url
     //   versions 0.9.2(build 440) and below created the survey docs in the public Documents directory
-    NSURL *folder = [url URLByDeletingLastPathComponent];
+    NSURL *folder = url.URLByDeletingLastPathComponent;
     if (folder != nil && ![folder isEqualToURL:[Survey privateDocumentsDirectory]]) {
         NSURL *newUrl = [[Survey privateDocumentsDirectory] URLByAppendingPathComponent:name];
         //Check if the url is out of date (cached by SurveyCollection)
@@ -101,7 +101,7 @@
             // fileExistsAtOldPath OR !fileExistsAtNewPath;  It should be impossible for newPath == nil 
             if (fileExistsAtOldPath && fileExistsAtNewPath) {
                 //Same name exists at both locations.  Assume the new public version is different from the private, and find a unique name
-                newUrl = [newUrl URLByUniquingPath];
+                newUrl = newUrl.URLByUniquingPath;
             }
             if (fileExistsAtOldPath && newUrl != nil) {  //We already know that url != nil
                 AKRLog(@"Moving Survey %@ from %@ to %@",url.lastPathComponent, folder, [Survey privateDocumentsDirectory]);
@@ -120,14 +120,14 @@
         _url = url;
         _state = state;
         _date = date;
-        _title = title != nil ? title : [[url lastPathComponent] stringByDeletingPathExtension] ;
+        _title = title != nil ? [title copy] : url.lastPathComponent.stringByDeletingPathExtension ;
         _protocolIsLoaded = NO;
         _thumbnailIsLoaded = NO;
     }
     return self;
 }
 
-- (id)initWithURL:(NSURL *)url
+- (instancetype)initWithURL:(NSURL *)url
 {
     if ([url.pathExtension isEqualToString:SURVEY_EXT]) {
         return [self initWithArchive:url];
@@ -135,7 +135,7 @@
     return [self initWithURL:url title:nil state:kUnborn date:[NSDate date]];
 }
 
-- (id)initWithProtocol:(SProtocol *)protocol
+- (instancetype)initWithProtocol:(SProtocol *)protocol
 {
     //verify the input - reading protocol values may cause protocol to load from filesystem
     if (!protocol.isValid) {
@@ -155,12 +155,12 @@
 }
 
 
-- (id)initWithArchive:(NSURL *)archive
+- (instancetype)initWithArchive:(NSURL *)archive
 {
     if (![archive.pathExtension isEqualToString:SURVEY_EXT]) {
         return nil;
     }
-    NSString *name = [[archive lastPathComponent] stringByDeletingPathExtension];
+    NSString *name = archive.lastPathComponent.stringByDeletingPathExtension;
     NSURL *newDocument = [Survey privateDocumentFromName:name];
     if ([Archiver unpackSurvey:newDocument fromArchive:archive]) {
         return [self initWithURL:newDocument];
@@ -186,7 +186,7 @@
 - (void)setTitle:(NSString *)title
 {
     if (_title != title) {
-        _title = title;
+        _title = [title copy];
         [self saveProperties];
     }
 }
@@ -207,7 +207,7 @@
 - (NSString *)subtitle2
 {
     NSString *status = nil;
-    NSString *dateString = [self.date stringWithMediumDateTimeFormat];
+    NSString *dateString = self.date.stringWithMediumDateTimeFormat;
     switch (self.state) {
         case kUnborn:
             status = @"Unborn";
@@ -223,7 +223,7 @@
             break;
         case kSaved:
             status = @"Saved";
-            dateString = [self.syncDate stringWithMediumDateTimeFormat];
+            dateString = self.syncDate.stringWithMediumDateTimeFormat;
             break;
     }
     return [NSString stringWithFormat:@"%@: %@",status, dateString];
@@ -480,7 +480,7 @@
 
     //protocol
     NSString *protocolPath = self.protocolUrl.path;
-    NSString *protocolFolder = [self.protocolUrl URLByDeletingLastPathComponent].path;
+    NSString *protocolFolder = self.protocolUrl.URLByDeletingLastPathComponent.path;
     [archive deflateFile:protocolPath relativeToPath:protocolFolder usingResourceFork:NO];
 }
 
@@ -490,7 +490,7 @@
 
     static NSURL *_privateDocumentsDirectory = nil;
     if (!_privateDocumentsDirectory) {
-        NSURL *libraryDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+        NSURL *libraryDirectory = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask].firstObject;
         _privateDocumentsDirectory = [libraryDirectory URLByAppendingPathComponent:@"Private Documents"];
         [[NSFileManager defaultManager] createDirectoryAtURL:_privateDocumentsDirectory withIntermediateDirectories:YES attributes:nil error:nil];
     }
@@ -524,7 +524,7 @@
     //find a suitable URL (reads filesystem)
     NSString *filename = [NSString stringWithFormat:@"%@.%@", name, INTERNAL_SURVEY_EXT];
     //the trailing slash is added because it is a directory, and this standardizes the URL for comparisons
-    NSURL *url = [[[[Survey privateDocumentsDirectory] URLByAppendingPathComponent:filename] URLByUniquingPath] URLByAppendingPathComponent:@"/"];
+    NSURL *url = [[[Survey privateDocumentsDirectory] URLByAppendingPathComponent:filename].URLByUniquingPath URLByAppendingPathComponent:@"/"];
     return url;
 }
 
@@ -638,7 +638,7 @@
         //Observations
         for (ProtocolFeature *feature in self.protocol.features) {
             graphicsLayer = [[AGSGraphicsLayer alloc] init];
-            [graphicsLayer setRenderer:feature.pointRenderer];
+            graphicsLayer.renderer = feature.pointRenderer;
             graphicsLayers[feature.name] = graphicsLayer;
         }
 
@@ -649,24 +649,24 @@
         //Mission Properties
         ProtocolMissionFeature *missionFeature = self.protocol.missionFeature;
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:missionFeature.pointRenderer];
+        graphicsLayer.renderer = missionFeature.pointRenderer;
         graphicsLayers[kMissionPropertyEntityName] = graphicsLayer;
 
         //gps points
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:missionFeature.pointRendererGps];
+        graphicsLayer.renderer = missionFeature.pointRendererGps;
         graphicsLayers[kGpsPointEntityName] = graphicsLayer;
 
         //Track logs observing
         NSString * name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:missionFeature.lineRendererObserving];
+        graphicsLayer.renderer = missionFeature.lineRendererObserving;
         graphicsLayers[name] = graphicsLayer;
 
         //Track logs not observing
         name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
         graphicsLayer = [[AGSGraphicsLayer alloc] init];
-        [graphicsLayer setRenderer:missionFeature.lineRendererNotObserving];
+        graphicsLayer.renderer = missionFeature.lineRendererNotObserving;
         graphicsLayers[name] = graphicsLayer;
 
         _graphicsLayersByName = [graphicsLayers copy];
@@ -718,7 +718,7 @@
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:name];
     request.predicate = [NSPredicate predicateWithFormat:@"(%@ <= gpsPoint.timestamp AND gpsPoint.timestamp <= %@) || (%@ <= adhocLocation.timestamp AND adhocLocation.timestamp <= %@)",start,end,start,end];
     NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    return (NSManagedObject *)[results lastObject]; // will return nil if there was an error, or no results
+    return (NSManagedObject *)results.lastObject; // will return nil if there was an error, or no results
 }
 
 - (ProtocolFeature *)protocolFeatureFromLayerName:(NSString *)layerName
@@ -855,7 +855,7 @@
     request.predicate = [NSPredicate predicateWithFormat:@"name == %@ AND author == %@ AND date == %@",
                          map.title, map.author, map.date];
     NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
-    self.currentMapEntity = [results firstObject];
+    self.currentMapEntity = results.firstObject;
     if(!self.currentMapEntity) {
         //AKRLog(@"  Map not found, creating new CoreData Entity");
         self.currentMapEntity = [NSEntityDescription insertNewObjectForEntityForName:kMapEntityName inManagedObjectContext:self.document.managedObjectContext];
@@ -906,16 +906,16 @@
     //Adds a GPS point definitively.
     if ([self isNewLocation:location]) {
         GpsPoint *gpsPoint = [self createGpsPoint:location];
-        [[self lastTrackLogSegment] addGpsPoint:gpsPoint];
-        if ([self lastTrackLogSegment].pointCount > 1000) {  //about about 17 minutes at 1fix/sec
+        [self.lastTrackLogSegment addGpsPoint:gpsPoint];
+        if (self.lastTrackLogSegment.pointCount > 1000) {  //about about 17 minutes at 1fix/sec
             [self splitTrackLogSegmentAt:gpsPoint];
         }
         [self drawGpsPoint:gpsPoint];
         if (self.lastGpsPoint) {
-            [self drawLineFor:[self lastTrackLogSegment].missionProperty from:self.lastGpsPoint to:gpsPoint];
+            [self drawLineFor:self.lastTrackLogSegment.missionProperty from:self.lastGpsPoint to:gpsPoint];
         }
         self.lastGpsPoint = gpsPoint;
-        [self.totalizer updateWithLocation:location forMissionProperties:[self lastTrackLogSegment].missionProperty];
+        [self.totalizer updateWithLocation:location forMissionProperties:self.lastTrackLogSegment.missionProperty];
         return gpsPoint;
     } else {
         return self.lastGpsPoint;
@@ -995,7 +995,7 @@
         // maybe because we started a new segment, at the same time as an automatic split was done.
         // return the current tracklog with an update in observing status.
         priorMissionProperty.observing = self.isObserving;
-        return [self lastTrackLogSegment];
+        return self.lastTrackLogSegment;
     }
     //we have a new unique gpsPoint, maybe because the priorMissionProperty was nil or adhoc (no GPS)
     TrackLogSegment *newTrackLog = [self splitTrackLogSegmentAt:gpsPoint];
@@ -1016,7 +1016,7 @@
 
 - (TrackLogSegment *)lastTrackLogSegment
 {
-    return [self.trackLogSegments lastObject];
+    return self.trackLogSegments.lastObject;
 }
 
 - (NSArray *)trackLogSegmentsSince:(NSDate *)timestamp
@@ -1174,7 +1174,7 @@
 - (AGSGraphic *)drawObservation:(Observation *)observation
 {
     //AKRLog(@"    Drawing observation type %@",observation.entity.name);
-    NSDate *timestamp = [observation timestamp];
+    NSDate *timestamp = observation.timestamp;
     NSAssert(timestamp, @"An observation has no timestamp: %@", observation);
     AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
     NSMutableDictionary *attribs = [NSMutableDictionary new];
@@ -1223,7 +1223,7 @@
     }
     if (symbol == nil) {
          symbol = [AGSTextSymbol textSymbolWithText:labelText color:labelSpec.color];
-        symbol.fontSize = (CGFloat)[labelSpec.size doubleValue];
+        symbol.fontSize = (CGFloat)labelSpec.size.doubleValue;
         // make lable anchor at lower left with offset for 15pt round marker; Doing more would require a rendering engine
         symbol.vAlignment = AGSTextSymbolVAlignmentBottom;
         symbol.hAlignment = AGSTextSymbolHAlignmentLeft;
@@ -1391,7 +1391,7 @@
     request.propertiesToFetch = @[description];
     NSArray *results = [self.document.managedObjectContext  executeFetchRequest:request error:nil];
     if (results != nil && results.count > 0){
-        NSNumber *maxID = [[results objectAtIndex:0] valueForKey:@"maxID"];
+        NSNumber *maxID = [results[0] valueForKey:@"maxID"];
         return maxID;
     }
     return nil;
@@ -1410,7 +1410,7 @@
 
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
 {
-    NSDate *timestamp = [missionProperty timestamp];
+    NSDate *timestamp = missionProperty.timestamp;
     NSAssert(timestamp, @"A mission property has no timestamp: %@",missionProperty);
     NSDictionary *attribs = @{kTimestampKey:timestamp};
     AGSPoint *mapPoint = [missionProperty pointOfMissionPropertyWithSpatialReference:self.mapViewSpatialReference];

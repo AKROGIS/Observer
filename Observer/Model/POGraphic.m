@@ -18,8 +18,8 @@
 
 - (void)remove
 {
-    [[self layer] removeGraphic:self];
-    [[self.label layer] removeGraphic:self.label];
+    [self.layer removeGraphic:self];
+    [self.label.layer removeGraphic:self.label];
 }
 
 @end

@@ -29,9 +29,9 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"Show Protocol Detail"]) {
+    if ([segue.identifier isEqualToString:@"Show Protocol Detail"]) {
         ((ProtocolDetailViewController *)segue.destinationViewController).protocol = self.survey.protocol;
-        [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
+        segue.destinationViewController.preferredContentSize = self.preferredContentSize;
     }
 //    if ([[segue identifier] isEqualToString:@"Show GpsPoint Detail"]) {
 //        ((GpsPointTableViewController *)segue.destinationViewController).gpsPoint = self.???;

@@ -36,21 +36,21 @@
 - (ProtocolFeature *)featureWithName:(NSString *)name;
 
 //YES if the protocol is available locally, NO otherwise;
-- (BOOL)isLocal;
+@property (nonatomic, getter=isLocal, readonly) BOOL local;
 
 //YES if the protocol is valid
 // currently defined by being able to load/parse the data at url, and find a missionFeature,
 // and at least one valid feature in the data.
-- (BOOL)isValid;
+@property (nonatomic, getter=isValid, readonly) BOOL valid;
 
 //YES if two protocols are the same (same title, version and date)
 //    do not compare urls, because the same protocol will have either a local, or a server url
 - (BOOL)isEqualToProtocol:(SProtocol *)protocol;
 
 //designated initializer
-- (id)initWithURL:(NSURL *)url title:(id)title version:(id)version date:(id)date;
-- (id)initWithURL:(NSURL *)url;
-- (id) init __attribute__((unavailable("Must use initWithURL: instead.")));
+- (instancetype)initWithURL:(NSURL *)url title:(id)title version:(id)version date:(id)date NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)url;
+- (instancetype) init __attribute__((unavailable("Must use initWithURL: instead.")));
 
 // Save the Protocol to the URL;  This is synchronous, so remote protocols will block
 // url must be a file URL
@@ -59,7 +59,7 @@
 // download the Protocol from the remote URL to a local file...
 - (void)startDownload;
 - (void)cancelDownload;
-- (BOOL)isDownloading;
+@property (nonatomic, getter=isDownloading, readonly) BOOL downloading;
 
 // The download should continue if the app is put in the background
 @property (nonatomic) BOOL isBackground;

@@ -61,12 +61,12 @@ static BOOL _isLoaded = NO;
 
 + (BOOL)isImportURL:(NSURL *)url
 {
-    return [[url pathExtension] isEqualToString:SURVEY_EXT];
+    return [url.pathExtension isEqualToString:SURVEY_EXT];
 }
 
 + (BOOL)isPrivateURL:(NSURL *)url
 {
-    return [[url pathExtension] isEqualToString:INTERNAL_SURVEY_EXT];
+    return [url.pathExtension isEqualToString:INTERNAL_SURVEY_EXT];
 }
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
@@ -219,7 +219,7 @@ static BOOL _isLoaded = NO;
     [self.items removeAllObjects];
     NSMutableSet *privateSurveyFileNames = [SurveyCollection existingPrivateSurveyNames];
     for (NSURL *surveyUrl in surveyUrls) {
-        NSString *cachedSurveyFileName = [surveyUrl lastPathComponent];
+        NSString *cachedSurveyFileName = surveyUrl.lastPathComponent;
         if ([privateSurveyFileNames containsObject:cachedSurveyFileName]) {
             [self.items addObject:[[Survey alloc] initWithURL:surveyUrl]];
             [privateSurveyFileNames removeObject:cachedSurveyFileName];
@@ -328,7 +328,7 @@ static BOOL _isLoaded = NO;
 {
     static NSURL *_documentsDirectory = nil;
     if (!_documentsDirectory) {
-        _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+        _documentsDirectory = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
     }
     return _documentsDirectory;
 }

@@ -15,8 +15,8 @@
 @interface ProtocolFeatureLabel: NSObject
 
 // If the JSON is not a NSDictionary, then all the properties will be nil
-- (id)initWithLabelJSON:(id)json version:(NSInteger) version;
-- (id) init __attribute__((unavailable("Must initWithLabelJSON:version: instead.")));
+- (instancetype)initWithLabelJSON:(id)json version:(NSInteger) version NS_DESIGNATED_INITIALIZER;
+- (instancetype) init __attribute__((unavailable("Must initWithLabelJSON:version: instead.")));
 
 
 //if field is not provided, or not a valid attribute, then there will be no label.

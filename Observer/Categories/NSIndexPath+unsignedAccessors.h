@@ -11,7 +11,7 @@
 
 @interface NSIndexPath (unsignedAccessors)
 
-- (NSUInteger)urow;
-- (NSUInteger)usection;
+@property (nonatomic, readonly) NSUInteger urow;
+@property (nonatomic, readonly) NSUInteger usection;
 
 @end

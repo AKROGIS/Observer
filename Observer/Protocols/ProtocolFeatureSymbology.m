@@ -12,7 +12,7 @@
 
 @implementation ProtocolFeatureSymbology
 
-- (id)initWithSymbologyJSON:(id)json version:(NSInteger) version
+- (instancetype)initWithSymbologyJSON:(id)json version:(NSInteger) version
 {
     self = [super init];
     if (self) {
@@ -49,7 +49,7 @@
         }
     }
     if ([size isKindOfClass:[NSNumber class]]) {
-        CGFloat realSize = (CGFloat)[(NSNumber *)size doubleValue];
+        CGFloat realSize = (CGFloat)((NSNumber *)size).doubleValue;
         symbol.size = CGSizeMake(realSize, realSize);
     }
     return symbol;
@@ -65,7 +65,7 @@
         }
     }
     if ([size isKindOfClass:[NSNumber class]]) {
-        CGFloat realSize = (CGFloat)[(NSNumber *)size doubleValue];
+        CGFloat realSize = (CGFloat)((NSNumber *)size).doubleValue;
         symbol.width = realSize;
     }
     return symbol;
@@ -78,7 +78,7 @@
         return nil;
     }
     NSScanner *scanner = [NSScanner scannerWithString:hexString];
-    [scanner setScanLocation:1]; // bypass '#' character
+    scanner.scanLocation = 1; // bypass '#' character
     if ([scanner scanHexInt:&rgbValue]) {
         CGFloat max = 255.0;
         return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/max green:((rgbValue & 0xFF00) >> 8)/max blue:(rgbValue & 0xFF)/max alpha:1.0];

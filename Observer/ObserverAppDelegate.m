@@ -39,7 +39,7 @@
     [AGSRuntimeEnvironment setClientID:clientID error:&error];
     if(error){
         // We had a problem using our client ID - Map will display "For developer use only"
-        NSLog(@"Error using client ID : %@",[error localizedDescription]);
+        NSLog(@"Error using client ID : %@",error.localizedDescription);
     }
 
     Map *savedMap = [[Map alloc] initWithCachedPropertiesName:[Settings manager].activeMapPropertiesName];
@@ -131,9 +131,9 @@
     if (name == nil) {
         return NO;
     }
-    NSURL *documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+    NSURL *documentsDirectory = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
     NSURL *newUrl = [documentsDirectory URLByAppendingPathComponent:name];
-    newUrl = [newUrl URLByUniquingPath];
+    newUrl = newUrl.URLByUniquingPath;
     NSError *error = nil;
     [[NSFileManager defaultManager] copyItemAtURL:url toURL:newUrl error:&error];
     if (error) {
@@ -144,7 +144,7 @@
     if ([SurveyCollection collectsURL:newUrl]) {
         Survey *newSurvey = [[Survey alloc] initWithURL:newUrl];
         [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
-        if ([newSurvey isValid]) {
+        if (newSurvey.valid) {
             self.observerMapViewController.survey = newSurvey;
             return YES;
         } else {
@@ -168,7 +168,7 @@
     }
     if ([ProtocolCollection collectsURL:url]) {
         SProtocol *newProtocol = [[SProtocol alloc] initWithURL:newUrl];
-        if ([newProtocol isValid]) {
+        if (newProtocol.valid) {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Protocol"
                                                                            message:@"Do you want to open a new survey file with this protocol?"
                                                                     preferredStyle:UIAlertControllerStyleAlert];
@@ -179,7 +179,7 @@
                                                                  style:UIAlertActionStyleDefault
                                                                handler:^(UIAlertAction * action){
                                                                    Survey *newSurvey = [[Survey alloc] initWithProtocol:newProtocol];
-                                                                   if ([newSurvey isValid]) {
+                                                                   if (newSurvey.valid) {
                                                                        self.observerMapViewController.survey = newSurvey;
                                                                    } else {
                                                                        [self alert:nil message:@"Unable to create new survey."];

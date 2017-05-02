@@ -64,7 +64,7 @@
 
 #pragma mark - Initialization
 
-- (id)initWithLocationsJSON:(id)json version:(NSInteger) version
+- (instancetype)initWithLocationsJSON:(id)json version:(NSInteger) version
 {
     self = [super init];
     if (self) {
@@ -90,28 +90,28 @@
     for (id item in json) {
         //gpsLocation
         if ([self dictionary:item hasValues:@[@"gps", @"gpslocation", @"gps-location"] forKey:@"type"]) {
-            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:@NO]) {
                 _gpsLocation = (NSDictionary *)item;
             }
             continue;
         }
         //angleDistanceLocation
         if ([self dictionary:item hasValues:@[@"ad", @"angledistance", @"angle-distance"] forKey:@"type"]) {
-            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:@NO]) {
                 _angleDistance = (NSDictionary *)item;
             }
             continue;
         }
         //mapTouch
         if ([self dictionary:item hasValues:@[@"touch", @"maptouch", @"map-touch", @"adhoctouch", @"adhoc-touch"] forKey:@"type"]) {
-            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:@NO]) {
                 _mapTouch = (NSDictionary *)item;
             }
             continue;
         }
         //mapTarget
         if ([self dictionary:item hasValues:@[@"target", @"maptarget", @"map-target", @"adhoctarget", @"adhoc-target"] forKey:@"type"]) {
-            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:@NO]) {
                 _mapTarget = (NSDictionary *)item;
             }
             continue;
@@ -130,15 +130,15 @@
             id value = _angleDistance[key];
             if ([value isKindOfClass:[NSString class]]) {
                 NSString *units = (NSString *)value;
-                if ([@[@"feet", @"foot"] containsObject:[units lowercaseString]]) {
+                if ([@[@"feet", @"foot"] containsObject:units.lowercaseString]) {
                     _distanceUnits = AGSSRUnitFoot;
                     _definesAngleDistance = YES;
                 }
-                if ([@[@"yard", @"yards"] containsObject:[units lowercaseString]]) {
+                if ([@[@"yard", @"yards"] containsObject:units.lowercaseString]) {
                     _distanceUnits = AGSSRUnitFoot;
                     _definesAngleDistance = YES;
                 }
-                if ([@[@"meter", @"metre", @"metres", @"meters"] containsObject:[units lowercaseString]]) {
+                if ([@[@"meter", @"metre", @"metres", @"meters"] containsObject:units.lowercaseString]) {
                     _distanceUnits = AGSSRUnitMeter;
                     _definesAngleDistance = YES;
                 }
@@ -150,7 +150,7 @@
             id value = _angleDistance[key];
             if ([value isKindOfClass:[NSNumber class]]) {
                 _definesAngleDistance = YES;
-                _angleBaseline = [(NSNumber *)value  doubleValue];
+                _angleBaseline = ((NSNumber *)value).doubleValue;
             }
         }
         //angleDirection
@@ -208,13 +208,13 @@
 
 - (WaysToLocateFeature)defaultNonTouchChoice
 {
-    if (self.hasGPS && [self dictionary:_gpsLocation hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
+    if (self.hasGPS && [self dictionary:_gpsLocation hasKey:@"default" withValue:@YES]) {
         return LocateFeatureWithGPS;
     }
-    if (self.hasMap && [self dictionary:_mapTarget hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
+    if (self.hasMap && [self dictionary:_mapTarget hasKey:@"default" withValue:@YES]) {
         return LocateFeatureWithMapTarget;
     }
-    if (self.hasGPS && self.mapIsProjected && [self dictionary:_angleDistance hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
+    if (self.hasGPS && self.mapIsProjected && [self dictionary:_angleDistance hasKey:@"default" withValue:@YES]) {
         return LocateFeatureWithAngleDistance;
     }
     return LocateFeatureUndefined;
@@ -293,7 +293,7 @@
         NSDictionary *dict = (NSDictionary *)possibleDict;
         id item = dict[key];
         if ([item isKindOfClass:[NSString class]]) {
-            NSString *text = [(NSString *)item lowercaseString];
+            NSString *text = ((NSString *)item).lowercaseString;
             for (NSString *value in values) {
                 if ([text isEqualToString:value]) {
                     return YES;

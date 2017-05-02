@@ -19,8 +19,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dateFormatter = [NSDateFormatter new];
-        [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
-        [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd"];
+        dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+        dateFormatter.dateFormat = @"yyyy'-'MM'-'dd";
         [dateFormatter setLenient:YES];
     });
     return [dateFormatter dateFromString:dateString];
@@ -35,8 +35,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         outDateFormatter = [NSDateFormatter new];
-        [outDateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
-        [outDateFormatter setDateFormat:@"MMM' 'd', 'y' at 'HH':'mm':'ss.SS' 'zzz"];
+        outDateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+        outDateFormatter.dateFormat = @"MMM' 'd', 'y' at 'HH':'mm':'ss.SS' 'zzz";
     });
     return [outDateFormatter stringFromDate:date];
 }
@@ -50,9 +50,9 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dateFormatter = [NSDateFormatter new];
-        [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
-        [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-        [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
+        dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+        dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+        dateFormatter.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'";
     });
     return [dateFormatter stringFromDate:date];
 }
@@ -66,8 +66,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dateFormatter = [NSDateFormatter new];
-        [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
-        [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS' 'z"];
+        dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+        dateFormatter.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS' 'z";
     });
     return [dateFormatter stringFromDate:date];
 }
@@ -97,7 +97,7 @@
         formatter.usesGroupingSeparator = YES;
         formatter.maximumSignificantDigits = 3;
     });
-    return [formatter stringFromNumber:[NSNumber numberWithDouble:number]];
+    return [formatter stringFromNumber:@(number)];
 }
 
 + (NSString *)stringWith4SigFigsFromDouble:(double)number
@@ -109,7 +109,7 @@
         formatter.usesGroupingSeparator = YES;
         formatter.maximumSignificantDigits = 4;
     });
-    return [formatter stringFromNumber:[NSNumber numberWithDouble:number]];
+    return [formatter stringFromNumber:@(number)];
 }
 
 

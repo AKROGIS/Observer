@@ -13,6 +13,6 @@
 // returns a new string based on self that is escaped for export in a CSV file
 // 1) converts quotes (") to ("")
 // 2) surrounds string with quotes (")
-- (NSString *)csvEscape;
+@property (nonatomic, readonly, copy) NSString *csvEscape;
 
 @end

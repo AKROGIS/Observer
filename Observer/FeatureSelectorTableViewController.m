@@ -84,10 +84,10 @@
             timestamp = (NSDate *)item;
         }
         if (timestamp) {
-            if ([timestamp isToday]) {
-                cell.textLabel.text = [timestamp stringWithMediumTimeFormat];
+            if (timestamp.today) {
+                cell.textLabel.text = timestamp.stringWithMediumTimeFormat;
             } else {
-                cell.textLabel.text = [timestamp stringWithMediumDateTimeFormat];
+                cell.textLabel.text = timestamp.stringWithMediumDateTimeFormat;
             }
         } else {
             cell.textLabel.text = @"Unknown timestamp";

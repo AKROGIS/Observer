@@ -15,8 +15,8 @@
 @property (nonatomic, readonly) double kilometers;
 @property (nonatomic, readonly) double azimuth;
 
-- (id)initWithAzimuth:(double)azimuth kilometer:(double)kilometers;
-- (id)init __attribute__((unavailable("Must use class initWithAzimuth:kilometer: or class methods.")));
+- (instancetype)initWithAzimuth:(double)azimuth kilometer:(double)kilometers NS_DESIGNATED_INITIALIZER;
+- (instancetype)init __attribute__((unavailable("Must use class initWithAzimuth:kilometer: or class methods.")));
 
 //returns a new AKRAngleDistance with:
 // kilometers = -1 indicates distance is not available (either input is nil)

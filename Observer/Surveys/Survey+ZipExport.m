@@ -26,8 +26,8 @@
 
 - (BOOL)exportToDiskWithForce:(BOOL)force error:(NSError * __autoreleasing *)error
 {
-    NSString *name = [self getExportFileName];
-    NSString *exportPath = [[self.documentsDirectory URLByAppendingPathComponent:name] path];
+    NSString *name = self.exportFileName;
+    NSString *exportPath = [self.documentsDirectory URLByAppendingPathComponent:name].path;
     if (exportPath == nil) {
         return NO;
     }
@@ -41,7 +41,7 @@
 
 - (NSURL *)documentsDirectory
 {
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+    return [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
 }
 
 @end

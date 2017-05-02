@@ -12,7 +12,7 @@
 @interface Survey (ZipExport)
 
 // The name of the export, used by the email client to name the attachment
-- (NSString *)getExportFileName;
+@property (nonatomic, getter=getExportFileName, readonly, copy) NSString *exportFileName;
 
 // returns a zip data stream of the survey document; used by the email client for the attachment
 - (NSData *)exportToNSDataError:(NSError **)error;

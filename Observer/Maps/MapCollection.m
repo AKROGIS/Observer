@@ -104,7 +104,7 @@ static int _downloadsInProgress = 0;
 
 + (BOOL)collectsURL:(NSURL *)url
 {
-    return [[url pathExtension] isEqualToString:MAP_EXT];
+    return [url.pathExtension isEqualToString:MAP_EXT];
 }
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
@@ -394,7 +394,7 @@ static int _downloadsInProgress = 0;
 {
     static NSURL *_documentsDirectory = nil;
     if (!_documentsDirectory) {
-        _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+        _documentsDirectory = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
     }
     return _documentsDirectory;
 }
