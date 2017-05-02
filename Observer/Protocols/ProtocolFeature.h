@@ -43,7 +43,7 @@
 @property (nonatomic) WaysToLocateFeature preferredLocationMethod;
 
 // The default (default or initial or preferred) location method
-- (WaysToLocateFeature) locationMethod;
+@property (nonatomic, readonly) WaysToLocateFeature locationMethod;
 
 // Only for sub classes
 - (AGSRenderer *)AGSRendererFromJSON:(NSDictionary *)json;

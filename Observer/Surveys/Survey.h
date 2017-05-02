@@ -42,7 +42,6 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, strong, readonly) NSString *lastPathComponent;
 @property (nonatomic, readonly) SurveyState state;
-@property (nonatomic, strong, readonly) NSString *subtitle;
 @property (nonatomic, strong, readonly) NSString *statusMessage;
 
 //title and date will block (reading values from the filessytem) if the state is unborn.
@@ -72,10 +71,10 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (BOOL)isEqualToSurvey:(Survey *)survey;
 
 //YES if the survey is valid
-- (BOOL)isValid;
+@property (nonatomic, getter=isValid, readonly) BOOL valid;
 
 //YES if the core data context is loaded and normal
-- (BOOL)isReady;
+@property (nonatomic, getter=isReady, readonly) BOOL ready;
 
 //other actions
 - (void)openDocumentWithCompletionHandler:(void (^)(BOOL success))handler;
@@ -90,12 +89,12 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 + (NSURL *)urlFromCachedName:(NSString *)name;
 
 // Info for details view
-- (NSUInteger)observationCount;
-- (NSUInteger)segmentCount;
-- (NSUInteger)gpsCount;
-- (NSUInteger)gpsCountSinceSync;
-- (NSDate *)firstGpsDate;
-- (NSDate *)lastGpsDate;
+@property (nonatomic, readonly) NSUInteger observationCount;
+@property (nonatomic, readonly) NSUInteger segmentCount;
+@property (nonatomic, readonly) NSUInteger gpsCount;
+@property (nonatomic, readonly) NSUInteger gpsCountSinceSync;
+@property (nonatomic, readonly, copy) NSDate *firstGpsDate;
+@property (nonatomic, readonly, copy) NSDate *lastGpsDate;
 
 
 
@@ -140,7 +139,7 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (void)stopObserving:(CLLocation *)locationOfGPS;
 - (TrackLogSegment *)startNewTrackLogSegment:(CLLocation *)locationOfGPS;
 - (NSArray *) trackLogSegmentsSince:(NSDate *)timestamp;
-- (TrackLogSegment *)lastTrackLogSegment;
+@property (nonatomic, readonly, strong) TrackLogSegment *lastTrackLogSegment;
 
 
 //Non-TrackLogging Mission Property

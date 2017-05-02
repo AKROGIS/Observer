@@ -13,6 +13,6 @@
 
 + (NSString *)csvHeader;
 
-- (NSString *)asCSV;
+@property (nonatomic, readonly, copy) NSString *asCSV;
 
 @end

@@ -36,12 +36,12 @@
 - (ProtocolFeature *)featureWithName:(NSString *)name;
 
 //YES if the protocol is available locally, NO otherwise;
-- (BOOL)isLocal;
+@property (nonatomic, getter=isLocal, readonly) BOOL local;
 
 //YES if the protocol is valid
 // currently defined by being able to load/parse the data at url, and find a missionFeature,
 // and at least one valid feature in the data.
-- (BOOL)isValid;
+@property (nonatomic, getter=isValid, readonly) BOOL valid;
 
 //YES if two protocols are the same (same title, version and date)
 //    do not compare urls, because the same protocol will have either a local, or a server url
@@ -59,7 +59,7 @@
 // download the Protocol from the remote URL to a local file...
 - (void)startDownload;
 - (void)cancelDownload;
-- (BOOL)isDownloading;
+@property (nonatomic, getter=isDownloading, readonly) BOOL downloading;
 
 // The download should continue if the app is put in the background
 @property (nonatomic) BOOL isBackground;

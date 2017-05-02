@@ -10,11 +10,11 @@
 
 @interface NSDate (Formatting)
 
-- (NSString *)stringWithMediumDateTimeFormat;
-- (NSString *)stringWithMediumDateFormat;
-- (NSString *)stringWithMediumTimeFormat;
-- (NSString *)stringWithRelativeTimeFormat;
+@property (nonatomic, readonly, copy) NSString *stringWithMediumDateTimeFormat;
+@property (nonatomic, readonly, copy) NSString *stringWithMediumDateFormat;
+@property (nonatomic, readonly, copy) NSString *stringWithMediumTimeFormat;
+@property (nonatomic, readonly, copy) NSString *stringWithRelativeTimeFormat;
 
-- (BOOL)isToday;
+@property (nonatomic, getter=isToday, readonly) BOOL today;
 
 @end

@@ -44,8 +44,8 @@
 - (void)refreshWithCompletionHandler:(void (^)(BOOL success))completionHandler;
 
 // UITableView DataSource Support
-- (NSUInteger)numberOfLocalProtocols;
-- (NSUInteger)numberOfRemoteProtocols;
+@property (nonatomic, readonly) NSUInteger numberOfLocalProtocols;
+@property (nonatomic, readonly) NSUInteger numberOfRemoteProtocols;
 // Returns nil if index out of bounds (semantics - there is no protocol at the index)
 - (SProtocol *)localProtocolAtIndex:(NSUInteger)index;
 // Returns nil if index out of bounds (semantics - there is no protocol at the index)

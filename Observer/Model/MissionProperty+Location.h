@@ -13,8 +13,8 @@
 
 @interface MissionProperty (Location)
 
-- (CLLocationCoordinate2D)locationOfMissionProperty;
+@property (nonatomic, readonly) CLLocationCoordinate2D locationOfMissionProperty;
 - (AGSPoint *)pointOfMissionPropertyWithSpatialReference:(AGSSpatialReference*)spatialReference;
-- (NSDate *)timestamp;
+@property (nonatomic, readonly, copy) NSDate *timestamp;
 
 @end

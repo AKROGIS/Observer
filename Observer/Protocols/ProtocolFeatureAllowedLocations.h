@@ -14,9 +14,9 @@
 @protocol LocationPresenter <NSObject>
 
 @optional;
-- (BOOL)hasMap;
-- (BOOL)hasGPS;
-- (BOOL)mapIsProjected;
+@property (nonatomic, readonly) BOOL hasMap;
+@property (nonatomic, readonly) BOOL hasGPS;
+@property (nonatomic, readonly) BOOL mapIsProjected;
 
 @end
 

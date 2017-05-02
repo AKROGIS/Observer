@@ -11,9 +11,9 @@
 
 @protocol AKRTableViewItem <NSObject>
 - (NSString *) title;
-- (NSString *) subtitle;
-- (UIImage *) thumbnail;
+@property (nonatomic, readonly, copy) NSString *subtitle;
+@property (nonatomic, readonly, strong) UIImage *thumbnail;
 @optional
 - (void) setTitle:(NSString *)title;
-- (NSString *) subtitle2;
+@property (nonatomic, readonly, copy) NSString *subtitle2;
 @end

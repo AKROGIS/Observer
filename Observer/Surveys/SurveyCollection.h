@@ -33,7 +33,7 @@
 - (void)refreshWithCompletionHandler:(void (^)())completionHandler;
 
 // UITableView DataSource Support
-- (NSUInteger)numberOfSurveys;
+@property (nonatomic, readonly) NSUInteger numberOfSurveys;
 // Returns nil if index out of bounds (semantics - there is no survey at the index)
 - (Survey *)surveyAtIndex:(NSUInteger)index;
 // Throws an exception if index is greater than the number of local maps

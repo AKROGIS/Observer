@@ -103,14 +103,14 @@
 
 // Additional info for the view controllers
 - (AKRAngleDistance *)angleDistanceFromLocation:(CLLocation *)location;
-- (double)areaInKilometers;
+@property (nonatomic, readonly) double areaInKilometers;
 //YES if the Map is available locally, NO otherwise;
-- (BOOL)isLocal;
+@property (nonatomic, getter=isLocal, readonly) BOOL local;
 
 // download the Protocol from the remote URL to a local file...
 - (void)startDownload;
 - (void)cancelDownload;
-- (BOOL)isDownloading;
+@property (nonatomic, getter=isDownloading, readonly) BOOL downloading;
 
 // The download should continue if the app is put in the background
 @property (nonatomic) BOOL isBackground;

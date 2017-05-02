@@ -22,10 +22,10 @@
 
 @interface Observation (Location)
 
-- (CLLocationCoordinate2D)locationOfFeature;
-- (CLLocationCoordinate2D)locationOfObserver;
+@property (nonatomic, readonly) CLLocationCoordinate2D locationOfFeature;
+@property (nonatomic, readonly) CLLocationCoordinate2D locationOfObserver;
 - (AGSPoint *)pointOfFeatureWithSpatialReference:(AGSSpatialReference*)spatialReference;
 - (AGSPoint *)pointOfObserverWithSpatialReference:(AGSSpatialReference*)spatialReference;
-- (NSDate *)timestamp;
+@property (nonatomic, readonly, copy) NSDate *timestamp;
 
 @end

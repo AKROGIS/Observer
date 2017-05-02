@@ -93,10 +93,10 @@
 
 //Current State
 
-- (BOOL) usesProtocol;
-- (BOOL) isValid;
-- (BOOL) isComplete;
-- (NSString *) basisDescription;
+@property (nonatomic, readonly) BOOL usesProtocol;
+@property (nonatomic, getter=isValid, readonly) BOOL valid;
+@property (nonatomic, getter=isComplete, readonly) BOOL complete;
+@property (nonatomic, readonly, copy) NSString *basisDescription;
 
 //Create a new observation point
 //The input point is the point of reference for the angle/distance measurements
