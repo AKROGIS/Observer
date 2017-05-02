@@ -23,7 +23,6 @@
 @property (nonatomic) BOOL showRemoteMaps;
 @property (nonatomic) BOOL isBackgroundRefreshing;
 @property (weak, nonatomic) IBOutlet UILabel *refreshLabel;
-@property (strong, nonatomic) MapDetailViewController *detailViewController;
 @end
 
 @implementation MapSelectViewController
@@ -50,12 +49,6 @@
     [super viewWillDisappear:animated];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    self.detailViewController = nil;
-}
-
 // Releasing the collection will save memory, but will also take time to recreate collection on each VC load
 - (void)dealloc
 {
@@ -66,14 +59,6 @@
 
 
 #pragma mark - lazy property initializers
-
-- (MapDetailViewController *)detailViewController
-{
-    if (!_detailViewController) {
-        _detailViewController = (MapDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
-    }
-    return _detailViewController;
-}
 
 - (MapCollection *)items
 {
