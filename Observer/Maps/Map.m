@@ -112,7 +112,7 @@
     }
     //create a properties dictionary based on solely on the tilecache contents
     NSMutableDictionary *newProperties = [NSMutableDictionary new];
-    newProperties[kTitleKey] = [[url lastPathComponent] stringByDeletingPathExtension];
+    newProperties[kTitleKey] = url.lastPathComponent.stringByDeletingPathExtension;
     newProperties[kAuthorKey] = @"Unknown";
     newProperties[kDateKey] = [fileAttributes fileCreationDate];  //TODO: #92 Get the date from the esriinfo.xml file in the zipped tpk
     newProperties[kSizeKey] = @([fileAttributes fileSize]);
@@ -172,13 +172,13 @@
     if (path != nil && !fileExistsAtPath) {
         [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
     }
-    return [[folder URLByAppendingPathComponent:@"map.plist"] URLByUniquingPath];
+    return [folder URLByAppendingPathComponent:@"map.plist"].URLByUniquingPath;
     //The new URL will be written to right away.
 }
 
 + (NSURL *)plistLocation
 {
-    NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+    NSURL *library = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask].firstObject;
     NSURL *folder = [library URLByAppendingPathComponent:@"Map Properties" isDirectory:YES];
     return folder;
 }
@@ -205,7 +205,7 @@
     if (path != nil && !fileExistsAtPath) {
         [[NSFileManager defaultManager] createDirectoryAtURL:folder withIntermediateDirectories:YES attributes:nil error:nil];
     }
-    NSURL *newUrl = [[folder URLByAppendingPathComponent:@"thumbnail.png"] URLByUniquingPath];
+    NSURL *newUrl = [folder URLByAppendingPathComponent:@"thumbnail.png"].URLByUniquingPath;
     //Since thumbnails will not be written right away, and new maps may get created in between,
     //we need to write a sentinal to disk at this URL, so another map will not try to us the same URL
     path = newUrl.path;
@@ -217,14 +217,14 @@
 
 + (NSURL *)oldThumbsLocation
 {
-    NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+    NSURL *library = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask].firstObject;
     NSURL *folder = [library URLByAppendingPathComponent:@"mapthumbs" isDirectory:YES];
     return folder;
 }
 
 + (NSURL *)thumbsLocation
 {
-    NSURL *library = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+    NSURL *library = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask].firstObject;
     NSURL *folder = [library URLByAppendingPathComponent:@"Map Thumbnails" isDirectory:YES];
     return folder;
 }
@@ -393,7 +393,7 @@
     if (self.isDownloading) {
         return @"Downloading...";
     } else {
-        return [NSString stringWithFormat:@"Date: %@, Size: %@", [self.date stringWithMediumDateFormat], [AKRFormatter stringFromBytes:self.byteCount]];
+        return [NSString stringWithFormat:@"Date: %@, Size: %@", self.date.stringWithMediumDateFormat, [AKRFormatter stringFromBytes:self.byteCount]];
     }
 }
 
@@ -565,10 +565,10 @@
     unsigned long long remoteByteCount = [remoteSize isKindOfClass:[NSNumber class]] ? [remoteSize unsignedLongLongValue] : 0;
     BOOL byteCountMatch = self.byteCount == remoteByteCount;
     if (byteCountMatch) { // Check Name
-        NSString *thisName = [self.tileCacheURL lastPathComponent];
+        NSString *thisName = self.tileCacheURL.lastPathComponent;
         id item = remoteMapProperties[kUrlKey];
         NSURL *remoteURL = [item isKindOfClass:[NSString class]] ? [NSURL URLWithString:item] : nil;
-        NSString *remoteName = [remoteURL lastPathComponent];
+        NSString *remoteName = remoteURL.lastPathComponent;
         BOOL nameMatch = (remoteName != nil && thisName != nil && [thisName isEqualToString:remoteName]) || (remoteName == nil && thisName == nil);
         if (nameMatch) {
             return YES;
@@ -710,7 +710,7 @@
     }
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (!self.destinationURL) {
-        NSURL *documentsDirectory = [[fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+        NSURL *documentsDirectory = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
         NSURL *originalURL = downloadTask.originalRequest.URL;
         NSString *name = originalURL.lastPathComponent;
         self.destinationURL = (name == nil) ? nil : [documentsDirectory URLByAppendingPathComponent:name];
@@ -721,7 +721,7 @@
         if (self.canReplace) {
             [fileManager removeItemAtURL:self.destinationURL error:NULL];
         } else {
-            self.destinationURL = [self.destinationURL URLByUniquingPath];
+            self.destinationURL = self.destinationURL.URLByUniquingPath;
         }
     }
     BOOL success = (location == nil || self.destinationURL == nil) ? NO : [fileManager copyItemAtURL:location toURL:self.destinationURL error:nil];
@@ -741,7 +741,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ by %@, dated: %@", self.title, self.author, [self.date stringWithMediumDateFormat]];
+    return [NSString stringWithFormat:@"%@ by %@, dated: %@", self.title, self.author, self.date.stringWithMediumDateFormat];
 }
 
 @end

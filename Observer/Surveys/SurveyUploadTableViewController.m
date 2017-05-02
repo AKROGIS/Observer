@@ -194,7 +194,7 @@
         NSString *body = [NSString stringWithFormat:@"Survey data collected for %@.",self.survey.title];
         [mailVC setSubject:subject];
         [mailVC setMessageBody:body isHTML:NO];
-        NSString *attachmentName = [self.survey getExportFileName];
+        NSString *attachmentName = self.survey.exportFileName;
         [mailVC addAttachmentData:attachmentData mimeType:@"application/octet-stream" fileName:attachmentName];
         mailVC.mailComposeDelegate = self;
         [self presentViewController:mailVC animated:YES completion:nil];

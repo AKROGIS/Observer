@@ -14,8 +14,8 @@
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDoesRelativeDateFormatting:YES];
-    [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
-    [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+    dateFormatter.timeStyle = NSDateFormatterMediumStyle;
+    dateFormatter.dateStyle = NSDateFormatterMediumStyle;
     return [dateFormatter stringFromDate:self];
 }
 
@@ -23,8 +23,8 @@
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDoesRelativeDateFormatting:YES];
-    [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
-    [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+    dateFormatter.timeStyle = NSDateFormatterNoStyle;
+    dateFormatter.dateStyle = NSDateFormatterMediumStyle;
     return [dateFormatter stringFromDate:self];
 }
 
@@ -32,13 +32,13 @@
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDoesRelativeDateFormatting:YES];
-    [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
+    dateFormatter.timeStyle = NSDateFormatterMediumStyle;
     return [dateFormatter stringFromDate:self];
 }
 
 - (NSString *)stringWithRelativeTimeFormat
 {
-    NSTimeInterval seconds = [self timeIntervalSinceNow];
+    NSTimeInterval seconds = self.timeIntervalSinceNow;
     if (seconds < 30) {
         return NSLocalizedString(@"Just Now", @"Relative time for less than 30 seconds");
     }

@@ -23,7 +23,7 @@
     request.predicate = predicate;
     NSArray *results = [self.document.managedObjectContext executeFetchRequest:request error:nil];
     for (GpsPoint *gpsPoint in results) {
-        [csv appendString:[gpsPoint asCSV]];
+        [csv appendString:gpsPoint.asCSV];
         [csv appendString:@"\n"];
     }
     return csv;

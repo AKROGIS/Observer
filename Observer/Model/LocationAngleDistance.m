@@ -199,7 +199,7 @@
     double referenceAngle = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleBaseline : kAngleDistanceDeadAhead;
     AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleDirection : kAngleDistanceAngleDirection;
     double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
-    double absoluteAngle = self.deadAhead + direction * ([angle doubleValue] - referenceAngle);
+    double absoluteAngle = self.deadAhead + direction * (angle.doubleValue - referenceAngle);
     if (absoluteAngle < 0)
         absoluteAngle = fmod(absoluteAngle, 360.0) + 360.0;
     if (360.0 < absoluteAngle)
@@ -209,7 +209,7 @@
 
 - (double) doubleFromDistance:(NSNumber *)distance
 {
-    if (distance == nil || [distance doubleValue] <= 0)
+    if (distance == nil || distance.doubleValue <= 0)
         return -1.0;
     
     AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : kAngleDistanceDistanceUnits;
@@ -217,7 +217,7 @@
     //return [self.srWithMeters convertValue:[distance doubleValue] fromUnit:distanceUnits];
     //My simple workaround
     double factor = [self.srWithMeters convertValue:1.0 toUnit:distanceUnits];
-    return [distance doubleValue]/factor;
+    return distance.doubleValue/factor;
 }
 
 @end

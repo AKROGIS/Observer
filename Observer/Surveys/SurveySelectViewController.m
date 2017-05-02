@@ -205,21 +205,21 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"Show Detail"]) {
+    if ([segue.identifier isEqualToString:@"Show Detail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
         Survey *survey = [self.items surveyAtIndex:indexPath.urow];
         ((SurveyDetailViewController *)segue.destinationViewController).survey = survey;
         //if we are in a popover, we want the new vc to stay the same size.
-        [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
+        segue.destinationViewController.preferredContentSize = self.preferredContentSize;
     }
-    if ([[segue identifier] isEqualToString:@"Upload Survey"]) {
+    if ([segue.identifier isEqualToString:@"Upload Survey"]) {
         //superview^2 hack to get the UITableViewCell from the upload button
-        NSIndexPath *indexPath = [self.tableView indexPathForCell:(UITableViewCell *)[[sender superview] superview]];
+        NSIndexPath *indexPath = [self.tableView indexPathForCell:(UITableViewCell *)[sender superview].superview];
         Survey *survey = [self.items surveyAtIndex:indexPath.urow];
         ((SurveyUploadTableViewController *)segue.destinationViewController).survey = survey;
-        [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
+        segue.destinationViewController.preferredContentSize = self.preferredContentSize;
     }
-    if ([[segue identifier] isEqualToString:@"Select Protocol"]) {
+    if ([segue.identifier isEqualToString:@"Select Protocol"]) {
         ProtocolSelectViewController *vc = (ProtocolSelectViewController *)segue.destinationViewController;
         vc.title = segue.identifier;
         vc.protocolSelectedAction = ^(SProtocol *protocol){
@@ -227,7 +227,7 @@
             [self.navigationController popViewControllerAnimated:YES];
         };
         //if we are in a popover, we want the new vc to stay the same size.
-        [[segue destinationViewController] setPreferredContentSize:self.preferredContentSize];
+        segue.destinationViewController.preferredContentSize = self.preferredContentSize;
     }
 }
 

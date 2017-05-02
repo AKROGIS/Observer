@@ -78,7 +78,7 @@ static BOOL _isLoaded = NO;
 
 + (BOOL)collectsURL:(NSURL *)url
 {
-    return [[url pathExtension] isEqualToString:PROTOCOL_EXT];
+    return [url.pathExtension isEqualToString:PROTOCOL_EXT];
 }
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
@@ -248,7 +248,7 @@ static BOOL _isLoaded = NO;
     static NSURL *_cacheFile = nil;
     {
         if (!_cacheFile) {
-            _cacheFile = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
+            _cacheFile = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask].firstObject;
             _cacheFile = [_cacheFile URLByAppendingPathComponent:@"protocol_list.cache"];
         }
         return _cacheFile;
@@ -393,7 +393,7 @@ static BOOL _isLoaded = NO;
 {
     static NSURL *_documentsDirectory = nil;
     if (!_documentsDirectory) {
-        _documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+        _documentsDirectory = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
     }
     return _documentsDirectory;
 }
@@ -505,7 +505,7 @@ static BOOL _isLoaded = NO;
     id<CollectionChanged> delegate = self.delegate;
     if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            for (id key in [protocolsToUpdate allKeys]) {
+            for (id key in protocolsToUpdate.allKeys) {
                 id protocol = protocolsToUpdate[key];
                 self.remoteItems[[key unsignedIntegerValue]] = protocol;
                 [delegate collection:self changedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:[key unsignedIntegerValue]]];
@@ -521,7 +521,7 @@ static BOOL _isLoaded = NO;
             }
         });
     } else {
-        for (id key in [protocolsToUpdate allKeys]) {
+        for (id key in protocolsToUpdate.allKeys) {
             id protocol = protocolsToUpdate[key];
             self.remoteItems[[key unsignedIntegerValue]] = protocol;
         }

@@ -130,15 +130,15 @@
             id value = _angleDistance[key];
             if ([value isKindOfClass:[NSString class]]) {
                 NSString *units = (NSString *)value;
-                if ([@[@"feet", @"foot"] containsObject:[units lowercaseString]]) {
+                if ([@[@"feet", @"foot"] containsObject:units.lowercaseString]) {
                     _distanceUnits = AGSSRUnitFoot;
                     _definesAngleDistance = YES;
                 }
-                if ([@[@"yard", @"yards"] containsObject:[units lowercaseString]]) {
+                if ([@[@"yard", @"yards"] containsObject:units.lowercaseString]) {
                     _distanceUnits = AGSSRUnitFoot;
                     _definesAngleDistance = YES;
                 }
-                if ([@[@"meter", @"metre", @"metres", @"meters"] containsObject:[units lowercaseString]]) {
+                if ([@[@"meter", @"metre", @"metres", @"meters"] containsObject:units.lowercaseString]) {
                     _distanceUnits = AGSSRUnitMeter;
                     _definesAngleDistance = YES;
                 }
@@ -150,7 +150,7 @@
             id value = _angleDistance[key];
             if ([value isKindOfClass:[NSNumber class]]) {
                 _definesAngleDistance = YES;
-                _angleBaseline = [(NSNumber *)value  doubleValue];
+                _angleBaseline = ((NSNumber *)value).doubleValue;
             }
         }
         //angleDirection
@@ -293,7 +293,7 @@
         NSDictionary *dict = (NSDictionary *)possibleDict;
         id item = dict[key];
         if ([item isKindOfClass:[NSString class]]) {
-            NSString *text = [(NSString *)item lowercaseString];
+            NSString *text = ((NSString *)item).lowercaseString;
             for (NSString *value in values) {
                 if ([text isEqualToString:value]) {
                     return YES;

@@ -37,7 +37,7 @@
     self.nameLabel.preferredMaxLayoutWidth = self.preferredContentSize.width - TEXTMARGINS;
     self.nameLabel.text = self.map.title;
     self.authorLabel.text = self.map.author;
-    self.dateLabel.text = [self.map.date stringWithMediumDateFormat];
+    self.dateLabel.text = self.map.date.stringWithMediumDateFormat;
     [self updateSizeUI];
     [self setupLocationUI];
     self.descriptionLabel.preferredMaxLayoutWidth = self.preferredContentSize.width - TEXTMARGINS;
@@ -77,7 +77,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    [self updateLocationUIWithLocation:[locations lastObject]];
+    [self updateLocationUIWithLocation:locations.lastObject];
 }
 
 #pragma mark - NSNotification callbacks

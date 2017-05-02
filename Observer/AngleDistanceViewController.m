@@ -157,8 +157,8 @@
     if (!_parser)
     {
         _parser = [[NSNumberFormatter alloc] init];
-        [_parser setNumberStyle:NSNumberFormatterDecimalStyle];
-        [_parser setLocale:[NSLocale currentLocale]];
+        _parser.numberStyle = NSNumberFormatterDecimalStyle;
+        _parser.locale = [NSLocale currentLocale];
     }
     return _parser;
 }
@@ -181,7 +181,7 @@
 {
     [self updateDefaultValues];
     [self updateLabel];
-    [self updateControlState:[self.textFields lastObject]];
+    [self updateControlState:self.textFields.lastObject];
 }
 
 - (void) updateDefaultValues

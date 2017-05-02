@@ -65,7 +65,7 @@ typedef NS_OPTIONS(NSUInteger, TotalizerUnits) {
 - (void)trackLogSegmentsChanged:(NSMutableArray *)trackLogSegments
 {
     self.trackLogSegments = trackLogSegments;
-    self.currentSegment = (TrackLogSegment *)[self.trackLogSegments lastObject];
+    self.currentSegment = (TrackLogSegment *)self.trackLogSegments.lastObject;
     [self updateFieldValues];
     [self updatePriorTotals];
     [self updateMessage];

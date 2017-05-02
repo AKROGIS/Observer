@@ -17,10 +17,10 @@
     //Create a unique extraction folder in the parent of outputURL; find *.obssurv in extraction folder; move it to outputUrl; remove extraction folder
     //This is a work around for the fact that ZKDataArchive inflateInFolder:withFolderName:usingResourceFork: ignores the withFolderName: parameter
     ZKDataArchive *archive = [ZKDataArchive archiveWithArchivePath:importUrl.path];
-    NSURL *surveyFolder = [[outputUrl URLByDeletingLastPathComponent] filePathURL];
-    NSURL *extractionFolder = [[[[surveyFolder URLByAppendingPathComponent:@"temp_ext_folder"] URLByUniquingPath] URLByAppendingPathComponent:@"/"] filePathURL];
+    NSURL *surveyFolder = outputUrl.URLByDeletingLastPathComponent.filePathURL;
+    NSURL *extractionFolder = [[surveyFolder URLByAppendingPathComponent:@"temp_ext_folder"].URLByUniquingPath URLByAppendingPathComponent:@"/"].filePathURL;
     [[NSFileManager defaultManager] createDirectoryAtURL:extractionFolder withIntermediateDirectories:YES attributes:nil error:nil];
-    NSUInteger errorCode = [archive inflateInFolder:[extractionFolder path] withFolderName:nil usingResourceFork:NO];
+    NSUInteger errorCode = [archive inflateInFolder:extractionFolder.path withFolderName:nil usingResourceFork:NO];
     if (errorCode == (NSUInteger)zkSucceeded) {
         NSURL *foundSurvey = [self findSurveyInFolder:extractionFolder];
         if (foundSurvey)
@@ -46,7 +46,7 @@
                           error:nil];
     if (documents) {
         for (NSURL *url in documents) {
-            if ([[url.lastPathComponent pathExtension] isEqualToString:INTERNAL_SURVEY_EXT]) {
+            if ([url.lastPathComponent.pathExtension isEqualToString:INTERNAL_SURVEY_EXT]) {
                 return url;
             }
         }
@@ -71,15 +71,15 @@
 
 + (void)addURL:(NSURL *)url toArchive:(ZKDataArchive *)archive
 {
-    if ([url isFileURL]) {
+    if (url.fileURL) {
         NSString *path = url.path;
         BOOL isDir = false;
         BOOL exists = (path == nil) ? NO : [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
         if (exists) {
             if (isDir) {
-                [archive deflateDirectory:path relativeToPath:[path stringByDeletingLastPathComponent] usingResourceFork:NO];
+                [archive deflateDirectory:path relativeToPath:path.stringByDeletingLastPathComponent usingResourceFork:NO];
             } else {
-                [archive deflateFile:path relativeToPath:[path stringByDeletingLastPathComponent] usingResourceFork:NO];
+                [archive deflateFile:path relativeToPath:path.stringByDeletingLastPathComponent usingResourceFork:NO];
             }
         }
     }

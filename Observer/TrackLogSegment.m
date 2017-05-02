@@ -58,13 +58,13 @@
     for (NSAttributeDescription *attribute in protocol.missionFeature.attributes) {
         id value = [self.missionProperty valueForKey:attribute.name];
         if ([value isKindOfClass:[NSString class]]) {
-            value = [((NSString *)value) csvEscape];
+            value = ((NSString *)value).csvEscape;
         }
         [csv appendFormat:@"%@,",(value ? value : @"")];
     }
 
-    GpsPoint *start = (GpsPoint *)[self.points firstObject];
-    GpsPoint *end = (GpsPoint *)[self.points lastObject];
+    GpsPoint *start = (GpsPoint *)self.points.firstObject;
+    GpsPoint *end = (GpsPoint *)self.points.lastObject;
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSInteger year = [gregorian components:NSCalendarUnitYear fromDate:start.timestamp].year;
     NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitYear forDate:start.timestamp];
@@ -100,8 +100,8 @@
 
 - (NSTimeInterval)duration
 {
-    GpsPoint *start = (GpsPoint *)[self.points firstObject];
-    GpsPoint *end = (GpsPoint *)[self.points lastObject];
+    GpsPoint *start = (GpsPoint *)self.points.firstObject;
+    GpsPoint *end = (GpsPoint *)self.points.lastObject;
     return [end.timestamp timeIntervalSinceDate:start.timestamp];
 }
 

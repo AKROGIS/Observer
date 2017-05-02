@@ -151,7 +151,7 @@
     //ignore the callback; because we can assume the auto-save will be done before the users gets that far
     //I might not have a survey or an open document, which would be ok, as there would be no need to save
     [self.survey.document autosaveWithCompletionHandler:nil];
-    id vc1 = [segue destinationViewController];
+    id vc1 = segue.destinationViewController;
     if([vc1 isKindOfClass:[UINavigationController class]])
     {
         vc1 = ((UINavigationController *)vc1).viewControllers.firstObject;
@@ -221,7 +221,7 @@
     CGFloat radians = _initialRotationOfViewAtGestureStart + sender.rotation;
     double degrees = (double)radians * (180 / M_PI);
     self.compassRoseButton.transform = CGAffineTransformMakeRotation(radians);
-    [self.mapView setRotationAngle:-1*degrees];
+    self.mapView.rotationAngle = -1*degrees;
 }
 
 - (IBAction)panMap:(UIPanGestureRecognizer *)sender
@@ -462,7 +462,7 @@
     }
 
     //use the speed of the last location to update the autorotation behavior
-    CLLocation *location = [locations lastObject];
+    CLLocation *location = locations.lastObject;
     if (0 <= location.speed) {
         [self.autoPanController speedUpdate:location.speed];
     }
@@ -638,9 +638,9 @@
 
     //Only moving AdHoc locations, so they can go anywhere
     if (self.movingGraphic) {
-        [self.movingGraphic setGeometry:mapPoint];
+        self.movingGraphic.geometry = mapPoint;
         if ([self.movingGraphic isKindOfClass:[POGraphic class]]) {
-            [((POGraphic *)self.movingGraphic).label setGeometry:mapPoint];
+            ((POGraphic *)self.movingGraphic).label.geometry = mapPoint;
         }
     }
 }
@@ -1125,14 +1125,14 @@
         return;
     }
     [self.survey setMap:self.map];
-    [self.survey setMapViewSpatialReference:self.mapView.spatialReference];
+    self.survey.mapViewSpatialReference = self.mapView.spatialReference;
     [self initializeGraphicsLayer];
     [self.survey loadGraphics];
 }
 
 - (void)initializeGraphicsLayer
 {
-    NSDictionary *graphicsLayers = [self.survey graphicsLayersByName];
+    NSDictionary *graphicsLayers = self.survey.graphicsLayersByName;
     NSString *onTransect = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
     NSString *offTransect = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
     //Draw these layers first and in this order
@@ -1141,7 +1141,7 @@
         [self.mapView addMapLayer:graphicsLayers[name] withName:name];
     }
     // Draw the remaining layers (observations) in any order
-    NSMutableArray *layerNames = [NSMutableArray arrayWithArray:[graphicsLayers allKeys]];
+    NSMutableArray *layerNames = [NSMutableArray arrayWithArray:graphicsLayers.allKeys];
     [layerNames removeObjectsInArray:lowerLayers];
     for (NSString *name in layerNames) {
         [self.mapView addMapLayer:graphicsLayers[name] withName:name];
@@ -1481,13 +1481,13 @@
         if (feature.hasUniqueId) {
             root.title = [NSString stringWithFormat:@"%@ %@", root.title, [entity valueForKey:feature.uniqueIdName]];
         } else {
-            root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, [timestamp stringWithMediumTimeFormat]];
+            root.title = [NSString stringWithFormat:@"%@ @ %@", root.title, timestamp.stringWithMediumTimeFormat];
         }
         QLabelElement *label = [QLabelElement new];
         label.title = @"Timestamp";
-        label.value = [timestamp stringWithMediumDateTimeFormat];
+        label.value = timestamp.stringWithMediumDateTimeFormat;
         //[[root.sections firstObject] insertObject:label atIndex:0]; //crashed inexplicably
-        [[[root.sections firstObject] elements] insertObject:label atIndex:0];  //works unless elements is nil
+        [[root.sections.firstObject elements] insertObject:label atIndex:0];  //works unless elements is nil
     }
 
     //Show a Location Button only when editing/reviewing
@@ -1513,7 +1513,7 @@
                 [self.attributeCollector.navigationController pushViewController:vc animated:YES];
             };
         }
-        [[root.sections lastObject] addElement:locationButton];
+        [root.sections.lastObject addElement:locationButton];
     }
 
     //Show a "move to GPS button" if:
@@ -1545,12 +1545,12 @@
                         if ([graphic isKindOfClass:[POGraphic class]]) {
                             AGSGraphic *newGraphic = [(POGraphic *)graphic redraw:observation survey:self.survey];
                             UINavigationController *nav = (UINavigationController *)self.presentedViewController;
-                            AttributeViewController *dialog = (AttributeViewController *)[nav topViewController];
+                            AttributeViewController *dialog = (AttributeViewController *)nav.topViewController;
                             dialog.graphic = newGraphic;
                             // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
                         }
                     };
-                    [[root.sections lastObject] addElement:updateLocationButton];
+                    [root.sections.lastObject addElement:updateLocationButton];
                 }
             }
         }
@@ -1574,9 +1574,9 @@
             [self dismissViewControllerAnimated:YES completion:nil];
         };
         if (self.survey.protocol.cancelOnTop) {
-            [[root.sections firstObject] insertElement:deleteButton atIndex:0];
+            [root.sections.firstObject insertElement:deleteButton atIndex:0];
         } else {
-            [[root.sections lastObject] addElement:deleteButton];
+            [root.sections.lastObject addElement:deleteButton];
         }
     }
 

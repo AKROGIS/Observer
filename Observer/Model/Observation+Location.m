@@ -24,14 +24,14 @@
                                                                                 protocolFeature:nil
                                                                                   absoluteAngle:self.angleDistanceLocation.angle
                                                                                        distance:self.angleDistanceLocation.distance];
-        location = [angleDistance locationFromLocation:[self.gpsPoint locationOfGps]];
+        location = [angleDistance locationFromLocation:self.gpsPoint.locationOfGps];
     }
     else if (self.adhocLocation && !self.gpsPoint) {
         location.latitude = self.adhocLocation.latitude;
         location.longitude = self.adhocLocation.longitude;
     }
     else {
-        location = [self.gpsPoint locationOfGps];
+        location = self.gpsPoint.locationOfGps;
     }
 
     return location;
@@ -45,23 +45,23 @@
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kGpsPointEntityName];
         request.predicate = [NSPredicate predicateWithFormat:@"timestamp == %@",self.adhocLocation.timestamp];
         NSArray *results = [self.managedObjectContext executeFetchRequest:request error:nil];
-        GpsPoint *gpsPoint = [results firstObject];
-        location = [gpsPoint locationOfGps];
+        GpsPoint *gpsPoint = results.firstObject;
+        location = gpsPoint.locationOfGps;
     } else {
-        location = [self.gpsPoint locationOfGps];
+        location = self.gpsPoint.locationOfGps;
     }
     return location;
 }
 
 - (AGSPoint *)pointOfFeatureWithSpatialReference:(AGSSpatialReference*)spatialReference
 {
-    CLLocationCoordinate2D location = [self locationOfFeature];
+    CLLocationCoordinate2D location = self.locationOfFeature;
     return [AGSPoint pointFromLocation:location spatialReference:spatialReference];
 }
 
 - (AGSPoint *)pointOfObserverWithSpatialReference:(AGSSpatialReference*)spatialReference
 {
-    CLLocationCoordinate2D location = [self locationOfObserver];
+    CLLocationCoordinate2D location = self.locationOfObserver;
     return [AGSPoint pointFromLocation:location spatialReference:spatialReference];
 }
 

@@ -307,11 +307,11 @@
     if ([segue.identifier isEqualToString:@"Remote Protocol Details"] || [segue.identifier isEqualToString:@"Local Protocol Details"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
         SProtocol *item = indexPath.section == 0 ? [self.items localProtocolAtIndex:indexPath.urow] :  [self.items remoteProtocolAtIndex:indexPath.urow];
-        ProtocolDetailViewController *vc = (ProtocolDetailViewController *)[segue destinationViewController];
+        ProtocolDetailViewController *vc = (ProtocolDetailViewController *)segue.destinationViewController;
         vc.title = segue.identifier;
         vc.protocol = item;
         //if we are in a popover, we want the popover to stay the same size.
-        [vc setPreferredContentSize:self.preferredContentSize];
+        vc.preferredContentSize = self.preferredContentSize;
     }
 }
 
@@ -378,10 +378,10 @@
 - (void)setFooterText
 {
     if (self.items.refreshDate) {
-        if ([self.items.refreshDate isToday]) {
-            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumTimeFormat]];
+        if (self.items.refreshDate.today) {
+            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",self.items.refreshDate.stringWithMediumTimeFormat];
         } else {
-            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",[self.items.refreshDate stringWithMediumDateFormat]];
+            self.refreshLabel.text = [NSString stringWithFormat:@"Updated %@",self.items.refreshDate.stringWithMediumDateFormat];
         }
     }
 }

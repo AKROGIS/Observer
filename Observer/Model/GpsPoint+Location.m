@@ -21,7 +21,7 @@
 
 - (AGSPoint *)pointOfGpsWithSpatialReference:(AGSSpatialReference*)spatialReference
 {
-    CLLocationCoordinate2D location = [self locationOfGps];
+    CLLocationCoordinate2D location = self.locationOfGps;
     return [AGSPoint pointFromLocation:location spatialReference:spatialReference];
 }
 

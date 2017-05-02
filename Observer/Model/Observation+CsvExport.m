@@ -46,13 +46,13 @@
     for (NSAttributeDescription *attribute in feature.attributes) {
         id value = [self valueForKey:attribute.name];
         if ([value isKindOfClass:[NSString class]]) {
-            value = [((NSString *)value) csvEscape];
+            value = ((NSString *)value).csvEscape;
         }
         [csv appendFormat:@"%@,",(value ? value : @"")];
     }
 
-    CLLocationCoordinate2D featureLocation = [self locationOfFeature];
-    CLLocationCoordinate2D observerLocation = [self locationOfObserver];
+    CLLocationCoordinate2D featureLocation = self.locationOfFeature;
+    CLLocationCoordinate2D observerLocation = self.locationOfObserver;
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSInteger year = [gregorian components:NSCalendarUnitYear fromDate:self.timestamp].year;
     NSUInteger dayOfYear = [gregorian ordinalityOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitYear forDate:self.timestamp];

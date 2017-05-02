@@ -18,9 +18,9 @@
         return self;
 
     int i = 1;
-    NSURL *directory = [self URLByDeletingLastPathComponent];
-    NSString *originalName = [self.lastPathComponent stringByDeletingPathExtension];
-    NSString *extension = [self pathExtension];
+    NSURL *directory = self.URLByDeletingLastPathComponent;
+    NSString *originalName = (self.lastPathComponent).stringByDeletingPathExtension;
+    NSString *extension = self.pathExtension;
 
     NSURL *newURL;
     NSString *newPath = nil;

@@ -26,27 +26,27 @@
 
 + (NSManagedObjectModel *) mergeMom:(NSManagedObjectModel *)mom missionAttributes:(NSArray *)attributes
 {
-    NSEntityDescription *entity = [[mom entitiesByName] valueForKey:kMissionPropertyEntityName];
+    NSEntityDescription *entity = [mom.entitiesByName valueForKey:kMissionPropertyEntityName];
     NSMutableArray *attributeProperties = [NSMutableArray arrayWithArray:entity.properties];
     [attributeProperties addObjectsFromArray:attributes];
-    [entity setProperties:attributeProperties];
+    entity.properties = attributeProperties;
     return mom;
 }
 
 + (NSManagedObjectModel *) mergeMom:(NSManagedObjectModel *)mom featureName:(NSString *)name attributes:(NSArray *)attributes
 {
     NSString *entityName = [NSString stringWithFormat:@"%@%@",kObservationPrefix,name];
-    NSEntityDescription *testEntity = [[mom entitiesByName] valueForKey:entityName];
+    NSEntityDescription *testEntity = [mom.entitiesByName valueForKey:entityName];
     if (testEntity) {
         return mom;
     }
-    NSEntityDescription *observation = [[mom entitiesByName] valueForKey:kObservationEntityName];
+    NSEntityDescription *observation = [mom.entitiesByName valueForKey:kObservationEntityName];
     NSEntityDescription *entity = [[NSEntityDescription alloc] init];
     entity.name = entityName;
     entity.managedObjectClassName = @"Observation";
-    observation.subentities = [[observation subentities] arrayByAddingObject:entity];
-    mom.entities = [[mom entities] arrayByAddingObject:entity];
-    [entity setProperties:attributes];
+    observation.subentities = [observation.subentities arrayByAddingObject:entity];
+    mom.entities = [mom.entities arrayByAddingObject:entity];
+    entity.properties = attributes;
     return mom;
 }
 
