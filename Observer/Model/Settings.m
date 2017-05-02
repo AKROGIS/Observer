@@ -344,7 +344,7 @@
     
     // The elements defined in a settings page are contained within an array
     // that is associated with the root-level PreferenceSpecifiers key.
-    NSArray *prefSpecifierArray = [settingsDict objectForKey:@"PreferenceSpecifiers"];
+    NSArray *prefSpecifierArray = settingsDict[@"PreferenceSpecifiers"];
     
     for (NSDictionary *prefItem in prefSpecifierArray)
         // Each element is itself a dictionary.
@@ -373,7 +373,7 @@
             // Some elements, such as 'Group' or 'Text Field' elements do not contain
             // a key and default value.  Skip those.
         {
-            [appDefaults setObject:prefItemDefaultValue forKey:prefItemKey];
+            appDefaults[prefItemKey] = prefItemDefaultValue;
         }
     }
 }

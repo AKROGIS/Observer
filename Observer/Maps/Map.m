@@ -115,17 +115,17 @@
     newProperties[kTitleKey] = [[url lastPathComponent] stringByDeletingPathExtension];
     newProperties[kAuthorKey] = @"Unknown";
     newProperties[kDateKey] = [fileAttributes fileCreationDate];  //TODO: #92 Get the date from the esriinfo.xml file in the zipped tpk
-    newProperties[kSizeKey] = [NSNumber numberWithUnsignedLongLong:[fileAttributes fileSize]];
+    newProperties[kSizeKey] = @([fileAttributes fileSize]);
     newProperties[kUrlKey] = url.lastPathComponent;
     //kRemoteThumbUrlKey - not available or required
     newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].lastPathComponent;
     newProperties[kDescriptionKey] = @"Not available."; //TODO: #92 get the description from the esriinfo.xml file in the zipped tpk
     AGSEnvelope *extents = (AGSEnvelope *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:tileCache.fullEnvelope
                                                                                   toSpatialReference:[AGSSpatialReference wgs84SpatialReference]];
-    newProperties[kXminKey] = [NSNumber numberWithDouble:extents.xmin];
-    newProperties[kYminKey] = [NSNumber numberWithDouble:extents.ymin];
-    newProperties[kXmaxKey] = [NSNumber numberWithDouble:extents.xmax];
-    newProperties[kYmaxKey] = [NSNumber numberWithDouble:extents.ymax];
+    newProperties[kXminKey] = @(extents.xmin);
+    newProperties[kYminKey] = @(extents.ymin);
+    newProperties[kXmaxKey] = @(extents.xmax);
+    newProperties[kYmaxKey] = @(extents.ymax);
 
     self = [self initWithProperties:[newProperties copy]];
     if (self) {

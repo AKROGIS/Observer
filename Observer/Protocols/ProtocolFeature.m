@@ -124,7 +124,7 @@ static NSUInteger currentUniqueId = 0;
 
 - (NSNumber *)nextUniqueId
 {
-    return [NSNumber numberWithUnsignedInteger:++currentUniqueId];
+    return @(++currentUniqueId);
 }
 
 - (void)initUniqueId:(NSNumber *)id

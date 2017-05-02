@@ -44,7 +44,7 @@
         _color = [self colorFromHexString:value];
     }
     
-    _size = [NSNumber numberWithInt:14];
+    _size = @14;
     value = json[@"size"];
     if ([value isKindOfClass:[NSNumber class]]) {
         _size = value;

@@ -97,7 +97,7 @@
         formatter.usesGroupingSeparator = YES;
         formatter.maximumSignificantDigits = 3;
     });
-    return [formatter stringFromNumber:[NSNumber numberWithDouble:number]];
+    return [formatter stringFromNumber:@(number)];
 }
 
 + (NSString *)stringWith4SigFigsFromDouble:(double)number
@@ -109,7 +109,7 @@
         formatter.usesGroupingSeparator = YES;
         formatter.maximumSignificantDigits = 4;
     });
-    return [formatter stringFromNumber:[NSNumber numberWithDouble:number]];
+    return [formatter stringFromNumber:@(number)];
 }
 
 

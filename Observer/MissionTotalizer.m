@@ -217,15 +217,15 @@ typedef NS_OPTIONS(NSUInteger, TotalizerUnits) {
             if (config)
             {
                 self.showOn = YES;
-                if ([config[@"includeon"] isEqual:[NSNumber numberWithBool:NO]]) {
+                if ([config[@"includeon"] isEqual:@NO]) {
                     self.showOn = NO;
                 }
                 self.showOff = NO;
-                if ([config[@"includeoff"] isEqual:[NSNumber numberWithBool:YES]]) {
+                if ([config[@"includeoff"] isEqual:@YES]) {
                     self.showOff = YES;
                 }
                 self.showTotal = NO;
-                if ([config[@"includetotal"] isEqual:[NSNumber numberWithBool:YES]]) {
+                if ([config[@"includetotal"] isEqual:@YES]) {
                     self.showTotal = YES;
                 }
                 self.units = TotalizerUnitsKilometers;

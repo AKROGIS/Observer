@@ -1391,7 +1391,7 @@
     request.propertiesToFetch = @[description];
     NSArray *results = [self.document.managedObjectContext  executeFetchRequest:request error:nil];
     if (results != nil && results.count > 0){
-        NSNumber *maxID = [[results objectAtIndex:0] valueForKey:@"maxID"];
+        NSNumber *maxID = [results[0] valueForKey:@"maxID"];
         return maxID;
     }
     return nil;

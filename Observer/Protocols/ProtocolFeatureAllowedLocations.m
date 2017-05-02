@@ -90,28 +90,28 @@
     for (id item in json) {
         //gpsLocation
         if ([self dictionary:item hasValues:@[@"gps", @"gpslocation", @"gps-location"] forKey:@"type"]) {
-            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:@NO]) {
                 _gpsLocation = (NSDictionary *)item;
             }
             continue;
         }
         //angleDistanceLocation
         if ([self dictionary:item hasValues:@[@"ad", @"angledistance", @"angle-distance"] forKey:@"type"]) {
-            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:@NO]) {
                 _angleDistance = (NSDictionary *)item;
             }
             continue;
         }
         //mapTouch
         if ([self dictionary:item hasValues:@[@"touch", @"maptouch", @"map-touch", @"adhoctouch", @"adhoc-touch"] forKey:@"type"]) {
-            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:@NO]) {
                 _mapTouch = (NSDictionary *)item;
             }
             continue;
         }
         //mapTarget
         if ([self dictionary:item hasValues:@[@"target", @"maptarget", @"map-target", @"adhoctarget", @"adhoc-target"] forKey:@"type"]) {
-            if (![self dictionary:item hasKey:@"allow" withValue:[NSNumber numberWithBool:NO]]) {
+            if (![self dictionary:item hasKey:@"allow" withValue:@NO]) {
                 _mapTarget = (NSDictionary *)item;
             }
             continue;
@@ -208,13 +208,13 @@
 
 - (WaysToLocateFeature)defaultNonTouchChoice
 {
-    if (self.hasGPS && [self dictionary:_gpsLocation hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
+    if (self.hasGPS && [self dictionary:_gpsLocation hasKey:@"default" withValue:@YES]) {
         return LocateFeatureWithGPS;
     }
-    if (self.hasMap && [self dictionary:_mapTarget hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
+    if (self.hasMap && [self dictionary:_mapTarget hasKey:@"default" withValue:@YES]) {
         return LocateFeatureWithMapTarget;
     }
-    if (self.hasGPS && self.mapIsProjected && [self dictionary:_angleDistance hasKey:@"default" withValue:[NSNumber numberWithBool:YES]]) {
+    if (self.hasGPS && self.mapIsProjected && [self dictionary:_angleDistance hasKey:@"default" withValue:@YES]) {
         return LocateFeatureWithAngleDistance;
     }
     return LocateFeatureUndefined;

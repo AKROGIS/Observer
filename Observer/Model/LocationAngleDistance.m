@@ -178,7 +178,7 @@
     double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
     double localAngle = referenceAngle + direction * (angle - self.deadAhead);
     localAngle = fmod(localAngle, 360.0);
-    return [NSNumber numberWithDouble:localAngle];
+    return @(localAngle);
 }
 
 - (NSNumber *) numberFromDistanceMeters:(double)distance
@@ -188,7 +188,7 @@
 
     AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : kAngleDistanceDistanceUnits;
     double localDistance = [self.srWithMeters convertValue:distance toUnit:distanceUnits];
-    return [NSNumber numberWithDouble:localDistance];
+    return @(localDistance);
 }
 
 - (double) doubleFromAngle:(NSNumber*)angle

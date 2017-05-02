@@ -1711,7 +1711,7 @@
         // all graphics for observations should be a POGraphic; do nothing if something went wrong
         if ([graphic isKindOfClass:[POGraphic class]]) {
             AGSGraphic *newGraphic = [(POGraphic *)graphic redraw:observation survey:self.survey];
-            AttributeViewController *dialog = (AttributeViewController *)[nav.viewControllers objectAtIndex:0];
+            AttributeViewController *dialog = (AttributeViewController *)(nav.viewControllers)[0];
             dialog.graphic = newGraphic;
             // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
             //AGSPoint *toPoint = (AGSPoint *)newGraphic.geometry;

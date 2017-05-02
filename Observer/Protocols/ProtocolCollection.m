@@ -480,7 +480,7 @@ static BOOL _isLoaded = NO;
                 //update the url of cached server objects
                 SProtocol *serverProtocol = serverProtocols[index];
                 if (![p.url isEqual:serverProtocol.url]) {
-                    protocolsToUpdate[[NSNumber numberWithUnsignedInt:i]] = serverProtocol;
+                    protocolsToUpdate[@(i)] = serverProtocol;
                     modelChanged = YES;
                 }
                 [serverProtocols removeObjectAtIndex:index];
@@ -506,7 +506,7 @@ static BOOL _isLoaded = NO;
     if (delegate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             for (id key in [protocolsToUpdate allKeys]) {
-                id protocol = [protocolsToUpdate objectForKey:key];
+                id protocol = protocolsToUpdate[key];
                 self.remoteItems[[key unsignedIntegerValue]] = protocol;
                 [delegate collection:self changedRemoteItemsAtIndexes:[NSIndexSet indexSetWithIndex:[key unsignedIntegerValue]]];
             }
@@ -522,7 +522,7 @@ static BOOL _isLoaded = NO;
         });
     } else {
         for (id key in [protocolsToUpdate allKeys]) {
-            id protocol = [protocolsToUpdate objectForKey:key];
+            id protocol = protocolsToUpdate[key];
             self.remoteItems[[key unsignedIntegerValue]] = protocol;
         }
         [self.remoteItems removeObjectsAtIndexes:itemsToRemove];
