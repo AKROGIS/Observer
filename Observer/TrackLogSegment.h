@@ -16,7 +16,7 @@
 
 // NOTE: The Designated Initializer is not public, THIS CLASS CANNOT BE SUB-CLASSED
 - (instancetype)init __attribute__((unavailable("Must use initWithMissionProperty: instead.")));
-- (instancetype)initWithMissionProperty:(MissionProperty *)missionProperty;
+- (instancetype)initWithMissionProperty:(MissionProperty *)missionProperty NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, strong, readonly) MissionProperty *missionProperty;
 //@property (nonatomic, strong, readonly) NSArray *gpsPoints;

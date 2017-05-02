@@ -12,7 +12,7 @@
 
 @interface ProtocolMissionFeature : ProtocolFeature
 
-- (instancetype)initWithJSON:(id)json version:(NSInteger) version;
+- (instancetype)initWithJSON:(id)json version:(NSInteger) version NS_DESIGNATED_INITIALIZER;
 
 // How should these mission features be drawn on the map
 @property (strong, nonatomic, readonly) AGSRenderer *lineRendererObserving;

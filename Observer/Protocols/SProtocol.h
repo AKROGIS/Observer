@@ -48,7 +48,7 @@
 - (BOOL)isEqualToProtocol:(SProtocol *)protocol;
 
 //designated initializer
-- (instancetype)initWithURL:(NSURL *)url title:(id)title version:(id)version date:(id)date;
+- (instancetype)initWithURL:(NSURL *)url title:(id)title version:(id)version date:(id)date NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithURL:(NSURL *)url;
 - (instancetype) init __attribute__((unavailable("Must use initWithURL: instead.")));
 

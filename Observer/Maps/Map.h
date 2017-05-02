@@ -37,7 +37,7 @@
 //============
 // Designated
 //-----------
-- (instancetype)initWithProperties:(NSDictionary *)properties;
+- (instancetype)initWithProperties:(NSDictionary *)properties NS_DESIGNATED_INITIALIZER;
 - (instancetype) init __attribute__((unavailable("Must use initWithProperties: or other initializer instead.")));
 
 //Convenience

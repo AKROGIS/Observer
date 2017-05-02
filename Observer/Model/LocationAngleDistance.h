@@ -48,7 +48,7 @@
 //designated initializer
 //This will initialize the readonly properties deadAhead, protocol feature, distanceMeters and absoluteAngles.
 //values must be provided in the database neutral units and frame of reference specified below.
-- (instancetype) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature absoluteAngle:(double)angle distance:(double)distance;
+- (instancetype) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature absoluteAngle:(double)angle distance:(double)distance NS_DESIGNATED_INITIALIZER;
 
 //convenience initializer with default values of -1 for angle and distance.
 - (instancetype) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature;
