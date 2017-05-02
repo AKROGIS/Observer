@@ -43,7 +43,7 @@
     self = [super init];
     if (self) {
         _url = url;
-        _title = ([title isKindOfClass:[NSString class]] ? title : nil);
+        _title = ([title isKindOfClass:[NSString class]] ? [title copy] : nil);
         _version = ([version isKindOfClass:[NSNumber class]] ? version : nil);
         _date = [date isKindOfClass:[NSDate class]] ? date : ([date isKindOfClass:[NSString class]] ? [AKRFormatter dateFromISOString:date] : nil);
     }

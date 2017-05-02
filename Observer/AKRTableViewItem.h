@@ -10,10 +10,9 @@
 #import <UIKit/UIKit.h>
 
 @protocol AKRTableViewItem <NSObject>
-- (NSString *) title;
+@property (nonatomic, readonly, copy) NSString *title;
 @property (nonatomic, readonly, copy) NSString *subtitle;
 @property (nonatomic, readonly, strong) UIImage *thumbnail;
 @optional
-- (void) setTitle:(NSString *)title;
 @property (nonatomic, readonly, copy) NSString *subtitle2;
 @end

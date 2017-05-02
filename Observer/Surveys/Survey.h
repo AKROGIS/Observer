@@ -45,13 +45,14 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 @property (nonatomic, strong, readonly) NSString *statusMessage;
 
 //title and date will block (reading values from the filessytem) if the state is unborn.
-@property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong, readonly) NSDate *date;   //Date of last change (create/edit)
 @property (nonatomic, strong, readonly) NSDate *syncDate;
 
 //The following methods will block (reading data from the filessytem)
 @property (nonatomic, strong, readonly) UIImage *thumbnail;
 @property (nonatomic, strong, readonly) SProtocol *protocol;
+
+- (void)setTitle:(NSString *)title;
 
 //document will return nil until openDocumentWithCompletionHandler is called with success
 @property (nonatomic, strong, readonly) UIManagedDocument *document;

@@ -120,7 +120,7 @@
         _url = url;
         _state = state;
         _date = date;
-        _title = title != nil ? title : [[url lastPathComponent] stringByDeletingPathExtension] ;
+        _title = title != nil ? [title copy] : [[url lastPathComponent] stringByDeletingPathExtension] ;
         _protocolIsLoaded = NO;
         _thumbnailIsLoaded = NO;
     }
@@ -186,7 +186,7 @@
 - (void)setTitle:(NSString *)title
 {
     if (_title != title) {
-        _title = title;
+        _title = [title copy];
         [self saveProperties];
     }
 }

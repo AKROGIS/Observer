@@ -64,7 +64,6 @@
 
 
 
-@property (nonatomic, strong, readonly) NSString *title;
 @property (nonatomic, strong, readonly) NSString *author;
 @property (nonatomic, strong, readonly) NSDate *date;
 @property (nonatomic,         readonly) unsigned long long byteCount;
