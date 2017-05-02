@@ -11,7 +11,7 @@
 
 @implementation ProtocolFeatureLabel
 
-- (id)initWithLabelJSON:(id)json version:(NSInteger) version
+- (instancetype)initWithLabelJSON:(id)json version:(NSInteger) version
 {
     self = [super init];
     if (self) {

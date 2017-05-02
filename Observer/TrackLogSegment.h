@@ -15,8 +15,8 @@
 @interface TrackLogSegment : NSObject
 
 // NOTE: The Designated Initializer is not public, THIS CLASS CANNOT BE SUB-CLASSED
-- (id)init __attribute__((unavailable("Must use initWithMissionProperty: instead.")));
-- (id)initWithMissionProperty:(MissionProperty *)missionProperty;
+- (instancetype)init __attribute__((unavailable("Must use initWithMissionProperty: instead.")));
+- (instancetype)initWithMissionProperty:(MissionProperty *)missionProperty;
 
 @property (nonatomic, strong, readonly) MissionProperty *missionProperty;
 //@property (nonatomic, strong, readonly) NSArray *gpsPoints;

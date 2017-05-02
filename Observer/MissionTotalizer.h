@@ -13,7 +13,7 @@
 
 @interface MissionTotalizer : NSObject
 
-- (id)initWithProtocol:(SProtocol *)protocol trackLogSegments:(NSMutableArray *)trackLogSegments ;
+- (instancetype)initWithProtocol:(SProtocol *)protocol trackLogSegments:(NSMutableArray *)trackLogSegments ;
 
 @property (nonatomic, strong, readonly) SProtocol *protocol;
 @property (nonatomic, strong, readonly) NSMutableArray *trackLogSegments;

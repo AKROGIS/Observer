@@ -19,17 +19,17 @@
 
 @implementation LocationAngleDistance
 
-- (id) init
+- (instancetype) init
 {
     return [self initWithDeadAhead:0.0 protocolFeature:nil absoluteAngle:-1.0 distance:-1.0];
 }
 
-- (id) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature
+- (instancetype) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature
 {
     return [self initWithDeadAhead:deadAhead protocolFeature:feature absoluteAngle:-1.0 distance:-1.0];
 }
 
-- (id) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature absoluteAngle:(double)angle distance:(double)distance
+- (instancetype) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature absoluteAngle:(double)angle distance:(double)distance
 {
     self = [super init];
     if (self)

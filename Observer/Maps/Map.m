@@ -39,7 +39,7 @@
 
 @implementation Map
 
-- (id)initWithProperties:(NSDictionary *)properties
+- (instancetype)initWithProperties:(NSDictionary *)properties
 {
     if (!properties) {
         return nil;
@@ -51,7 +51,7 @@
     return self;
 }
 
-- (id)initWithCachedPropertiesName:(NSString *)name
+- (instancetype)initWithCachedPropertiesName:(NSString *)name
 {
     // Prior to version 1.0.0, name was an absolute path URL cached in settings.
     // This URL was wrong after an update (the app directory gets renamed).
@@ -85,7 +85,7 @@
     return self;
 }
 
-- (id)initWithRemoteProperties:(NSDictionary *)properties
+- (instancetype)initWithRemoteProperties:(NSDictionary *)properties
 {
     NSMutableDictionary *newProperties = [NSMutableDictionary dictionaryWithDictionary:properties];
     newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].lastPathComponent;
@@ -97,7 +97,7 @@
     return self;
 }
 
-- (id)initWithTileCacheURL:(NSURL *)url
+- (instancetype)initWithTileCacheURL:(NSURL *)url
 {
     //This will only be called by the app delegate or the map collection with a File URL in the Documents folder
     NSString *path = url.path;
@@ -140,7 +140,7 @@
     return self;
 }
 
-- (id)initWithTileCacheURL:(NSURL *)url name:(NSString *)name author:(NSString *)author date:(NSDate *)date description:(NSString *)description
+- (instancetype)initWithTileCacheURL:(NSURL *)url name:(NSString *)name author:(NSString *)author date:(NSDate *)date description:(NSString *)description
 {
     self = [self initWithTileCacheURL:url];
     if (self) {

@@ -15,7 +15,7 @@
 
 static NSUInteger currentUniqueId = 0;
 
-- (id)initWithJSON:(id)json version:(NSInteger) version
+- (instancetype)initWithJSON:(id)json version:(NSInteger) version
 {
     self = [super init];
     if (self) {

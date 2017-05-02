@@ -40,7 +40,7 @@ typedef NS_OPTIONS(NSUInteger, TotalizerUnits) {
 
 @implementation MissionTotalizer
 
-- (id)initWithProtocol:(SProtocol *)protocol trackLogSegments:(NSMutableArray *)trackLogSegments {
+- (instancetype)initWithProtocol:(SProtocol *)protocol trackLogSegments:(NSMutableArray *)trackLogSegments {
     if (protocol == nil || trackLogSegments == nil) {
         return nil;
     }

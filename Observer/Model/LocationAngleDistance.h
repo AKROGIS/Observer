@@ -48,13 +48,13 @@
 //designated initializer
 //This will initialize the readonly properties deadAhead, protocol feature, distanceMeters and absoluteAngles.
 //values must be provided in the database neutral units and frame of reference specified below.
-- (id) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature absoluteAngle:(double)angle distance:(double)distance;
+- (instancetype) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature absoluteAngle:(double)angle distance:(double)distance;
 
 //convenience initializer with default values of -1 for angle and distance.
-- (id) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature;
+- (instancetype) initWithDeadAhead:(double)deadAhead protocolFeature:(ProtocolFeature *)feature;
 
 //convenience initializer with default values of 0 for deadAhead, nil for protocol feature and -1 for angle and distance.
-- (id) init;
+- (instancetype) init;
 
 //the course (or heading) for dead ahead (positive = clockwise, with 0 = north)
 //default value = 0.0

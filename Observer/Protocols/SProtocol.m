@@ -35,7 +35,7 @@
 @implementation SProtocol
 
 
-- (id) initWithURL:(NSURL *)url title:(id)title version:(id)version date:(id)date
+- (instancetype) initWithURL:(NSURL *)url title:(id)title version:(id)version date:(id)date
 {
     if (!url) {
         return nil;
@@ -51,7 +51,7 @@
 }
 
 
-- (id) initWithURL:(NSURL *)url
+- (instancetype) initWithURL:(NSURL *)url
 {
     return [self initWithURL:url
                        title:url.lastPathComponent
@@ -64,7 +64,7 @@
 
 #pragma mark - NSCoding
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     int version = [aDecoder decodeIntForKey:kCodingVersionKey];
     switch (version) {

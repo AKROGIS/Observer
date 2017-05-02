@@ -18,8 +18,8 @@
 @interface ProtocolFeature : NSObject
 
 // If the JSON is not a NSDictionary, then all the properties will be nil
-- (id)initWithJSON:(id)json version:(NSInteger) version;
-- (id) init __attribute__((unavailable("Must use initWithJSON:version: instead.")));
+- (instancetype)initWithJSON:(id)json version:(NSInteger) version;
+- (instancetype) init __attribute__((unavailable("Must use initWithJSON:version: instead.")));
 
 // The user provided name of this object
 @property (strong, nonatomic, readonly) NSString *name;

@@ -62,11 +62,11 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 
 //Initializers
 // NOTE: The Designated Initializer is not public, THIS CLASS CANNOT BE SUB-CLASSED
-- (id)init __attribute__((unavailable("Must use initWithProtocol: or initWithURL: instead.")));
-- (id)initWithURL:(NSURL *)url;
+- (instancetype)init __attribute__((unavailable("Must use initWithProtocol: or initWithURL: instead.")));
+- (instancetype)initWithURL:(NSURL *)url;
 //This involve doing IO (to find and create the unused url), it should be called on a background thread
-- (id)initWithProtocol:(SProtocol *)protocol;
-- (id)initWithArchive:(NSURL *)archive;
+- (instancetype)initWithProtocol:(SProtocol *)protocol;
+- (instancetype)initWithArchive:(NSURL *)archive;
 
 //YES if two Surveys are the same (same url)
 - (BOOL)isEqualToSurvey:(Survey *)survey;

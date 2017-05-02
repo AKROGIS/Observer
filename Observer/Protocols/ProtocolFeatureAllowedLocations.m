@@ -64,7 +64,7 @@
 
 #pragma mark - Initialization
 
-- (id)initWithLocationsJSON:(id)json version:(NSInteger) version
+- (instancetype)initWithLocationsJSON:(id)json version:(NSInteger) version
 {
     self = [super init];
     if (self) {

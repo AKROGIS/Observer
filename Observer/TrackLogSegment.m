@@ -22,7 +22,7 @@
 
 @implementation TrackLogSegment
 
-- (id)initWithMissionProperty:(MissionProperty *)missionProperty
+- (instancetype)initWithMissionProperty:(MissionProperty *)missionProperty
 {
     if (!missionProperty || !missionProperty.gpsPoint) {
         return nil;

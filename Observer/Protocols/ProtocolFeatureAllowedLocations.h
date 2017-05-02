@@ -32,8 +32,8 @@
 + (WaysToLocateFeature) locationMethodForName:(NSString *)name;
 
 // If locations is not a NSArray, then all the properties will be nil
-- (id)initWithLocationsJSON:(id)json version:(NSInteger) version;
-- (id) init __attribute__((unavailable("Must use initWithLocationsJSON:version: instead.")));
+- (instancetype)initWithLocationsJSON:(id)json version:(NSInteger) version;
+- (instancetype) init __attribute__((unavailable("Must use initWithLocationsJSON:version: instead.")));
 
 // The protocol provides the Angle Distance parameters
 @property (nonatomic, readonly) BOOL definesAngleDistance;

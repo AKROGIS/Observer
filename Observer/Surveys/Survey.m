@@ -72,7 +72,7 @@
 
 #pragma mark - initializers
 
-- (id)initWithURL:(NSURL *)url title:(NSString *)title state:(SurveyState)state date:(NSDate *)date
+- (instancetype)initWithURL:(NSURL *)url title:(NSString *)title state:(SurveyState)state date:(NSDate *)date
 {
     NSString *name = url.lastPathComponent;
     if (name == nil || !url.isFileURL) {
@@ -127,7 +127,7 @@
     return self;
 }
 
-- (id)initWithURL:(NSURL *)url
+- (instancetype)initWithURL:(NSURL *)url
 {
     if ([url.pathExtension isEqualToString:SURVEY_EXT]) {
         return [self initWithArchive:url];
@@ -135,7 +135,7 @@
     return [self initWithURL:url title:nil state:kUnborn date:[NSDate date]];
 }
 
-- (id)initWithProtocol:(SProtocol *)protocol
+- (instancetype)initWithProtocol:(SProtocol *)protocol
 {
     //verify the input - reading protocol values may cause protocol to load from filesystem
     if (!protocol.isValid) {
@@ -155,7 +155,7 @@
 }
 
 
-- (id)initWithArchive:(NSURL *)archive
+- (instancetype)initWithArchive:(NSURL *)archive
 {
     if (![archive.pathExtension isEqualToString:SURVEY_EXT]) {
         return nil;

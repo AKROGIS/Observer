@@ -12,7 +12,7 @@
 
 @implementation ProtocolFeatureSymbology
 
-- (id)initWithSymbologyJSON:(id)json version:(NSInteger) version
+- (instancetype)initWithSymbologyJSON:(id)json version:(NSInteger) version
 {
     self = [super init];
     if (self) {

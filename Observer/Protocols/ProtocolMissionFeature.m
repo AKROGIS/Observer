@@ -11,7 +11,7 @@
 
 @implementation ProtocolMissionFeature
 
-- (id)initWithJSON:(id)json version:(NSInteger) version
+- (instancetype)initWithJSON:(id)json version:(NSInteger) version
 {
     self = [super initWithJSON:json version:version];
     if (self) {

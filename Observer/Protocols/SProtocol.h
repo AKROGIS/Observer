@@ -48,9 +48,9 @@
 - (BOOL)isEqualToProtocol:(SProtocol *)protocol;
 
 //designated initializer
-- (id)initWithURL:(NSURL *)url title:(id)title version:(id)version date:(id)date;
-- (id)initWithURL:(NSURL *)url;
-- (id) init __attribute__((unavailable("Must use initWithURL: instead.")));
+- (instancetype)initWithURL:(NSURL *)url title:(id)title version:(id)version date:(id)date;
+- (instancetype)initWithURL:(NSURL *)url;
+- (instancetype) init __attribute__((unavailable("Must use initWithURL: instead.")));
 
 // Save the Protocol to the URL;  This is synchronous, so remote protocols will block
 // url must be a file URL
