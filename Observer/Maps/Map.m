@@ -31,7 +31,7 @@
 @property (nonatomic, strong, readwrite) AGSLocalTiledLayer *tileCache;
 
 //TODO: #6 move to NSOperation
-@property (nonatomic) BOOL isDownloading;
+@property (nonatomic, readwrite) BOOL downloading;
 @property (nonatomic, strong) NSURLSession *session;
 @property (nonatomic, strong) NSURLSessionTask *downloadTask;
 
@@ -671,7 +671,7 @@
     NSURLRequest *request = [NSURLRequest requestWithURL:self.tileCacheURL];
     self.downloadTask = [self.session downloadTaskWithRequest:request];
     self.downloadPercentComplete = 0;
-    self.isDownloading = YES;
+    self.downloading = YES;
     [self.downloadTask resume];
     [MapCollection startDownloading];
 }
@@ -679,7 +679,7 @@
 - (void)cancelDownload
 {
     [self.downloadTask cancel];
-    self.isDownloading = NO;
+    self.downloading = NO;
     [MapCollection canceledDownloading];
 }
 
@@ -704,7 +704,7 @@
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
 {
-    self.isDownloading = NO;
+    self.downloading = NO;
     if (downloadTask.state == NSURLSessionTaskStateCanceling) {
         return;
     }

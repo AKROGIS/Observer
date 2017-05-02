@@ -27,7 +27,7 @@
 @property (nonatomic) BOOL parsedJSON;
 
 //TODO: #6 move to NSOperation
-@property (nonatomic) BOOL downloading;
+@property (nonatomic, readwrite) BOOL downloading;
 @property (nonatomic, strong) NSURLSession *session;
 @property (nonatomic, strong) NSURLSessionTask *downloadTask;
 @end
@@ -99,7 +99,7 @@
 
 - (NSString *)subtitle
 {
-    if (self.downloading) {
+    if (self.isDownloading) {
         return @"Downloading...";
     } else {
         return [NSString stringWithFormat:@"Version: %@, Date: %@", self.versionString, self.dateString];
@@ -341,11 +341,6 @@
     self.downloadPercentComplete = 0;
     self.downloading = YES;
     [self.downloadTask resume];
-}
-
-- (BOOL)isDownloading
-{
-    return self.downloading;
 }
 
 - (void)cancelDownload
