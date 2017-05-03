@@ -114,7 +114,7 @@
             }
         }
     }
-
+    AKRLog(@"*** Creating Survey @ %@", url);
     self = [super init];
     if (self) {
         _url = url;
@@ -125,6 +125,10 @@
         _thumbnailIsLoaded = NO;
     }
     return self;
+}
+
+-(void)dealloc {
+    AKRLog(@"*** Dealloc Survey @ %@", self.url);
 }
 
 - (instancetype)initWithURL:(NSURL *)url

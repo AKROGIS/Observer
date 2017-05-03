@@ -41,18 +41,22 @@
         // We had a problem using our client ID - Map will display "For developer use only"
         NSLog(@"Error using client ID : %@",error.localizedDescription);
     }
-
+    AKRLog(@"** Start loading Map");
     Map *savedMap = [[Map alloc] initWithCachedPropertiesName:[Settings manager].activeMapPropertiesName];
     if (savedMap) {
         self.observerMapViewController.map = savedMap;
     }
+    AKRLog(@"** Start loading Surveys");
     self.surveys = [SurveyCollection sharedCollection];
     [self.surveys openWithCompletionHandler:^(BOOL success) {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.observerMapViewController.surveys = self.surveys;
+            AKRLog(@"** Surveys Loaded %lu", (unsigned long)self.surveys.numberOfSurveys);
             Survey *savedSurvey = [self.surveys surveyWithURL:[Survey urlFromCachedName:[Settings manager].activeSurveyName]];
+            AKRLog(@"** Survey found %@ (%d)", savedSurvey, savedSurvey.isValid);
             if (savedSurvey.isValid) {
                 self.observerMapViewController.survey = savedSurvey;
+                AKRLog(@"** Surveys Loaded");
             }
         });
     }];
