@@ -80,6 +80,11 @@
 {
     _items = collection;
     [self.tableView reloadData];
+    [collection refreshWithCompletionHandler:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }];
 }
 
 - (void)insertNewObject:(id)sender
