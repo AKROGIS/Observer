@@ -9,12 +9,14 @@
 #import <ArcGIS/ArcGIS.h>
 #import <CoreLocation/CoreLocation.h>
 #import <UIKit/UIKit.h>
+#import "SurveyCollection.h"
 #import "Survey.h"
 #import "Map.h"
 
 @interface ObserverMapViewController : UIViewController <CLLocationManagerDelegate, AGSLayerDelegate, AGSMapViewLayerDelegate, AGSMapViewTouchDelegate, AGSCalloutDelegate, LocationPresenter, UIPopoverPresentationControllerDelegate>
 
 //Model
+@property (strong, nonatomic) SurveyCollection *surveys;
 @property (strong, nonatomic) Survey *survey;
 @property (strong, nonatomic) Map *map;
 

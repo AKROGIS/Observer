@@ -163,6 +163,7 @@
     if ([segue.identifier isEqualToString:@"Select Survey"]){
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
+        vc.items = self.surveys;
         __weak ObserverMapViewController *weakSelf = self;
         vc.surveySelectedAction = ^(Survey *survey){
             ObserverMapViewController *me = weakSelf;

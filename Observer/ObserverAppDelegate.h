@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SurveyCollection.h"
 
 @interface ObserverAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic, readonly) SurveyCollection *surveys;
 
 @end

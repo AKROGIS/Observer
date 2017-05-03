@@ -9,6 +9,7 @@
 #import "SurveyCollection.h"
 #import "NSArray+map.h"
 #import "NSURL+unique.h"
+#import "NSURL+isEqualToURL.h"
 #import "Settings.h"
 #import "AKRLog.h"
 
@@ -100,6 +101,16 @@ static BOOL _isLoaded = NO;
             }
         }
     });
+}
+
+- (Survey *)surveyWithURL:(NSURL *)url
+{
+    for (Survey *survey in self.items) {
+        if ([survey.url isEqualToURL:url]) {
+            return survey;
+        }
+    }
+    return nil;
 }
 
 - (void)refreshWithCompletionHandler:(void (^)())completionHandler

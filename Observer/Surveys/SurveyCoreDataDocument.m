@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 GIS Team. All rights reserved.
 //
 
+#import "ObserverAppDelegate.h"
 #import "SurveyCoreDataDocument.h"
 #import "SurveyObjectModel.h"
 #import "Survey.h"
@@ -15,7 +16,8 @@
 
 - (NSManagedObjectModel *)managedObjectModel
 {
-    Survey *survey = [[Survey alloc] initWithURL:self.fileURL.URLByDeletingLastPathComponent];
+    ObserverAppDelegate *app = (ObserverAppDelegate *)[UIApplication sharedApplication].delegate;
+    Survey *survey = [app.surveys surveyWithURL:self.fileURL.URLByDeletingLastPathComponent];
     return [SurveyObjectModel objectModelWithProtocol:survey.protocol];
 }
 

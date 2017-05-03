@@ -7,9 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SurveyCollection.h"
 #import "Survey.h"
 
 @interface SurveySelectViewController : UITableViewController <UITextFieldDelegate>
+
+// The VC model
+@property (nonatomic, strong) SurveyCollection *items;
 
 // A block to execute when a survey is selected.
 // This will be called even if the user re-selects the current survey
@@ -21,10 +25,5 @@
 
 // A block to execute when a survey is deleted
 @property (nonatomic, copy) void (^surveyDeletedAction)(Survey *survey);
-
-// Add the survey to the TableView
-// Used when a survey was obtained external to the VC
-// Also ensures that the collection and the caller are refering to the same object
-- (void) addSurvey:(Survey *)survey;
 
 @end

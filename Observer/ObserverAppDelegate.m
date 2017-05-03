@@ -10,7 +10,6 @@
 #import "ObserverMapViewController.h"
 #import "Settings.h"
 #import "NSURL+unique.h"
-#import "SurveyCollection.h"
 #import "MapCollection.h"
 #import "ProtocolCollection.h"
 #import "AKRLog.h"
@@ -22,6 +21,7 @@
 
 @interface ObserverAppDelegate()
 
+@property (strong, nonatomic, readwrite) SurveyCollection *surveys;
 @property (nonatomic,strong) ObserverMapViewController *observerMapViewController;
 
 @end
@@ -46,10 +46,16 @@
     if (savedMap) {
         self.observerMapViewController.map = savedMap;
     }
-    Survey *savedSurvey = [[Survey alloc] initWithURL:[Survey urlFromCachedName:[Settings manager].activeSurveyName]];
-    if (savedSurvey.isValid) {
-        self.observerMapViewController.survey = savedSurvey;
-    }
+    self.surveys = [SurveyCollection sharedCollection];
+    [self.surveys openWithCompletionHandler:^(BOOL success) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.observerMapViewController.surveys = self.surveys;
+            Survey *savedSurvey = [self.surveys surveyWithURL:[Survey urlFromCachedName:[Settings manager].activeSurveyName]];
+            if (savedSurvey.isValid) {
+                self.observerMapViewController.survey = savedSurvey;
+            }
+        });
+    }];
     return YES;
 }
 							
