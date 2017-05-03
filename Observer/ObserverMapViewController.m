@@ -1175,17 +1175,10 @@
         [self stopRecording:nil];
     }
     [self.mapView clearGraphicsLayers];
-    [survey closeDocumentWithCompletionHandler:^(BOOL success) {
-        //this completion handler runs on the main thread;
-        if (!success) {
-            AKRLog(@"Survey (%@) failed to close", survey.title);
-            //There is really nothing I can do but continue...
-        }
-        [self removeMissionPropertiesButton];
-        [self configureObservationButtons];
-        [self updateTitleBar];
-        [self decrementBusy];
-    }];
+    [self removeMissionPropertiesButton];
+    [self configureObservationButtons];
+    [self updateTitleBar];
+    [self decrementBusy];
 }
 
 - (void)openSurvey:(Survey *)survey

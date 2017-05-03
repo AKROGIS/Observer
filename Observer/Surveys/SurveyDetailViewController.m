@@ -58,15 +58,6 @@
         }
         //Get the survey properties
         [self cacheSurveyProperties];
-        //Close the survey document; were done with it
-        [survey closeDocumentWithCompletionHandler:^(BOOL success2) {
-            if (!success2) {
-                AKRLog(@"Error - Failed to close survey %@ in Details VC", survey.title);
-                // Continue anyway...
-            }
-            //AKRLog(@"Closed survey %@ in Details VC", survey.title);
-        }];
-
         //Update the table
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
