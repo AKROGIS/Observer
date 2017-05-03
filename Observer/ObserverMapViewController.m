@@ -120,7 +120,7 @@
     [self requestLocationServices];
     [self configureGpsButton];
     [self removeMissionPropertiesButton];
-    [self configureObservationButtons];
+    [self configureObservationButtons:self.survey];
     [self openMap:self.map];  // open in map setter may fail if the view isn't ready.
     [self openSurvey:self.survey];  // open in survey setter may fail if the view isn't ready.
     self.statusMessage.text = nil;
@@ -172,9 +172,7 @@
         };
         vc.surveyUpdatedAction = ^(Survey *survey){
             if ([survey isEqualToSurvey:self.survey]) {
-                ObserverMapViewController *me = weakSelf;
-                me.survey.title = survey.title;
-                [me updateTitleBar];
+                [weakSelf updateTitleBar:survey];
             }
         };
         vc.surveyDeletedAction = ^(Survey *survey){
@@ -498,7 +496,7 @@
     self.map = nil;
     [self.survey clearMap];
     [self.survey clearMapMapViewSpatialReference];
-    [self configureObservationButtons];
+    [self configureObservationButtons:self.survey];
     [self decrementBusy];
     [self alert:nil message:@"Unable to load map"];
 }
@@ -515,7 +513,7 @@
     self.noMapView.hidden = YES;
     [self loadGraphics];
     [self setupGPS];
-    [self configureObservationButtons];
+    [self configureObservationButtons:self.survey];
     [self decrementBusy];
 }
 
@@ -760,11 +758,11 @@
     self.autoPanController.autoPanModeButton = self.panButton;
 }
 
-- (void)addMissionPropertiesButton
+- (void)addMissionPropertiesButton:(Survey *)survey
 {
     // Adds button at the end of the toolbar, so call before adding observation buttons
     if (![self.toolbar.items containsObject:self.editEnvironmentBarButton] &&
-        self.survey.protocol.missionFeature.attributes.count > 0) {
+        survey.protocol.missionFeature.attributes.count > 0) {
         // self.toolbar.items is immutable, so we need to get a copy to change it
         NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
         [toolbarButtons addObject:self.editEnvironmentBarButton];
@@ -782,15 +780,15 @@
     }
 }
 
-- (void)configureObservationButtons
+- (void)configureObservationButtons:(Survey *)survey
 {
     NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
     //Remove any existing Add Feature buttons
     [toolbarButtons removeObjectsInArray:self.addFeatureBarButtonItems];
 
     [self.addFeatureBarButtonItems removeAllObjects];
-    if (self.survey.protocol) {
-        for (ProtocolFeature *feature in self.survey.protocol.features) {
+    if (survey.protocol) {
+        for (ProtocolFeature *feature in survey.protocol.features) {
             feature.allowedLocations.locationPresenter = self;
             if (feature.allowedLocations.countOfNonTouchChoices > 0) {
                 //feature names (from protocol file) should be short enough to fit on a button
@@ -823,13 +821,9 @@
     }
 }
 
--(void)updateTitleBar
+-(void)updateTitleBar:(Survey *)survey
 {
-    // This is called by the Survey VC when editing to catch a name change of self.survey
-    // It is also called by the completion handlers in close/open survey methods (called by viewDidLoad and setSurvey.
-    // Using self.survey solves a problem where the close completion handler ends up on the main queue after open handler.
-    // This must be called in handlers because open/close sets the self.selectSurveyButton.title to 'working...'
-    self.selectSurveyButton.title = (self.survey.isReady ? self.survey.title : @"Select Survey");
+    self.selectSurveyButton.title = (survey.isReady ? survey.title : @"Select Survey");
 }
 
 -(void)disableControls
@@ -1176,8 +1170,8 @@
     }
     [self.mapView clearGraphicsLayers];
     [self removeMissionPropertiesButton];
-    [self configureObservationButtons];
-    [self updateTitleBar];
+    [self configureObservationButtons:nil];
+    [self updateTitleBar:nil];
     [self decrementBusy];
 }
 
@@ -1202,9 +1196,9 @@
             } else {
                 [self loadGraphics];
             }
-            [self addMissionPropertiesButton];
-            [self configureObservationButtons];
-            [self updateTitleBar];
+            [self addMissionPropertiesButton:survey];
+            [self configureObservationButtons:survey];
+            [self updateTitleBar:survey];
             [self decrementBusy];
         });
     }];
