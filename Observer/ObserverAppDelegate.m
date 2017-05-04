@@ -10,7 +10,6 @@
 #import "ObserverMapViewController.h"
 #import "Settings.h"
 #import "NSURL+unique.h"
-#import "SurveyCollection.h"
 #import "MapCollection.h"
 #import "ProtocolCollection.h"
 #import "AKRLog.h"
@@ -22,6 +21,7 @@
 
 @interface ObserverAppDelegate()
 
+@property (strong, nonatomic, readwrite) SurveyCollection *surveys;
 @property (nonatomic,strong) ObserverMapViewController *observerMapViewController;
 
 @end
@@ -41,15 +41,23 @@
         // We had a problem using our client ID - Map will display "For developer use only"
         NSLog(@"Error using client ID : %@",error.localizedDescription);
     }
-
     Map *savedMap = [[Map alloc] initWithCachedPropertiesName:[Settings manager].activeMapPropertiesName];
     if (savedMap) {
         self.observerMapViewController.map = savedMap;
     }
-    Survey *savedSurvey = [[Survey alloc] initWithURL:[Survey urlFromCachedName:[Settings manager].activeSurveyName]];
-    if (savedSurvey.isValid) {
-        self.observerMapViewController.survey = savedSurvey;
-    }
+    // Preload all the surveys. This takes < 0.5 sec with 15 surveys (this is many more than most people have, and it isn't noticable)
+    // The benefit is that there is a single set of survey objects that are created/opened once and there is no more risk of having
+    //   different objects that open/close the same underlying UIManagedDocument URL.
+    self.surveys = [SurveyCollection sharedCollection];
+    [self.surveys openWithCompletionHandler:^(BOOL success) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.observerMapViewController.surveys = self.surveys;
+            Survey *savedSurvey = [self.surveys surveyWithURL:[Survey urlFromCachedName:[Settings manager].activeSurveyName]];
+            if (savedSurvey.isValid) {
+                self.observerMapViewController.survey = savedSurvey;
+            }
+        });
+    }];
     return YES;
 }
 							

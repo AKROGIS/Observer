@@ -7,18 +7,15 @@
 //
 
 #import "SurveySelectViewController.h"
-#import "SurveyCollection.h"
 #import "SurveyDetailViewController.h"
 #import "SurveyTableViewCell.h"
 #import "ProtocolSelectViewController.h"
 #import "SurveyUploadTableViewController.h"
 #import "SProtocol.h"
-#import "Survey.h"
 #import "NSIndexPath+unsignedAccessors.h"
 #import "AKRLog.h"
 
 @interface SurveySelectViewController ()
-@property (nonatomic, strong) SurveyCollection *items; //Model
 @property (strong, nonatomic) UIBarButtonItem *addButton;
 @property (strong, nonatomic) NSIndexPath *indexPathToDelete;
 @end
@@ -76,36 +73,18 @@
     // Dispose of any resources that can be recreated.
 }
 
-// Releasing the collection will save memory, but will also take time to recreate collection on each VC load
-- (void)dealloc
+
+
+
+- (void)setItems:(SurveyCollection *)collection
 {
-    [SurveyCollection releaseSharedCollection];
-}
-
-
-
-
-#pragma mark - lazy property initializers
-
-- (SurveyCollection *)items
-{
-    if (!_items) {
-        SurveyCollection *surveys = [SurveyCollection sharedCollection];
-        [surveys openWithCompletionHandler:^(BOOL success) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.items = surveys;
-                [self.tableView reloadData];
-            });
-        }];
-    }
-    return _items;
-}
-
-- (void) addSurvey:(Survey *)survey
-{
-    [self.items insertSurvey:survey atIndex:0];
-    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]]
-                          withRowAnimation:UITableViewRowAnimationAutomatic];
+    _items = collection;
+    [self.tableView reloadData];
+    [collection refreshWithCompletionHandler:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }];
 }
 
 - (void)insertNewObject:(id)sender

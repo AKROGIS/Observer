@@ -124,10 +124,8 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 - (void)stopRecording:(CLLocation *)locationOfGPS;
 
 - (void)setMap:(Map *)map;
-- (void)clearMap;
 
 @property (nonatomic, strong) AGSSpatialReference *mapViewSpatialReference;
-- (void)clearMapMapViewSpatialReference;
 
 // GPS Methods
 // Location should be checked by caller to ensure it is a good/current location

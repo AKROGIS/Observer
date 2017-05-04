@@ -120,7 +120,7 @@
     [self requestLocationServices];
     [self configureGpsButton];
     [self removeMissionPropertiesButton];
-    [self configureObservationButtons];
+    [self configureObservationButtons:self.survey];
     [self openMap:self.map];  // open in map setter may fail if the view isn't ready.
     [self openSurvey:self.survey];  // open in survey setter may fail if the view isn't ready.
     self.statusMessage.text = nil;
@@ -163,6 +163,7 @@
     if ([segue.identifier isEqualToString:@"Select Survey"]){
         SurveySelectViewController *vc = (SurveySelectViewController *)vc1;
         vc.title = segue.identifier;
+        vc.items = self.surveys;
         __weak ObserverMapViewController *weakSelf = self;
         vc.surveySelectedAction = ^(Survey *survey){
             ObserverMapViewController *me = weakSelf;
@@ -171,9 +172,7 @@
         };
         vc.surveyUpdatedAction = ^(Survey *survey){
             if ([survey isEqualToSurvey:self.survey]) {
-                ObserverMapViewController *me = weakSelf;
-                me.survey.title = survey.title;
-                [me updateTitleBar];
+                [weakSelf updateTitleBar:survey];
             }
         };
         vc.surveyDeletedAction = ^(Survey *survey){
@@ -495,9 +494,8 @@
 - (void)layer:(AGSLayer *)layer didFailToLoadWithError:(NSError *)error
 {
     self.map = nil;
-    [self.survey clearMap];
-    [self.survey clearMapMapViewSpatialReference];
-    [self configureObservationButtons];
+    self.survey.map = nil;
+    [self configureObservationButtons:self.survey];
     [self decrementBusy];
     [self alert:nil message:@"Unable to load map"];
 }
@@ -514,7 +512,7 @@
     self.noMapView.hidden = YES;
     [self loadGraphics];
     [self setupGPS];
-    [self configureObservationButtons];
+    [self configureObservationButtons:self.survey];
     [self decrementBusy];
 }
 
@@ -759,11 +757,11 @@
     self.autoPanController.autoPanModeButton = self.panButton;
 }
 
-- (void)addMissionPropertiesButton
+- (void)addMissionPropertiesButton:(Survey *)survey
 {
     // Adds button at the end of the toolbar, so call before adding observation buttons
     if (![self.toolbar.items containsObject:self.editEnvironmentBarButton] &&
-        self.survey.protocol.missionFeature.attributes.count > 0) {
+        survey.protocol.missionFeature.attributes.count > 0) {
         // self.toolbar.items is immutable, so we need to get a copy to change it
         NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
         [toolbarButtons addObject:self.editEnvironmentBarButton];
@@ -781,15 +779,15 @@
     }
 }
 
-- (void)configureObservationButtons
+- (void)configureObservationButtons:(Survey *)survey
 {
     NSMutableArray *toolbarButtons = [self.toolbar.items mutableCopy];
     //Remove any existing Add Feature buttons
     [toolbarButtons removeObjectsInArray:self.addFeatureBarButtonItems];
 
     [self.addFeatureBarButtonItems removeAllObjects];
-    if (self.survey.protocol) {
-        for (ProtocolFeature *feature in self.survey.protocol.features) {
+    if (survey.protocol) {
+        for (ProtocolFeature *feature in survey.protocol.features) {
             feature.allowedLocations.locationPresenter = self;
             if (feature.allowedLocations.countOfNonTouchChoices > 0) {
                 //feature names (from protocol file) should be short enough to fit on a button
@@ -822,13 +820,9 @@
     }
 }
 
--(void)updateTitleBar
+-(void)updateTitleBar:(Survey *)survey
 {
-    // This is called by the Survey VC when editing to catch a name change of self.survey
-    // It is also called by the completion handlers in close/open survey methods (called by viewDidLoad and setSurvey.
-    // Using self.survey solves a problem where the close completion handler ends up on the main queue after open handler.
-    // This must be called in handlers because open/close sets the self.selectSurveyButton.title to 'working...'
-    self.selectSurveyButton.title = (self.survey.isReady ? self.survey.title : @"Select Survey");
+    self.selectSurveyButton.title = (survey.isReady ? survey.title : @"Select Survey");
 }
 
 -(void)disableControls
@@ -1066,28 +1060,22 @@
 - (void)closeMap:(Map *)map
 {
     if (!self.isViewLoaded) {
-        AKRLog(@"Cannot close the map becasue the view is not ready yet.");
-        return;
-    }
-    if (!map) {
-        AKRLog(@"Cannot close the map because none was provided.");
+        AKRLog(@"Cannot close the map because the view is not ready yet.");
         return;
     }
     [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
-    [self.survey clearMap];
-    [self.survey clearMapMapViewSpatialReference];
+    self.survey.map = nil;
     self.noMapView.hidden = NO;
     self.panButton.enabled = NO;
 }
 
 - (void)openMap:(Map *)map
 {
-    if (!self.isViewLoaded) {
-        AKRLog(@"Cannot open the map becasue the view is not ready yet.");
+    if (!map) {
         return;
     }
-    if (!map) {
-        AKRLog(@"Cannot open the map because none was provided.");
+    if (!self.isViewLoaded) {
+        AKRLog(@"Cannot open the map because the view is not ready yet.");
         return;
     }
     AKRLog(@"Opening the map %@", map);
@@ -1126,6 +1114,7 @@
     }
     [self.survey setMap:self.map];
     self.survey.mapViewSpatialReference = self.mapView.spatialReference;
+    [self.mapView clearGraphicsLayers];
     [self initializeGraphicsLayer];
     [self.survey loadGraphics];
 }
@@ -1155,46 +1144,27 @@
 
 - (void)closeSurvey:(Survey *)survey
 {
+    // "Closing" the survey no longer closes the survey document.  We let the OS take care of that.
+    // This just updates the UI
     if (!self.isViewLoaded) {
-        AKRLog(@"Cannot close the survey because the view isn't loaded yet");
         return;
     }
-    if (!survey) {
-        AKRLog(@"Cannot close the survey, because there is none");
-        return;
-    }
-    if (survey.document.documentState != UIDocumentStateNormal) {
-        AKRLog(@"Survey (%@) is in an abnormal state: %lu", survey.title, (unsigned long)survey.document.documentState);
-        //There is really nothing I can do but continue...
-    }
-    AKRLog(@"Closing survey document (%@)", survey.title);
-    [self incrementBusy];  //closing the survey document may block
-    self.selectSurveyButton.title = @"Closing survey...";
     if (survey.isRecording) {
         [self stopRecording:nil];
     }
     [self.mapView clearGraphicsLayers];
-    [survey closeDocumentWithCompletionHandler:^(BOOL success) {
-        //this completion handler runs on the main thread;
-        if (!success) {
-            AKRLog(@"Survey (%@) failed to close", survey.title);
-            //There is really nothing I can do but continue...
-        }
-        [self removeMissionPropertiesButton];
-        [self configureObservationButtons];
-        [self updateTitleBar];
-        [self decrementBusy];
-    }];
+    [self removeMissionPropertiesButton];
+    [self configureObservationButtons:nil];
+    [self updateTitleBar:nil];
 }
 
 - (void)openSurvey:(Survey *)survey
 {
-    if (!self.isViewLoaded) {
-        AKRLog(@"Cannot open the survey because the view isn't loaded yet");
+    if (!survey) {
         return;
     }
-    if (!survey) {
-        AKRLog(@"Cannot open the survey, because there is none");
+    if (!self.isViewLoaded) {
+        AKRLog(@"Cannot open the survey because the view isn't loaded yet");
         return;
     }
     AKRLog(@"Opening survey document (%@)", self.survey.title);
@@ -1208,9 +1178,9 @@
             } else {
                 [self loadGraphics];
             }
-            [self addMissionPropertiesButton];
-            [self configureObservationButtons];
-            [self updateTitleBar];
+            [self addMissionPropertiesButton:survey];
+            [self configureObservationButtons:survey];
+            [self updateTitleBar:survey];
             [self decrementBusy];
         });
     }];

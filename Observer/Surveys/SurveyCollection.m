@@ -9,6 +9,7 @@
 #import "SurveyCollection.h"
 #import "NSArray+map.h"
 #import "NSURL+unique.h"
+#import "NSURL+isEqualToURL.h"
 #import "Settings.h"
 #import "AKRLog.h"
 
@@ -74,6 +75,7 @@ static BOOL _isLoaded = NO;
     static BOOL isLoading = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
         //Check and set self.isLoading on the main thread to guarantee there is no race condition.
+        //_isLoaded guarantees that items is only set once (i.e. loadCache is only called once)
         if (_isLoaded) {
             if (completionHandler)
                 completionHandler(self.items != nil);
@@ -100,6 +102,16 @@ static BOOL _isLoaded = NO;
             }
         }
     });
+}
+
+- (Survey *)surveyWithURL:(NSURL *)url
+{
+    for (Survey *survey in self.items) {
+        if ([survey.url isEqualToURL:url]) {
+            return survey;
+        }
+    }
+    return nil;
 }
 
 - (void)refreshWithCompletionHandler:(void (^)())completionHandler
@@ -207,49 +219,61 @@ static BOOL _isLoaded = NO;
 
 - (void) refreshLocalSurveys
 {
-    //NOTE: compare file name (without path), because iOS is inconsistent about symbolic links at root of documents path
     BOOL modelChanged = NO;
 
-    // Load cache
-    NSArray *surveyUrls = [self.items mapObjectsUsingBlock:^id(id obj, NSUInteger idx) {
-        return [obj url];
-    }];
-    
-    // create (in order) surveys from cached urls IFF they are found in the Documents Folder
-    [self.items removeAllObjects];
-    NSMutableSet *privateSurveyFileNames = [SurveyCollection existingPrivateSurveyNames];
-    for (NSURL *surveyUrl in surveyUrls) {
-        NSString *cachedSurveyFileName = surveyUrl.lastPathComponent;
-        if ([privateSurveyFileNames containsObject:cachedSurveyFileName]) {
-            [self.items addObject:[[Survey alloc] initWithURL:surveyUrl]];
-            [privateSurveyFileNames removeObject:cachedSurveyFileName];
+    // Get a list of the Filenames (url.lastpathcomponent) of the surveys in the private survey folder
+    NSSet *privateSurveyFilenames = [SurveyCollection existingPrivateSurveyNames];
+
+    //Assume that all the survey files are new; we will remove them from the set if we have a survey for the filename
+    NSMutableSet *newFilenames = [[NSMutableSet alloc] initWithSet:privateSurveyFilenames];
+
+    // Assume we do not have any extra (unfound surveys)
+    NSMutableArray *surveysToRemove = [NSMutableArray new];
+
+    // Find any surveys not in the private survey folder
+    // And any paths in the private survey folder not in the surveys
+    for (Survey *survey in self.items) {
+        NSString *surveyFilename = survey.url.lastPathComponent;
+        if ([newFilenames containsObject:surveyFilename]) {
+            [newFilenames removeObject:surveyFilename];
+        } else {
+            [surveysToRemove addObject:survey];
         }
     }
-    if (self.items.count < surveyUrls.count) {
-        // There are surveyUrls in the cache that have been deleted.
-        // Ignore the deleted files, and update the cache.
+
+    // Remove unfound surveys;
+    // This should never happen, since a survey should only have a URL in the private survey folder,
+    // We do not need to worry about closing the survey, since it's URL is bad, it can't have an open document
+    for (Survey *survey in surveysToRemove) {
+        AKRLog(@"WARNING: You have a survey %@ at %@ not in the private folder; Removing", survey.title, survey.url);
+        //[survey delete];
+        [self.items removeObject:survey];
         modelChanged = YES;
     }
 
-    //Since we have removed any survey names in the cache from the list of actual surveys on disk,
-    //anything left in privateSurveyFileNames is a survey not in our list of items.
-    //This will happen when a user opens a *.poz file from email or safari.
-    for (NSString *surveyName in privateSurveyFileNames) {
-        NSURL *surveyUrl = [Survey urlFromCachedName:surveyName];
-        [self.items addObject:[[Survey alloc] initWithURL:surveyUrl]];
+    // Add new survey to items for new Filenames
+    // This will happen when a user opens a *.poz file from email or safari.
+    for (NSString *name in newFilenames) {
+        AKRLog(@"SURPRISE: You have a survey folder %@ not in your cache; Creating", name);
+        NSURL *surveyUrl = [[Survey privateDocumentsDirectory] URLByAppendingPathComponent:name];
+        Survey *newSurvey = [[Survey alloc] initWithURL:surveyUrl];
+        [self.items addObject:newSurvey];
         modelChanged = YES;
     }
 
     //Add surveys that were added to the public (iTunes) folder;
+
     //First check for raw (private extensions) surveys.  This will probably only be done by developers.
     //The survey init method will move the survey from the public iTunes folder to the private folder.
     for (NSString *publicSurveyFileName in [SurveyCollection existingPublicSurveyNames]) {
         NSURL *surveyUrl = [[SurveyCollection documentsDirectory] URLByAppendingPathComponent:publicSurveyFileName];
+        // Trying to create a survey outside the private folder will move they survey and change the url property
         [self.items addObject:[[Survey alloc] initWithURL:surveyUrl]];
         modelChanged = YES;
     }
 
-    // I cannot add importable (*.poz) surveys in the public (iTues) folder because they are likely exports.
+    // Second, check for archived (*.poz) surveys
+    // I cannot add importable (*.poz) surveys in the public (iTunes) folder because they may be exports of surveys I'm already managing.
     // See Issue #90 (https://github.com/regan-sarwas/Observer/issues/90) for a discussion of options.
 
     if (modelChanged) {
@@ -257,7 +281,7 @@ static BOOL _isLoaded = NO;
     }
 }
 
-+ (NSMutableSet *) /* of NSString */ existingPrivateSurveyNames
++ (NSSet *) /* of NSString */ existingPrivateSurveyNames
 {
     NSError *error = nil;
     NSArray *documents = [[NSFileManager defaultManager]
@@ -273,7 +297,7 @@ static BOOL _isLoaded = NO;
                 [localFileNames addObject:name];
             }
         }
-        return [NSMutableSet setWithArray:localFileNames];;
+        return [NSSet setWithArray:localFileNames];;
     }
     AKRLog(@"Unable to enumerate %@: %@",[[Survey privateDocumentsDirectory] lastPathComponent], error.localizedDescription);
     return nil;

@@ -65,6 +65,7 @@
 @property (nonatomic, readwrite) BOOL isObserving;
 @property (nonatomic, readwrite) BOOL isRecording;
 @property (nonatomic, strong, readwrite) MissionTotalizer *totalizer;
+@property (nonatomic, readwrite) BOOL isGraphicsLoaded;
 
 @end
 
@@ -114,7 +115,6 @@
             }
         }
     }
-
     self = [super init];
     if (self) {
         _url = url;
@@ -848,6 +848,10 @@
 
 - (void)setMap:(Map *)map
 {
+    if (map == nil) {
+        self.currentMapEntity = nil;
+        return;
+    }
     // try to fetch it, otherwise create it.
     //AKRLog(@"Looking for %@ in coredata",map);
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kMapEntityName];
@@ -865,16 +869,16 @@
     }
 }
 
-- (void)clearMap
+
+- (void)setMapViewSpatialReference:(AGSSpatialReference *)sr
 {
-    self.currentMapEntity = nil;
-    _graphicsLayersByName = nil;
+    if (sr.wkid != _mapViewSpatialReference.wkid) {
+        _mapViewSpatialReference = sr;
+        _graphicsLayersByName = nil;
+        self.isGraphicsLoaded = NO;
+    }
 }
 
-- (void)clearMapMapViewSpatialReference
-{
-    self.mapViewSpatialReference = nil;
-}
 
 
 
@@ -1304,6 +1308,9 @@
 
 - (void)loadGraphics
 {
+    if (self.isGraphicsLoaded) {
+        return;
+    }
     //Warning, this should not be called unless the cached graphics layers (self.graphicsLayersByName) are new, or have been cleared.
     //Currently This is being coordinating in the mainVC.  See Issue #167 for detailed discussion.
 
@@ -1376,6 +1383,7 @@
     }
 
     AKRLog(@"  Done loading graphics");
+    self.isGraphicsLoaded = YES;
 }
 
 - (NSNumber *)maxIntFromContext:(NSManagedObjectContext *)context entityName:(NSString *)entity attributeName:(NSString *)attribute

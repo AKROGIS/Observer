@@ -23,6 +23,9 @@
 //Does this collection manage the provided URL?
 + (BOOL)collectsURL:(NSURL *)url;
 
+//Return the optional survey if there is one in the collection with this URL
+- (Survey *)surveyWithURL:(NSURL *)url;
+
 // Builds the ordered lists of remote and local protocols from a saved cache.
 // Cache is corrected for changes in the local files system.
 - (void)openWithCompletionHandler:(void (^)(BOOL success))completionHandler;

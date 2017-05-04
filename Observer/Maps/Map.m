@@ -425,7 +425,6 @@
 //Alert: Mutating function
 //Alert: will block for IO
 - (void)loadThumbnail {
-    AKRLog(@"Start load thumbnail %@ %@", self.cachedThumbnailURL, self.remoteThumbnailURL);
     UIImage *thumbnail = nil;
     NSString *path = self.cachedThumbnailURL.path;
     if (path != nil && [[NSFileManager defaultManager] fileExistsAtPath:path]) {
@@ -439,24 +438,19 @@
     }
     _thumbnail = thumbnail;
     self.isThumbnailLoaded = YES;
-    AKRLog(@"Done load thumbnail");
 }
 
 //Alert: will block for IO
 + (UIImage *)loadThumbnailAtURL:(NSURL *)url
 {
     if (url.isFileURL) {
-        AKRLog(@"Start loading local data");
         NSData *data = [NSData dataWithContentsOfURL:url];
-        AKRLog(@"Done");
         return (data == nil) ? nil : [[UIImage alloc] initWithData:data];
     } else {
         //TODO: #6 do this transfer in an NSOperation Queue
         //TODO: #6 need to deal with various network errors
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-        AKRLog(@"Start loading local data");
         NSData *data = [NSData dataWithContentsOfURL:url];
-        AKRLog(@"Done");
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         return (data == nil) ? nil : [[UIImage alloc] initWithData:data];
     }
