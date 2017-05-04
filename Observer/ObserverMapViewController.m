@@ -494,8 +494,7 @@
 - (void)layer:(AGSLayer *)layer didFailToLoadWithError:(NSError *)error
 {
     self.map = nil;
-    [self.survey clearMap];
-    [self.survey clearMapMapViewSpatialReference];
+    self.survey.map = nil;
     [self configureObservationButtons:self.survey];
     [self decrementBusy];
     [self alert:nil message:@"Unable to load map"];
@@ -1065,8 +1064,7 @@
         return;
     }
     [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
-    [self.survey clearMap];
-    [self.survey clearMapMapViewSpatialReference];
+    self.survey.map = nil;
     self.noMapView.hidden = NO;
     self.panButton.enabled = NO;
 }
@@ -1116,6 +1114,7 @@
     }
     [self.survey setMap:self.map];
     self.survey.mapViewSpatialReference = self.mapView.spatialReference;
+    [self.mapView clearGraphicsLayers];
     [self initializeGraphicsLayer];
     [self.survey loadGraphics];
 }
