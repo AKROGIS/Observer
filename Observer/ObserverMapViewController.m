@@ -1061,11 +1061,7 @@
 - (void)closeMap:(Map *)map
 {
     if (!self.isViewLoaded) {
-        AKRLog(@"Cannot close the map becasue the view is not ready yet.");
-        return;
-    }
-    if (!map) {
-        AKRLog(@"Cannot close the map because none was provided.");
+        AKRLog(@"Cannot close the map because the view is not ready yet.");
         return;
     }
     [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
@@ -1077,12 +1073,11 @@
 
 - (void)openMap:(Map *)map
 {
-    if (!self.isViewLoaded) {
-        AKRLog(@"Cannot open the map becasue the view is not ready yet.");
+    if (!map) {
         return;
     }
-    if (!map) {
-        AKRLog(@"Cannot open the map because none was provided.");
+    if (!self.isViewLoaded) {
+        AKRLog(@"Cannot open the map because the view is not ready yet.");
         return;
     }
     AKRLog(@"Opening the map %@", map);
@@ -1150,21 +1145,11 @@
 
 - (void)closeSurvey:(Survey *)survey
 {
+    // "Closing" the survey no longer closes the survey document.  We let the OS take care of that.
+    // This just updates the UI
     if (!self.isViewLoaded) {
-        AKRLog(@"Cannot close the survey because the view isn't loaded yet");
         return;
     }
-    if (!survey) {
-        AKRLog(@"Cannot close the survey, because there is none");
-        return;
-    }
-    if (survey.document.documentState != UIDocumentStateNormal) {
-        AKRLog(@"Survey (%@) is in an abnormal state: %lu", survey.title, (unsigned long)survey.document.documentState);
-        //There is really nothing I can do but continue...
-    }
-    AKRLog(@"Closing survey document (%@)", survey.title);
-    [self incrementBusy];  //closing the survey document may block
-    self.selectSurveyButton.title = @"Closing survey...";
     if (survey.isRecording) {
         [self stopRecording:nil];
     }
@@ -1172,17 +1157,15 @@
     [self removeMissionPropertiesButton];
     [self configureObservationButtons:nil];
     [self updateTitleBar:nil];
-    [self decrementBusy];
 }
 
 - (void)openSurvey:(Survey *)survey
 {
-    if (!self.isViewLoaded) {
-        AKRLog(@"Cannot open the survey because the view isn't loaded yet");
+    if (!survey) {
         return;
     }
-    if (!survey) {
-        AKRLog(@"Cannot open the survey, because there is none");
+    if (!self.isViewLoaded) {
+        AKRLog(@"Cannot open the survey because the view isn't loaded yet");
         return;
     }
     AKRLog(@"Opening survey document (%@)", self.survey.title);
