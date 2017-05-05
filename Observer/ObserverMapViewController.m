@@ -1560,6 +1560,9 @@
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
     dialog.graphic = graphic;
+    CGFloat height = (CGFloat)44.0 * (3.0 + feature.attributes.count);
+    dialog.preferredContentSize = CGSizeMake(320.0, height);
+    dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
     return dialog;
 }
 
@@ -1571,7 +1574,6 @@
     // Present VC
     self.attributeCollector = dialog;
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:dialog];
-    dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissAttributeCollector:)];
     UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAndDismissAttributeCollector:)];
@@ -1685,6 +1687,8 @@
         [controller.navigationController pushViewController:dialog animated:YES];
     };
 
+    CGFloat height = (CGFloat)44.0 * (4.0 + feature.attributes.count);
+    vc.preferredContentSize = CGSizeMake(320.0, height);
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationPopover;
     [self presentViewController:nav animated:YES completion:nil];

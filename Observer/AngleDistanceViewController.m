@@ -8,7 +8,6 @@
 
 #import "AngleDistanceViewController.h"
 
-#define TEXTMARGINS 60  //2*30pts
 
 @interface AngleDistanceViewController ()
 
@@ -22,7 +21,6 @@
 
 @property (strong, nonatomic) NSString *initialAngle;
 @property (strong, nonatomic) NSString *initialDistance;
-@property (nonatomic) BOOL isViewLayout;
 
 @end
 
@@ -30,7 +28,6 @@
 
 - (void)awakeFromNib
 {
-    self.preferredContentSize = CGSizeMake(320.0, 216.0);
     [super awakeFromNib];
 }
 
@@ -42,8 +39,6 @@
 
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    self.detailsLabel.preferredMaxLayoutWidth = self.preferredContentSize.width - TEXTMARGINS;
-    [self resizeView];
     [[self.view viewWithTag:1] becomeFirstResponder];
 }
 
@@ -51,11 +46,6 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSUserDefaultsDidChangeNotification object:nil];
     [super viewDidDisappear:animated];
-}
-
-- (void) viewDidLayoutSubviews
-{
-    self.isViewLayout = YES;
 }
 
 
@@ -128,9 +118,6 @@
 - (void) setLocation:(LocationAngleDistance *)location {
     _location = location;
     [self updateView];
-    if (self.isViewLayout) {
-        [self resizeView];
-    }
 }
 
 
@@ -211,7 +198,6 @@
         self.detailsLabel.text = self.location.basisDescription;
         self.detailsLabel.textColor = [UIColor darkTextColor];
     }
-    [self.detailsLabel sizeToFit];
 }
 
 - (void) updateControlState:(UITextField *)textField
@@ -225,17 +211,6 @@
     textField.returnKeyType = canBeDone ? UIReturnKeyDone : UIReturnKeyNext;
     //TODO: #178 keyboard view does not update until focus changes to new view
     //TODO: #178 other textfields should also be updated to UIReturnKeyDone without requiring a text changed event
-}
-
-- (void) resizeView
-{
-    [self.view layoutSubviews];
-    CGRect frame = self.view.frame;
-    CGFloat height = self.detailsLabel.frame.origin.y + self.detailsLabel.frame.size.height + 20;
-    frame.size.height = height;
-    self.view.frame = frame;
-    //only if contentSizeForViewInPopover values change will the popover will resize
-    self.preferredContentSize = self.view.frame.size;
 }
 
 - (BOOL) anyInputFieldHasChanged

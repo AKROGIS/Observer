@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="TiC-11-YSU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="TiC-11-YSU">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -305,23 +305,23 @@
                         <viewControllerLayoutGuide type="bottom" id="lKm-Zz-W0u"/>
                     </layoutGuides>
                     <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1" id="cpS-cq-Xbt">
-                        <rect key="frame" x="0.0" y="0.0" width="540" height="620"/>
+                        <rect key="frame" x="0.0" y="44" width="320" height="146"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Angle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ljc-mH-gmu">
-                                <rect key="frame" x="20" y="31" width="48" height="21"/>
+                                <rect key="frame" x="20" y="11" width="48" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="500" text="Distance" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CtF-Tj-71V">
-                                <rect key="frame" x="20" y="69" width="72" height="21"/>
+                                <rect key="frame" x="20" y="49" width="72" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="GnW-yn-rjl">
-                                <rect key="frame" x="100" y="28" width="420" height="30"/>
+                                <rect key="frame" x="100" y="8" width="200" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
@@ -330,7 +330,7 @@
                                 </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" horizontalHuggingPriority="100" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="to the observed item" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="PZH-M5-KGF">
-                                <rect key="frame" x="100" y="66" width="420" height="30"/>
+                                <rect key="frame" x="100" y="46" width="200" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
@@ -338,8 +338,8 @@
                                     <outlet property="delegate" destination="XgC-zb-GAl" id="ZK8-93-lOn"/>
                                 </connections>
                             </textField>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="750" text="Angle increases counter-clockwise with dead ahead equal to 180 degrees. Distance is in meters." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="500" translatesAutoresizingMaskIntoConstraints="NO" id="X9z-CU-JZw">
-                                <rect key="frame" x="20" y="104" width="500" height="30"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="200" text="Angle increases counter-clockwise with dead ahead equal to 180 degrees. Distance is in meters." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X9z-CU-JZw">
+                                <rect key="frame" x="20" y="84" width="280" height="45"/>
                                 <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="13"/>
                                 <color key="textColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
@@ -354,7 +354,7 @@
                             <constraint firstItem="PZH-M5-KGF" firstAttribute="trailing" secondItem="X9z-CU-JZw" secondAttribute="trailing" id="XGp-9Y-cCi"/>
                             <constraint firstItem="PZH-M5-KGF" firstAttribute="leading" secondItem="CtF-Tj-71V" secondAttribute="trailing" constant="8" symbolic="YES" id="b0Y-dY-ciQ"/>
                             <constraint firstItem="GnW-yn-rjl" firstAttribute="leading" secondItem="PZH-M5-KGF" secondAttribute="leading" id="dLb-se-lN3"/>
-                            <constraint firstItem="GnW-yn-rjl" firstAttribute="top" secondItem="rX0-vy-SN8" secondAttribute="bottom" constant="20" symbolic="YES" id="k6a-dI-fzk"/>
+                            <constraint firstItem="GnW-yn-rjl" firstAttribute="top" secondItem="rX0-vy-SN8" secondAttribute="bottom" constant="8" symbolic="YES" id="k6a-dI-fzk"/>
                             <constraint firstItem="GnW-yn-rjl" firstAttribute="baseline" secondItem="ljc-mH-gmu" secondAttribute="baseline" id="kQt-Tb-4PF"/>
                             <constraint firstItem="CtF-Tj-71V" firstAttribute="baseline" secondItem="PZH-M5-KGF" secondAttribute="baseline" id="lTq-kQ-8d8"/>
                             <constraint firstItem="GnW-yn-rjl" firstAttribute="trailing" secondItem="PZH-M5-KGF" secondAttribute="trailing" id="mdQ-w3-haW"/>
@@ -375,8 +375,11 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <value key="contentSizeForViewInPopover" type="size" width="320" height="216"/>
-                    <modalFormSheetSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="190"/>
                     <connections>
                         <outlet property="angleTextField" destination="GnW-yn-rjl" id="T4C-c5-0Q3"/>
                         <outlet property="detailsLabel" destination="X9z-CU-JZw" id="PWj-1x-LFM"/>
