@@ -1560,7 +1560,7 @@
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
     dialog.graphic = graphic;
-    CGFloat height = (CGFloat)44.0 * (3.0 + feature.attributes.count);
+    CGFloat height = (CGFloat)44.0 * (3 + feature.attributes.count);
     dialog.preferredContentSize = CGSizeMake(320.0, height);
     dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
     return dialog;
@@ -1672,10 +1672,20 @@
         // Undo any observation creation (currently none)
         [controller dismissViewControllerAnimated:YES completion:nil];
     };
+    __block Observation *observation = nil;  // Allow this variable to be modified in the completion handler; so we can track thier modification
+    __block AGSGraphic *graphic = nil;
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
-        //FIXME: #144 If we navigate back to the ADVC from the attribute Editor, we need to edit the observation, not create a new one.
-        Observation *observation = [self.survey createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
-        AGSGraphic *graphic = [self.survey drawObservation:observation];
+        if (observation == nil) {
+            // Create a new observation/graphic for the attributeEditor when the user completes the AngleDistanceVC
+            observation = [self.survey createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
+            graphic = [self.survey drawObservation:observation];
+        } else {
+            // The user gets here if they finish editing (or click done) in the ADVC after popping back to the ADVC from the attribute Editor
+            // Get the entity from the Attribute editor push in the containing NAV controller
+            [self.survey updateAngleDistanceObservation:observation withAngleDistance:controller.location];
+            graphic = [(POGraphic *)graphic redraw:observation survey:self.survey];
+            // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
+        }
         AttributeViewController *dialog = [self attributeDialogForFeatureType:feature entity:observation graphic:graphic defaults:nil isNew:YES isEditing:YES];
         self.attributeCollector = dialog;
         dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
