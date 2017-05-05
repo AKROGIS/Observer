@@ -202,9 +202,6 @@
 
 - (void) updateControlState:(UITextField *)textField
 {
-    BOOL userHasProgressed = self.location.isValid && [self anyInputFieldHasChanged];
-    self.modalInPopover = userHasProgressed;
-    
     BOOL inputIsComplete = self.location.isComplete;
     BOOL canBeDone = self.location.isValid && inputIsComplete;
     self.navigationItem.rightBarButtonItem.enabled = canBeDone;
