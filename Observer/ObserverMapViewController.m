@@ -1408,13 +1408,19 @@
 
 - (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint isNew:(BOOL)isNew isEditing:(BOOL)isEditing
 {
+    AttributeViewController *dialog = [self attributeDialogForFeatureType:feature entity:entity graphic:graphic defaults:template isNew:isNew isEditing:isEditing];
+    [self presentAttributeDialog:dialog atMapPoint:mapPoint];
+}
+
+- (AttributeViewController *)attributeDialogForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic defaults:(NSManagedObject *)template isNew:(BOOL)isNew isEditing:(BOOL)isEditing
+{
     //TODO: #183 Cleanup, isEditing parameter is never used. We always allow editing. Callers all use YES
     //TODO: #183 refactor this ugly and overly complicated method
 
     if (isNew && feature.attributes.count == 0) {
         //Do not present an attribute editor for a new feature with no attributes
         //If the feature is not new, then we need to present the user with the delete/move and other options even if there are no attributes
-        return;
+        return nil;
     }
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
@@ -1554,7 +1560,14 @@
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
     dialog.graphic = graphic;
+    return dialog;
+}
 
+- (void)presentAttributeDialog:(AttributeViewController *)dialog atMapPoint:(AGSPoint *)mapPoint
+{
+    if (dialog == nil) {
+        return;
+    }
     // Present VC
     self.attributeCollector = dialog;
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:dialog];
@@ -1653,11 +1666,23 @@
 
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
     vc.location = location;
+    vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
+        // Undo any observation creation (currently none)
+        [controller dismissViewControllerAnimated:YES completion:nil];
+    };
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
-        AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+        //FIXME: #144 If we navigate back to the ADVC from the attribute Editor, we need to edit the observation, not create a new one.
         Observation *observation = [self.survey createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
         AGSGraphic *graphic = [self.survey drawObservation:observation];
-        [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
+        AttributeViewController *dialog = [self attributeDialogForFeatureType:feature entity:observation graphic:graphic defaults:nil isNew:YES isEditing:YES];
+        self.attributeCollector = dialog;
+        dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
+        UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissAttributeCollector:)];
+        UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAndDismissAttributeCollector:)];
+        dialog.toolbarItems = @[cancelButton, flex, doneButton];
+        controller.navigationController.toolbarHidden = NO;
+        [controller.navigationController pushViewController:dialog animated:YES];
     };
 
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
