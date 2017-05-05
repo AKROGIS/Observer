@@ -32,7 +32,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>https://akrgis.nps.gov:8443/sync</string>
+			<string>https://inpniscvfemp29.nps.doi.net:8443/sync</string>
 			<key>Key</key>
 			<string>url_for_survey_upload</string>
 			<key>Title</key>

@@ -1,2 +1,6 @@
 *.pyc
 *.ipa
+
+*.pfx
+
+*.pem
