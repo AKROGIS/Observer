@@ -21,7 +21,6 @@
 
 @interface ObserverAppDelegate()
 
-@property (strong, nonatomic, readwrite) SurveyCollection *surveys;
 @property (nonatomic,strong) ObserverMapViewController *observerMapViewController;
 
 @end
@@ -48,10 +47,10 @@
     // Preload all the surveys. This takes < 0.5 sec with 15 surveys (this is many more than most people have, and it isn't noticable)
     // The benefit is that there is a single set of survey objects that are created/opened once and there is no more risk of having
     //   different objects that open/close the same underlying UIManagedDocument URL.
-    self.surveys = [SurveyCollection sharedCollection];
-    [self.surveys openWithCompletionHandler:^(BOOL success) {
+    SurveyCollection *surveys = [SurveyCollection sharedCollection];
+    [surveys openWithCompletionHandler:^(BOOL success) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.observerMapViewController.surveys = self.surveys;
+            self.observerMapViewController.surveys = surveys;
             Survey *savedSurvey = [self.surveys surveyWithURL:[Survey urlFromCachedName:[Settings manager].activeSurveyName]];
             if (savedSurvey.isValid) {
                 self.observerMapViewController.survey = savedSurvey;
@@ -103,6 +102,12 @@
     return [self open:url];
 }
 
+#pragma mark - Public properties
+
+- (SurveyCollection *)surveys
+{
+    return self.observerMapViewController.surveys;
+}
 
 
 
@@ -151,8 +156,9 @@
 
     if ([SurveyCollection collectsURL:newUrl]) {
         Survey *newSurvey = [[Survey alloc] initWithURL:newUrl];
-        [[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
+        //[[NSFileManager defaultManager] removeItemAtURL:newUrl error:nil];
         if (newSurvey.valid) {
+            [self.observerMapViewController.surveys insertSurvey:newSurvey atIndex:0];
             self.observerMapViewController.survey = newSurvey;
             return YES;
         } else {
@@ -188,6 +194,7 @@
                                                                handler:^(UIAlertAction * action){
                                                                    Survey *newSurvey = [[Survey alloc] initWithProtocol:newProtocol];
                                                                    if (newSurvey.valid) {
+                                                                       [self.observerMapViewController.surveys insertSurvey:newSurvey atIndex:0];
                                                                        self.observerMapViewController.survey = newSurvey;
                                                                    } else {
                                                                        [self alert:nil message:@"Unable to create new survey."];
