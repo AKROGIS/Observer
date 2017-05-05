@@ -1688,7 +1688,13 @@
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationPopover;
     [self presentViewController:nav animated:YES completion:nil];
-    nav.popoverPresentationController.barButtonItem = button;
+    //nav.popoverPresentationController.barButtonItem = button;
+    UIPopoverPresentationController *popover = nav.popoverPresentationController;
+    popover.sourceView = self.mapView;
+    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+    CGPoint screenPoint = [self.mapView nearestScreenPoint:mapPoint];
+    popover.sourceRect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
+    popover.delegate = self;
 }
 
 // This is called by the feature editor (setAttributesForFeatureType:), when the user wants to edit the Angle/Distance of an observation.
