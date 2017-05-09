@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Park Observer | 2016 Beta</title>
+	<link rel="stylesheet" href="../../akr.css">
+</head>
+
+<body>
+    <div id="top">
+			<img style="float:left; padding-right:10px; padding-top:8px" src="../../images/app_icon_small.png">
+			<h1>Park Observer</h1>
+			<h2>An iPad application for offline data collection</h2>
+			<h2>Brought to you by the Alaska Regional Office GIS Team</h2>
+			<br/>
+    </div>
+
+    <div id="content">
+			<section id="intro">
+				<h3>Park Observer 2016</h3>
+				<p>We have been working on Park Observer this spring, and we have some nice new feature.
+					They are still in development, so we apppreciate any testing and feedback.
+					The features are only available on version 0.9.8 or higher.
+					(To check the version, open the Settings App and tap on Park Observer
+					near the bottom of the list on the left.  <strong>NOTE</strong> There is
+					a <a href="http://stackoverflow.com/a/32791771/542911">bug</a> in the Settings app
+					if the Park Observer settings page is mostly blank, kill the settings app
+					 (double click the home button and swipe up on the settings app) and try again.)
+					Use the <a href="#installing-app">instructions below</a> to install the latest version.</p>
+					<h3>New Features</h3>
+					<ul>
+						<li>
+							<h4>Park Observer to ArcMap Tool</h4>
+							<p>Export or email your Survey to an ArcGIS computer and build a
+							file geodatabase of all your survey data.  No need to connect to
+							the NPS network.
+							<a href="#fgdb-export">More info...</a></p>
+						</li>
+						<li>
+							<h4>Advanced Symbology</h4>
+							<p>Lines and points in Park Observer can now use most of the symbology
+							available to ArcGIS.  Observations can have different symbols and/or
+							colors based on attributes of the observation.
+							<a href="#advanced-symbology">More info...</a></p>
+						</li>
+						<li>
+							<h4>Track Log Totalizer</h4>
+							<p>Display a running time or distance by survey segment.
+							<a href="#totalizer">More info...</a></p>
+						</li>
+						<li>
+							<h4>Recording Indicator</h4>
+							<p>User configurable text (via the protocol file) can be displayed
+							on the map to indicate: "Recording but not observing" and "Observing (on Transect)"
+							<a href="#footer">Contact us</a>, or see the
+							<a href="../../ProtocolSpecificationV2.html">Protocol File Specifications</a> for more info.</p>
+						</li>
+						<li>
+							<h4>Allow special characters in Comments fields</h4>
+							<p>Comment fields (and all text fields) will now correctly process
+							any special characters.  This fixed a bug where commas and newlines
+						  in particular messed up the CSV data in the export files.</p>
+						</li>
+						<li>
+							<h4>Unique Identifier for Observations</h4>
+							<p>The title of the attribute editor now displays the timestamp
+								of the observation for referencing the observation on paper
+								forms.  Alternatively, the protocol file can specify an 'UniqueID'
+								attribute for observations which will be use instead of the timestamp.</p>
+						</li>
+						<li>
+							<h4>Label Observations</h4>
+							<p>Add an option to use an attribute to label the observation
+								on the map.  This includes the new Unique ID attribute.</p>
+						</li>
+						<li>
+							<h4>Background tracklogging</h4>
+							<p>Currently the app does not get location updates if you
+							switch to another app while recording.  This can be fixed.</p>
+						</li>
+						<li>
+							<h4>Cancel/Delete Button on Top</h4>
+							<p>Added an option via the protocol file to move the Cancel/Delete
+								Button on the add/edit attributes form to the top of the form.</p>
+						</li>
+					</ul>
+					<h3>Features in Progress</h3>
+					<p>We are also working on several other features we plan to have ready this spring:</p>
+					<ul>
+						<li>
+							<h4>Required Fields</h4>
+							<p>Specify (via the protocol file), that selected fields must
+							not be blank (nor contain 0) in order to close the form.  This
+							feature should be used sparingly.  It violates the notion that
+							the user is in charge of the app, and puts the app in charge of
+							the user.
+						</li>
+						<li>
+							<h4>Move Buttons to the Top</h4>
+							<p>Add an option via the Settings app to allow a user to decide
+							if the button toolbar should be at the bottom (default) or at
+							the top of the screen.</p>
+						</li>
+						<li>
+							<h4>Other</h4>
+							<p>The full list of bugs, feature requests and other issues is
+								available on <a href="https://github.com/regan-sarwas/Observer/issues">
+									source code repository on github</a></p>
+						</li>
+					</ul>
+			</section>
+			<section id="installing-app">
+				<h3>Installing the Upgrade</h3>
+				<p>Until thes new features are finished and tested, version 0.9.7 will
+				be the default over the air install from this web site.  This means
+			you will need to install the app manually to use the latest features.</p>
+				<ol>
+					<li>Download version 0.9.8 or higher to your computer from the <a href="..">downloads</a> page.
+					<li>Follow the remainder of the instructions
+						<a href="../../no-wifi.htm">Getting Started without Wifi</a>.</li>
+						<li>Download the <a href="../../syncserver/ParkObserver.pyt">Park Observer Toolbox</a> for ArcMap.
+						After downloading, move this file somewhere that is convenient for ArcCatalog to find.</li>
+				</ol>
+			</section>
+			<section id="fgdb-export">
+				<h3>View data in ArcMap</h3>
+				<p>This feature is for those who cannot access to the Park Observer
+					server on the NPS wireless network,
+				and those that want to view/edit the data collected in ArcMap while still
+			in the field.</p>
+			<p>To use this feature you will need to <a href="#installing-app">upgrade the app</a>
+				and install the Park Observer Toolbox on your ArcGIS PC.  The export file (*.poz)
+			created with older (0.9.7 or earlier) versions of Park Observer is not
+			compatible with ArcGIS.</p>
+			<p>
+				More complete instructions will be provided shortly (with screenshots and everything).
+				In the meantime, the following should work for the intrepid.
+			</p>
+			<ol>
+				<li>Install the latest version of the app, and the Park Observer Toolbox</li>
+				<li>Tap on the survey button</li>
+				<li>Tap on the share icon (square with up arrow) next to the survey to share</li>
+				<li>Tap on <em>Share Survey with iTunes</em></li>
+				<li>Connect your iPad to an ArcGIS PC</li>
+				<li>Copy the survey file (*.poz) found in the Park Observer File Sharing
+					area of iTunes (see <a href="../../no-wifi.htm">Getting Started without Wifi</a> for
+					help on iTunes file sharing) to a folder on your PC.</li>
+				<li>Open ArcCatalog</li>
+				<li>In ArcCatalog, browse to the location where you saved the Park Observer
+					Toolbox (ParkObserver.pyt) file downloaded in the first step.</li>
+					<li>Open the toolbox and double click the <em>Survey to FGDB</em> tool.</li>
+					<li>There is only one input to this tool: the poz file from step 6</li>
+					<li>When the tool is done, it will have created a FGDB in the same folder
+						as the survey (*.poz) file. The FGDB is named to match the survey protocol
+						name and version</li>
+					<li>The FGDB will include feature classes for the tracklogs, gps points,
+						various kinds of observations and relationships among these various
+						feature classes.  Just drag and drop all the feature classes into
+						ArcMap and symbolize/select to your heart's content.</li>
+			</ol>
+
+			</section>
+			<section id="advanced-symbology">
+				<h3>Advanced Symbology</h3>
+				<p>Track log lines can now have differnt styles (dashed, dotted, etc).
+				Observation points can now have different shapes, outlines, even icons.
+			  All of the renderers and
+				options describe <a href="http://resources.arcgis.com/en/help/rest/apiref/renderer.html">
+				here</a> are supported.  The <a href="http://www.json.org">JSON</a> description of your
+				desired symbology must be added to your upgraded protocol file.</p>
+				<p><strong>Specifying <em>Unique Value</em> and <em>Class Break</em> renderers
+				is supported, however a bug in the app is keeping the features from being rendered
+				properly.  This should  be fixed soon.</strong>
+				</p>
+			<p>To use this feature you will need to <a href="#installing-app">upgrade the app</a>, and upgrade your protocol files.
+
+			<p><strong>... insert more instructions here ...</strong></p>
+
+			<a href="#footer">Contact us</a>, or see <a href="../../protocols/SampleProtocolV2.obsprot">Version 2 Sample Protocol file</a> or the
+			<a href="../../ProtocolSpecificationV2.html">Protocol File Specifications</a> for more info.</p>
+
+			</section>
+			<section id="totalizer">
+				<h3>Transect Totalalizer</h3>
+				<p>The totalizer puts text on the map in the upper left hand corner to
+					show the duration spent under the current conditions.
+					This text will not appear unless special instructions are included
+				in your protocol file. The text can display the time or distance
+				(in miles or kilometers) while observing, not observing or both.
+				This duration is totaled for each value of a mission property attribute
+				you select.
+				For example if your survey collects a transect ID, you can
+				display the distance covered so far observing on that transect line.
+				</p>
+				<p>To use this feature you will need to <a href="#installing-app">upgrade the app</a>, and upgrade your protocol files.
+				<strong>... insert more instructions here ...</strong>
+				<a href="#footer">Contact us</a>, or see <a href="../../protocols/SampleProtocolV2.obsprot">Version 2 Sample Protocol file</a> or the
+				<a href="../../ProtocolSpecificationV2.html">Protocol File Specifications</a> for more info.</p>
+			</section>
+    </div>
+
+    <div id="footer">
+			Questions? Contact Regan Sarwas at <a href="mailto:regan_sarwas@nps.gov">regan_sarwas@nps.gov</a>.
+    </div>
+
+</body>
+</html>

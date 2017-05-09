@@ -9,14 +9,14 @@
 </head>
 <body>
     <div id="top">
-	<img style="float:left; padding-right:10px; padding-top:8px" src="app_icon_small.png">
+	<img style="float:left; padding-right:10px; padding-top:8px" src="images/app_icon_small.png">
 	<h1>Park Observer</h1>
 	<h2>An iPad application for offline data collection</h2>
 	<h2>Brought to you by the Alaska Regional Office GIS Team</h2>
 	<br>
     </div>
-	
-	
+
+
     <div id="content">
 	<br/>
 	<h3>Adding Maps and Protocols</h3>
@@ -29,21 +29,21 @@
 	  </li>
 	  <li>
 	    <strong>Thanks, but I want to do it myself.</strong>
-		
+
 				<h4><a href="protocols/">Protocols</a></h4>
 
 	    <p>Protocols define your survey - you must have a protocol to collect data.  The
 	    protocol defines the features that you can collect, and the attributes of those features.</p>
-		
+
 		<p>The easiest way to create a new protocol is to copy one of the <a href="protocols/">existing protocols</a>
 		and then edit it in a text editor like notepad.  If you get stuck,
 		try reading the <a href="ProtocolSpecification.html">specification for the protocol file</a></p>
-		
+
 		<p>A Protocol should have a unique name and version.  To avoid confusion, the file name should match the name attribute
 		inside the file, but this is not required.
 		Protocols have a major and minor version number.  Both are integers separated by a decimal point.
 		A change in the major version number indicates a change in the database schema.  Use the minor version number for all other changes.</p>
-		
+
 		<p>Protocols create a FGDB on the server the first time a new major version is synced with the server.
 		The name of the database is determined by the protocol name and the major version number.  The world will end
 		if you try to sync a protocol with the same name and major version but different schema as an existing protocol.
@@ -51,7 +51,7 @@
 
 		<p>The protocol must be a valid <a href="http://json.org/">JSON</a> file, or it will fail to load in the app.
 		You should validate it first by using an <a href="http://jsonlint.com/">online validator</a>.</p>
-		
+
 		<p>Once you have a valid protocol, you can use iTunes to load it onto your device.
 		It will then appear in the list of local protocols in your app.
 		If you want your protocol to appear in the list of protocols available to all users
@@ -93,13 +93,13 @@
 	</li>
 	</ol>
 
-		
+
 	    </li>
 	  </ol>
     </div>
-	
+
     <div id="footer">
 	Questions? Contact Regan Sarwas at <a href="mailto:regan_sarwas@nps.gov">regan_sarwas@nps.gov</a>.
-    </div>	
+    </div>
 </body>
 </html>
