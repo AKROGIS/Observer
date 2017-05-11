@@ -1,0 +1,57 @@
+[
+  {
+    "version":"1.0.0",
+    "build":753,
+    "description":"First Release for Summer 2017",
+    "warning":"Drops support for iOS 7.0",
+    "url":"v1.0.0/ParkObserver_1.0.0.ipa",
+    "published":"2017-05-05",
+    "expiration":"2018-04-03",
+    "details":"v1.0.0/Changelog.html"
+  },{
+    "version":"0.9.8b",
+    "build":707,
+    "description":"Final Release for Summer 2016",
+    "warning":"",
+    "url":"v0.9.8b/ParkObserver_0.9.8b.ipa",
+    "published":"2016-06-20",
+    "expiration":"2017-04-05; 2018-04-03",
+    "details":"v0.9.8/Spring2016Beta.html"
+  },{
+    "version":"0.9.8",
+    "build":701,
+    "description":"Beta release of new user requested features for the summer 2016 field season.",
+    "warning":"This is a Beta release. Please read the <a href=\"../BetaTesting.html\">Beta Testing Warning</a>",
+    "url":"v0.9.8/ParkObserver_0.9.8.ipa",
+    "published":"2016-04-30",
+    "expiration":"2017-04-05",
+    "details":"v0.9.8/Spring2016Beta.html"
+  },{
+    "version":"0.9.7",
+    "build":682,
+    "description":"Essentially the original release, updated for iOS 9, and resigned.",
+    "warning":"This version of the app cannot read the newer versions of the protocol file.",
+    "url":"v0.9.7/ParkObserver_0.9.7.ipa",
+    "published":"2016-02-04",
+    "expiration":"2016-04-09; 2017-04-05",
+    "details":""
+  },{
+    "version":"0.9.5",
+    "build":566,
+    "description":"Second beta release",
+    "warning":"This is a Beta release. Please read the <a href=\"../BetaTesting.html\">Beta Testing Warning</a>",
+    "url":"v0.9.5/ParkObserver_0.9.5.ipa",
+    "published":"2014-08-04",
+    "expiration":"2015-04-19; 2016-04-09",
+    "details":""
+  },{
+    "version":"0.9.2",
+    "build":438,
+    "description":"First public beta release",
+    "warning":"This is a Beta release. Please read the <a href=\"../BetaTesting.html\">Beta Testing Warning</a>",
+    "url":"v0.9.2/ParkObserver_0.9.2.ipa",
+    "published":"2014-06-25",
+    "expiration":"2015-04-19",
+    "details":""
+  }
+]

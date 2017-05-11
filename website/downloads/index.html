@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+  <head>
+    <title>Park Observer | Downloads</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Map List">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+    <link rel="stylesheet" href="../akr.css">
+  <style type="text/css">
+    .versions-heading {font-size:1.8em; color:black;}
+    .version-heading {font-size:1.6em; color:black; font-weight: bold;}
+    .warning {color:red; font-weight: bold;}
+  </style>
+</head>
+  <body>
+    <div id="top">
+      <img style="float:left; padding-right:10px; padding-top:8px" src="../images/app_icon_small.png">
+      <h1>Park Observer Downloads</h1>
+      <h2>An iPad application for offline data collection</h2>
+      <h2>Brought to you by the Alaska Regional Office GIS Team</h2>
+      <br>
+    </div>
+
+    <div id="content">
+      <section id="intro">
+        <p>Please install the current version. Previous versions, are provided in case you are
+          have trouble with the latest release.  In general downgrading is not recommended.
+          If you are having trouble with the current release,
+          please <a href="#footer">Contact us</a>.</p>
+        <p>To check the version on your iPad open the Settings App and tap on Park Observer
+          near the bottom of the list on the left.  <strong>NOTE</strong> There is
+          a <a href="http://stackoverflow.com/a/32791771/542911">bug</a> in version
+          9.x of the Settings app -
+          if the Park Observer settings page is mostly blank, kill the settings app
+          (double click the home button and swipe up on the settings app) and try again.</p>
+        <p class="warning">All versions of Park Observer are signed with an expiring certificate,
+          and will no longer run when the certificate expires.</p>
+        <p>You will need an iPad with at least iOS 8.0. The most recent version of iOS is recommended.</p>
+        <p><a>To install go to <a href="https://akrgis.nps.gov/observer">https://akrgis.nps.gov/observer</a>
+          on your iPad, or follow these <a href="https://akrgis.nps.gov/Observer/no-wifi.htm">instructions</a>
+          from your PC.</a></p>
+      </section>
+
+      <h1 class="versions-heading">Versions</h1>
+      <ul id="versionList" class="pure-list"></ul>
+
+      <section id="installing-tools">
+        <h1 class="versions-heading">POZ to FGDB tool for ArcGIS.</h3>
+        <ul>
+          <li>
+            <h2><a href="syncserver/ParkObserver.pyt">ParkObserver.pyt</a></h4>
+            <p><b>Released: </b><i>June 16, 2016</i></p>
+          </li>
+        </ul>
+      </section>
+
+    </div>
+
+    <div id="footer">
+      Questions? Contact Regan Sarwas at <a href="mailto:regan_sarwas@nps.gov">regan_sarwas@nps.gov</a>.
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+      $.getJSON("versionlist.json", function(data) {
+        var items = [];
+        $.each(data, function(index, item) {
+          var title = "<h2 class='version-heading'>" + item.version + " (build:" + item.build + ")</h2>";
+          var description = item.description ? '<p>' + item.description + '</p>' : '';
+          var dates = '<p><b>Released: </b><i>' + item.published + '</i>; <b>Expiration Date: </b><i>' + item.expiration + '</i></p>';
+          var warning = item.warning ? '<p class="warning">' + item.warning + '</p>' : '';
+          var download = '<a class="pure-button" href="' + item.url +'">Download</a>';
+          var moreinfo = item.details ? '<a class="pure-button" href="' + item.details + '">Details</a>' : '';
+          var vertext = '<li>' + title + description + dates + warning + '<p>' + download + ' ' + moreinfo + '</p></li></br>';
+          items.push(vertext);
+        });
+        $('#versionList').append(items.join(""))
+      });
+    </script>
+
+  </body>
+</html>

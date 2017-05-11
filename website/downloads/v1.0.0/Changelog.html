@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Park Observer | v1.0.0 Change Log</title>
+	<link rel="stylesheet" href="../../akr.css">
+</head>
+
+<body>
+    <div id="top">
+			<img style="float:left; padding-right:10px; padding-top:8px" src="../../images/app_icon_small.png">
+			<h1>Park Observer</h1>
+			<h2>An iPad application for offline data collection</h2>
+			<h2>Brought to you by the Alaska Regional Office GIS Team</h2>
+			<br/>
+    </div>
+
+    <div id="content">
+			<section id="intro">
+				<h3>Change Log for version 1.0.0</h3>
+
+				<p>The definitive list of changes is tracked in the GitHub Repo</p>
+				<ul>
+					<li><a href="https://github.com/regan-sarwas/Observer/issues?q=closed:2016-06-21..2017-05-05">Issues closed since previous release</a></li>
+					<li><a href="https://github.com/regan-sarwas/Observer/commits/master?q=committer-date:2016-06-21..2017-05-05">Code commits since previous release</a></li>
+				</ul>
+
+				<h3>Major Changes</h3>
+					<ul>
+						<li>
+							<h4>Attributes can be entered when you start recording</h4>
+							<p>Previously, the mission property attributes only comes up when you start observing, or change environment, it should also happen when you start recording.
+								Previously, transects all start with a small segment on the wrong transect id, because the default when recording starts is the prior transect id.
+						</li>
+						<li>
+							<h4>Fixed button to clear integer input</h4>
+							<p>Clicking in the text box (In lieu of the stepper control) provides a gray x button which clears the input field, however it did not clear the data.
+								Now the clear button returns the text value to its default, which could be nil or 0, but it could also be any other integer value.
+								<a href="https://github.com/regan-sarwas/Observer/issues/149">Learn more...</a>
+
+						</li>
+						<li>
+							<h4>Supported importing of surveys</h4>
+							<p>Old surveys or surveys from other iPads can be added by putting the *.obssurv folder (inside the *.poz file)
+								in the documents directory in iTunes, or by opening a *.poz file from email or Safari.
+								I cannot import *.poz files put in the iTunes folder, because that is where the exports are.
+						</li>
+						<li>
+							<h4>Removed Angle/Distance settings from the settings app.</h4>
+							<p>The settings can only be defined in the protocol file, which was best, and always used anyways.
+						</li>
+						<li>
+							<h4>Support slashes in survey names</h4>
+							<p>A slash in a survey name as seen as a folder separator, which caused the survey export to fail.
+								Slashes are replaced by underscore in the file name.
+						</li>
+						<li>
+							<h4>Auto split long long tracklogs at 1000 gps points</h4>
+							<p>This prevents very very long polylines from getting created when the user does not stop observing.
+								The long polylines could slow down input and drawing.  The split tracklogs have all the same attributes,
+								and will appear the same in ArcMap, and can be merged if needed.
+						</li>
+						<li>
+							<h4>Add Cancel button to attribute editing form</h4>
+							<p>Default when dismissing the form is to save all edits.  This will close the form and discard edits.
+								No warning is given.
+						</li>
+						<li>
+							<h4>Observation selector uses label field</h4>
+							<p>When you tap to select a feature, and multiple feature are available, you need to pick the feature you want from a list.
+								Previously, you had to know the creation date to choose the one you wanted.
+								Now if you have a your feature has a label, you can use the label to select the feature you want.
+						</li>
+						<li>
+							<h4>Numerous bug fixes</h4>
+							<p>Survey race conditions; Crashes with map loading, defaults not being recognized after upgrade
+								Move to GPS point not always updating the display.  Duplicate graphics for a single feature.
+								Crashed if you started data logging without a map. Deleting any map incorrectly cleared the map display.
+								And lots more.
+						</li>
+						<li>
+							<h4>Modernization of code for latest iOS versions</h4>
+							<p>Lots of code cleanup and refactoring to support best practices for modern iOS code.
+								Turned on all compiler warnings and eliminated all warnings.
+								Removed dead and un-needed code.
+						</li>
+					</ul>
+			</section>
+    </div>
+
+    <div id="footer">
+			Questions? Contact Regan Sarwas at <a href="mailto:regan_sarwas@nps.gov">regan_sarwas@nps.gov</a>.
+    </div>
+
+</body>
+</html>
