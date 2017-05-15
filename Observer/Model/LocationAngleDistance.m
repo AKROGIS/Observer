@@ -89,6 +89,13 @@
     return 0 <= self.deadAhead;
 }
 
+- (BOOL) inputAngleWrapsStern
+{
+    double referenceAngle = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleBaseline : kAngleDistanceDeadAhead;
+    double inputAngle = self.angle.doubleValue;
+    return (inputAngle < referenceAngle - 180.0 || referenceAngle + 180.0 < inputAngle);
+}
+
 - (BOOL) isComplete
 {
     return (0 < self.distanceMeters)  && (0 <= self.absoluteAngle);

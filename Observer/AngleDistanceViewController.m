@@ -222,7 +222,7 @@
     self.modalInPopover = userHasProgressed;
     
     BOOL inputIsComplete = self.location.isComplete;
-    BOOL canBeDone = self.location.isValid && inputIsComplete;
+    BOOL canBeDone = self.location.isValid && inputIsComplete && !self.location.inputAngleWrapsStern;
     self.navigationItem.rightBarButtonItem.enabled = canBeDone;
     textField.returnKeyType = canBeDone ? UIReturnKeyDone : UIReturnKeyNext;
     //TODO: #178 keyboard view does not update until focus changes to new view

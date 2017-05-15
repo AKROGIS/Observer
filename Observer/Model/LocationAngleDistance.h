@@ -96,6 +96,7 @@
 @property (nonatomic, readonly) BOOL usesProtocol;
 @property (nonatomic, getter=isValid, readonly) BOOL valid;
 @property (nonatomic, getter=isComplete, readonly) BOOL complete;
+@property (nonatomic, readonly) BOOL inputAngleWrapsStern;
 @property (nonatomic, readonly, copy) NSString *basisDescription;
 
 //Create a new observation point
