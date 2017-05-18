@@ -1657,7 +1657,11 @@
         AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
         Observation *observation = [self.survey createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
         AGSGraphic *graphic = [self.survey drawObservation:observation];
+        [self dismissViewControllerAnimated:YES completion:nil];
         [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
+    };
+    vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
+        [self dismissViewControllerAnimated:YES completion:nil];
     };
 
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
