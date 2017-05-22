@@ -7,6 +7,7 @@
 //
 
 #import "AngleDistanceViewController.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 #define TEXTMARGINS 60  //2*30pts
 
@@ -220,7 +221,11 @@
     self.modalInPopover = userHasProgressed;
     
     BOOL inputIsComplete = self.location.isComplete;
-    BOOL canBeDone = self.location.isValid && inputIsComplete && !self.location.inputAngleWrapsStern;
+    BOOL problem = !self.location.isValid || self.location.inputAngleWrapsStern;
+    BOOL canBeDone = inputIsComplete && !problem;
+    if (problem) {
+        AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
+    }
     self.navigationItem.rightBarButtonItem.enabled = canBeDone;
     textField.returnKeyType = canBeDone ? UIReturnKeyDone : UIReturnKeyNext;
     //TODO: #178 keyboard view does not update until focus changes to new view
