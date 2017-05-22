@@ -1471,7 +1471,7 @@
         if (angleDistanceLocation) {
             locationButton.title = @"Change Location";
             locationButton.onSelected = ^(){
-                [self performAngleDistanceSequeWithFeature:feature entity:entity graphic:graphic];
+                [self performAngleDistanceSequeWithFeature:feature];
             };
         } else {
             locationButton.title = @"Review Location";
@@ -1671,9 +1671,12 @@
 }
 
 // This is called by the feature editor (setAttributesForFeatureType:), when the user wants to edit the Angle/Distance of an observation.
-- (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic
+- (void) performAngleDistanceSequeWithFeature:(ProtocolFeature *)feature
 {
     UINavigationController *nav = (UINavigationController *)self.presentedViewController;
+    AttributeViewController *dialog = (AttributeViewController *)(nav.viewControllers)[0];
+    NSManagedObject *entity = dialog.managedObject;
+    AGSGraphic *graphic = dialog.graphic;
     AngleDistanceLocation *angleDistance = [self.survey angleDistanceLocationFromEntity:entity];
     LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:angleDistance.direction protocolFeature:feature absoluteAngle:angleDistance.angle distance:angleDistance.distance];;
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
@@ -1685,7 +1688,6 @@
         // all graphics for observations should be a POGraphic; do nothing if something went wrong
         if ([graphic isKindOfClass:[POGraphic class]]) {
             AGSGraphic *newGraphic = [(POGraphic *)graphic redraw:observation survey:self.survey];
-            AttributeViewController *dialog = (AttributeViewController *)(nav.viewControllers)[0];
             dialog.graphic = newGraphic;
             // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
             //AGSPoint *toPoint = (AGSPoint *)newGraphic.geometry;
