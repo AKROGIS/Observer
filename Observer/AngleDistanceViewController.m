@@ -7,6 +7,7 @@
 //
 
 #import "AngleDistanceViewController.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 #define TEXTMARGINS 60  //2*30pts
 
@@ -84,6 +85,12 @@
 
 
 #pragma mark - UITextField Delegate
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    textField.returnKeyType = self.canBeDone ? UIReturnKeyDone : UIReturnKeyNext;
+    return YES;
+}
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
@@ -218,14 +225,35 @@
 {
     BOOL userHasProgressed = self.location.isValid && [self anyInputFieldHasChanged];
     self.modalInPopover = userHasProgressed;
-    
-    BOOL inputIsComplete = self.location.isComplete;
-    BOOL canBeDone = self.location.isValid && inputIsComplete && !self.location.inputAngleWrapsStern;
+
+    BOOL canBeDone = self.canBeDone;
+    if (self.problemWithInput) {
+        //AudioServicesPlayAlertSound(kSystemSoundID_Vibrate); // Vibration function is not available on iPad
+        //This is a hack to avoid bundling my own sound file.  This number could change at any update
+        SystemSoundID beep = 1005; //http://iphonedevwiki.net/index.php/AudioServices
+        AudioServicesPlayAlertSound(beep);
+    }
     self.navigationItem.rightBarButtonItem.enabled = canBeDone;
-    textField.returnKeyType = canBeDone ? UIReturnKeyDone : UIReturnKeyNext;
-    //TODO: #178 keyboard view does not update until focus changes to new view
-    //TODO: #178 other textfields should also be updated to UIReturnKeyDone without requiring a text changed event
+    UIReturnKeyType returnKeyType = canBeDone ? UIReturnKeyDone : UIReturnKeyNext;
+    if (returnKeyType != textField.returnKeyType) {
+        // You cannot change the keyboard while the textfield is the first responder
+        [textField resignFirstResponder];
+        textField.returnKeyType = returnKeyType;
+        [textField becomeFirstResponder];
+    }
 }
+
+- (BOOL)canBeDone
+{
+    return self.location.isComplete & !self.problemWithInput;
+}
+
+
+- (BOOL)problemWithInput
+{
+    return !self.location.isValid || self.location.inputAngleWrapsStern;
+}
+
 
 - (void) resizeView
 {
