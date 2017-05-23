@@ -1268,8 +1268,6 @@
         }
     }
     if (button) {
-        // It is not possible (AFIK) to set the anchor for a manual popover seque, hence I must do the "segue" with code
-        //TODO: #144 Use the uipopoverpresentationcontrollerdelegate prepareForPopoverPresentation
         [self performAngleDistanceSequeWithFeature:feature fromButton:button];
     } else {
         AKRLog(@"Oh No! I couldn't find the calling button for the segue");
