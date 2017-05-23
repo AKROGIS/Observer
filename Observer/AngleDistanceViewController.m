@@ -224,7 +224,10 @@
     BOOL problem = !self.location.isValid || self.location.inputAngleWrapsStern;
     BOOL canBeDone = inputIsComplete && !problem;
     if (problem) {
-        AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
+        //AudioServicesPlayAlertSound(kSystemSoundID_Vibrate); // Vibration function is not available on iPad
+        //This is a hack to avoid bundling my own sound file.  This number could change at any update
+        SystemSoundID beep = 1005; //http://iphonedevwiki.net/index.php/AudioServices
+        AudioServicesPlayAlertSound(beep);
     }
     self.navigationItem.rightBarButtonItem.enabled = canBeDone;
     textField.returnKeyType = canBeDone ? UIReturnKeyDone : UIReturnKeyNext;
