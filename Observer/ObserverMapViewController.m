@@ -1268,8 +1268,6 @@
         }
     }
     if (button) {
-        // It is not possible (AFIK) to set the anchor for a manual popover seque, hence I must do the "segue" with code
-        //TODO: #144 Use the uipopoverpresentationcontrollerdelegate prepareForPopoverPresentation
         [self performAngleDistanceSequeWithFeature:feature fromButton:button];
     } else {
         AKRLog(@"Oh No! I couldn't find the calling button for the segue");
@@ -1408,13 +1406,19 @@
 
 - (void)setAttributesForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic defaults:(NSManagedObject *)template atPoint:(AGSPoint *)mapPoint isNew:(BOOL)isNew isEditing:(BOOL)isEditing
 {
+    AttributeViewController *dialog = [self attributeDialogForFeatureType:feature entity:entity graphic:graphic defaults:template isNew:isNew isEditing:isEditing];
+    [self presentAttributeDialog:dialog atMapPoint:mapPoint];
+}
+
+- (AttributeViewController *)attributeDialogForFeatureType:(ProtocolFeature *)feature entity:(NSManagedObject *)entity graphic:(AGSGraphic *)graphic defaults:(NSManagedObject *)template isNew:(BOOL)isNew isEditing:(BOOL)isEditing
+{
     //TODO: #183 Cleanup, isEditing parameter is never used. We always allow editing. Callers all use YES
     //TODO: #183 refactor this ugly and overly complicated method
 
     if (isNew && feature.attributes.count == 0) {
         //Do not present an attribute editor for a new feature with no attributes
         //If the feature is not new, then we need to present the user with the delete/move and other options even if there are no attributes
-        return;
+        return nil;
     }
     //get data from entity attributes (unobscure the key names)
     NSMutableDictionary *data;
@@ -1554,11 +1558,20 @@
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
     dialog.graphic = graphic;
+    CGFloat height = (CGFloat)44.0 * (3 + feature.attributes.count);
+    dialog.preferredContentSize = CGSizeMake(320.0, height);
+    dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
+    return dialog;
+}
 
+- (void)presentAttributeDialog:(AttributeViewController *)dialog atMapPoint:(AGSPoint *)mapPoint
+{
+    if (dialog == nil) {
+        return;
+    }
     // Present VC
     self.attributeCollector = dialog;
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:dialog];
-    dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissAttributeCollector:)];
     UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAndDismissAttributeCollector:)];
@@ -1653,21 +1666,50 @@
 
     AngleDistanceViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"AngleDistanceViewController"];
     vc.location = location;
+    vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
+        // Undo any observation creation (currently none)
+        [controller dismissViewControllerAnimated:YES completion:nil];
+    };
+    __block Observation *observation = nil;  // Allow this variable to be modified in the completion handler; so we can track thier modification
+    __block AGSGraphic *graphic = nil;
     vc.completionBlock = ^(AngleDistanceViewController *controller) {
-        AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-        Observation *observation = [self.survey createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
-        AGSGraphic *graphic = [self.survey drawObservation:observation];
-        [self dismissViewControllerAnimated:YES completion:nil];
-        [self setAttributesForFeatureType:feature entity:observation graphic:graphic defaults:nil atPoint:mapPoint isNew:YES isEditing:YES];
+        if (observation == nil) {
+            // Create a new observation/graphic for the attributeEditor when the user completes the AngleDistanceVC
+            observation = [self.survey createObservation:feature atGpsPoint:gpsPoint withAngleDistanceLocation:controller.location];
+            graphic = [self.survey drawObservation:observation];
+        } else {
+            // The user gets here if they finish editing (or click done) in the ADVC after popping back to the ADVC from the attribute Editor
+            // Get the entity from the Attribute editor push in the containing NAV controller
+            [self.survey updateAngleDistanceObservation:observation withAngleDistance:controller.location];
+            graphic = [(POGraphic *)graphic redraw:observation survey:self.survey];
+            // Would be nice to move the popup, but it doesn't work (deprecated in 9.x)
+        }
+        AttributeViewController *dialog = [self attributeDialogForFeatureType:feature entity:observation graphic:graphic defaults:nil isNew:YES isEditing:YES];
+        self.attributeCollector = dialog;
+        dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
+        UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissAttributeCollector:)];
+        UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveAndDismissAttributeCollector:)];
+        dialog.toolbarItems = @[cancelButton, flex, doneButton];
+        controller.navigationController.toolbarHidden = NO;
+        [controller.navigationController pushViewController:dialog animated:YES];
     };
     vc.cancellationBlock = ^(AngleDistanceViewController *controller) {
         [self dismissViewControllerAnimated:YES completion:nil];
     };
 
+    CGFloat height = (CGFloat)44.0 * (4.0 + feature.attributes.count);
+    vc.preferredContentSize = CGSizeMake(320.0, height);
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationPopover;
     [self presentViewController:nav animated:YES completion:nil];
-    nav.popoverPresentationController.barButtonItem = button;
+    //nav.popoverPresentationController.barButtonItem = button;
+    UIPopoverPresentationController *popover = nav.popoverPresentationController;
+    popover.sourceView = self.mapView;
+    AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
+    CGPoint screenPoint = [self.mapView nearestScreenPoint:mapPoint];
+    popover.sourceRect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
+    popover.delegate = self;
 }
 
 // This is called by the feature editor (setAttributesForFeatureType:), when the user wants to edit the Angle/Distance of an observation.
