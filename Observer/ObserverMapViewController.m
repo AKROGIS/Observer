@@ -1483,7 +1483,7 @@
                 GpsPointTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"GpsPointTableViewController"];
                 vc.gpsPoint = [self.survey gpsPointFromEntity:entity];
                 vc.adhocLocation = [self.survey adhocLocationFromEntity:entity];
-                //TODO: #168 Resize popover
+                vc.preferredContentSize = self.attributeCollector.preferredContentSize;
                 [self.attributeCollector.navigationController pushViewController:vc animated:YES];
             };
         }
@@ -1558,8 +1558,6 @@
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
     dialog.graphic = graphic;
-    CGFloat height = (CGFloat)44.0 * (3 + feature.attributes.count);
-    dialog.preferredContentSize = CGSizeMake(320.0, height);
     dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
     return dialog;
 }
@@ -1698,8 +1696,6 @@
         [self dismissViewControllerAnimated:YES completion:nil];
     };
 
-    CGFloat height = (CGFloat)44.0 * (4.0 + feature.attributes.count);
-    vc.preferredContentSize = CGSizeMake(320.0, height);
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationPopover;
     [self presentViewController:nav animated:YES completion:nil];

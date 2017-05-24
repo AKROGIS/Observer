@@ -36,6 +36,7 @@
 {
     [super viewDidLoad];
     [self updateView];
+    self.preferredContentSize = CGSizeMake(0.0, 0.0); // use the default (system or presenter) size
 }
 
 - (void) viewDidAppear:(BOOL)animated {
