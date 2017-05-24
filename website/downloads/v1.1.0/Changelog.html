@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Park Observer | v1.1.0 Change Log</title>
+	<link rel="stylesheet" href="../../akr.css">
+</head>
+
+<body>
+    <div id="top">
+			<img style="float:left; padding-right:10px; padding-top:8px" src="../../images/app_icon_small.png">
+			<h1>Park Observer</h1>
+			<h2>An iPad application for offline data collection</h2>
+			<h2>Brought to you by the Alaska Regional Office GIS Team</h2>
+			<br/>
+    </div>
+
+    <div id="content">
+			<section id="intro">
+				<h3>Change Log for version 1.1.0</h3>
+
+				<p>The definitive list of changes is tracked in the GitHub Repo</p>
+				<ul>
+					<li><a href="https://github.com/regan-sarwas/Observer/issues?q=closed:2017-05-05..2017-05-24">Issues closed since previous release</a></li>
+					<li><a href="https://github.com/regan-sarwas/Observer/commits/master?q=committer-date:2017-05-05..2017-05-24">Code commits since previous release</a></li>
+				</ul>
+
+				<h3>Major Changes</h3>
+					<ul>
+						<li>
+							<h4>Limit angles to a valid value</h4>
+							<p>Previously, angles would wrap around 360 degrees, which incorrectly accepted typos.
+								Now the angles are limited to the dead ahead bearing +/- 180 degrees. If the angle is
+								not valid there is a system beep, the done button does not activate, and the text field maintains key focus.
+						</li>
+						<li>
+							<h4>Single popover for Angle/Distance and Attributes</h4>
+							<p>The transition to/from the Attribute editing form and the Angle/Distance form takes place in the
+								same spot on the screen (in the same popover controller).  This speeds up and simplifies the transition
+								from one to the other.
+						</li>
+						<li>
+							<h4>Fixed Cancel/Done buttons on Angle/Distance editor</h4>
+							<p>When editing an existing record, the Cancel/Done buttons on the Location editor closed <thead>
+								the entire editing session instead of returning to Attribute editor.  This has been fixed.
+							</thead>.
+						</li>
+						<li>
+							<h4>Reduced the number of popover resizes.</h4>
+							<p>The resizing for the keyboard is good (maybe annoying, but necessary) and shouldn't be mucked
+								with. I eliminated all attempts to resize the popover as small as possible, as this rarely
+								prevented a resize for the keyboard, and it resulted in a lot of unnecessary resizing when
+								pushing/popping forms in the navigation stack.
+						</li>
+					</ul>
+			</section>
+    </div>
+
+    <div id="footer">
+			Questions? Contact Regan Sarwas at <a href="mailto:regan_sarwas@nps.gov">regan_sarwas@nps.gov</a>.
+    </div>
+
+</body>
+</html>

@@ -82,7 +82,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>1.0.0 (753)</string>
+			<string>1.1.0 (764)</string>
 			<key>Key</key>
 			<string>version</string>
 			<key>Title</key>
