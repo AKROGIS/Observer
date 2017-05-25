@@ -141,7 +141,7 @@
 - (NSPredicate *) distanceRegex
 {
     if (!_distanceRegex)
-        _distanceRegex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^\\d*$"];
+        _distanceRegex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^([1-9][0-9]*)$"];
     return _distanceRegex;
 }
 
