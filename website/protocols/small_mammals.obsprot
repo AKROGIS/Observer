@@ -17,9 +17,9 @@
       "sections":[
         {
           "elements":[
-            {"type":"QEntryElement",     "key":"u",  "bind":"textValue:plot",             "title":"Plot",             "placeholder":"ID", "autocorrectionType":"No"},
-            {"type":"QEntryElement",     "key":"s",  "bind":"textValue:observer",         "title":"Observer",         "placeholder":"Initials"},
-            {"type":"QMultilineElement", "key":"c",  "bind":"textValue:comments",         "title":"Comments"}
+            {"type":"QEntryElement",     "key":"u", "bind":"textValue:plot",     "title":"Plot",     "placeholder":"ID",      "autocorrectionType":"No"},
+            {"type":"QEntryElement",     "key":"s", "bind":"textValue:observer", "title":"Observer", "placeholder":"Initials"},
+            {"type":"QMultilineElement", "key":"c", "bind":"textValue:comments", "title":"Comments"}
             ]
         }
       ]
@@ -69,13 +69,14 @@
     {
       "name":"Critter",
       "attributes":[
-        {"name":"trap",     "type":700},
-        {"name":"nr",       "type":700},
-        {"name":"tag",      "type":700},
-        {"name":"species",  "type":700},
-        {"name":"gender",   "type":700},
-        {"name":"age",      "type":700},
-        {"name":"weight",   "type":600},
+        {"name":"trap",         "type":700},
+        {"name":"nr",           "type":700},
+        {"name":"tag",          "type":700},
+        {"name":"species",      "type":700},
+        {"name":"gender",       "type":700},
+        {"name":"age",          "type":700},
+        {"name":"total_weight", "type":600},
+        {"name":"bag_weight",   "type":600},
 
         {"name":"swab",     "type":800},
         {"name":"mort",     "type":800},
@@ -109,19 +110,20 @@
         "sections":[
           {
             "elements":[
-              {"type":"QEntryElement",     "key":"t",  "bind":"textValue:trap",          "title":"Trap",        "placeholder":"ID",   "autocorrectionType":"No"},
-              {"type":"QSegmentedElement", "key":"n",  "bind":"selectedItem:nr",                                "items":["New", "Re-Capture"]},
-              {"type":"QEntryElement",     "key":"i",  "bind":"textValue:tag",           "title":"Tag",         "placeholder":"Code", "autocorrectionType":"No"},
-              {"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:species",    "title":"Species",     "items":["CLRU", "MIMI", "BOCH", "MIOE"]},
-              {"type":"QSegmentedElement", "key":"g",  "bind":"selectedItem:gender",     "title":"Gender",      "items":["Male", "Female", "Unknown"]},
-              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:age",        "title":"Age",         "items":["Juvy", "subadult", "adult", "2nd yr"]},
-              {"type":"QDecimalElement",   "key":"w",  "bind":"numberValue:weight",      "title":"Net Wt (g)",  "fractionDigits":0},
-              {"type":"QBooleanElement",   "key":"sw", "bind":"boolValue:swab",          "title":"Swab?",       "boolValue":0},
-              {"type":"QBooleanElement",   "key":"m",  "bind":"boolValue:mort",          "title":"Mortality?",  "boolValue":0},
-              {"type":"QBooleanElement",   "key":"b",  "bind":"boolValue:black",         "title":"Blackback?",     "boolValue":0},
-              {"type":"QBooleanElement",   "key":"e",  "bind":"boolValue:ecto",          "title":"Ectoparasites?", "boolValue":0},
-              {"type":"QBooleanElement",   "key":"p",  "bind":"boolValue:photos",        "title":"Photos?",     "boolValue":0},
-              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:comments",      "title":"Comments"}
+              {"type":"QEntryElement",     "key":"t",  "bind":"textValue:trap",           "title":"Trap",           "placeholder":"ID",   "autocorrectionType":"No"},
+              {"type":"QSegmentedElement", "key":"n",  "bind":"selectedItem:nr",                                    "items":["New", "Re-Capture"]},
+              {"type":"QEntryElement",     "key":"i",  "bind":"textValue:tag",            "title":"Tag",            "placeholder":"Code", "autocorrectionType":"No"},
+              {"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:species",     "title":"Species",        "items":["CLRU", "MIMI", "BOCH", "MIOE"]},
+              {"type":"QSegmentedElement", "key":"g",  "bind":"selectedItem:gender",      "title":"Gender",         "items":["Male", "Female", "Unknown"]},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:age",         "title":"Age",            "items":["Juvy", "subadult", "adult", "2nd yr"]},
+              {"type":"QDecimalElement",   "key":"w1", "bind":"numberValue:total_weight", "title":"Total Wt (g)",   "fractionDigits":0},
+              {"type":"QDecimalElement",   "key":"w2", "bind":"numberValue:bag_weight",   "title":"Bag Wt (g)",     "fractionDigits":0},
+              {"type":"QBooleanElement",   "key":"sw", "bind":"boolValue:swab",           "title":"Swab?",          "boolValue":0},
+              {"type":"QBooleanElement",   "key":"m",  "bind":"boolValue:mort",           "title":"Mortality?",     "boolValue":0},
+              {"type":"QBooleanElement",   "key":"b",  "bind":"boolValue:black",          "title":"Blackback?",     "boolValue":0},
+              {"type":"QBooleanElement",   "key":"e",  "bind":"boolValue:ecto",           "title":"Ectoparasites?", "boolValue":0},
+              {"type":"QBooleanElement",   "key":"p",  "bind":"boolValue:photos",         "title":"Photos?",        "boolValue":0},
+              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:comments",       "title":"Comments"}
               ]
           }, {
             "title":"Body Condition", "elements": [
