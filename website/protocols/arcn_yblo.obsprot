@@ -2,8 +2,8 @@
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
   "name":"ARCN YBLO Survey",
-  "version":2.0,
-  "date":"2017-06-05",
+  "version":2.1,
+  "date":"2017-06-06",
   "description":"This survey protocol is for Yellow-billed Loon Surveys on the North Slope of Alaska",
   "gps_interval": 1,
   "mission":{
@@ -79,6 +79,7 @@
         {"name":"count",    "type":100},
         {"name":"species",  "type":700},
         {"name":"species2", "type":700},
+        {"name":"nest",     "type":800},
         {"name":"pair",     "type":800},
         {"name":"countChicks", "type":100},
         {"name":"countEggs","type":700},
@@ -102,16 +103,17 @@
               {"type":"QIntegerElement",   "key":"c",  "bind":"numberValue:count",     "title":"Count"},
               {"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:species",  "title":"Loons/Terns",      "items":["YBLO", "PALO", "RTLO", "ARLO", "COLO", "UNLO", "TERN", "ARTE", "ALTE", "COLONY", "RNGR", "TUSW" ,"GLGU"]},
               {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:species2", "title":"Other Species",    "items":["COEI", "BLSC", "WWSC", "EMGO", "CANG", "LTDU", "MOX", "BEAR", "BOU", "MOOS", ""]},
+              {"type":"QBooleanElement",   "key":"n",  "bind":"boolValue:nest",          "title":"Nest?", "boolValue":0},
               {"type":"QBooleanElement",   "key":"p",  "bind":"boolValue:pair",          "title":"Pair?", "boolValue":0},
               {"type":"QIntegerElement",   "key":"c",  "bind":"numberValue:countChicks", "title":"Chicks"},
               {"type":"QLabelElement",     "title":"Eggs"},
               {"type":"QSegmentedElement", "key":"e",  "bind":"selectedItem:countEggs",    "items":["0", "1", "2"]},
               {"type":"QLabelElement",     "title":"Location of Nest"},
-              {"type":"QSegmentedElement", "key":"l",  "bind":"selectedItem:location",    "items":["No Nest", "Peninsula", "Shoreline", "Island"]},
+              {"type":"QSegmentedElement", "key":"l",  "bind":"selectedItem:location",    "items":["Peninsula", "Shoreline", "Island"]},
               {"type":"QLabelElement",     "title":"Nest Activity"},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:activity",    "items":["On Nest", "Flushed", "By Nest"]},
               {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",    "title":"Waypoint",         "placeholder":"ID", "autocorrectionType":"No"},
-              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",       "title":"Comments"}
+              {"type":"QMultilineElement", "key":"co", "bind":"textValue:Notes",       "title":"Comments"}
             ]
           }
         ]
