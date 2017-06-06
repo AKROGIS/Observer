@@ -3,7 +3,7 @@
   "meta-version":2,
   "name":"Small Mammals",
   "version":1.0,
-  "date":"2017-05-26",
+  "date":"2017-06-06",
   "description":"This protocol is for small mammal surveys in the Arctic Alaska I&M Network.  Contact melanie_flamme@nps.gov for more details.",
   "mission":{
     "attributes":[
@@ -71,7 +71,8 @@
       "attributes":[
         {"name":"trap",         "type":700},
         {"name":"nr",           "type":700},
-        {"name":"tag",          "type":700},
+        {"name":"tag_prefix",   "type":700},
+        {"name":"tag_suffix",   "type":700},
         {"name":"species",      "type":700},
         {"name":"gender",       "type":700},
         {"name":"age",          "type":700},
@@ -89,11 +90,11 @@
         {"name":"sores",    "type":800},
         {"name":"subq",     "type":800},
 
-        {"name":"mammaries",   "type":800},
-        {"name":"pregnant",     "type":800},
-        {"name":"litter",     "type":800},
-        {"name":"perforate",    "type":800},
-        {"name":"lactating",     "type":800},
+        {"name":"mammaries", "type":800},
+        {"name":"pregnant",  "type":800},
+        {"name":"litter",    "type":800},
+        {"name":"perforate", "type":800},
+        {"name":"lactating", "type":800},
         {"name":"scrotal",   "type":800},
 
         {"name":"photos",   "type":800},
@@ -113,7 +114,8 @@
             "elements":[
               {"type":"QEntryElement",     "key":"t",  "bind":"textValue:trap",           "title":"Trap",           "placeholder":"ID",   "autocorrectionType":"No"},
               {"type":"QSegmentedElement", "key":"n",  "bind":"selectedItem:nr",                                    "items":["New", "Re-Capture"]},
-              {"type":"QEntryElement",     "key":"i",  "bind":"textValue:tag",            "title":"Tag",            "placeholder":"Code", "autocorrectionType":"No"},
+              {"type":"QRadioElement",     "key":"i",  "bind":"selectedItem:tag_prefix",  "title":"Tag Start",      "items":["0A130A0B", "6C00062", "9820003579", "9820004088"]},
+              {"type":"QEntryElement",     "key":"i2", "bind":"textValue:tag_suffix",     "title":"Tag End",        "placeholder":"Code", "autocorrectionType":"No"},
               {"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:species",     "title":"Species",        "items":["CLRU", "MIMI", "BOCH", "MIOE", "UNKN"]},
               {"type":"QSegmentedElement", "key":"g",  "bind":"selectedItem:gender",      "title":"Gender",         "items":["Male", "Female", "Unknown"]},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:age",         "title":"Age",            "items":["Juvy", "subadult", "adult", "2nd yr"]},
