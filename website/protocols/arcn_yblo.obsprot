@@ -3,7 +3,7 @@
   "meta-version":2,
   "name":"ARCN YBLO Survey",
   "version":2.0,
-  "date":"2017-05-22",
+  "date":"2017-06-05",
   "description":"This survey protocol is for Yellow-billed Loon Surveys on the North Slope of Alaska",
   "gps_interval": 1,
   "mission":{
@@ -107,7 +107,7 @@
               {"type":"QLabelElement",     "title":"Eggs"},
               {"type":"QSegmentedElement", "key":"e",  "bind":"selectedItem:countEggs",    "items":["0", "1", "2"]},
               {"type":"QLabelElement",     "title":"Location of Nest"},
-              {"type":"QSegmentedElement", "key":"l",  "bind":"selectedItem:location",    "items":["Peninsula", "Shoreline", "Island"]},
+              {"type":"QSegmentedElement", "key":"l",  "bind":"selectedItem:location",    "items":["No Nest", "Peninsula", "Shoreline", "Island"]},
               {"type":"QLabelElement",     "title":"Nest Activity"},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:activity",    "items":["On Nest", "Flushed", "By Nest"]},
               {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",    "title":"Waypoint",         "placeholder":"ID", "autocorrectionType":"No"},
