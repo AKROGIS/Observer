@@ -1,5 +1,14 @@
 [
   {
+    "version":"1.1.1",
+    "build":766,
+    "description":"Fix bug to disallow distances starting with zero.",
+    "warning":"",
+    "url":"v1.1.1/ParkObserver_1.1.1.ipa",
+    "published":"2017-06-13",
+    "expiration":"2018-04-03",
+    "details":""
+  },{
     "version":"1.1.0",
     "build":764,
     "description":"Updates for Angle/Distance Protocols",
