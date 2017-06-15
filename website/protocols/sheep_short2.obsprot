@@ -131,7 +131,6 @@
               {"type":"QIntegerElement",   "key":"r6", "bind":"numberValue:CountRams101",   "title":"Full Curl(+)"},
               {"type":"QIntegerElement",   "key":"r7", "bind":"numberValue:CountRamsOther", "title":"Other Rams"},
               {"type":"QIntegerElement",   "key":"e5", "bind":"numberValue:CountUnknown",   "title":"Unclassified"},
-              {"type":"QLabelElement",     "title":"Activity"},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",     "items":["Stationary", "Walking", "Running"]},
               {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",         "title":"Waypoint",       "placeholder":"ID", "autocorrectionType":"No"},
               {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",            "title":"Comments"}
