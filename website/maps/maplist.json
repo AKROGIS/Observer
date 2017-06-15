@@ -26,6 +26,19 @@
         "ymax":59.1069933103807
     },
     {
+        "name":"GAAR - Snowshoe Hare Ecology Project 2017",
+        "author":"Regan Sarwas",
+        "date":"2017-06-05",
+        "size":1363003654,
+        "url":"https://akrgis.nps.gov/observer/maps/GAAR_SHEP.tpk",
+        "thumbnail":"https://akrgis.nps.gov/observer/maps/thumbnails/GAAR_SHEP.png",
+        "description":"Detailed locations of plots at six sites along the Dalton Highway near Wiseman",
+        "xmin":-150.570777930128,
+        "ymin":66.9590210109132,
+        "xmax":-149.587734576708,
+        "ymax":67.5587752636684
+    },
+    {
         "name":"Gustavus Alaska",
         "author":"Regan Sarwas",
         "date":"2014-05-07",
