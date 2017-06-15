@@ -111,6 +111,7 @@
         {"name":"CountUnknown",   "type":100},
         {"name":"Activity",       "type":700},
         {"name":"Waypoint",       "type":700},
+        {"name":"OnTransect",       "type":700},
         {"name":"Notes",          "type":700}
        ],
       "locations":[
@@ -133,6 +134,8 @@
               {"type":"QIntegerElement",   "key":"e5", "bind":"numberValue:CountUnknown",   "title":"Unclassified"},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",     "items":["Stationary", "Walking", "Running"]},
               {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",         "title":"Waypoint",       "placeholder":"ID", "autocorrectionType":"No"},
+              {"type":"QLabelElement",     "title":"On Transect?"},
+              {"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:OnTransect",     "items":["On", "Missed", "Below", "Off"]},
               {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",            "title":"Comments"}
             ]
           }
