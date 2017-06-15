@@ -125,7 +125,6 @@
         "sections":[
           {
             "elements":[
-              {"type":"QLabelElement",   "key":"id", "bind":"value:id", "title":"ID Number"},
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountEwelike",   "title":"Ewe-like"},
               {"type":"QIntegerElement",   "key":"e4", "bind":"numberValue:CountLambs",     "title":"Lambs"},
               {"type":"QIntegerElement",   "key":"r5", "bind":"numberValue:CountRams099",   "title":"< Full Curl"},
