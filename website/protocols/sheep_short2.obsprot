@@ -2,8 +2,8 @@
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
   "name":"Sheep Transects Short",
-  "version":2.2,
-  "date":"2016-06-28",
+  "version":3.0,
+  "date":"2017-06-15",
   "description":"This protocol is for sheep surveys in the Alaskan I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
   "observing": "ON Transect",
   "notobserving": "Recording NOT observing",
@@ -142,8 +142,14 @@
       },
       "label":{
         "field":"Waypoint",
-        "size":18,
-        "color":"#000000"
+        "symbol":{
+          "type":"esriTS",
+          "color":[255,0,0,255],
+          "font":{"family":"Arial", "size":24, "weight":"bold", "style":"normal", "decoration":"none"},
+          "verticalAlignment": "bottom",
+          "horizontalAlignment": "left",
+          "xoffset": 10, "yoffset": 20
+        }
       },
       "symbology":{
         "type": "simple",
@@ -151,7 +157,7 @@
           "type": "esriSMS",
           "style": "esriSMSCircle",
           "color": [255,215,0,255],
-          "size": 15,
+          "size": 24,
           "outline": {
             "color": [0,0,0,255],
             "width": 2
