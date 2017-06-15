@@ -165,8 +165,64 @@
           }
         }
       }
+    },
+    {
+      "name":"Other",
+      "attributes":[
+        {"name":"id", "type":0},
+        {"name":"Species",        "type":700},
+        {"name":"CountGroup",     "type":100},
+        {"name":"Activity",       "type":700},
+        {"name":"Waypoint",       "type":700},
+        {"name":"Notes",          "type":700}
+       ],
+      "locations":[
+        {"type":"gps",           "default":false, "allow":true},
+        {"type":"adhocTarget",   "default":true, "allow":true},
+        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Other",
+        "grouped":true,
+        "sections":[
+          {
+            "elements":[
+              {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:Species",   "title":"Species", "items":["Golden Eagle", "Grizzly", "Black Bear", "Wolf", "Wolverine", "Caribou", "Muskox", "Moose", "Other"]},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountGroup", "title":"Group Size"},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",  "items":["Stationary", "Walking", "Running"]},
+              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",     "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
+              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",        "title":"Comments"}
+            ]
+          }
+        ]
+      },
+      "label":{
+        "field":"Waypoint",
+        "symbol":{
+          "type":"esriTS",
+          "color":[255,0,0,255],
+          "font":{"family":"Arial", "size":22, "weight":"bold", "style":"normal", "decoration":"none"},
+          "verticalAlignment": "bottom",
+          "horizontalAlignment": "left",
+          "xoffset": 9, "yoffset": 18
+        }
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [130,224,170,255],
+          "size": 20,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 2
+          }
+        }
+      }
     }
-   ],
+  ],
   "csv":{
     "gps_points":{
       "name":"GpsPoints",
