@@ -5,13 +5,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="description" content="Map List">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0/pure-min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <link rel="stylesheet" href="../akr.css">
     <style type="text/css">
-        #mapTable {padding:20px;margin-left:auto;margin-right:auto;}
-        td.attName {font-weight:bold}
         .caption {font-size:smaller; color:grey; font-style: italic; text-align: center}
-        .simple-table {border-style:none}
         <!--img.thumb {border:1px solid grey;}-->
         img.thumb {-moz-box-shadow: 0 0 3px 3px #cccccc;
             -webkit-box-shadow: 0 0 3px 3px #cccccc;
@@ -27,11 +24,10 @@
         </div>
 
         <div id="content">
-            <table id="mapTable" class="pure-table pure-table-bordered">
+            <table id="mapTable" class="table">
                 <thead>
                 <tr>
                     <th>Map</th>
-                    <th>Description</th>
                     <th>Details</th>
                 </tr>
                 </thead>
@@ -46,10 +42,13 @@
                     $.each( data, function( index, item ) {
                         var img = "<div><img class='thumb' src='"+ item.thumbnail +"'><p class='caption'>"+ item.name + "</p></div>";
                         var size = Math.round(item.size / 1024.0 / 1024.0) + "MB";
-                        var details = "<table class='simple-table'></tr><tr><td class='attName'>Author</td><td class='attValue'>" + item.author + "</td></tr>";
-                        details = details + "<tr><td class='attName'>Date</td><td class='attValue'>" + item.date + "</td></tr>";
-                        details = details + "<tr><td class='attName'>Size</td><td class='attValue'>" + size + "</td></tr></table>";
-                        items.push( '<tr><td><a href="'+item.url + '">'+ img + '</a></td><td>'+ item.description +'</td><td>'+ details +'</td></tr>' );
+                        var details = '<dl class="dl-horizontal">'
+                        details = details + "<dt>Description</dt><dd>" + item.description + "</dd>";
+                        details = details + "<dt>Author</dt><dd>" + item.author + "</dd>";
+                        details = details + "<dt>Date</dt><dd>" + item.date + "</dd>";
+                        details = details + "<dt>Size</dt><dd>" + size + "</dd>";
+                        details = details + "</dl>";
+                        items.push( '<tr><td><a href="'+item.url + '">'+ img + '</a></td><td>'+ details +'</td></tr>' );
                     });
                     $('#mapTable').find('tbody:last').append(items.join( "" ))
                 });

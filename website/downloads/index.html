@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="Map List">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0/pure-min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="../akr.css">
   <style type="text/css">
-    .versions-heading {font-size:1.8em; color:black;}
-    .version-heading {font-size:1.6em; color:black; font-weight: bold;}
+    .versions-heading {font-size:1.8em; color:black; margin-bottom:15px;}
+    .version-heading {font-size:1.6em; color:black; font-weight: bold; margin-bottom:10px;}
     .warning {color:red; font-weight: bold;}
   </style>
 </head>
@@ -37,13 +37,13 @@
         <p class="warning">All versions of Park Observer are signed with an expiring certificate,
           and will no longer run when the certificate expires.</p>
         <p>You will need an iPad with at least iOS 8.0. The most recent version of iOS is recommended.</p>
-        <p><a>To install go to <a href="https://akrgis.nps.gov/observer">https://akrgis.nps.gov/observer</a>
+        <p>To install go to <a href="https://akrgis.nps.gov/observer">https://akrgis.nps.gov/observer</a>
           on your iPad, or follow these <a href="https://akrgis.nps.gov/Observer/no-wifi.htm">instructions</a>
           from your PC.</a></p>
       </section>
 
       <h1 class="versions-heading">Versions</h1>
-      <ul id="versionList" class="pure-list"></ul>
+      <ul id="versionList"></ul>
 
       <section id="installing-tools">
         <h1 class="versions-heading">POZ to FGDB tool for ArcGIS.</h3>
@@ -70,9 +70,10 @@
           var description = item.description ? '<p>' + item.description + '</p>' : '';
           var dates = '<p><b>Released: </b><i>' + item.published + '</i>; <b>Expiration Date: </b><i>' + item.expiration + '</i></p>';
           var warning = item.warning ? '<p class="warning">' + item.warning + '</p>' : '';
-          var download = '<a class="pure-button" href="' + item.url +'">Download</a>';
-          var moreinfo = item.details ? '<a class="pure-button" href="' + item.details + '">Details</a>' : '';
-          var vertext = '<li>' + title + description + dates + warning + '<p>' + download + ' ' + moreinfo + '</p></li></br>';
+          var download = '<a href="' + item.url +'">Download</a>';
+          var moreinfo = item.details ? '<a href="' + item.details + '">Details</a>' : '';
+          var sep = download && moreinfo ? ' | ' : ''
+          var vertext = '<li>' + title + description + dates + warning + '<p>' + download + sep + moreinfo + '</p></li></br>';
           items.push(vertext);
         });
         $('#versionList').append(items.join(""))
