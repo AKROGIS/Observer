@@ -30,7 +30,7 @@
 - (void)awakeFromNib
 {
     self.clearsSelectionOnViewWillAppear = NO;
-    self.preferredContentSize = CGSizeMake(420.0, 480.0);
+    self.preferredContentSize = CGSizeMake(420.0, 580.0);
     [super awakeFromNib];
 }
 
