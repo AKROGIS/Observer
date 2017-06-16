@@ -1,0 +1,190 @@
+{
+  "meta-name":"NPS-Protocol-Specification",
+  "meta-version":2,
+  "name":"GAAR Snowshoe Hare",
+  "version":1.0,
+  "date":"2017-06-05",
+  "description":"Snowshoe Hare Ecology Project (SHEP) Gates of the Arctic NP&P.  Contact donna_difolco@nps.gov for more details.",
+  "mission":{
+    "attributes":[
+      {"name":"site",     "type":700},
+      {"name":"observer", "type":700},
+      {"name":"comments", "type":700}
+    ],
+    "dialog":{
+      "title":"Mission Properties",
+      "grouped":true,
+      "sections":[
+        {
+          "elements":[
+            {"type":"QRadioElement",     "key":"s", "bind":"selectedItem:site",  "title":"Site",     "items":["Cathedral", "Rosie", "Slate", "Wiseman", "Jennie", "Hammond", "Gold"]},
+            {"type":"QEntryElement",     "key":"o", "bind":"textValue:observer", "title":"Observer", "placeholder":"Initials", "autocapitalizationType":"AllCharacters"},
+            {"type":"QMultilineElement", "key":"c", "bind":"textValue:comments", "title":"Comments"}
+          ]
+        }
+      ]
+    },
+    "symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSSquare",
+        "color": [171,235,198,255],
+        "size": 20,
+        "outline": {
+          "color": [24,106,59,255],
+          "width": 1
+        }
+      }
+    },
+    "on-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSSolid",
+        "color": [46,204,113,255],
+        "width": 3
+      }
+    },
+    "off-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSDash",
+        "color": [231,76,60,255],
+        "width": 1.5
+      }
+    },
+    "gps-symbology": {
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSCircle",
+        "color": [52,152,219,255],
+        "size": 5
+      }
+    }
+  },
+  "features":[
+    {
+      "name":"Pellet",
+      "attributes":[
+        {"name":"plot",         "type":700},
+        {"name":"pellets",      "type":100},
+        {"name":"comments",     "type":700}
+      ],
+      "locations":[
+        {"type":"gps",           "default":true,  "allow":true},
+        {"type":"adhocTarget",   "default":false, "allow":false},
+        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Pellet",
+        "grouped":false,
+        "sections":[
+          {
+            "elements":[
+              {"type":"QEntryElement",     "key":"p", "bind":"textValue:plot",      "title":"Plot", "placeholder":"ID",   "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+              {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:pellets", "title":"# Pellets"},
+              {"type":"QMultilineElement", "key":"c", "bind":"textValue:comments",  "title":"Notes"}
+            ]
+          }
+        ]
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [255,215,0,255],
+          "size": 18,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 2
+          }
+        }
+      }
+    }, {
+      "name":"Trap",
+      "attributes":[
+        {"name":"trap",      "type":700},
+        {"name":"weight",    "type":600},
+        {"name":"tag_l",     "type":700},
+        {"name":"tag_r",     "type":700},
+        {"name":"frequency", "type":600},
+        {"name":"foot",      "type":600},
+        {"name":"gender",    "type":700},
+        {"name":"age",       "type":700},
+        {"name":"nr",        "type":700},
+        {"name":"comments",  "type":700}
+      ],
+      "locations":[
+        {"type":"gps",           "default":true,  "allow":true},
+        {"type":"adhocTarget",   "default":false, "allow":false},
+        {"type":"adhocTouch",    "default":false, "allow":false},
+        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Trap",
+        "grouped":false,
+        "sections":[
+          {
+            "elements":[
+              {"type":"QEntryElement",     "key":"t",  "bind":"textValue:trap",           "title":"Trap",           "placeholder":"ID",      "autocorrectionType":"No"},
+              {"type":"QDecimalElement",   "key":"w",  "bind":"numberValue:weight",       "title":"Weight (g)",     "fractionDigits":0},
+              {"type":"QEntryElement",     "key":"tl", "bind":"textValue:tag_l",          "title":"Left Tag",       "placeholder":"Ear #",   "autocorrectionType":"No"},
+              {"type":"QEntryElement",     "key":"tr", "bind":"textValue:tag_r",          "title":"Right Tag",      "placeholder":"Ear #",   "autocorrectionType":"No"},
+              {"type":"QDecimalElement",   "key":"f",  "bind":"numberValue:frequency",    "title":"Frequency",      "fractionDigits":2},
+              {"type":"QDecimalElement",   "key":"l",  "bind":"numberValue:foot",         "title":"Hind Foot(mm)",  "fractionDigits":0},
+              {"type":"QSegmentedElement", "key":"g",  "bind":"selectedItem:gender",      "title":"Gender",         "items":["Male", "Female", "Unknown"]},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:age",         "title":"Age",            "items":["Juvenile", "Adult", "Unknown"]},
+              {"type":"QSegmentedElement", "key":"n",  "bind":"selectedItem:nr",                                    "items":["New", "Re-Capture"]},
+              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:comments",       "title":"Comments"}
+              ]
+          }
+        ]
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [0,215,255,255],
+          "size": 18,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 2
+          }
+        }
+      }
+    }
+  ],
+  "csv":{
+    "gps_points":{
+      "name":"GpsPoints",
+      "field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+      "field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+      "key_indexes":[0,2,1]
+    },
+    "track_logs":{
+      "name":"TrackLogs",
+      "field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+      "field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+      "start_key_indexes":[1,9,8],
+      "end_key_indexes":[5,11,10]
+    },
+    "features":{
+      "header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+      "feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+      "feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+      "feature_field_map":[0,1,2,3,4,5,8],
+      "feature_key_indexes":[0,5,4],
+      "obs_name":"Observations",
+      "obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+      "obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+      "obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+      "obs_key_indexes":[0,11,10]
+    }
+  }
+}

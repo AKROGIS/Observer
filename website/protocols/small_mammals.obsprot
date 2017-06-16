@@ -1,0 +1,193 @@
+{
+  "meta-name":"NPS-Protocol-Specification",
+  "meta-version":2,
+  "name":"Small Mammals",
+  "version":1.0,
+  "date":"2017-06-06",
+  "description":"This protocol is for small mammal surveys in the Arctic Alaska I&M Network.  Contact melanie_flamme@nps.gov for more details.",
+  "mission":{
+    "attributes":[
+      {"name":"plot",          "type":700},
+      {"name":"observer",      "type":700},
+      {"name":"comments",      "type":700}
+    ],
+    "dialog":{
+      "title":"Mission Properties",
+      "grouped":true,
+      "sections":[
+        {
+          "elements":[
+            {"type":"QEntryElement",     "key":"u", "bind":"textValue:plot",     "title":"Plot",     "placeholder":"ID",      "autocorrectionType":"No"},
+            {"type":"QEntryElement",     "key":"s", "bind":"textValue:observer", "title":"Observer", "placeholder":"Initials"},
+            {"type":"QMultilineElement", "key":"c", "bind":"textValue:comments", "title":"Comments"}
+            ]
+        }
+      ]
+    },
+    "symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSSquare",
+        "color": [171,235,198,255],
+        "size": 20,
+        "outline": {
+          "color": [24,106,59,255],
+          "width": 1
+        }
+      }
+    },
+    "on-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSSolid",
+        "color": [46,204,113,255],
+        "width": 3
+      }
+    },
+    "off-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSDash",
+        "color": [231,76,60,255],
+        "width": 1.5
+      }
+    },
+    "gps-symbology": {
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSCircle",
+        "color": [52,152,219,255],
+        "size": 5
+      }
+    }
+  },
+  "features":[
+    {
+      "name":"Critter",
+      "attributes":[
+        {"name":"trap",         "type":700},
+        {"name":"nr",           "type":700},
+        {"name":"tag_prefix",   "type":700},
+        {"name":"tag_suffix",   "type":700},
+        {"name":"species",      "type":700},
+        {"name":"gender",       "type":700},
+        {"name":"age",          "type":700},
+        {"name":"total_weight", "type":600},
+        {"name":"bag_weight",   "type":600},
+        {"name":"net_weight",   "type":600},
+
+        {"name":"swab",     "type":800},
+        {"name":"mort",     "type":800},
+        {"name":"black",    "type":800},
+        {"name":"ecto",     "type":800},
+
+        {"name":"skinny",   "type":800},
+        {"name":"mange",    "type":800},
+        {"name":"sores",    "type":800},
+        {"name":"subq",     "type":800},
+
+        {"name":"mammaries", "type":800},
+        {"name":"pregnant",  "type":800},
+        {"name":"litter",    "type":800},
+        {"name":"perforate", "type":800},
+        {"name":"lactating", "type":800},
+        {"name":"scrotal",   "type":800},
+
+        {"name":"photos",   "type":800},
+        {"name":"comments", "type":700}
+       ],
+      "locations":[
+        {"type":"gps",           "default":true, "allow":true},
+        {"type":"adhocTarget",   "default":false, "allow":false},
+        {"type":"adhocTouch",    "default":false, "allow":false},
+        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Critter",
+        "grouped":false,
+        "sections":[
+          {
+            "elements":[
+              {"type":"QEntryElement",     "key":"t",  "bind":"textValue:trap",           "title":"Trap",           "placeholder":"ID",   "autocorrectionType":"No"},
+              {"type":"QSegmentedElement", "key":"n",  "bind":"selectedItem:nr",                                    "items":["New", "Re-Capture"]},
+              {"type":"QRadioElement",     "key":"i",  "bind":"selectedItem:tag_prefix",  "title":"Tag Start",      "items":["0A130A0B", "6C00062", "9820003579", "9820004088"]},
+              {"type":"QEntryElement",     "key":"i2", "bind":"textValue:tag_suffix",     "title":"Tag End",        "placeholder":"Code", "autocorrectionType":"No"},
+              {"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:species",     "title":"Species",        "items":["CLRU", "MIMI", "BOCH", "MIOE", "UNKN"]},
+              {"type":"QSegmentedElement", "key":"g",  "bind":"selectedItem:gender",      "title":"Gender",         "items":["Male", "Female", "Unknown"]},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:age",         "title":"Age",            "items":["Juvy", "subadult", "adult", "2nd yr"]},
+              {"type":"QDecimalElement",   "key":"w1", "bind":"numberValue:total_weight", "title":"Total Wt (g)",   "fractionDigits":0},
+              {"type":"QDecimalElement",   "key":"w2", "bind":"numberValue:bag_weight",   "title":"Bag Wt (g)",     "fractionDigits":0},
+              {"type":"QDecimalElement",   "key":"w3", "bind":"numberValue:net_weight",   "title":"Net Wt (g)",     "fractionDigits":0},
+              {"type":"QBooleanElement",   "key":"sw", "bind":"boolValue:swab",           "title":"Swab?",          "boolValue":0},
+              {"type":"QBooleanElement",   "key":"m",  "bind":"boolValue:mort",           "title":"Mortality?",     "boolValue":0},
+              {"type":"QBooleanElement",   "key":"b",  "bind":"boolValue:black",          "title":"Blackback?",     "boolValue":0},
+              {"type":"QBooleanElement",   "key":"e",  "bind":"boolValue:ecto",           "title":"Ectoparasites?", "boolValue":0},
+              {"type":"QBooleanElement",   "key":"p",  "bind":"boolValue:photos",         "title":"Photos?",        "boolValue":0},
+              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:comments",       "title":"Comments"}
+              ]
+          }, {
+            "title":"Body Condition", "elements": [
+              {"type":"QBooleanElement",   "key":"b1",  "bind":"boolValue:skinny",        "title":"Skinny?", "boolValue":0},
+              {"type":"QBooleanElement",   "key":"b2",  "bind":"boolValue:mange",         "title":"Mange?",  "boolValue":0},
+              {"type":"QBooleanElement",   "key":"b3",  "bind":"boolValue:sores",         "title":"Sores?",  "boolValue":0},
+              {"type":"QBooleanElement",   "key":"b4",  "bind":"boolValue:subq",          "title":"Subq?",   "boolValue":0}
+            ]
+          }, {
+            "title":"Reproductive", "elements": [
+              {"type":"QBooleanElement",   "key":"r1",  "bind":"boolValue:mammaries",      "title":"Mammaries?", "boolValue":0},
+              {"type":"QBooleanElement",   "key":"r2",  "bind":"boolValue:pregnant",       "title":"Pregnant?",  "boolValue":0},
+              {"type":"QBooleanElement",   "key":"r3",  "bind":"boolValue:litter",         "title":"Litter?",    "boolValue":0},
+              {"type":"QBooleanElement",   "key":"r4",  "bind":"boolValue:perforate",      "title":"Perforate?", "boolValue":0},
+              {"type":"QBooleanElement",   "key":"r5",  "bind":"boolValue:lactating",      "title":"Lactating?", "boolValue":0},
+              {"type":"QBooleanElement",   "key":"r5",  "bind":"boolValue:scrotal",        "title":"Scrotal?",   "boolValue":0}
+            ]
+          }
+        ]
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [255,215,0,255],
+          "size": 18,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 2
+          }
+        }
+      }
+    }
+   ],
+  "csv":{
+    "gps_points":{
+      "name":"GpsPoints",
+      "field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+      "field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+      "key_indexes":[0,2,1]
+    },
+    "track_logs":{
+      "name":"TrackLogs",
+      "field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+      "field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+      "start_key_indexes":[1,9,8],
+      "end_key_indexes":[5,11,10]
+    },
+    "features":{
+      "header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+      "feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+      "feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+      "feature_field_map":[0,1,2,3,4,5,8],
+      "feature_key_indexes":[0,5,4],
+      "obs_name":"Observations",
+      "obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+      "obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+      "obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+      "obs_key_indexes":[0,11,10]
+    }
+  }
+}

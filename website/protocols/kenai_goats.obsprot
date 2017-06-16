@@ -1,10 +1,10 @@
 {
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
-  "name":"Sheep Transects Short",
-  "version":3.0,
+  "name":"Kenai Goat Survey",
+  "version":1.0,
   "date":"2017-06-16",
-  "description":"This protocol is for sheep surveys in the Alaskan I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
+  "description":"This protocol is for goat surveys in the Kenai Peninsula.  Contact kumi_rattenbury@nps.gov for more details.",
   "observing": "ON Transect",
   "notobserving": "Recording NOT observing",
   "cancel_on_top": true,
@@ -100,6 +100,67 @@
   },
   "features":[
     {
+      "name":"Goats",
+      "attributes":[
+        {"name":"id", "type":0},
+        {"name":"CountAdults",   "type":100},
+        {"name":"CountKids",     "type":100},
+        {"name":"CountUnknown",   "type":100},
+        {"name":"Activity",       "type":700},
+        {"name":"Waypoint",       "type":700},
+        {"name":"OnTransect",     "type":700},
+        {"name":"Notes",          "type":700}
+       ],
+      "locations":[
+        {"type":"gps",           "default":false, "allow":true},
+        {"type":"adhocTarget",   "default":true, "allow":true},
+        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Goats",
+        "grouped":true,
+        "sections":[
+          {
+            "elements":[
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountAdults",   "title":"Adults"},
+              {"type":"QIntegerElement",   "key":"e4", "bind":"numberValue:CountKids",     "title":"Kids"},
+              {"type":"QIntegerElement",   "key":"e5", "bind":"numberValue:CountUnknown",  "title":"Unclassified"},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",     "items":["Stationary", "Walking", "Running"]},
+              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",        "title":"Waypoint",       "placeholder":"ID", "autocorrectionType":"No"},
+              {"type":"QLabelElement",     "title":"On Transect?"},
+              {"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:OnTransect",   "items":["On", "Missed", "Below", "Off"]},
+              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",           "title":"Comments"}
+            ]
+          }
+        ]
+      },
+      "label":{
+        "field":"Waypoint",
+        "symbol":{
+          "type":"esriTS",
+          "color":[255,0,0,255],
+          "font":{"family":"Arial", "size":24, "weight":"bold", "style":"normal", "decoration":"none"},
+          "verticalAlignment": "bottom",
+          "horizontalAlignment": "left",
+          "xoffset": 10, "yoffset": 20
+        }
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [66,165,245,255],
+          "size": 24,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 2
+          }
+        }
+      }
+    },
+    {
       "name":"Sheep",
       "attributes":[
         {"name":"id", "type":0},
@@ -188,7 +249,7 @@
         "sections":[
           {
             "elements":[
-              {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:Species",   "title":"Species", "items":["Goat", "Coyote", "Golden Eagle", "Grizzly", "Black Bear", "Wolf", "Wolverine", "Caribou", "Muskox", "Moose", "Other"]},
+              {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:Species",   "title":"Species", "items":["Golden Eagle", "Grizzly", "Black Bear", "Wolf", "Wolverine", "Caribou", "Muskox", "Moose", "Other"]},
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountGroup", "title":"Group Size"},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",  "title":"Activity", "items":["Stationary", "Walking", "Running"]},
               {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",     "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},

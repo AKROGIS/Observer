@@ -8,22 +8,22 @@
 ,
 {
   "name":"ARCN RTLO Survey",
-  "version":1.1,
-  "date":"2016-11-14",
+  "version":2.0,
+  "date":"2017-06-06",
   "url":"https://akrgis.nps.gov/observer/protocols/arcn_rtlo.obsprot"
 }
 ,
 {
   "name":"ARCN YBLO Survey",
-  "version":1.2,
-  "date":"2016-11-14",
+  "version":2.1,
+  "date":"2017-06-06",
   "url":"https://akrgis.nps.gov/observer/protocols/arcn_yblo.obsprot"
 }
 ,
 {
   "name":"Sheep Transects Short",
-  "version":2.2,
-  "date":"2016-06-28",
+  "version":3.0,
+  "date":"2017-06-16",
   "url":"https://akrgis.nps.gov/observer/protocols/sheep_short2.obsprot"
 }
 ,
@@ -32,6 +32,20 @@
   "version":2.1,
   "date":"2017-05-02",
   "url":"https://akrgis.nps.gov/observer/protocols/sheep_long2.obsprot"
+}
+,
+{
+  "name":"Small Mammals",
+  "version":1.0,
+  "date":"2017-06-06",
+  "url":"https://akrgis.nps.gov/observer/protocols/small_mammals.obsprot"
+}
+,
+{
+  "name":"GAAR Snowshoe Hare",
+  "version":1.0,
+  "date":"2017-06-05",
+  "url":"https://akrgis.nps.gov/observer/protocols/gaar_shep.obsprot"
 }
 ,
 {
