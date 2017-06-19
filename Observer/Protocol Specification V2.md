@@ -67,6 +67,7 @@ Each of these properties is define in the following sections. Complete details o
 		-	The name can be any sequence of characters, and must be enclosed in quotes
 		-	The name is used in the interface to let the user choose among different feature types
 		-	It should be short and descriptive.
+		-	allow_off_transect_observations - An optional boolean value that defaults to false.  If true, then this feature can be observed while off transect (not observing)
 		-	attributes
 		-	A feature type can have an optional list of attributes to be collected for each feature
 		-	A feature with no attributes, only collects a location (and the type of the feature)

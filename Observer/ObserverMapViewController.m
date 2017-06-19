@@ -539,15 +539,27 @@
 
     switch (features.count) {  //Number of layers with selected features
         case 0:
-            if (self.survey.isObserving) {
-                switch (self.survey.protocol.featuresWithLocateByTouch.count) {
+            if (self.survey.isRecording) {
+                NSArray *observableFeatures;
+                if (self.survey.isObserving) {
+                    observableFeatures = self.survey.protocol.featuresWithLocateByTouch;
+                } else {
+                    NSMutableArray *obsFeatures = [NSMutableArray new];
+                    for (ProtocolFeature *feature in self.survey.protocol.featuresWithLocateByTouch) {
+                        if (feature.allowOffTransectObservations) {
+                            [obsFeatures addObject:feature];
+                        }
+                    }
+                    observableFeatures = [obsFeatures copy];
+                }
+                switch (observableFeatures.count) {
                     case 0:
                         break;
                     case 1:
-                        [self addFeature:self.survey.protocol.featuresWithLocateByTouch[0] atMapPoint:mapPoint];
+                        [self addFeature:observableFeatures[0] atMapPoint:mapPoint];
                         break;
                     default:
-                        [self presentProtocolFeatureSelector:self.survey.protocol.featuresWithLocateByTouch atPoint:screen mapPoint:mapPoint];
+                        [self presentProtocolFeatureSelector:observableFeatures atPoint:screen mapPoint:mapPoint];
                         break;
                 }
             }
@@ -851,7 +863,7 @@
     self.startStopObservingBarButtonItem.enabled = self.survey.isRecording && !self.gpsFailed;
     self.editEnvironmentBarButton.enabled = self.survey.isRecording && self.survey.protocol.missionFeature.attributes.count > 0 && !self.gpsFailed;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
-        item.enabled = self.survey.isObserving && !self.gpsFailed;
+        item.enabled = (self.survey.isObserving || (self.survey.isRecording && item.feature.allowOffTransectObservations)) && !self.gpsFailed;
     }
     [self updateStatusMessage];
 }
