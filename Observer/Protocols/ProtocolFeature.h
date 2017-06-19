@@ -24,6 +24,10 @@
 // The user provided name of this object
 @property (strong, nonatomic, readonly) NSString *name;
 
+//Can we observe these features when we are off-transect (i.e. not observing); default is NO
+//This is useful for supplemental/optional features (like other species)
+@property (nonatomic, readonly) BOOL allowOffTransectObservations;
+
 // What kind of locations are allowed by this feature
 @property (strong, nonatomic, readonly) ProtocolFeatureAllowedLocations *allowedLocations;
 

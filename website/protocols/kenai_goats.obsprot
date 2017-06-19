@@ -162,6 +162,7 @@
     },
     {
       "name":"Sheep",
+      "allow_off_transect_observations": true,
       "attributes":[
         {"name":"id", "type":0},
         {"name":"CountEwelike",   "type":100},
@@ -229,6 +230,7 @@
     },
     {
       "name":"Other",
+      "allow_off_transect_observations": true,
       "attributes":[
         {"name":"id", "type":0},
         {"name":"Species",        "type":700},

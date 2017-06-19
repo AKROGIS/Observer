@@ -42,6 +42,10 @@ static NSUInteger currentUniqueId = 0;
     if ([name isKindOfClass:[NSString class]]) {
         _name = (NSString *)name;
     }
+
+    id allowOffTransectObservations = json[@"allow_off_transect_observations"];
+    _allowOffTransectObservations = [allowOffTransectObservations isKindOfClass:[NSNumber class]] ? [allowOffTransectObservations boolValue] : NO;
+    
     _allowedLocations = [[ProtocolFeatureAllowedLocations alloc] initWithLocationsJSON:json[@"locations"]version:version];
     [self defineReadonlySymbology:json[@"symbology"] version:version];
     _labelSpec = [[ProtocolFeatureLabel alloc] initWithLabelJSON:json[@"label"] version:version];
