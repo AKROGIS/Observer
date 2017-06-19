@@ -2,8 +2,8 @@
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
   "name":"Sheep Transects Short",
-  "version":3.0,
-  "date":"2017-06-16",
+  "version":3.1,
+  "date":"2017-06-19",
   "description":"This protocol is for sheep surveys in the Alaskan I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
   "observing": "ON Transect",
   "notobserving": "Recording NOT observing",
@@ -168,10 +168,14 @@
     },
     {
       "name":"Other",
+      "allow_off_transect_observations": true,
       "attributes":[
         {"name":"id", "type":0},
         {"name":"Species",        "type":700},
         {"name":"CountGroup",     "type":100},
+        {"name":"CountAdult",     "type":100},
+        {"name":"CountYoung",     "type":100},
+        {"name":"Activity",       "type":700},
         {"name":"Activity",       "type":700},
         {"name":"Waypoint",       "type":700},
         {"name":"Notes",          "type":700}
@@ -190,7 +194,9 @@
             "elements":[
               {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:Species",   "title":"Species", "items":["Goat", "Coyote", "Golden Eagle", "Grizzly", "Black Bear", "Wolf", "Wolverine", "Caribou", "Muskox", "Moose", "Other"]},
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountGroup", "title":"Group Size"},
-              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",  "title":"Activity", "items":["Stationary", "Walking", "Running"]},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountAdult", "title":"Adults"},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountYoung", "title":"Young"},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",  "title":"Activity", "items":["Stationary", "Walking", "Running", "Flying"]},
               {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",     "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
               {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",        "title":"Comments"}
             ]
