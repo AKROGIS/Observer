@@ -10,10 +10,13 @@
 #import <CoreData/CoreData.h>
 #import <Foundation/Foundation.h>
 #import "QuickDialogController.h"
+#import "Survey.h"
 
 @interface AttributeViewController : QuickDialogController
 
 @property (nonatomic, strong) NSManagedObject *managedObject;
 @property (nonatomic, strong) AGSGraphic *graphic;
+
+- (void)addDeleteButtonForSurvey:(Survey *)survey;
 
 @end
