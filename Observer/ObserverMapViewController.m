@@ -1542,35 +1542,14 @@
         }
     }
 
-    //Delete Button
-    //You cannot delete a mission property (cancel is done on VC Nav controls).
-    if (![feature isKindOfClass:[ProtocolMissionFeature class]]) {
-        NSString *buttonText = @"Delete";
-        QButtonElement *deleteButton = [[QButtonElement alloc] initWithTitle:buttonText];
-        deleteButton.appearance = [[QFlatAppearance alloc] init];
-        deleteButton.appearance.buttonAlignment = NSTextAlignmentCenter;
-        deleteButton.appearance.actionColorEnabled = [UIColor redColor];
-        deleteButton.onSelected = ^(){
-            if ([graphic isKindOfClass:[POGraphic class]]) {
-                [(POGraphic *)graphic remove];
-            } else {
-                [graphic.layer removeGraphic:graphic];
-            }
-            [self.survey deleteEntity:entity];
-            [self dismissViewControllerAnimated:YES completion:nil];
-        };
-        if (self.survey.protocol.cancelOnTop) {
-            [root.sections.firstObject insertElement:deleteButton atIndex:0];
-        } else {
-            [root.sections.lastObject addElement:deleteButton];
-        }
-    }
-
-
     AttributeViewController *dialog = [[AttributeViewController alloc] initWithRoot:root];
     dialog.managedObject = entity;
     dialog.graphic = graphic;
     dialog.resizeWhenKeyboardPresented = NO; //because the popover I'm in will resize
+    //Add a Delete Button; You cannot delete a mission property (cancel is done on VC Nav controls).
+    if (![feature isKindOfClass:[ProtocolMissionFeature class]]) {
+        [dialog addDeleteButtonForSurvey:self.survey];
+    }
     return dialog;
 }
 
