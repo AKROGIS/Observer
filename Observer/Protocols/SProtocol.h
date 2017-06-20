@@ -75,4 +75,11 @@
 // The percent complete of the download, saved incase the the popover is dismissed, and then re-presented
 @property (nonatomic) double downloadPercentComplete;
 
+// Settings to determine when to show the Mission Properties Attribute Editor
+@property (nonatomic) BOOL editMissionPropertiesAtStartRecording;
+@property (nonatomic) BOOL editMissionPropertiesAtStartFirstObserving;
+@property (nonatomic) BOOL editMissionPropertiesAtStartReObserving;
+@property (nonatomic) BOOL editPriorMissionPropertiesAtStopObserving;
+@property (nonatomic) BOOL editMissionPropertiesAtStopObserving;
+
 @end

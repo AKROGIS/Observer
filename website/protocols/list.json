@@ -118,8 +118,8 @@
 ,
 {
   "name":"Test Protocol Version 2",
-  "version":2.1,
-  "date":"2016-06-20",
+  "version":2.2,
+  "date":"2017-06-19",
   "url":"https://akrgis.nps.gov/observer/protocols/SampleProtocolV2.obsprot"
 }
 ]
