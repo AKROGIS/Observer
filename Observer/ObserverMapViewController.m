@@ -126,6 +126,7 @@
     [self openSurvey:self.survey];  // open in survey setter may fail if the view isn't ready.
     self.statusMessage.text = nil;
     self.totalizerMessage.text = nil;
+    [self updateStatusView];
     //Register map pan and zoom notifications for scale bar
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateScaleBar) name:AGSMapViewDidEndZoomingNotification object:nil];
 }
@@ -279,8 +280,10 @@
     }
     self.recordingButNotObserving = YES;
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(stopRecording:) ToPlay:NO];
-    [self enableControls];
     [self startLocationUpdates];
+    self.totalizerMessage.text = self.survey.totalizer.message;
+    self.totalizerMessage.font = [UIFont systemFontOfSize:self.survey.totalizer.fontSize];
+    [self enableControls];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
 }
 
@@ -349,8 +352,8 @@
     [self.survey stopRecording:location]; //Stops observing
     [UIApplication sharedApplication].idleTimerDisabled = NO;
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(startRecording:) ToPlay:YES];
-    [self enableControls];
     self.totalizerMessage.text = nil;
+    [self enableControls];
 }
 
 - (void)stopObserving:(UIBarButtonItem *)sender
@@ -902,11 +905,19 @@
     //call this from map load; start/stop recording/observing  gps fail/recover (all the cases when enableControls is called)
     self.statusMessage.text = self.gpsFailed ? @"GPS Failed" : self.survey.statusMessage;
     if (self.survey.isRecording) {
-        self.statusMessage.textColor = [UIColor colorWithWhite:(CGFloat)0.7 alpha:1];
+        self.statusMessage.textColor = [UIColor darkTextColor];
+        self.statusMessage.font = [UIFont systemFontOfSize:self.survey.protocol.statusMessageFontSize];
     }
-    if (self.survey.isObserving) {
-        self.statusMessage.textColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.5 alpha:1.0];
+    if (self.survey.isObserving || self.gpsFailed) {
+        self.statusMessage.textColor = [UIColor colorWithRed:0.95686 green:0.26275 blue:0.21176 alpha:1.0]; // #F44336 (244,67,54) Google Material Collor 500
+        self.statusMessage.font = [UIFont boldSystemFontOfSize:(self.survey.protocol.statusMessageFontSize+2.0)];
     }
+    [self updateStatusView];
+}
+
+- (void) updateStatusView
+{
+    self.statusMessage.superview.hidden = self.statusMessage.text.length == 0 && self.totalizerMessage.text.length == 0;
 }
 
 - (void)incrementBusy

@@ -38,6 +38,8 @@ Each of these properties is define in the following sections. Complete details o
 		-	User defined message to display on screen when observing. The default is nothing.
 	*	notobserving
 		-	User defined message to display on screen when track logging but not observing.  The default is nothing.
+	*	status_message_fontsize
+		-	An optional floating point value that indicate the size (in points) of the notobserving text.  The default is 16.0.  The observing text will always be 2 points bigger, bold, and red.
 	*	cancel_on_top
 		-	Optional boolean property.  `true` will put the `cancel`/`delete` button on the top of the observation attributes form.  The default is false - the button will be on the bottom.
 	* gps_interval
@@ -57,6 +59,7 @@ Each of these properties is define in the following sections. Complete details o
 		-	when any of the fields change, a different total is displayed.
 		-	There must be at least on field (string) in the array which matches the name of one of the attributes in the mission
 		-	units - An optional element with a value of "kilometers" or "miles" or "minutes". Default is "kilometers"
+		-	fontsize - An optional floating point value that indicate the size (in points) of the totalizer text.  The default is 14.0
 		-	includeon - A boolean value (true/false), that indicate is the total while "observing" is true should be displayed.  The default is  true
 		-	includeoff - A boolean value (true/false), that indicate if the total while "observing" is false should be displayed.  The default is  false
 		-	includetotal - A boolean value (true/false), that indicate if the total regardless of "observing" status should be displayed.  The default is  false

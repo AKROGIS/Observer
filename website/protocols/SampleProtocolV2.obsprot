@@ -6,7 +6,8 @@
   "date":"2017-06-19",
   "description":"This survey protocol is for for testing various features of the protocol specification - version 2",
   "observing": "ON Transect",
-  "notobserving": "Recording NOT observing",
+  "notobserving": "Recording",
+  "status_message_fontsize":20.0,
   "cancel_on_top": true,
   "gps_interval": 5,
   "mission":{
@@ -88,6 +89,7 @@
     "totalizer": {
       "fields": ["Transect"],
       "units": "miles",
+      "fontsize": 20.0,
       "includeon": true,
       "includeoff": true,
       "includetotal": true

@@ -268,6 +268,9 @@
     _notObservingMessage = [_notObservingMessage stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     _notObservingMessage = _notObservingMessage.length == 0 ? nil : _notObservingMessage;
 
+    id statusMessageFontSize = json[@"status_message_fontsize"];
+    _statusMessageFontSize = [statusMessageFontSize isKindOfClass:[NSNumber class]] ? (CGFloat)[statusMessageFontSize floatValue] : 16.0;
+
     id totalizerConfig = json[@"mission"][@"totalizer"];
     _totalizerConfig = [totalizerConfig isKindOfClass:[NSDictionary class]] ? totalizerConfig : nil;
 
