@@ -208,6 +208,7 @@ typedef NS_OPTIONS(NSUInteger, TotalizerUnits) {
     //    ⁃	includeon - A boolean value (true/false), that indicate is the total while "observing" is true should be displayed.  The default is  true
     //    ⁃	includeoff - A boolean value (true/false), that indicate if the total while "observing" is false should be displayed.  The default is  false
     //    ⁃	includetotal - A boolean value (true/false), that indicate if the total regardless of "observing" status should be displayed.  The default is  false
+    //    ⁃	fontsize - An optional floating point value that indicate the size (in points) of the totalizer text.  The default is 14.0
 
     BOOL hasTotalizer = NO;
     switch (self.protocol.metaversion) {
@@ -238,6 +239,9 @@ typedef NS_OPTIONS(NSUInteger, TotalizerUnits) {
                     self.units = TotalizerUnitsTime;
                     self.unitLabel = @"Minutes";
                 }
+                id fontSize = config[@"fontsize"];
+                _fontSize = [fontSize isKindOfClass:[NSNumber class]] ? (CGFloat)[fontSize floatValue] : 14.0;
+
                 // get and verify fields
                 NSMutableArray *tempfields = [NSMutableArray new];
                 id protocol_fields = config[@"fields"];

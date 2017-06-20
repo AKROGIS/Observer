@@ -282,6 +282,7 @@
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(stopRecording:) ToPlay:NO];
     [self startLocationUpdates];
     self.totalizerMessage.text = self.survey.totalizer.message;
+    self.totalizerMessage.font = [UIFont systemFontOfSize:self.survey.totalizer.fontSize];
     [self enableControls];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
 }
@@ -905,11 +906,11 @@
     self.statusMessage.text = self.gpsFailed ? @"GPS Failed" : self.survey.statusMessage;
     if (self.survey.isRecording) {
         self.statusMessage.textColor = [UIColor darkTextColor];
-        self.statusMessage.font = [UIFont systemFontOfSize:16.0];
+        self.statusMessage.font = [UIFont systemFontOfSize:self.survey.protocol.statusMessageFontSize];
     }
     if (self.survey.isObserving || self.gpsFailed) {
         self.statusMessage.textColor = [UIColor colorWithRed:0.95686 green:0.26275 blue:0.21176 alpha:1.0]; // #F44336 (244,67,54) Google Material Collor 500
-        self.statusMessage.font = [UIFont boldSystemFontOfSize:18.0];
+        self.statusMessage.font = [UIFont boldSystemFontOfSize:(self.survey.protocol.statusMessageFontSize+2.0)];
     }
     [self updateStatusView];
 }

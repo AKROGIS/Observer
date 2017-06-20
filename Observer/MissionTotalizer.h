@@ -19,6 +19,8 @@
 @property (nonatomic, strong, readonly) SProtocol *protocol;
 @property (nonatomic, strong, readonly) NSMutableArray *trackLogSegments;
 @property (nonatomic, strong, readonly) NSString *message;
+@property (nonatomic, readonly) CGFloat fontSize;
+
 
 - (void)updateWithLocation:(CLLocation *)location forMissionProperties:(MissionProperty *)missionProperty;
 - (void)trackLogSegmentsChanged:(NSMutableArray *)trackLogSegments;
