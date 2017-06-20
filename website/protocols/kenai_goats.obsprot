@@ -3,7 +3,7 @@
   "meta-version":2,
   "name":"Kenai Goat Survey",
   "version":1.0,
-  "date":"2017-06-16",
+  "date":"2017-06-20",
   "description":"This protocol is for goat surveys in the Kenai Peninsula.  Contact kumi_rattenbury@nps.gov for more details.",
   "observing": "ON Transect",
   "notobserving": "Recording NOT observing",
@@ -50,6 +50,7 @@
         }
       ]
     },
+    "edit_prior_at_stop_observing":true,
     "symbology":{
       "type": "simple",
       "symbol": {
@@ -101,10 +102,11 @@
   "features":[
     {
       "name":"Goats",
+      "allow_off_transect_observations": true,
       "attributes":[
-        {"name":"id", "type":0},
-        {"name":"CountAdults",   "type":100},
-        {"name":"CountKids",     "type":100},
+        {"name":"id",             "type":0},
+        {"name":"CountAdults",    "type":100},
+        {"name":"CountKids",      "type":100},
         {"name":"CountUnknown",   "type":100},
         {"name":"Activity",       "type":700},
         {"name":"Waypoint",       "type":700},
@@ -127,7 +129,7 @@
               {"type":"QIntegerElement",   "key":"e4", "bind":"numberValue:CountKids",     "title":"Kids"},
               {"type":"QIntegerElement",   "key":"e5", "bind":"numberValue:CountUnknown",  "title":"Unclassified"},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",     "items":["Stationary", "Walking", "Running"]},
-              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",        "title":"Waypoint",       "placeholder":"ID", "autocorrectionType":"No"},
+              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",        "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
               {"type":"QLabelElement",     "title":"On Transect?"},
               {"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:OnTransect",   "items":["On", "Missed", "Below", "Off"]},
               {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",           "title":"Comments"}
@@ -164,7 +166,7 @@
       "name":"Sheep",
       "allow_off_transect_observations": true,
       "attributes":[
-        {"name":"id", "type":0},
+        {"name":"id",             "type":0},
         {"name":"CountEwelike",   "type":100},
         {"name":"CountLambs",     "type":100},
         {"name":"CountRams099",   "type":100},
@@ -195,7 +197,7 @@
               {"type":"QIntegerElement",   "key":"r7", "bind":"numberValue:CountRamsOther", "title":"Other Rams"},
               {"type":"QIntegerElement",   "key":"e5", "bind":"numberValue:CountUnknown",   "title":"Unclassified"},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",      "title":"Activity", "items":["Stationary", "Walking", "Running"]},
-              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",         "title":"Waypoint",       "placeholder":"ID", "autocorrectionType":"No"},
+              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",         "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
               {"type":"QLabelElement",     "title":"On Transect?"},
               {"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:OnTransect",    "title":"OnTransect", "items":["On", "Missed", "Below", "Off"]},
               {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",            "title":"Comments"}
@@ -232,13 +234,16 @@
       "name":"Other",
       "allow_off_transect_observations": true,
       "attributes":[
-        {"name":"id", "type":0},
+        {"name":"id",             "type":0},
         {"name":"Species",        "type":700},
-        {"name":"CountGroup",     "type":100},
+        {"name":"CountAdult",     "type":100},
+        {"name":"CountYoung",     "type":100},
+        {"name":"CountUnknown",   "type":100},
+        {"name":"Activity",       "type":700},
         {"name":"Activity",       "type":700},
         {"name":"Waypoint",       "type":700},
         {"name":"Notes",          "type":700}
-       ],
+      ],
       "locations":[
         {"type":"gps",           "default":false, "allow":true},
         {"type":"adhocTarget",   "default":true, "allow":true},
@@ -251,16 +256,17 @@
         "sections":[
           {
             "elements":[
-              {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:Species",   "title":"Species", "items":["Golden Eagle", "Grizzly", "Black Bear", "Wolf", "Wolverine", "Caribou", "Muskox", "Moose", "Other"]},
-              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountGroup", "title":"Group Size"},
-              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",  "title":"Activity", "items":["Stationary", "Walking", "Running"]},
-              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",     "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
-              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",        "title":"Comments"}
+              {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:Species",     "title":"Species",  "items":["Goat", "Coyote", "Golden Eagle", "Grizzly", "Black Bear", "Wolf", "Wolverine", "Caribou", "Muskox", "Moose", "Other"]},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountAdult",   "title":"Adults"},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountYoung",   "title":"Young"},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountUnknown", "title":"Unknown"},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",    "title":"Activity", "items":["Stationary", "Walking", "Running", "Flying"]},
+              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",       "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
+              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",          "title":"Comments"}
             ]
           }
         ]
-      },
-      "label":{
+      },      "label":{
         "field":"Waypoint",
         "symbol":{
           "type":"esriTS",
