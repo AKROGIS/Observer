@@ -271,6 +271,21 @@
     id totalizerConfig = json[@"mission"][@"totalizer"];
     _totalizerConfig = [totalizerConfig isKindOfClass:[NSDictionary class]] ? totalizerConfig : nil;
 
+    id editMPAtRecording = json[@"mission"][@"edit_at_start_recording"];
+    _editMissionPropertiesAtStartRecording = [editMPAtRecording isKindOfClass:[NSNumber class]] ? [editMPAtRecording boolValue] : YES;
+
+    id editMPAtFirstObserving = json[@"mission"][@"edit_at_start_first_observing"];
+    _editMissionPropertiesAtStartFirstObserving = [editMPAtFirstObserving isKindOfClass:[NSNumber class]] ? [editMPAtFirstObserving boolValue] : NO;
+
+    id editMPAtReObserving = json[@"mission"][@"edit_at_start_reobserving"];
+    _editMissionPropertiesAtStartReObserving = [editMPAtReObserving isKindOfClass:[NSNumber class]] ? [editMPAtReObserving boolValue] : YES;
+
+    id editPriorMPAtStopObserving = json[@"mission"][@"edit_prior_at_stop_observing"];
+    _editPriorMissionPropertiesAtStopObserving = [editPriorMPAtStopObserving isKindOfClass:[NSNumber class]] ? [editPriorMPAtStopObserving boolValue] : NO;
+
+    id editMPAtStopObserving = json[@"mission"][@"edit_at_stop_observing"];
+    _editMissionPropertiesAtStopObserving = [editMPAtStopObserving isKindOfClass:[NSNumber class]] ? [editMPAtStopObserving boolValue] : NO;
+
     _missionFeature = [[ProtocolMissionFeature alloc] initWithJSON:json[@"mission"] version:jsonVersion];
     _features = [self buildFeaturelist:json[@"features"] version:jsonVersion];
     _featuresWithLocateByTouch = [self buildFeaturesWithLocateByTouch:_features];

@@ -2,8 +2,8 @@
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
   "name":"Test Protocol Version 2",
-  "version":2.1,
-  "date":"2016-06-20",
+  "version":2.2,
+  "date":"2017-06-19",
   "description":"This survey protocol is for for testing various features of the protocol specification - version 2",
   "observing": "ON Transect",
   "notobserving": "Recording NOT observing",
@@ -40,6 +40,11 @@
         }
       ]
     },
+    "edit_at_start_recording":false,
+    "edit_at_start_first_observing":true,
+    "edit_at_start_reobserving":false,
+    "edit_prior_at_stop_observing":true,
+    "edit_at_stop_observing":true,
     "symbology":{
       "type": "simple",
       "symbol": {

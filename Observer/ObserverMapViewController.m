@@ -93,6 +93,7 @@
 @property (nonatomic) BOOL userWantsLocationUpdates;
 @property (nonatomic) BOOL userWantsHeadingUpdates;
 @property (nonatomic) BOOL gpsFailed;
+@property (nonatomic) BOOL recordingButNotObserving;
 
 @property (strong, nonatomic) AutoPanStateMachine *autoPanController;
 @property (strong, nonatomic) CLLocationManager *locationManager;
@@ -273,7 +274,10 @@
         [self alert:nil message:@"Unable to start recording.  Please try again."];
         return;
     }
-    [self showTrackLogAttributeEditor:self.survey.lastTrackLogSegment];
+    if (self.survey.protocol.editMissionPropertiesAtStartRecording) {
+        [self showTrackLogAttributeEditor:self.survey.lastTrackLogSegment];
+    }
+    self.recordingButNotObserving = YES;
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(stopRecording:) ToPlay:NO];
     [self enableControls];
     [self startLocationUpdates];
@@ -292,7 +296,16 @@
         return;
     }
     TrackLogSegment *tracklog = [self.survey startObserving:location];
-    [self showTrackLogAttributeEditor:tracklog];
+    if (self.recordingButNotObserving) {
+        if (self.survey.protocol.editMissionPropertiesAtStartFirstObserving) {
+            [self showTrackLogAttributeEditor:tracklog];
+        }
+    } else {
+        if (self.survey.protocol.editMissionPropertiesAtStartReObserving) {
+            [self showTrackLogAttributeEditor:tracklog];
+        }
+    }
+    self.recordingButNotObserving = NO;
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(stopObserving:) ToPlay:NO];
     [self enableControls];
 }
@@ -324,14 +337,17 @@
         AKRLog(@"Whaaaat ... How did I try to stop recording when I am not recording?");
         return;
     }
-    BOOL wasObserving = self.survey.isObserving;
     CLLocation *location = self.mostRecentLocation;
+    if (self.survey.isObserving) {
+        if (location.timestamp) {
+            [self stopObservingAtLocation:location];
+        } else {
+            [self showNoLocationAlert];
+        }
+    }
     [self stopLocationUpdates];
     [self.survey stopRecording:location]; //Stops observing
     [UIApplication sharedApplication].idleTimerDisabled = NO;
-    if (wasObserving) {
-        self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startObserving:) ToPlay:YES];
-    }
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(startRecording:) ToPlay:YES];
     [self enableControls];
     self.totalizerMessage.text = nil;
@@ -348,7 +364,20 @@
         [self showNoLocationAlert];
         return;
     }
+    [self stopObservingAtLocation:location];
+}
+
+- (void)stopObservingAtLocation:(CLLocation *)location
+{
+    TrackLogSegment *priorTrackLog = self.survey.lastTrackLogSegment;
     [self.survey stopObserving:location];
+    if (self.survey.protocol.editPriorMissionPropertiesAtStopObserving && !self.survey.protocol.editMissionPropertiesAtStopObserving) {
+        [self showTrackLogAttributeEditor:priorTrackLog];
+    }
+    //TODO: #201 Support editing both prior and future
+    if (self.survey.protocol.editMissionPropertiesAtStopObserving) {
+        [self showTrackLogAttributeEditor:self.survey.lastTrackLogSegment];
+    }
     self.startStopObservingBarButtonItem = [self setBarButtonAtIndex:7 action:@selector(startObserving:) ToPlay:YES];
     [self enableControls];
 }
