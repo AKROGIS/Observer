@@ -371,9 +371,10 @@
 {
     TrackLogSegment *priorTrackLog = self.survey.lastTrackLogSegment;
     [self.survey stopObserving:location];
-    if (self.survey.protocol.editPriorMissionPropertiesAtStopObserving) {
+    if (self.survey.protocol.editPriorMissionPropertiesAtStopObserving && !self.survey.protocol.editMissionPropertiesAtStopObserving) {
         [self showTrackLogAttributeEditor:priorTrackLog];
     }
+    //TODO: #201 Support editing both prior and future
     if (self.survey.protocol.editMissionPropertiesAtStopObserving) {
         [self showTrackLogAttributeEditor:self.survey.lastTrackLogSegment];
     }

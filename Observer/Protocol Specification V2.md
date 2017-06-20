@@ -65,6 +65,8 @@ Each of these properties is define in the following sections. Complete details o
 		-	edit_at_start_reobserving - An optional boolean value that defaults to true.  If true, then editor will be displayed when start observing button is pushed after stop observing
 		-	edit_prior_at_stop_observing - An optional boolean value that defaults to false.  If true, then editor will be displayed for prior track log when done observing (stop observing or stop recording button) 
 		-	edit_at_stop_observing - An optional boolean value that defaults to false.  If true, then editor will be displayed when when done observing (stop observing or stop recording button)
+				-  Note: only one of edit_prior_at_stop_observing and edit_at_stop_observing should be set to true.  If both are set to true, edit_prior_at_stop_observing is ignored  (you can edit the prior mission property by taping to marker on the map)
+
 
 	*	features
 		-	An Array of objects with the following properties
