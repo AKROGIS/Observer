@@ -178,7 +178,6 @@
         {"name":"CountYoung",     "type":100},
         {"name":"CountUnknown",   "type":100},
         {"name":"Activity",       "type":700},
-        {"name":"Activity",       "type":700},
         {"name":"Waypoint",       "type":700},
         {"name":"Notes",          "type":700}
        ],
