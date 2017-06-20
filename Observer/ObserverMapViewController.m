@@ -280,8 +280,9 @@
     }
     self.recordingButNotObserving = YES;
     self.startStopRecordingBarButtonItem = [self setBarButtonAtIndex:5 action:@selector(stopRecording:) ToPlay:NO];
-    [self enableControls];
     [self startLocationUpdates];
+    self.totalizerMessage.text = self.survey.totalizer.message;
+    [self enableControls];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
 }
 
@@ -1661,7 +1662,6 @@
             self.totalizerMessage.text = self.survey.totalizer.message;
         }
     }
-    [self updateStatusView];
 }
 
 
