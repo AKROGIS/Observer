@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Park Observer | v1.2.0 Change Log</title>
+	<link rel="stylesheet" href="../../akr.css">
+</head>
+
+<body>
+    <div id="top">
+			<img style="float:left; padding-right:10px; padding-top:8px" src="../../images/app_icon_small.png">
+			<h1>Park Observer</h1>
+			<h2>An iPad application for offline data collection</h2>
+			<h2>Brought to you by the Alaska Regional Office GIS Team</h2>
+			<br/>
+    </div>
+
+    <div id="content">
+			<section id="intro">
+				<h3>Change Log for version 1.2.0</h3>
+
+				<p>The definitive list of changes is tracked in the GitHub Repo</p>
+				<ul>
+					<li><a href="https://github.com/regan-sarwas/Observer/issues?q=closed:2017-05-24..2017-06-20">Issues closed since previous release</a></li>
+					<li><a href="https://github.com/regan-sarwas/Observer/commits/master?q=committer-date:2017-05-24..2017-06-20">Code commits since previous release</a></li>
+				</ul>
+
+				<h3>Major Changes</h3>
+					<ul>
+						<li>
+							<h4>Clean up styling of Status Text and make font size configurable</h4>
+							<p>The text for on/off-transect (or observing/not-observing), as well as the transect totalizer
+								is now a clean font on an opaque gray background.  The font size can be configured with options
+								in the obsprot file, so individual surveys can control this to thier specifications.
+						</li>
+						<li>
+							<h4>Configurable control for when the Mission Properties dialog is displayed for editing</h4>
+							<p>Options can be configured in the protocol file.  You can display the MP editor at any of
+								 the following times:
+								<ol>
+									<li>Start Recording - default is on</li>
+									<li>Start Observing (first one after recording) default is off</li>
+									<li>Start Re-Observing (after stop observing) default is on</li>
+									<li>Stop Observing Prior (edits the track log segment being closed) - default is off</li>
+									<li>Stop Observing - default is off</li>
+								</ol>
+								<p>There is a limitation where only one of the last two options is allowed.  If both are on, then the
+								second one wins.  If you want to edit the prior track log segment, you can tap the marker on the map at
+								the start of the segment.
+						</li>
+						<li>
+							<h4>An alert is presented when deleting a feature</h4>
+							<p>Deletion is an undoable action.  Since it is possible, especially in a bumpy aircraft, to accidentally tap
+								the delete button when reviewing or editing an existing observation, the inconvenience of agreeing to <thead>
+									deletion seems warranted.
+								</thead>
+						</li>
+						<li>
+							<h4>Allow 'off-transect' observations</h4>
+							<p>Off-transect is synonymous with not observing, and on-transect equals observing. While it
+								seems illogical to allow observations when you are not observing,  there are some surveys that
+								want to be able to make observations at any time, regardless of the on/off-transect setting.
+								This feature is enabled in the protocol file on a feature by feature basis.  The default is off.
+						</li>
+						<li>
+							<h4>Increase spacing around the Mission Properties (partly cloudy) button</h4>
+							<p>This helps to avoid mistaken taps.
+						</li>
+					</ul>
+			</section>
+			<p>See the <a href="../../ProtocolSpecificationV2.html">protocol specification</a> file for details on enabling the configurable options.
+    </div>
+
+    <div id="footer">
+			Questions? Contact Regan Sarwas at <a href="mailto:regan_sarwas@nps.gov">regan_sarwas@nps.gov</a>.
+    </div>
+
+</body>
+</html>

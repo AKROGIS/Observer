@@ -1,5 +1,14 @@
 [
   {
+    "version":"1.2.0",
+    "build":808,
+    "description":"Enhancements for sheep protocols",
+    "warning":"",
+    "url":"v1.2.0/ParkObserver_1.2.0.ipa",
+    "published":"2017-06-20",
+    "expiration":"2018-04-03",
+    "details":"v1.2.0/Changelog.html"
+  },{
     "version":"1.1.1",
     "build":766,
     "description":"Fix bug to disallow distances starting with zero.",
