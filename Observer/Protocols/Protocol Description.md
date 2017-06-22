@@ -6,20 +6,39 @@ and defines the schema for the GIS database on the server.
 You can create your own protocol file if you follow the specification, however this is the file format is very picky,
 and it is easier (and recommended) to get help from the AKR GIS Team.
 
+This document discusses some of the considerations in making a protocol file suitable for your survey needs.
+It is not the definitive guide to exactly what is allowed in the content and
+format of a protocol file.  For that, see the [Protocol Specifications](ProtocolSpecificationV2.html).
+
 Basic Definition
 ----------------
 A protocol file is defined by a name and a version.  The name and version are used to sync to the GIS database on the server,
 so the name should reflect the scope of the protocol, and the version is used to distinguish changes over time.
-More on this to come.
 
 A protocol has a description, which should include some information helpful for someone browsing protocols to select the
-appropriate protocol for thier survey.  Contact information for the primary user of the protocol is usually included in the description.
+appropriate protocol for their survey.  Contact information for the primary user of the protocol is usually included in the description.
 
 The protocol defines the list of attributes tracked during a mission (called mission properties)
 
-The protocol defines the list of features (and thier attributes) that are observerd during a survey.
+The protocol defines the list of features (and their attributes) that are observered during a survey.
 Most survey are limited to a single feature (animal).
 
+Name and Version
+----------------
+
+A Protocol should have a unique name and version.  To avoid confusion, the file name should match the name attribute
+inside the file, but this is not required.
+Protocols have a major and minor version number.  Both are integers separated by a decimal point.
+A change in the major version number indicates a change in the database schema.  Use the minor version number for all other changes.
+
+When a survey is upload to the server, or the POZ2FGDB toolbox is used, the protocol used to create the survey
+determines then name of the database that is created (or appended).
+The name of the database is determined by the protocol name and the major version number.  If the database exists
+then the survey is added to the tables in the database. Therefore it is important to increase the major version
+number of your protocol if you add, remove, rename, or change the type of any of your attributes (i.e. change the
+database schema). The world may end if you try to sync two different surveys with different schemas, but the same
+protocol name and major version number.
+Please don't do that.
 
 Mission Properties
 ------------------
@@ -52,7 +71,7 @@ PickLists
   protocol’s FGDB to match the picklist values.  Currently, picklists are not created in the FGDB if the data is stored as text (I hope to
   remove this restriction the future).
 
-  * Default/Initial Value – If a default value is specified, then the form will be prepopulated with that item selected from the picklist.
+  * Default/Initial Value – If a default value is specified, then the form will be pre-populated with that item selected from the picklist.
   The appropriate value will be recorded in the database without additional action from the user.  If no default value is specified, then
   that item in the form will be blank.  The database will record a null (empty) value if the data type is text, or -1 if the data type is integer.
   Once a value is selected, it is not possible to clear the selection, and you must pick one of the items in the picklist.
