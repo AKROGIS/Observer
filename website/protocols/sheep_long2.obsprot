@@ -2,11 +2,12 @@
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
   "name":"Sheep Transects Long",
-  "version":2.1,
-  "date":"2017-05-02",
+  "version":3.0,
+  "date":"2017-06-22",
   "description":"This protocol is for sheep (and bear) surveys in the Alaska I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
   "observing": "ON Transect",
-  "notobserving": "Recording NOT observing",
+  "notobserving": "Off Transect",
+  "status_message_fontsize":18.0,
   "cancel_on_top": true,
   "gps_interval": 2,
   "mission":{
@@ -50,6 +51,7 @@
         }
       ]
     },
+    "edit_prior_at_stop_observing":false,
     "symbology":{
       "type": "simple",
       "symbol": {
@@ -93,6 +95,7 @@
     "totalizer": {
       "fields": ["Transect"],
       "units": "kilometers",
+      "fontsize": 18.0,
       "includeon": true,
       "includeoff": false,
       "includetotal": false
@@ -101,7 +104,9 @@
   "features":[
     {
         "name":"Sheep",
+        "allow_off_transect_observations": true,
         "attributes":[
+        {"name":"id",             "type":0},
         {"name":"Subunit",        "type":700},
         {"name":"CountEwes",      "type":100},
         {"name":"CountLambs",     "type":100},
@@ -113,8 +118,10 @@
         {"name":"CountRams050",   "type":100},
         {"name":"CountRams075",   "type":100},
         {"name":"CountRamsFull",  "type":100},
+        {"name":"Activity",       "type":700},
         {"name":"Waypoint",       "type":700},
-        {"name":"Activity",       "type":700}
+        {"name":"OnTransect",     "type":700},
+        {"name":"Notes",          "type":700}
        ],
       "locations":[
         {"type":"gps",           "default":false, "allow":true},
@@ -139,17 +146,25 @@
               {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountRams050",   "title":"Rams 1/2 Curl"},
               {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountRams075",   "title":"Rams 3/4 Curl"},
               {"type":"QIntegerElement",   "key":"n", "bind":"numberValue:CountRamsFull",  "title":"Rams Full Curl"},
-              {"type":"QEntryElement",     "key":"w", "bind":"textValue:Waypoint",         "title":"Waypoint",              "placeholder":"ID", "autocorrectionType":"No"},
-              {"type":"QLabelElement",     "title":"Activity"},
-              {"type":"QSegmentedElement", "key":"a", "bind":"selectedItem:Activity",      "items":["Standing", "Feeding", "Bedded", "Running", "Walking"]}
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",      "title":"Activity", "items":["Standing", "Feeding", "Bedded", "Running", "Walking"]},
+              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",         "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
+              {"type":"QLabelElement",     "title":"On Transect?"},
+              {"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:OnTransect",    "title":"OnTransect", "items":["On", "Missed", "Below", "Off"]},
+              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",            "title":"Comments"}
             ]
           }
         ]
       },
       "label":{
         "field":"Waypoint",
-        "size":17,
-        "color":"#FFD700"
+        "symbol":{
+          "type":"esriTS",
+          "color":[255,0,0,255],
+          "font":{"family":"Arial", "size":24, "weight":"bold", "style":"normal", "decoration":"none"},
+          "verticalAlignment": "bottom",
+          "horizontalAlignment": "left",
+          "xoffset": 10, "yoffset": 20
+        }
       },
       "symbology":{
         "type": "simple",
@@ -157,7 +172,7 @@
           "type": "esriSMS",
           "style": "esriSMSCircle",
           "color": [255,215,0,255],
-          "size": 15,
+          "size": 24,
           "outline": {
             "color": [0,0,0,255],
             "width": 2
@@ -166,13 +181,18 @@
       }
     },
     {
-        "name":"Bear",
-        "attributes":[
-        {"name":"Species",     "type":700},
-        {"name":"Count",       "type":100},
-        {"name":"Composition", "type":700},
-        {"name":"Waypoint2",      "type":700},
-        {"name":"Activity2",    "type":700}
+      "name":"Other",
+      "allow_off_transect_observations": true,
+      "attributes":[
+        {"name":"id",             "type":0},
+        {"name":"Species",        "type":700},
+        {"name":"CountAdult",     "type":100},
+        {"name":"CountYoung",     "type":100},
+        {"name":"CountUnknown",   "type":100},
+        {"name":"Nest_Den",       "type":800},
+        {"name":"Activity",       "type":700},
+        {"name":"Waypoint",       "type":700},
+        {"name":"Notes",          "type":700}
        ],
       "locations":[
         {"type":"gps",           "default":false, "allow":true},
@@ -181,39 +201,41 @@
         {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{
-        "title":"Bears",
-        "grouped":false,
+        "title":"Other",
+        "grouped":true,
         "sections":[
           {
-              "elements":[
-              {"type":"QLabelElement",     "title":"Species"},
-              {"type":"QSegmentedElement", "key":"s", "bind":"selectedItem:Species",     "items":["Black Bear", "Blue Bear", "Brown Bear"]},
-              {"type":"QIntegerElement", "key":"n", "bind":"numberValue:Count",        "title":"Group Size"},
-              {"type":"QRadioElement",   "key":"c", "bind":"selectedItem:Composition", "title":"Group Type", "items":["Adult - Sex unknown",
-                                                                "Subadult - Sex unknown",
-                                                                "Large Male",
-                                                                "Female with cubs",
-                                                                "Female with yearlings",
-                                                                "Female with juveniles"]},
-              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint2",        "title":"Waypoint",              "placeholder":"ID", "autocorrectionType":"No"},
-              {"type":"QLabelElement",     "title":"Activity"},
-              {"type":"QSegmentedElement", "key":"a", "bind":"selectedItem:Activity2",    "items":["Running", "Walking", "Stationary"]}
-              ]
+            "elements":[
+              {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:Species",     "title":"Species",  "items":["Goat", "Coyote", "Golden Eagle", "Grizzly", "Black Bear", "Wolf", "Wolverine", "Caribou", "Muskox", "Moose", "Other"]},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountAdult",   "title":"Adults"},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountYoung",   "title":"Young"},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountUnknown", "title":"Unknown"},
+              {"type":"QBooleanElement",   "key":"d",  "bind":"boolValue:Nest_Den",       "title":"Den/Nest?", "boolValue":0},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",    "title":"Activity", "items":["Stationary", "Walking", "Running", "Flying"]},
+              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",       "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
+              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",          "title":"Comments"}
+            ]
           }
         ]
       },
       "label":{
-        "field":"Waypoint2",
-        "size":17,
-        "color":"#FFD700"
+        "field":"Waypoint",
+        "symbol":{
+          "type":"esriTS",
+          "color":[255,0,0,255],
+          "font":{"family":"Arial", "size":22, "weight":"bold", "style":"normal", "decoration":"none"},
+          "verticalAlignment": "bottom",
+          "horizontalAlignment": "left",
+          "xoffset": 9, "yoffset": 18
+        }
       },
       "symbology":{
         "type": "simple",
         "symbol": {
           "type": "esriSMS",
           "style": "esriSMSCircle",
-          "color": [0,191,255,255],
-          "size": 15,
+          "color": [130,224,170,255],
+          "size": 20,
           "outline": {
             "color": [0,0,0,255],
             "width": 2
@@ -221,7 +243,7 @@
         }
       }
     }
-   ],
+  ],
   "csv":{
     "gps_points":{
       "name":"GpsPoints",
