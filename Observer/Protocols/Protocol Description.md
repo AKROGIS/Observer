@@ -74,10 +74,30 @@ What types of locations do you want to allow/require? Your choices are:
  * At an angle/distance from the current GPS location/course
 
 By default, the first three are allowed, and none is required.
-At the GPS is the default unless you touch the map.
-If you want angle/distance, you need to specify the distance units, and angle convention.
-If Map Touch and at GPS Location are both allowed, you can locate an item with a map touch,
-and then correct it by dragging it, or snapping it to the current GPS location.
+GPS is the default unless you touch the map.
+If you want angle/distance, you can specify the distance units, and angle convention.
+
+features located with Map touch or map target can both be moved by dragging the marker
+on the map, or by snapping it to the current GPS location.
+features located by GPS or Angle/Distance cannot be moved.
+
+If a touch location method is allowed, a feature will be created where the user touches the map.
+If multiple features allow touch location, then a picklist will be displayed to select the feature to create.
+
+If a feature allows one or more non-touch location methods, then a button with the name of the feature is added to the user interface. If there is only one allowed non-touch location method, then tapping the button adds the feature with that location method. If more than one non-touch location method is allowed, then button has the following behavior:
+
+  * Tap:
+    - If there is a default non-touch location method, then:
+      + use that location method to add a new feature.
+    - If there is no default non-touch location method, then:
+      + If the feature's preferred location method (see Long Press) is not set, then:
+        * set the feature's preferred method to the first of [GPS, Target, Angle/Distance] to be allowed.
+      + Use the feature's preferred location method to add the new feature.
+  * Long Press:
+    - Provide the user with a selection list of all the allowed non-touch location methods.
+    - If the user selects one, then:
+      + A feature is added using the selected location method.
+      + Set the feature's preferred location method to the selected location method.
 
 
 Symbology
@@ -86,7 +106,7 @@ Symbology
 The protocol file specifies symbology:
 
  * Tracklogs - different colors and/or lineweight while observing and not observing
- 
+
  * features - color and size (they are always circles)
- 
+
  * points where mission properties are set - color and size (they are always circles)
