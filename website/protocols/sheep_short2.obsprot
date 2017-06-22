@@ -2,8 +2,8 @@
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
   "name":"Sheep Transects Short",
-  "version":3.1,
-  "date":"2017-06-20",
+  "version":4.0,
+  "date":"2017-06-22",
   "description":"This protocol is for sheep surveys in the Alaskan I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
   "observing": "ON Transect",
   "notobserving": "Off Transect",
@@ -51,7 +51,7 @@
         }
       ]
     },
-    "edit_prior_at_stop_observing":true,
+    "edit_prior_at_stop_observing":false,
     "symbology":{
       "type": "simple",
       "symbol": {
@@ -179,6 +179,7 @@
         {"name":"CountAdult",     "type":100},
         {"name":"CountYoung",     "type":100},
         {"name":"CountUnknown",   "type":100},
+        {"name":"Nest_Den",       "type":800},
         {"name":"Activity",       "type":700},
         {"name":"Waypoint",       "type":700},
         {"name":"Notes",          "type":700}
@@ -199,6 +200,7 @@
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountAdult",   "title":"Adults"},
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountYoung",   "title":"Young"},
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountUnknown", "title":"Unknown"},
+              {"type":"QBooleanElement",   "key":"d",  "bind":"boolValue:Nest_Den",       "title":"Den/Nest?", "boolValue":0},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",    "title":"Activity", "items":["Stationary", "Walking", "Running", "Flying"]},
               {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",       "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
               {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",          "title":"Comments"}
