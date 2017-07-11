@@ -11,7 +11,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 
 class SyncHandler(BaseHTTPRequestHandler):
-    root_folder = r"D:\MapData\Observer"
+    root_folder = r"E:\MapData\Observer"
     upload_folder = os.path.join(root_folder, "upload")
     error_log = os.path.join(root_folder, "error.log")
     name = "Park Observer Sync Tool"
@@ -114,7 +114,10 @@ class SyncHandler(BaseHTTPRequestHandler):
 
 if not os.path.exists(SyncHandler.upload_folder):
     os.makedirs(SyncHandler.upload_folder)
-# For more info on https see: https://gist.github.com/dergachev/7028596
+# Next line is for an insecure (http) service
+# server = HTTPServer(('', 8080), SyncHandler)
+# Next two lines are for a secure (https) service
 server = HTTPServer(('', 8443), SyncHandler)
 server.socket = ssl.wrap_socket (server.socket, keyfile='key.pem', certfile='cert.pem', server_side=True)
+# For more info on https see: https://gist.github.com/dergachev/7028596
 server.serve_forever()
