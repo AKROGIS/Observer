@@ -23,6 +23,9 @@
       {"name":"TurbIntensity", "type":700},
       {"name":"TurbDuration",  "type":700},
       {"name":"Temperature",   "type":600},
+      {"name":"Ceiling",       "type":700},
+      {"name":"Wind",          "type":700},
+      {"name":"Conditions",    "type":700},
       {"name":"Comments",      "type":700}
     ],
     "dialog":{
@@ -31,14 +34,14 @@
       "sections":[
         {
           "elements":[
-            {"type":"QEntryElement",     "key":"t",   "bind":"textValue:Transect",        "title":"Transect",      "placeholder":"ID", "autocorrectionType":"No"},
+            {"type":"QEntryElement",     "key":"t",   "bind":"textValue:Transect",        "title":"Transect/Unit", "placeholder":"ID", "autocorrectionType":"No"},
             {"type":"QEntryElement",     "key":"s",   "bind":"textValue:Survey",          "title":"Survey",        "placeholder":"Park and Year"},
             {"type":"QEntryElement",     "key":"p",   "bind":"textValue:Pilot",           "title":"Pilot",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
             {"type":"QEntryElement",     "key":"o1",  "bind":"textValue:Observer",        "title":"Observer",      "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
             {"type":"QEntryElement",     "key":"a",   "bind":"textValue:Aircraft",        "title":"Aircraft",      "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
             {"type":"QBooleanElement",   "key":"o1r", "bind":"boolValue:Direction",       "title":"Looking Right"},
             {"type":"QLabelElement",     "title":"Cloud Cover"},
-            {"type":"QSegmentedElement", "key":"cc",  "bind":"selectedItem:CloudCover",   "items":["None", "<50% scattered", "> 50% broken", "Overcast"]},
+            {"type":"QSegmentedElement", "key":"cc",  "bind":"selectedItem:CloudCover",   "items":["Clear", "Partly Cloudy", "Overcast"]},
             {"type":"QLabelElement",     "title":"Precipitation"},
             {"type":"QSegmentedElement", "key":"pp",  "bind":"selectedItem:Precipitation","items":["None", "Rain", "Snow"]},
             {"type":"QLabelElement",     "title":"Turbulence Intensity"},
@@ -46,6 +49,10 @@
             {"type":"QLabelElement",     "title":"Turbulence Duration"},
             {"type":"QSegmentedElement", "key":"td",  "bind":"selectedItem:TurbDuration", "items":["None", "Occasional", "Intermittent", "Constant"]},
             {"type":"QDecimalElement",   "key":"tp",  "bind":"numberValue:Temperature",   "title":"Temperature (F)", "fractionDigits":0},
+            {"type":"QEntryElement",     "key":"ce",  "bind":"textValue:Ceiling",         "title":"Ceiling (Ft)",    "placeholder":"", "autocorrectionType":"No"},
+            {"type":"QEntryElement",     "key":"w",   "bind":"textValue:Wind",            "title":"Wind",            "placeholder":"", "autocorrectionType":"No"},
+            {"type":"QLabelElement",     "title":"Survey Conditions"},
+            {"type":"QSegmentedElement", "key":"co",  "bind":"selectedItem:Conditions",   "items":["Excellent", "Fair/Good", "Poor"]},
             {"type":"QMultilineElement", "key":"c",   "bind":"textValue:Comments",        "title":"Comments"}
           ]
         }
