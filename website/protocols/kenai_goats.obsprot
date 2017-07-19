@@ -58,7 +58,7 @@
         }
       ]
     },
-    "edit_prior_at_stop_observing":true,
+    "edit_prior_at_stop_observing":false,
     "symbology":{
       "type": "simple",
       "symbol": {
