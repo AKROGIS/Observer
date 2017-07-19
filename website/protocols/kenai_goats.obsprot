@@ -120,6 +120,8 @@
         {"name":"Activity",       "type":700},
         {"name":"Waypoint",       "type":700},
         {"name":"OnTransect",     "type":700},
+        {"name":"Habitat",        "type":700},
+        {"name":"Terrain",        "type":700},
         {"name":"Notes",          "type":700}
        ],
       "locations":[
@@ -137,10 +139,13 @@
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountAdults",   "title":"Adults"},
               {"type":"QIntegerElement",   "key":"e4", "bind":"numberValue:CountKids",     "title":"Kids"},
               {"type":"QIntegerElement",   "key":"e5", "bind":"numberValue:CountUnknown",  "title":"Unclassified"},
-              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",     "items":["Stationary", "Walking", "Running"]},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",     "items":["Bedded", "Feeding", "Standing", "Walking", "Running"]},
               {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",        "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
               {"type":"QLabelElement",     "title":"On Transect?"},
               {"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:OnTransect",   "items":["On", "Missed", "Below", "Off"]},
+              {"type":"QRadioElement",     "key":"h",  "bind":"selectedItem:Habitat",      "title":"Habitat Type",  "items":["Rocky", "Alpine Meadow", "Thicket", "Subalpine Conifer", "Snow", "Mature Forest"]},
+              {"type":"QLabelElement",     "title":"Terrain Type"},
+              {"type":"QSegmentedElement", "key":"t2", "bind":"selectedItem:Terrain",      "title":"Terrain Type",  "items":["Smooth", "Broken", "Very Broken"]},
               {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",           "title":"Comments"}
             ]
           }
