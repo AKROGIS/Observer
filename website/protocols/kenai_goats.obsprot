@@ -3,7 +3,7 @@
   "meta-version":2,
   "name":"Kenai Goat Survey",
   "version":1.0,
-  "date":"2017-06-20",
+  "date":"2017-07-19",
   "description":"This protocol is for goat surveys in the Kenai Peninsula.  Contact kumi_rattenbury@nps.gov for more details.",
   "observing": "ON Transect",
   "notobserving": "Off Transect",
