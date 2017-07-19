@@ -3,7 +3,7 @@
   "meta-version":2,
   "name":"Kenai Goat Survey",
   "version":1.0,
-  "date":"2017-06-20",
+  "date":"2017-07-19",
   "description":"This protocol is for goat surveys in the Kenai Peninsula.  Contact kumi_rattenbury@nps.gov for more details.",
   "observing": "ON Transect",
   "notobserving": "Off Transect",
@@ -23,6 +23,9 @@
       {"name":"TurbIntensity", "type":700},
       {"name":"TurbDuration",  "type":700},
       {"name":"Temperature",   "type":600},
+      {"name":"Ceiling",       "type":700},
+      {"name":"Wind",          "type":700},
+      {"name":"Conditions",    "type":700},
       {"name":"Comments",      "type":700}
     ],
     "dialog":{
@@ -31,14 +34,14 @@
       "sections":[
         {
           "elements":[
-            {"type":"QEntryElement",     "key":"t",   "bind":"textValue:Transect",        "title":"Transect",      "placeholder":"ID", "autocorrectionType":"No"},
+            {"type":"QEntryElement",     "key":"t",   "bind":"textValue:Transect",        "title":"Transect/Unit", "placeholder":"ID", "autocorrectionType":"No"},
             {"type":"QEntryElement",     "key":"s",   "bind":"textValue:Survey",          "title":"Survey",        "placeholder":"Park and Year"},
             {"type":"QEntryElement",     "key":"p",   "bind":"textValue:Pilot",           "title":"Pilot",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
             {"type":"QEntryElement",     "key":"o1",  "bind":"textValue:Observer",        "title":"Observer",      "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
             {"type":"QEntryElement",     "key":"a",   "bind":"textValue:Aircraft",        "title":"Aircraft",      "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
             {"type":"QBooleanElement",   "key":"o1r", "bind":"boolValue:Direction",       "title":"Looking Right"},
             {"type":"QLabelElement",     "title":"Cloud Cover"},
-            {"type":"QSegmentedElement", "key":"cc",  "bind":"selectedItem:CloudCover",   "items":["None", "<50% scattered", "> 50% broken", "Overcast"]},
+            {"type":"QSegmentedElement", "key":"cc",  "bind":"selectedItem:CloudCover",   "items":["Clear", "Partly Cloudy", "Overcast"]},
             {"type":"QLabelElement",     "title":"Precipitation"},
             {"type":"QSegmentedElement", "key":"pp",  "bind":"selectedItem:Precipitation","items":["None", "Rain", "Snow"]},
             {"type":"QLabelElement",     "title":"Turbulence Intensity"},
@@ -46,12 +49,16 @@
             {"type":"QLabelElement",     "title":"Turbulence Duration"},
             {"type":"QSegmentedElement", "key":"td",  "bind":"selectedItem:TurbDuration", "items":["None", "Occasional", "Intermittent", "Constant"]},
             {"type":"QDecimalElement",   "key":"tp",  "bind":"numberValue:Temperature",   "title":"Temperature (F)", "fractionDigits":0},
+            {"type":"QEntryElement",     "key":"ce",  "bind":"textValue:Ceiling",         "title":"Ceiling (Ft)",    "placeholder":"", "autocorrectionType":"No"},
+            {"type":"QEntryElement",     "key":"w",   "bind":"textValue:Wind",            "title":"Wind",            "placeholder":"", "autocorrectionType":"No"},
+            {"type":"QLabelElement",     "title":"Survey Conditions"},
+            {"type":"QSegmentedElement", "key":"co",  "bind":"selectedItem:Conditions",   "items":["Excellent", "Fair/Good", "Poor"]},
             {"type":"QMultilineElement", "key":"c",   "bind":"textValue:Comments",        "title":"Comments"}
           ]
         }
       ]
     },
-    "edit_prior_at_stop_observing":true,
+    "edit_prior_at_stop_observing":false,
     "symbology":{
       "type": "simple",
       "symbol": {
@@ -113,6 +120,8 @@
         {"name":"Activity",       "type":700},
         {"name":"Waypoint",       "type":700},
         {"name":"OnTransect",     "type":700},
+        {"name":"Habitat",        "type":700},
+        {"name":"Terrain",        "type":700},
         {"name":"Notes",          "type":700}
        ],
       "locations":[
@@ -130,10 +139,13 @@
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountAdults",   "title":"Adults"},
               {"type":"QIntegerElement",   "key":"e4", "bind":"numberValue:CountKids",     "title":"Kids"},
               {"type":"QIntegerElement",   "key":"e5", "bind":"numberValue:CountUnknown",  "title":"Unclassified"},
-              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",     "items":["Stationary", "Walking", "Running"]},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",     "items":["Bedded", "Feeding", "Standing", "Walking", "Running"]},
               {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",        "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
               {"type":"QLabelElement",     "title":"On Transect?"},
               {"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:OnTransect",   "items":["On", "Missed", "Below", "Off"]},
+              {"type":"QRadioElement",     "key":"h",  "bind":"selectedItem:Habitat",      "title":"Habitat Type",  "items":["Rocky", "Alpine Meadow", "Thicket", "Subalpine Conifer", "Snow", "Mature Forest"]},
+              {"type":"QLabelElement",     "title":"Terrain Type"},
+              {"type":"QSegmentedElement", "key":"t2", "bind":"selectedItem:Terrain",      "title":"Terrain Type",  "items":["Smooth", "Broken", "Very Broken"]},
               {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",           "title":"Comments"}
             ]
           }
@@ -241,7 +253,7 @@
         {"name":"CountAdult",     "type":100},
         {"name":"CountYoung",     "type":100},
         {"name":"CountUnknown",   "type":100},
-        {"name":"Activity",       "type":700},
+        {"name":"Nest_Den",       "type":800},
         {"name":"Activity",       "type":700},
         {"name":"Waypoint",       "type":700},
         {"name":"Notes",          "type":700}
@@ -262,6 +274,7 @@
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountAdult",   "title":"Adults"},
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountYoung",   "title":"Young"},
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountUnknown", "title":"Unknown"},
+              {"type":"QBooleanElement",   "key":"d",  "bind":"boolValue:Nest_Den",       "title":"Den/Nest?", "boolValue":0},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",    "title":"Activity", "items":["Stationary", "Walking", "Running", "Flying"]},
               {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",       "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
               {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",          "title":"Comments"}

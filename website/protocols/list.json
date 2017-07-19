@@ -56,6 +56,13 @@
 }
 ,
 {
+  "name":"Kenai Goat Survey",
+  "version":1.0,
+  "date":"2017-07-19",
+  "url":"https://akrgis.nps.gov/observer/protocols/kenai_goats.obsprot"
+}
+,
+{
   "name":"LACL Bear Trends",
   "version":1.01,
   "date":"2014-07-01",
