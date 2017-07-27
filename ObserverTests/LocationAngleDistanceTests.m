@@ -181,16 +181,16 @@
     double aa;
     
     for (NSString *dir in directions) {
-        for (a = 0.0; a <= 180.0; a = a + 10.0 ) {  // dead ahead in protocol
+        for (a = 0.0; a <= 180.0; a = a + 90.0 ) {  // dead ahead in protocol
             NSDictionary *json = @{@"name":@"test",
                                    @"locations":@[@{@"type":@"angleDistance", @"deadAhead":@(a), @"units":@"meter", @"direction":dir}]};
             ProtocolFeature *feature = [[ProtocolFeature alloc] initWithJSON:json version:1];
-            for (h = 0.0; h <= 360.0; h = h + 10.0) {  // vehicle gps heading
+            for (h = 0.0; h <= 360.0; h = h + 90.0) {  // vehicle gps heading
                 LocationAngleDistance *location = [[LocationAngleDistance alloc] initWithDeadAhead:h protocolFeature:feature];
                 double min = a - 180.0;
                 double max = a + 180.0;
                 LocationAngleDistance *location2;
-                for (b = min; b <= max; b = b + 10.0) {  //Angle to bird group relative to vehicle heading
+                for (b = min; b <= max; b = b + 90.0) {  //Angle to bird group relative to vehicle heading
                     location.angle = @(b);
                     double aa = location.absoluteAngle;
                     location2 = [[LocationAngleDistance alloc] initWithDeadAhead:h protocolFeature:feature absoluteAngle:aa distance:100.0];
