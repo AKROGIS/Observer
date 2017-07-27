@@ -195,6 +195,11 @@
                     double aa = location.absoluteAngle;
                     location2 = [[LocationAngleDistance alloc] initWithDeadAhead:h protocolFeature:feature absoluteAngle:aa distance:100.0];
                     double b2 = [location2.angle doubleValue];
+                    // cc, 60, 320 => 190 != -170
+                    // cc, 70, 120 => -110 != 250
+                    // ccw 30, 30 => 100 != -260
+                    // cc, 0, 130 => -170 != 190
+                    // ccw, 180, 190 => 360 != 0
                     XCTAssertEqualWithAccuracy(b, b2, 0.00001, @"Angle did not round trip %@, %f, %f", dir, a, h);
                 }
             }
