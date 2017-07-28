@@ -184,7 +184,10 @@
     AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleDirection : kAngleDistanceAngleDirection;
     double direction = angleDirection == AngleDirectionClockwise ? 1.0 : -1.0;
     double localAngle = referenceAngle + direction * (angle - self.deadAhead);
-    localAngle = fmod(localAngle, 360.0);
+    if (localAngle < referenceAngle - 180.0)
+        return @(localAngle + 360.0);
+    if (referenceAngle + 180.0 < localAngle)
+        return @(localAngle - 360.0);
     return @(localAngle);
 }
 
