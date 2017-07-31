@@ -172,4 +172,47 @@
 //    XCTAssertEqualWithAccuracy(location.absoluteAngle,300.0, 0.00001, @"Absolute Angle is not correct");
 }
 
+- (void)testRoundTrip
+{
+    NSArray *directions = @[@"ccw", @"cw"];
+    int ai;
+    int bi;
+    int hi;
+    int min;
+    int max;
+    double a;
+    double h;
+    double aa;
+    double b1;
+    double b2;
+    NSDictionary *json;
+    LocationAngleDistance *location;
+    LocationAngleDistance *location2;
+    
+    for (NSString *dir in directions) {
+        for (ai = 0; ai <= 180; ai += 90 ) {  // dead ahead in protocol
+            a = (double)ai;
+            json = @{@"name":@"test", @"locations":@[@{@"type":@"angleDistance", @"deadAhead":@(a), @"units":@"meter", @"direction":dir}]};
+            ProtocolFeature *feature = [[ProtocolFeature alloc] initWithJSON:json version:1];
+            for (hi = 0; h <= 360; hi += 30) {  // vehicle gps heading
+                h = (double)hi;
+                location = [[LocationAngleDistance alloc] initWithDeadAhead:h protocolFeature:feature];
+                min = ai - 180;
+                max = ai + 180;
+                for (bi = min; bi <= max; bi += 30) {  //Angle to bird group relative to vehicle heading
+                    b1 = (double)bi;
+                    if (bi == min) b1 += 0.1;  // because of wrapping, min and max are indistinguishable and they cause false-positives
+                    if (bi == max) b1 -= 0.1;
+                    location.angle = @(b1);
+                    aa = location.absoluteAngle;
+                    location2 = [[LocationAngleDistance alloc] initWithDeadAhead:h protocolFeature:feature absoluteAngle:aa distance:100.0];
+                    b2 = [location2.angle doubleValue];
+                    //NSLog(@"%6.1f > %6.1f > %6.1f %@, deadahead = %.1f, bearing = %.1f", b1, aa, b2, dir, a, h);
+                    XCTAssertEqualWithAccuracy(b1, b2, 0.00001, @"Angle did not round trip %@, %f, %f", dir, a, h);
+                }
+            }
+        }
+    }
+}
+
 @end
