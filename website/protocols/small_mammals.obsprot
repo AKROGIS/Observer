@@ -69,7 +69,8 @@
     {
       "name":"Critter",
       "attributes":[
-        {"name":"trap",         "type":700},
+        {"name":"trap_number",  "type":700},
+        {"name":"trap_letter",  "type":700},
         {"name":"nr",           "type":700},
         {"name":"tag_prefix",   "type":700},
         {"name":"tag_suffix",   "type":700},
@@ -112,7 +113,8 @@
         "sections":[
           {
             "elements":[
-              {"type":"QEntryElement",     "key":"t",  "bind":"textValue:trap",           "title":"Trap",           "placeholder":"ID",   "autocorrectionType":"No"},
+              {"type":"QEntryElement",     "key":"t1", "bind":"textValue:trap_number",    "title":"Trap (number)",  "items":["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]},
+              {"type":"QEntryElement",     "key":"t2", "bind":"textValue:trap_letter",    "title":"Trap (letter)",  "items":["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]},
               {"type":"QSegmentedElement", "key":"n",  "bind":"selectedItem:nr",                                    "items":["New", "Re-Capture"]},
               {"type":"QRadioElement",     "key":"i",  "bind":"selectedItem:tag_prefix",  "title":"Tag Start",      "items":["0A130A0B", "6C00062", "9820003579", "9820004088"]},
               {"type":"QEntryElement",     "key":"i2", "bind":"textValue:tag_suffix",     "title":"Tag End",        "placeholder":"Code", "autocorrectionType":"No"},
