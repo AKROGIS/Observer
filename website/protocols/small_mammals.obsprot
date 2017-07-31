@@ -2,8 +2,8 @@
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
   "name":"Small Mammals",
-  "version":1.0,
-  "date":"2017-06-06",
+  "version":2.0,
+  "date":"2017-07-31",
   "description":"This protocol is for small mammal surveys in the Arctic Alaska I&M Network.  Contact melanie_flamme@nps.gov for more details.",
   "mission":{
     "attributes":[
