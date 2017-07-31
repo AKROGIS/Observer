@@ -116,7 +116,7 @@
               {"type":"QSegmentedElement", "key":"n",  "bind":"selectedItem:nr",                                    "items":["New", "Re-Capture"]},
               {"type":"QRadioElement",     "key":"i",  "bind":"selectedItem:tag_prefix",  "title":"Tag Start",      "items":["0A130A0B", "6C00062", "9820003579", "9820004088"]},
               {"type":"QEntryElement",     "key":"i2", "bind":"textValue:tag_suffix",     "title":"Tag End",        "placeholder":"Code", "autocorrectionType":"No"},
-              {"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:species",     "title":"Species",        "items":["CLRU", "MIMI", "BOCH", "MIOE", "UNKN"]},
+              {"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:species",     "title":"Species",        "items":["CLRU", "MIOE", "MIMI", "SOSP", "REDS", "GRAJ", "SYBO", "LETR", "GLSA", "MUER", "BCCH", "BOCH", "DEJU", "UNKN"]},
               {"type":"QSegmentedElement", "key":"g",  "bind":"selectedItem:gender",      "title":"Gender",         "items":["Male", "Female", "Unknown"]},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:age",         "title":"Age",            "items":["Juvy", "subadult", "adult", "2nd yr"]},
               {"type":"QDecimalElement",   "key":"w1", "bind":"numberValue:total_weight", "title":"Total Wt (g)",   "fractionDigits":0},
