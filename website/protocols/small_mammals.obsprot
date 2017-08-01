@@ -2,13 +2,12 @@
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
   "name":"Small Mammals",
-  "version":1.0,
-  "date":"2017-06-06",
+  "version":2.0,
+  "date":"2017-07-31",
   "description":"This protocol is for small mammal surveys in the Arctic Alaska I&M Network.  Contact melanie_flamme@nps.gov for more details.",
   "mission":{
     "attributes":[
       {"name":"plot",          "type":700},
-      {"name":"observer",      "type":700},
       {"name":"comments",      "type":700}
     ],
     "dialog":{
@@ -18,7 +17,6 @@
         {
           "elements":[
             {"type":"QEntryElement",     "key":"u", "bind":"textValue:plot",     "title":"Plot",     "placeholder":"ID",      "autocorrectionType":"No"},
-            {"type":"QEntryElement",     "key":"s", "bind":"textValue:observer", "title":"Observer", "placeholder":"Initials"},
             {"type":"QMultilineElement", "key":"c", "bind":"textValue:comments", "title":"Comments"}
             ]
         }
@@ -69,7 +67,9 @@
     {
       "name":"Critter",
       "attributes":[
-        {"name":"trap",         "type":700},
+        {"name":"observer",     "type":700},
+        {"name":"trap_number",  "type":700},
+        {"name":"trap_letter",  "type":700},
         {"name":"nr",           "type":700},
         {"name":"tag_prefix",   "type":700},
         {"name":"tag_suffix",   "type":700},
@@ -112,11 +112,13 @@
         "sections":[
           {
             "elements":[
-              {"type":"QEntryElement",     "key":"t",  "bind":"textValue:trap",           "title":"Trap",           "placeholder":"ID",   "autocorrectionType":"No"},
+              {"type":"QEntryElement",     "key":"o",  "bind":"textValue:observer",       "title":"Observer",       "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+              {"type":"QRadioElement",     "key":"t1", "bind":"selectedItem:trap_number", "title":"Trap (number)",  "items":["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]},
+              {"type":"QRadioElement",     "key":"t2", "bind":"selectedItem:trap_letter", "title":"Trap (letter)",  "items":["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]},
               {"type":"QSegmentedElement", "key":"n",  "bind":"selectedItem:nr",                                    "items":["New", "Re-Capture"]},
               {"type":"QRadioElement",     "key":"i",  "bind":"selectedItem:tag_prefix",  "title":"Tag Start",      "items":["0A130A0B", "6C00062", "9820003579", "9820004088"]},
               {"type":"QEntryElement",     "key":"i2", "bind":"textValue:tag_suffix",     "title":"Tag End",        "placeholder":"Code", "autocorrectionType":"No"},
-              {"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:species",     "title":"Species",        "items":["CLRU", "MIMI", "BOCH", "MIOE", "UNKN"]},
+              {"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:species",     "title":"Species",        "items":["CLRU", "MIOE", "MIMI", "SOSP", "REDS", "GRAJ", "SYBO", "LETR", "GLSA", "MUER", "BCCH", "BOCH", "DEJU", "UNKN"]},
               {"type":"QSegmentedElement", "key":"g",  "bind":"selectedItem:gender",      "title":"Gender",         "items":["Male", "Female", "Unknown"]},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:age",         "title":"Age",            "items":["Juvy", "subadult", "adult", "2nd yr"]},
               {"type":"QDecimalElement",   "key":"w1", "bind":"numberValue:total_weight", "title":"Total Wt (g)",   "fractionDigits":0},
