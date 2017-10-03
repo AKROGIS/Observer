@@ -33,7 +33,7 @@
 // Refresh the list of surveys
 // Will NOT send message to a delegate or post notifications.
 // Use the completion handler to reload the UITableView
-- (void)refreshWithCompletionHandler:(void (^)())completionHandler;
+- (void)refreshWithCompletionHandler:(void (^)(void))completionHandler;
 
 // UITableView DataSource Support
 @property (nonatomic, readonly) NSUInteger numberOfSurveys;
