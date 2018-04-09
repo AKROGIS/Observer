@@ -1165,7 +1165,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.nps.akr.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "ca7776ef-6a6e-42f7-be32-f3313d0c7ece";
+				PROVISIONING_PROFILE = "d7797107-2550-47ba-8a85-a4e29312a266";
 				PROVISIONING_PROFILE_SPECIFIER = "NPS Wildcard Development";
 				SWIFT_OBJC_BRIDGING_HEADER = "Observer/Park Observer-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1193,8 +1193,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.nps.akr.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "8b372bef-d1ab-464f-a3c6-da34356ece83";
-				PROVISIONING_PROFILE_SPECIFIER = "NPS Distribution 2017";
+				PROVISIONING_PROFILE = "a825d88d-45f0-413a-893d-8a9967a53f7a";
+				PROVISIONING_PROFILE_SPECIFIER = "NPS Distribution 2018";
 				SWIFT_OBJC_BRIDGING_HEADER = "Observer/Park Observer-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
