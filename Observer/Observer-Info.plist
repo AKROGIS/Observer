@@ -82,6 +82,8 @@
 	</dict>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Location services are required to record your observation locations.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Location services are required to record your observation locations.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
