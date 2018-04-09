@@ -1512,8 +1512,8 @@
         QLabelElement *label = [QLabelElement new];
         label.title = @"Timestamp";
         label.value = timestamp.stringWithMediumDateTimeFormat;
-        [[root.sections firstObject] insertObject:label atIndex:0]; //crashed inexplicably
-        //[[root.sections.firstObject elements] insertObject:label atIndex:0];  //works unless elements is nil //Xcode 9 give an compiler error
+        QSection *firstSection = (QSection *)root.sections.firstObject;
+        [firstSection.elements insertObject:label atIndex:0];
     }
 
     //Show a Location Button only when editing/reviewing
