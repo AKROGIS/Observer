@@ -960,19 +960,16 @@
 
 - (void)requestAuthorizationForAlwaysOnLocationServices
 {
-    // Good reference: http://nevan.net/2014/09/core-location-manager-changes-in-ios-8/
-
-    // ** Don't forget to add NSLocationAlwaysUsageDescription in Observer-Info.plist and give it a string
+    // ** Don't forget to add keys in Observer-Info.plist.  See https://developer.apple.com/documentation/corelocation/choosing_the_authorization_level_for_location_services/requesting_always_authorization
 
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
 
     //Ignore kCLAuthorizationStatusRestricted - location services turned off with Parental Restrictions; nothing we can do.
 
-    // If the status is denied or only granted for when in use, display an alert
-    if (status == kCLAuthorizationStatusAuthorizedWhenInUse || status == kCLAuthorizationStatusDenied) {
-        NSString *title;
-        title = (status == kCLAuthorizationStatusDenied) ? @"Location services are off" : @"Background location is not enabled";
-        NSString *message = @"To make observations you must turn on 'Always' in the Location Services Settings";
+    // If the status is denied, display an alert
+    if (status == kCLAuthorizationStatusDenied) {
+        NSString *title = @"Location Access is Denied";
+        NSString *message = @"To make observations you must allow Park Observer to access your location";
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
                                                                        message:message
                                                                 preferredStyle:UIAlertControllerStyleAlert];
@@ -988,9 +985,12 @@
         [alert addAction:settingAction];
         [self presentViewController:alert animated:YES completion:nil];
     }
-    // The user has not enabled any location services. Request background authorization.
+    // The user has not enabled any location services. Request authorization.
     else if (status == kCLAuthorizationStatusNotDetermined) {
-        [self.locationManager requestAlwaysAuthorization];
+        // Do not enable background locations; it uses battery, and I am not doing it right.
+        // See: https://developer.apple.com/documentation/corelocation/getting_the_user_s_location/handling_location_events_in_the_background
+        //[self.locationManager requestAlwaysAuthorization];
+        [self.locationManager requestWhenInUseAuthorization];
     }
 }
 

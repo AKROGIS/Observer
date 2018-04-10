@@ -82,16 +82,8 @@
 	</dict>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Location services are required to record your observation locations.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Location services are required to record your observation locations.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location services are required to record your observation locations.</string>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>location</string>
-	</array>
+	<string>Park Observer requires access to your location to record observations and track logs.</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UIMainStoryboardFile</key>
