@@ -1,0 +1,298 @@
+{
+  "meta-name":"NPS-Protocol-Specification",
+  "meta-version":2,
+  "name":"Fall Moose Comp",
+  "version":1.0,
+  "date":"2018-10-26",
+  "description":"This protocol is for Moose surveys in the YUCH.  Contact Matthew_Cameron@nps.gov or Mat_Sorum@nps.gov for more details.",
+  "observing": "IN Unit",
+  "notobserving": "Outside Unit",
+  "status_message_fontsize":18.0,
+  "cancel_on_top": true,
+  "gps_interval": 2,
+  "mission":{
+    "attributes":[
+      {"name":"Unit",               "type":100},
+	  {"name":"GMU",                "type":700},
+	  {"name":"Location",           "type":700},
+      {"name":"Pilot",              "type":700},
+      {"name":"Observer",           "type":700},
+	  {"name":"Aircraft",           "type":700},
+	  {"name":"Temperature",        "type":600},
+	  {"name":"BelowZero",          "type":800},
+	  {"name":"Stratum",            "type":700},
+	  {"name":"SurveyRating",       "type":700},
+      {"name":"SnowAge",            "type":700},
+      {"name":"SnowCover",          "type":700},
+	  {"name":"LightType",          "type":700},
+      {"name":"LightIntensity",     "type":700},
+	  {"name":"HabitatType",        "type":700},
+	  {"name":"SurveyIssues",       "type":700},
+	  {"name":"Notes",              "type":700}
+    ],
+    "dialog":{
+      "title":"Mission Properties",
+      "grouped":true,
+      "sections":[
+        {
+          "elements":[
+            {"type":"QDecimalElement",     "key":"u",        "bind":"numberValue:Unit",              "title":"Survey Unit Number",  "fractionDigits":0},
+            {"type":"QEntryElement",       "key":"p",        "bind":"textValue:Pilot",               "title":"Pilot",               "placeholder":"Initials",    "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QEntryElement",       "key":"o",        "bind":"textValue:Observer",            "title":"Observer",            "placeholder":"Initials",    "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+			{"type":"QEntryElement",       "key":"a",        "bind":"textValue:Aircraft",            "title":"Tail Number",         "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+			{"type":"QDecimalElement",     "key":"tp",       "bind":"numberValue:Temperature",       "title":"Temperature (F)",     "fractionDigits":0},
+			{"type":"QBooleanElement",     "key":"bz",       "bind":"boolValue:BelowZero",           "title":"Below Zero"},
+			{"type":"QLabelElement",       "title":"Stratum"},
+            {"type":"QSegmentedElement",   "key":"st",       "bind":"selectedItem:Stratum",          "title":"Stratum",             "items":["High","Low"]},
+			{"type":"QLabelElement",       "title":"Overall Survey Rating"},
+            {"type":"QSegmentedElement",   "key":"sr",       "bind":"selectedItem:SurveyRating",     "title":"Survey Rating",       "items":["Excellent", "Good", "Fair", "Poor"]},
+			{"type":"QLabelElement",       "title":"Snow Age"},
+            {"type":"QSegmentedElement",   "key":"sa",       "bind":"selectedItem:SnowAge",          "title":"Snow Age",            "items":["Fresh", "< 1 Week", "> 1 Week"]},
+			{"type":"QLabelElement",       "title":"Snow Cover"},
+            {"type":"QSegmentedElement",   "key":"sc",       "bind":"selectedItem:SnowCover",        "title":"Snow Cover",          "items":["Complete", "Veg Showing", "Bare Ground Showing"]},
+		    {"type":"QLabelElement",       "title":"Light Type"},
+            {"type":"QSegmentedElement",   "key":"lt",       "bind":"selectedItem:LightType",        "title":"Light Type",          "items":["Bright", "Flat"]},
+			{"type":"QLabelElement",       "title":"Light Intensity"},
+            {"type":"QSegmentedElement",   "key":"li",       "bind":"selectedItem:LightIntensity",   "title":"Snow Cover",          "items":["Low", "Medium", "High"]},
+			{"type":"QRadioElement",       "key":"ht",       "bind":"selectedItem:HabitatType",      "title":"Habitat Type",        "items":["Open Lower Elevation, Predom shrub, riparian, or wetlet","Mixed Open Forest with shrub understory","Dense Spruce Forest","Dense Deciduous Forest Few Shrubs","Subalpine Shrub","Burn","Open Tussock Tundra with forested stringers","Other (describe in notes)"]},
+			{"type":"QRadioElement",       "key":"si",       "bind":"selectedItem:SurveyIssues",     "title":"Survey Issues",       "items":["Classification Errors","Uncooperative Pilot","Inadequate Search Effort","Short on Fuel","Windy/Turbulent","Inadequate Snow Cover","Inexperienced Pilot","Movement In/Out of Intensive","Movement In/Out of SU","Improper Aircraft","Poor Light","Poor Light","Inexperienced Observer","Large Number of Moose (>25)","Observer Airsick","Low Clouds or Fog","Poor Visibility/Snow on Trees","Problems finding SU Boundaries","Observer Sleeping", "Other/Multiple (Describe in comments)"]},
+			{"type":"QEntryElement",       "key":"g",        "bind":"textValue:GMU",                 "title":"GMU",                 "placeholder":"GMU Number",  "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+			{"type":"QEntryElement",       "key":"l",        "bind":"textValue:Location",            "title":"Location",            "placeholder":"Descriptive",    "autocorrectionType":"No"},
+			{"type":"QMultilineElement",   "key":"co",       "bind":"textValue:Notes",               "title":"Comments"}
+          ]
+        }
+      ]
+    },
+    "edit_prior_at_stop_observing":false,
+    "symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSSquare",
+        "color": [171,235,198,255],
+        "size": 11,
+        "outline": {
+          "color": [24,106,59,255],
+          "width": 1
+        }
+      }
+    },
+    "on-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSSolid",
+        "color": [46,204,113,255],
+        "width": 3
+      }
+    },
+    "off-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSDash",
+        "color": [231,76,60,255],
+        "width": 1.5
+      }
+    },
+    "gps-symbology": {
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSCircle",
+        "color": [52,152,219,255],
+        "size": 5
+      }
+    },
+    "totalizer": {
+      "fields": ["Unit"],
+      "units": "minutes",
+      "fontsize": 18.0,
+      "includeon": true,
+      "includeoff": false,
+      "includetotal": false
+    }
+  },
+  "features":[
+    {
+      "name":"Moose",
+      "allow_off_transect_observations": true,
+      "attributes":[
+        {"name":"id",                 "type":0},
+        {"name":"CountBullYearling",  "type":100},
+        {"name":"CountBullMedium",    "type":100},
+        {"name":"CountBullLarge",     "type":100},
+        {"name":"CountCowNoCalf",     "type":100},
+        {"name":"CountCowOneCalf",    "type":100},
+        {"name":"CountCowTwoCalfs",   "type":100},
+		{"name":"CountCowThreeCalfs", "type":100},
+        {"name":"CountLoneCalfs",     "type":100},
+        {"name":"CountUnknown",       "type":100},
+		{"name":"Waypoint",           "type":700},
+        {"name":"Photo",              "type":800},
+        {"name":"Notes",              "type":700}
+       ],
+      "locations":[
+        {"type":"gps",           "default":false, "allow":true},
+        {"type":"adhocTarget",   "default":true, "allow":true},
+        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Moose",
+        "grouped":true,
+        "sections":[
+		  { "elements":[
+				{"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",            "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"}
+				]
+		  },
+          { "title":"Bull Count",
+            "elements":[
+              {"type":"QIntegerElement",   "key":"c1", "bind":"numberValue:CountBullYearling", "title":"Yearling"},
+              {"type":"QIntegerElement",   "key":"c2", "bind":"numberValue:CountBullMedium",   "title":"Medium"},
+              {"type":"QIntegerElement",   "key":"c3", "bind":"numberValue:CountBullLarge",    "title":"Large"}
+            ]
+          },
+		  {
+		  "title":"Cow Count",
+		  "elements":[
+              {"type":"QIntegerElement",   "key":"c4", "bind":"numberValue:CountCowNoCalf",    "title":"No Calf"},
+              {"type":"QIntegerElement",   "key":"c5", "bind":"numberValue:CountCowOneCalf",   "title":"One Calf"},
+              {"type":"QIntegerElement",   "key":"c6", "bind":"numberValue:CountCowTwoCalfs",  "title":"Two Calfs"},
+			  {"type":"QIntegerElement",   "key":"c7", "bind":"numberValue:CountCowThreeCalfs",  "title":"Three Calfs"}
+		    ]
+		  },
+		  {
+		  "title":"Other Count",
+		  "elements":[
+              {"type":"QIntegerElement",   "key":"c8", "bind":"numberValue:CountLoneCalfs",    "title":"Lone Calf"},
+              {"type":"QIntegerElement",   "key":"c9", "bind":"numberValue:CountUnknown",      "title":"Unknown"}
+		    ]
+		  },
+		  {
+		  "elements":[
+              {"type":"QBooleanElement",   "key":"p",  "bind":"boolValue:Photo",               "title":"Photo"},
+              {"type":"QMultilineElement", "key":"n",  "bind":"textValue:Notes",               "title":"Notes"}
+		    ]
+		  }
+        ]
+      },
+      "label":{
+        "field":"Waypoint",
+        "symbol":{
+          "type":"esriTS",
+          "color":[255,0,0,255],
+          "font":{"family":"Arial", "size":24, "weight":"bold", "style":"normal", "decoration":"none"},
+          "verticalAlignment": "bottom",
+          "horizontalAlignment": "left",
+          "xoffset": 10, "yoffset": 20
+        }
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [255,215,0,255],
+          "size": 24,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 2
+          }
+        }
+      }
+    },
+    {
+      "name":"Other",
+      "allow_off_transect_observations": true,
+      "attributes":[
+        {"name":"id",             "type":0},
+        {"name":"Species",        "type":700},
+		{"name":"OtherSpecies",   "type":700},
+        {"name":"CountAdult",     "type":100},
+        {"name":"CountYoung",     "type":100},
+        {"name":"CountUnknown",   "type":100},
+        {"name":"Nest_Den",       "type":800},
+        {"name":"Activity",       "type":700},
+        {"name":"Waypoint",       "type":700},
+        {"name":"Notes",          "type":700}
+       ],
+      "locations":[
+        {"type":"gps",           "default":false, "allow":true},
+        {"type":"adhocTarget",   "default":true, "allow":true},
+        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Other",
+        "grouped":true,
+        "sections":[
+          {
+            "elements":[
+              {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:Species",     "title":"Species",       "items":["Caribou", "Grizzly", "Black Bear", "Wolf", "Coyote", "Lynx", "Sheep", "Golden Eagle",  "Wolverine", "Other"]},
+			  {"type":"QEntryElement",     "key":"os",  "bind":"textValue:OtherSpecies",  "title":"Other Species", "placeholder":"Species Name", "autocorrectionType":"No"},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountAdult",   "title":"Adults"},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountYoung",   "title":"Young"},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountUnknown", "title":"Unknown"},
+              {"type":"QBooleanElement",   "key":"d",  "bind":"boolValue:Nest_Den",       "title":"Den/Nest?", "boolValue":0},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",    "title":"Activity", "items":["Stationary", "Walking", "Running", "Flying"]},
+              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",       "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
+              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",          "title":"Comments"}
+            ]
+          }
+        ]
+      },
+      "label":{
+        "field":"Species",
+        "symbol":{
+          "type":"esriTS",
+          "color":[255,0,0,255],
+          "font":{"family":"Arial", "size":22, "weight":"bold", "style":"normal", "decoration":"none"},
+          "verticalAlignment": "bottom",
+          "horizontalAlignment": "left",
+          "xoffset": 9, "yoffset": 18
+        }
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [130,224,170,255],
+          "size": 20,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 2
+          }
+        }
+      }
+    }
+  ],
+  "csv":{
+    "gps_points":{
+      "name":"GpsPoints",
+      "field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+      "field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+      "key_indexes":[0,2,1]
+    },
+    "track_logs":{
+      "name":"TrackLogs",
+      "field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+      "field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+      "start_key_indexes":[1,9,8],
+      "end_key_indexes":[5,11,10]
+    },
+    "features":{
+      "header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+      "feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+      "feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+      "feature_field_map":[0,1,2,3,4,5,8],
+      "feature_key_indexes":[0,5,4],
+      "obs_name":"Observations",
+      "obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+      "obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+      "obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+      "obs_key_indexes":[0,11,10]
+    }
+  }
+}

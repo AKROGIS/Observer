@@ -114,6 +114,12 @@
   "version":1.00,
   "date":"2015-11-05",
   "url":"https://akrgis.nps.gov/observer/protocols/yuch_moose.obsprot"
+},
+{
+  "name":"Fall Moose Comp",
+  "version":1.0,
+  "date":"2018-10-26",
+  "url":"https://akrgis.nps.gov/observer/protocols/yuch_fall_moose_comp.obsprot"
 }
 ,
 {
