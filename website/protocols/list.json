@@ -35,6 +35,13 @@
 }
 ,
 {
+  "name":"Landbird Draft",
+  "version":0.7,
+  "date":"2019-02-08",
+  "url":"https://akrgis.nps.gov/observer/protocols/landbird_draft.obsprot"
+}
+,
+{
   "name":"Small Mammals",
   "version":2.0,
   "date":"2017-07-31",

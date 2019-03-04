@@ -1,0 +1,248 @@
+{
+  "meta-name":"NPS-Protocol-Specification",
+  "meta-version":2,
+  "name":"Landbird Draft",
+  "version":0.7,
+  "date":"2019-02-08",
+  "description":"This a protocol for land bird surveys in the Alaska I&M Networks.  Contact jeremy_mizel@nps.gov or dylan_schertz@nps.gov for more details.",
+  "observing": "ON Transect",
+  "notobserving": "Off Transect",
+  "status_message_fontsize":18.0,
+  "cancel_on_top": true,
+  "gps_interval": 2,
+  "mission":{
+    "attributes":[
+      {"name":"Route",         "type":700},
+      {"name":"Cell",          "type":700},
+      {"name":"Observer",      "type":700},
+      {"name":"Recorder",      "type":700},
+	  {"name":"NoiseLevel",    "type":700},
+      {"name":"Comments",      "type":700}
+    ],
+    "dialog":{
+      "title":"Mission Properties",
+      "grouped":true,
+      "sections":[
+        {
+          "elements":[
+            {"type":"QEntryElement",     "key":"t",   "bind":"textValue:Route",          "title":"Route",        "placeholder":"Route #", "autocorrectionType":"No"},
+            {"type":"QEntryElement",     "key":"s",   "bind":"textValue:Cell",           "title":"Cell",         "placeholder":"Cell #", "autocorrectionType":"No"},
+            {"type":"QEntryElement",     "key":"p",   "bind":"textValue:Observer",       "title":"Observer",     "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QEntryElement",     "key":"o1",  "bind":"textValue:Recorder",       "title":"Recorder",     "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QLabelElement",     "title":"Noise Level"},
+            {"type":"QSegmentedElement", "key":"nl",  "bind":"selectedItem:NoiseLevel",  "items":["0", "1", "2", "3"]},
+            {"type":"QMultilineElement", "key":"c",   "bind":"textValue:Comments",       "title":"Comments"}
+          ]
+        }
+      ]
+    },
+    "edit_prior_at_stop_observing":false,
+    "symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSSquare",
+        "color": [171,235,198,255],
+        "size": 11,
+        "outline": {
+          "color": [24,106,59,255],
+          "width": 1
+        }
+      }
+    },
+    "on-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSSolid",
+        "color": [46,204,113,255],
+        "width": 3
+      }
+    },
+    "off-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSDash",
+        "color": [231,76,60,255],
+        "width": 1.5
+      }
+    },
+    "gps-symbology": {
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSCircle",
+        "color": [52,152,219,255],
+        "size": 5
+      }
+    },
+    "totalizer": {
+      "fields": ["Cell"],
+      "units": "minutes",
+      "fontsize": 18.0,
+      "includeon": true,
+      "includeoff": false,
+      "includetotal": false
+    }
+  },
+  "features":[
+    {
+        "name":"Bird",
+        "allow_off_transect_observations": true,
+        "attributes":[
+        {"name":"id",                 "type":0},
+        {"name":"Species",             "type":700},
+        {"name":"OtherSpecies",       "type":700},
+        {"name":"Count",              "type":100},
+        {"name":"DetectionType",      "type":700},
+        {"name":"UncertainLocation",  "type":800},
+		{"name":"SangLater",          "type":800},
+		{"name":"MatedPair",          "type":800},
+		{"name":"Territorial",        "type":800},
+		{"name":"SecondLocation",     "type":800},
+        {"name":"Notes",              "type":700}
+       ],
+      "locations":[
+        {"type":"gps",           "default":false, "allow":true},
+        {"type":"adhocTarget",   "default":false, "allow":true},
+        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"angleDistance", "default":true, "allow":true, "baseline":0.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Bird",
+        "grouped":true,
+        "sections":[
+          {
+            "elements":[
+			  {"type":"QRadioElement",     "key":"s",  "bind":"selectedItem:Species",        "title":"Species",             "items":["ATSP","FOSP","GCSP","SAVS","WCSP","LALO","REDP","ARWA","OCWA","WIWA","YWAR","AMRO","GCTH","AMPI","HOLA","BLUE","NOWH","BBMA","ROPT","WIPT","AMGP","SURF","WHIM","WISN","LTJA","Other"]},
+              {"type":"QEntryElement",     "key":"s2", "bind":"textValue:OtherSpecies",      "title":"Other Species",       "placeholder":"Banding code", "autocapitalizationType":"AllCharacters"},
+              {"type":"QIntegerElement",   "key":"c",  "numberValue":1, "minimumValue":0,           "title":"Count"},
+              {"type":"QSegmentedElement", "key":"d",  "bind":"selectedItem:DetectionType",  "title":"Detection Type",      "items":["Singing", "Calling", "Visual", "Fly Over"]},
+			  {"type":"QBooleanElement",   "key":"l",  "bind":"boolValue:UncertainLocation", "title":"Uncertain Location?", "boolValue":0},
+			  {"type":"QBooleanElement",   "key":"sl", "bind":"boolValue:SangLater",         "title":"Sang later?",         "boolValue":0},
+			  {"type":"QBooleanElement",   "key":"p",  "bind":"boolValue:MatedPair",         "title":"Mated pair?",         "boolValue":0},
+			  {"type":"QBooleanElement",   "key":"t",  "bind":"boolValue:Territorial",       "title":"Territorial?",        "boolValue":0},
+			  {"type":"QBooleanElement",   "key":"2n",  "bind":"boolValue:SecondLocation",  "title":"Second Location?",    "boolValue":0},					  
+              {"type":"QMultilineElement", "key":"n",  "bind":"textValue:Notes",             "title":"Comments"}
+            ]
+          }
+        ]
+      },
+      "label":{
+        "field":"Species",
+        "symbol":{
+          "type":"esriTS",
+          "color":[255,0,0,255],
+          "font":{"family":"Arial", "size":24, "weight":"bold", "style":"normal", "decoration":"none"},
+          "verticalAlignment": "bottom",
+          "horizontalAlignment": "left",
+          "xoffset": 10, "yoffset": 20
+        }
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [255,215,0,255],
+          "size": 24,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 2
+          }
+        }
+      }
+    },
+    {
+      "name":"Other",
+      "allow_off_transect_observations": true,
+      "attributes":[
+        {"name":"id",             "type":0},
+        {"name":"Species",        "type":700},
+        {"name":"CountAdult",     "type":100},
+        {"name":"CountYoung",     "type":100},
+        {"name":"CountUnknown",   "type":100},
+        {"name":"Nest_Den",       "type":800},
+        {"name":"Activity",       "type":700},
+        {"name":"Waypoint",       "type":700},
+        {"name":"Notes",          "type":700}
+       ],
+      "locations":[
+        {"type":"gps",           "default":false, "allow":true},
+        {"type":"adhocTarget",   "default":false, "allow":true},
+        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"angleDistance", "default":true,  "allow":true, "baseline":0.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"Other",
+        "grouped":true,
+        "sections":[
+          {
+            "elements":[
+              {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:Species",     "title":"Species",  "items":["Goat", "Coyote", "Grizzly", "Black Bear", "Wolf", "Wolverine", "Caribou", "Muskox", "Moose", "Other"]},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountAdult",   "title":"Adults"},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountYoung",   "title":"Young"},
+              {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountUnknown", "title":"Unknown"},
+              {"type":"QBooleanElement",   "key":"d",  "bind":"boolValue:Nest_Den",       "title":"Den/Nest?", "boolValue":0},
+              {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",    "title":"Activity", "items":["Stationary", "Walking", "Running", "Flying"]},
+              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",       "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
+              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",          "title":"Comments"}
+            ]
+          }
+        ]
+      },
+      "label":{
+        "field":"Waypoint",
+        "symbol":{
+          "type":"esriTS",
+          "color":[255,0,0,255],
+          "font":{"family":"Arial", "size":22, "weight":"bold", "style":"normal", "decoration":"none"},
+          "verticalAlignment": "bottom",
+          "horizontalAlignment": "left",
+          "xoffset": 9, "yoffset": 18
+        }
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [130,224,170,255],
+          "size": 20,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 2
+          }
+        }
+      }
+    }
+  ],
+  "csv":{
+    "gps_points":{
+      "name":"GpsPoints",
+      "field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+      "field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+      "key_indexes":[0,2,1]
+    },
+    "track_logs":{
+      "name":"TrackLogs",
+      "field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+      "field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+      "start_key_indexes":[1,9,8],
+      "end_key_indexes":[5,11,10]
+    },
+    "features":{
+      "header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+      "feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+      "feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+      "feature_field_map":[0,1,2,3,4,5,8],
+      "feature_key_indexes":[0,5,4],
+      "obs_name":"Observations",
+      "obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+      "obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+      "obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+      "obs_key_indexes":[0,11,10]
+    }
+  }
+}
