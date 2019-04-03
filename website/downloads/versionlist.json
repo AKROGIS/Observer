@@ -1,5 +1,14 @@
 [
   {
+    "version":"1.2.2",
+    "build":823,
+    "description":"Updated expired certificate; no other changes.",
+    "warning":"",
+    "url":"v1.2.2/ParkObserver_1.2.2.ipa",
+    "published":"2019-04-03",
+    "expiration":"2020-04-03",
+    "details":""
+  },{
     "version":"1.2.1",
     "build":821,
     "description":"Updated expired certificate",
