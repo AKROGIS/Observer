@@ -21,38 +21,10 @@
 }
 ,
 {
-  "name":"Sheep Transects Short",
-  "version":4.0,
-  "date":"2017-06-22",
-  "url":"https://akrgis.nps.gov/observer/protocols/sheep_short2.obsprot"
-}
-,
-{
-  "name":"Sheep Transects Long",
-  "version":3.0,
-  "date":"2017-06-22",
-  "url":"https://akrgis.nps.gov/observer/protocols/sheep_long2.obsprot"
-}
-,
-{
-  "name":"Transect Bear Survey",
+  "name":"Fall Moose Comp",
   "version":1.0,
-  "date":"2019-04-24",
-    "url":"https://akrgis.nps.gov/observer/protocols/bear_transects.obsprot"
-}
-,
-{
-  "name":"Landbird Draft",
-  "version":0.7,
-  "date":"2019-02-08",
-  "url":"https://akrgis.nps.gov/observer/protocols/landbird_draft.obsprot"
-}
-,
-{
-  "name":"Small Mammals",
-  "version":2.0,
-  "date":"2017-07-31",
-  "url":"https://akrgis.nps.gov/observer/protocols/small_mammals.obsprot"
+  "date":"2018-10-26",
+  "url":"https://akrgis.nps.gov/observer/protocols/yuch_fall_moose_comp.obsprot"
 }
 ,
 {
@@ -105,10 +77,38 @@
 }
 ,
 {
+  "name":"Landbird Draft",
+  "version":0.7,
+  "date":"2019-02-08",
+  "url":"https://akrgis.nps.gov/observer/protocols/landbird_draft.obsprot"
+}
+,
+{
   "name":"SEAN KIMU Protocol",
   "version":2.0,
   "date":"2016-06-20",
   "url":"https://akrgis.nps.gov/observer/protocols/sean_kimu.obsprot"
+}
+,
+{
+  "name":"Sheep Transects Long",
+  "version":3.0,
+  "date":"2017-06-22",
+  "url":"https://akrgis.nps.gov/observer/protocols/sheep_long2.obsprot"
+}
+,
+{
+  "name":"Sheep Transects Short",
+  "version":4.0,
+  "date":"2017-06-22",
+  "url":"https://akrgis.nps.gov/observer/protocols/sheep_short2.obsprot"
+}
+,
+{
+  "name":"Small Mammals",
+  "version":2.0,
+  "date":"2017-07-31",
+  "url":"https://akrgis.nps.gov/observer/protocols/small_mammals.obsprot"
 }
 ,
 {  "name":"SWAN Eagle Occupancy",
@@ -124,18 +124,18 @@
 }
 ,
 {
+  "name":"Transect Bear Survey",
+  "version":1.0,
+  "date":"2019-04-24",
+    "url":"https://akrgis.nps.gov/observer/protocols/bear_transects.obsprot"
+}
+,
+{
   "name":"YUCH Moose Surveys",
   "version":1.00,
   "date":"2015-11-05",
   "url":"https://akrgis.nps.gov/observer/protocols/yuch_moose.obsprot"
 },
-{
-  "name":"Fall Moose Comp",
-  "version":1.0,
-  "date":"2018-10-26",
-  "url":"https://akrgis.nps.gov/observer/protocols/yuch_fall_moose_comp.obsprot"
-}
-,
 {
   "name":"Test Protocol",
   "version":1.3,
