@@ -1,31 +1,31 @@
 {
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
-  "name":"ARCN Bears",
-  "version":3.0,
+  "name":"Transect Bear Survey",
+  "version":1.0,
   "date":"2019-04-24",
-  "description":"This protocol is for bear surveys in the Arctic Alaska I&M Network.  Contact dylan_schertz@nps.gov or joshua_schmidt@nps.gov for more details.",
-  "observing": "IN Unit",
-  "notobserving": "Recording NOT observing",
+  "description":"This protocol is for transect bear surveys in the Alaskan I&M Networks.  Contact dylan_schertz@nps.gov or tammy_wilson@nps.gov for more details.",
+  "observing": "ON Transect",
+  "notobserving": "Off Transect",
+  "status_message_fontsize":18.0,
   "cancel_on_top": true,
   "gps_interval": 2,
   "mission":{
     "attributes":[
-      {"name":"Unit",          "type":700},
-      {"name":"Survey",        "type":700},
-      {"name":"Pilot",         "type":700},
-      {"name":"Observer",      "type":700},
-      {"name":"Aircraft",      "type":700},
-      {"name":"Aircraft2",     "type":700},
-      {"name":"CloudCover",    "type":700},
-      {"name":"Precipitation", "type":700},
-      {"name":"Lighting",      "type":700},
-      {"name":"Temperature",   "type":600},
-      {"name":"Turbulence",    "type":700},
-      {"name":"VegCover",      "type":700},
-      {"name":"Snow",          "type":700},
-      {"name":"BearTracks",    "type":700},
-      {"name":"Comments",      "type":700}
+      {"name":"Transect",        "type":700},
+      {"name":"Survey",          "type":700},
+      {"name":"Pilot",           "type":700},
+      {"name":"Observer",        "type":700},
+      {"name":"Direction",       "type":800},
+      {"name":"Aircraft",        "type":700},
+      {"name":"CloudCover",      "type":700},
+      {"name":"Precipitation",   "type":700},
+      {"name":"Turbulence",      "type":700},
+	  {"name":"Lighting",        "type":700},
+      {"name":"SnowCover",       "type":700},
+	  {"name":"VegetationCover", "type":700},
+      {"name":"Temperature",     "type":600},
+      {"name":"Comments",        "type":700}
     ],
     "dialog":{
       "title":"Mission Properties",
@@ -33,39 +33,38 @@
       "sections":[
         {
           "elements":[
-            {"type":"QEntryElement",     "key":"u",  "bind":"textValue:Unit",             "title":"Unit",             "placeholder":"ID", "autocorrectionType":"No"},
-            {"type":"QEntryElement",     "key":"s",  "bind":"textValue:Survey",           "title":"Survey",           "placeholder":"Park and Year"},
-            {"type":"QEntryElement",     "key":"p",  "bind":"textValue:Pilot",            "title":"Pilot",            "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-            {"type":"QEntryElement",     "key":"o",  "bind":"textValue:Observer",         "title":"Observer",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-            {"type":"QEntryElement",     "key":"a",  "bind":"textValue:Aircraft",         "title":"Aircraft",         "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-            {"type":"QEntryElement",     "key":"a2", "bind":"textValue:Aircraft2",        "title":"Partner",          "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
-            {"type":"QDecimalElement",   "key":"tp", "bind":"numberValue:Temperature",    "title":"Temperature (F)",  "fractionDigits":0},
+            {"type":"QEntryElement",     "key":"t",   "bind":"textValue:Transect",        "title":"Transect",      "placeholder":"ID", "autocorrectionType":"No"},
+            {"type":"QEntryElement",     "key":"s",   "bind":"textValue:Survey",          "title":"Survey",        "placeholder":"Park and Year"},
+            {"type":"QEntryElement",     "key":"p",   "bind":"textValue:Pilot",           "title":"Pilot",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QEntryElement",     "key":"o1",  "bind":"textValue:Observer",        "title":"Observer",      "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QEntryElement",     "key":"a",   "bind":"textValue:Aircraft",        "title":"Aircraft",      "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QBooleanElement",   "key":"o1r", "bind":"boolValue:Direction",       "title":"Looking Right"},
             {"type":"QLabelElement",     "title":"Cloud Cover"},
-            {"type":"QSegmentedElement", "key":"cc", "bind":"selectedItem:CloudCover",    "items":["Clear", "<50% scattered", "> 50% broken", "Overcast"]},
+            {"type":"QSegmentedElement", "key":"cc",  "bind":"selectedItem:CloudCover",   "items":["None", "<50% scattered", "> 50% broken", "Overcast"]},
             {"type":"QLabelElement",     "title":"Precipitation"},
-            {"type":"QSegmentedElement", "key":"pr", "bind":"selectedItem:Precipitation", "items":["None", "Rain", "Snow"]},
-            {"type":"QLabelElement",     "title":"Lighting"},
-            {"type":"QSegmentedElement", "key":"l",  "bind":"selectedItem:Lighting",      "items":["Bright", "Flat Light"]},
+            {"type":"QSegmentedElement", "key":"pp",  "bind":"selectedItem:Precipitation","items":["None", "Rain", "Snow"]},
             {"type":"QLabelElement",     "title":"Turbulence"},
-            {"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:Turbulence",    "items":["None", "Light", "Moderate"]},
-            {"type":"QLabelElement",     "title":"Vegetation Cover"},
-            {"type":"QSegmentedElement", "key":"v",  "bind":"selectedItem:VegCover",      "items":["<10%", "10-30%", ">30%"]},
-            {"type":"QLabelElement",     "title":"Snow Cover"},
-            {"type":"QSegmentedElement", "key":"sn", "bind":"selectedItem:Snow",          "items":["None", "Patchy", "Complete"]},
-            {"type":"QLabelElement",     "title":"Bear Track Sets"},
-            {"type":"QSegmentedElement", "key":"b",  "bind":"selectedItem:BearTracks",    "items":["0", "1", ">1"]},
-            {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Comments",         "title":"Comments"}
-            ]
+            {"type":"QSegmentedElement", "key":"tb",  "bind":"selectedItem:Turbulence",   "items":["None", "Light", "Moderate"]},
+            {"type":"QLabelElement",     "title":"Lighting"},
+            {"type":"QSegmentedElement", "key":"l",  "bind":"selectedItem:Lighting", "items":["Bright", "Flat Light"]},
+			{"type":"QLabelElement",     "title":"Vegetation Cover"},
+            {"type":"QSegmentedElement", "key":"vc",  "bind":"selectedItem:VegetationCover",   "items":["<10%", "10-30%", ">30%"]},
+			{"type":"QLabelElement",     "title":"Snow Cover"},
+            {"type":"QSegmentedElement", "key":"sc",  "bind":"selectedItem:SnowCover",   "items":["None", "Patchy", "Complete"]},
+            {"type":"QDecimalElement",   "key":"tp",  "bind":"numberValue:Temperature",   "title":"Temperature (F)", "fractionDigits":0},
+            {"type":"QMultilineElement", "key":"c",   "bind":"textValue:Comments",        "title":"Comments"}
+          ]
         }
       ]
     },
+    "edit_prior_at_stop_observing":false,
     "symbology":{
       "type": "simple",
       "symbol": {
         "type": "esriSMS",
         "style": "esriSMSSquare",
         "color": [171,235,198,255],
-        "size": 20,
+        "size": 11,
         "outline": {
           "color": [24,106,59,255],
           "width": 1
@@ -100,9 +99,9 @@
       }
     },
     "totalizer": {
-      "fields": ["Unit"],
-      "units": "minutes",
-	  "fontsize": 18.0,
+      "fields": ["Transect"],
+      "units": "kilometers",
+      "fontsize": 18.0,
       "includeon": true,
       "includeoff": false,
       "includetotal": false
@@ -111,21 +110,21 @@
   "features":[
     {
       "name":"Bear",
-	  "allow_off_transect_observations": true,
+      "allow_off_transect_observations": true,
       "attributes":[
-        {"name":"Species",           "type":700},
-        {"name":"AdultCount",        "type":100},
-        {"name":"CubCount",          "type":100},
-        {"name":"YearlingCount",     "type":100},
-        {"name":"ImmatureCount",     "type":100},
-        {"name":"Activity",          "type":700},
-        {"name":"Observer2",         "type":700},
-        {"name":"VegCover2",         "type":700},
-        {"name":"Snow2",             "type":700},
-        {"name":"Waypoint",          "type":700},
-        {"name":"Photos",            "type":700},
-		{"name":"SeenbyOtherPlane",  "type":700},
-        {"name":"Notes",             "type":700}
+        {"name":"id",               "type":0},
+		{"name":"Species",          "type":700},
+        {"name":"CountAdult",       "type":100},
+        {"name":"CountCub",         "type":100},
+        {"name":"CountYearling",    "type":100},
+        {"name":"CountImmature",    "type":100},
+        {"name":"Activity",         "type":700},
+		{"name":"VegetationCover",  "type":700},
+		{"name":"SnowCover",        "type":700},
+        {"name":"Waypoint",         "type":700},
+        {"name":"OnTransect",       "type":700},
+		{"name":"Photos",           "type":800},
+        {"name":"Notes",            "type":700}
        ],
       "locations":[
         {"type":"gps",           "default":false, "allow":true},
@@ -134,32 +133,28 @@
         {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{
-        "title":"Bears",
-        "grouped":false,
+        "title":"Bear",
+        "grouped":true,
         "sections":[
           {
-              "elements":[
-              {"type":"QLabelElement",     "title":"Species or Den"},
-              {"type":"QSegmentedElement", "key":"s",  "bind":"selectedItem:Species",          "items":["Brown Bear", "Black Bear", "Den"]},
-              {"type":"QIntegerElement",   "key":"n1", "bind":"numberValue:AdultCount",        "title":"Adults"},
-              {"type":"QIntegerElement",   "key":"n2", "bind":"numberValue:CubCount",          "title":"COY"},
-              {"type":"QIntegerElement",   "key":"n3", "bind":"numberValue:YearlingCount",     "title":"Yearlings"},
-              {"type":"QIntegerElement",   "key":"n4", "bind":"numberValue:ImmatureCount",     "title":"Cubs ≥ 2yr"},
+            "elements":[
+			  {"type":"QLabelElement",     "title":"Species or Den"},
+              {"type":"QSegmentedElement", "key":"s",  "bind":"selectedItem:Species",      "items":["Brown Bear", "Black Bear", "Den"]},
+			  {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",              "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
+              {"type":"QIntegerElement",   "key":"c1", "bind":"numberValue:CountAdult",          "title":"Adults"},
+              {"type":"QIntegerElement",   "key":"c2", "bind":"numberValue:CountCub",            "title":"COY"},
+              {"type":"QIntegerElement",   "key":"c3", "bind":"numberValue:CountYearling",       "title":"Yearling"},
+              {"type":"QIntegerElement",   "key":"c4", "bind":"numberValue:CountImmature",       "title":"Cubs ≥ 2yr"},
+			  {"type":"QLabelElement",     "title":"On Transect?"},
+              {"type":"QSegmentedElement", "key":"t",  "bind":"selectedItem:OnTransect",    "title":"OnTransect", "items":["On", "Missed", "Below", "Off"]},
               {"type":"QLabelElement",     "title":"Activity"},
-              {"type":"QSegmentedElement", "key":"z",  "bind":"selectedItem:Activity",         "items":["Stationary", "Walking", "Running"]},
-              {"type":"QLabelElement",     "title":"Observer"},
-              {"type":"QSegmentedElement", "key":"o",  "bind":"selectedItem:Observer2",        "items":["Pilot", "Observer", "Both"]},
-              {"type":"QLabelElement",     "title":"Vegetation Cover"},
-              {"type":"QSegmentedElement", "key":"v",  "bind":"selectedItem:VegCover2",        "items":["<10%", "10-30%", ">30%"]},
-              {"type":"QLabelElement",     "title":"Snow Cover"},
-              {"type":"QSegmentedElement", "key":"sn", "bind":"selectedItem:Snow2",            "items":["None", "Patchy", "Complete"]},
-			  {"type":"QLabelElement",     "title":"Photos?"},
-			  {"type":"QSegmentedElement", "key":"p",  "bind":"selectedItem:Photos",           "items":["Yes", "No"]},
-              {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",            "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
-			  {"type":"QLabelElement",     "title":"Seen by other plane?"},
-			  {"type":"QSegmentedElement", "key":"sp",  "bind":"selectedItem:SeenbyOtherPlane", "items":["Check upon return", "Yes", "No"]},
-              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",               "title":"Comments"}
-              ]
+			  {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",           "title":"Activity", "items":["Stationary", "Walking", "Running"]},
+			  {"type":"QLabelElement",     "title":"Vegetation Cover"},
+			  {"type":"QSegmentedElement", "key":"vc", "bind":"selectedItem:VegetationCover",   "title":"Vegetation Cover", "items":["<10%", "10-30%", ">30%"]},
+			  {"type":"QLabelElement",     "title":"Snow Cover"},
+			  {"type":"QSegmentedElement", "key":"sc", "bind":"selectedItem:SnowCover",          "title":"Snow Cover", "items":["None", "Patchy", "Complete"]},  
+              {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",            "title":"Comments"}
+            ]
           }
         ]
       },
@@ -187,8 +182,8 @@
           }
         }
       }
-    },    
-	{
+    },
+    {
       "name":"Other",
       "allow_off_transect_observations": true,
       "attributes":[
@@ -214,11 +209,12 @@
         "sections":[
           {
             "elements":[
-              {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:Species",     "title":"Species",  "items":["Caribou", "Moose", "Goat", "Sheep" , "Golden Eagle", "Wolf", "Coyote", "Wolverine", "Other"]},
+              {"type":"QRadioElement",     "key":"s2", "bind":"selectedItem:Species",     "title":"Species",  "items":["Golden Eagle", "Bald Eagle", "Moose", "Sheep", "Coyote", "Wolf", "Wolverine", "Caribou", "Other"]},
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountAdult",   "title":"Adults"},
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountYoung",   "title":"Young"},
               {"type":"QIntegerElement",   "key":"e2", "bind":"numberValue:CountUnknown", "title":"Unknown"},
               {"type":"QBooleanElement",   "key":"d",  "bind":"boolValue:Nest_Den",       "title":"Den/Nest?", "boolValue":0},
+			  {"type":"QLabelElement",     "title":"Activity"},
               {"type":"QSegmentedElement", "key":"a",  "bind":"selectedItem:Activity",    "title":"Activity", "items":["Stationary", "Walking", "Running", "Flying"]},
               {"type":"QEntryElement",     "key":"w",  "bind":"textValue:Waypoint",       "title":"Waypoint", "placeholder":"ID", "autocorrectionType":"No"},
               {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",          "title":"Comments"}
@@ -251,7 +247,7 @@
         }
       }
     }
-   ],
+  ],
   "csv":{
     "gps_points":{
       "name":"GpsPoints",

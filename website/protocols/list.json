@@ -1,9 +1,9 @@
 [
 {
   "name":"ARCN Bears",
-  "version":2.0,
-  "date":"2017-04-30",
-  "url":"https://akrgis.nps.gov/observer/protocols/arcn_bears2.obsprot"
+  "version":3.0,
+  "date":"2019-04-24",
+  "url":"https://akrgis.nps.gov/observer/protocols/arcn_bears.obsprot"
 }
 ,
 {
@@ -32,6 +32,13 @@
   "version":3.0,
   "date":"2017-06-22",
   "url":"https://akrgis.nps.gov/observer/protocols/sheep_long2.obsprot"
+}
+,
+{
+  "name":"Transect Bear Survey",
+  "version":1.0,
+  "date":"2019-04-24",
+    "url":"https://akrgis.nps.gov/observer/protocols/bear_transects.obsprot"
 }
 ,
 {
