@@ -2,9 +2,9 @@
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
   "name":"Sheep Transects Short",
-  "version":4.0,
-  "date":"2017-06-22",
-  "description":"This protocol is for sheep surveys in the Alaskan I&M Networks.  Contact kumi_rattenbury@nps.gov for more details.",
+  "version":5.0,
+  "date":"2019-06-11",
+  "description":"This protocol is for sheep surveys in the Alaskan I&M Networks.  Contact dylan_schertz@nps.gov for more details.",
   "observing": "ON Transect",
   "notobserving": "Off Transect",
   "status_message_fontsize":18.0,
@@ -162,6 +162,48 @@
           "type": "esriSMS",
           "style": "esriSMSCircle",
           "color": [255,215,0,255],
+          "size": 24,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 2
+          }
+        }
+      }
+    },
+    {
+      "name":"ARCC",
+      "allow_off_transect_observations": true,
+      "attributes":[
+        {"name":"id",             "type":0},
+        {"name":"Dispatcher",     "type":700},
+		{"name":"DispatcherType", "type":700},
+        {"name":"Notes",          "type":700}
+       ],
+      "locations":[
+        {"type":"gps",           "default":true, "allow":true},
+        {"type":"adhocTarget",   "default":false, "allow":false},
+        {"type":"adhocTouch",    "default":false, "allow":false},
+        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+      ],
+      "dialog":{
+        "title":"ARCC Check in",
+        "grouped":true,
+        "sections":[
+          {
+            "elements":[
+              {"type":"QRadioElement",     "key":"d", "bind":"selectedItem:Dispatcher",    "title":"Dispatcher Name",  "items":["Eric","Jessica","Julia","Karen","Rob"]},
+              {"type":"QEntryElement",     "key":"dt",  "bind":"textValue:DispatcherType",   "title":"Other name", "placeholder":"Dispatcher Name", "autocorrectionType":"No"},
+              {"type":"QMultilineElement", "key":"n",  "bind":"textValue:Notes",            "title":"Comments"}
+            ]
+          }
+        ]
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [0,92,230,255],
           "size": 24,
           "outline": {
             "color": [0,0,0,255],
