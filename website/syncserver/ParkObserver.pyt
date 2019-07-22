@@ -10,6 +10,8 @@ import csv
 import arcpy
 
 # Version: 2019-07-22
+#   Catch parsing errors on feature tables and issue a warning
+#   Ensure that table name that I use match table names created by ArcGIS (i.e. space to '_')
 
 class Toolbox(object):
     """Define the toolbox (the name of the toolbox is the name of the
@@ -255,13 +257,17 @@ def process_feature_file_v1(feature_f, protocol, gps_points_list, feature_name, 
                 observation_gps_oid = gps_points_list[observation_timestamp]
             except KeyError:
                 observation_gps_oid = None
-            feature = [feature_shape] + \
-                      [cast(protocol_items[i], feature_field_types[i]) for i in range(feature_fields_count)] + \
-                      [cast(feature_items[i], feature_types[i]) for i in range(len(feature_items))] + \
-                      [feature_gps_oid]
-            observation = [observation_shape] + \
-                          [cast(observe_items[i], observation_types[i]) for i in range(len(observe_items))] + \
-                          [observation_gps_oid]
+            try:
+                feature = [feature_shape] + \
+                        [cast(protocol_items[i], feature_field_types[i]) for i in range(feature_fields_count)] + \
+                        [cast(feature_items[i], feature_types[i]) for i in range(len(feature_items))] + \
+                        [feature_gps_oid]
+                observation = [observation_shape] + \
+                            [cast(observe_items[i], observation_types[i]) for i in range(len(observe_items))] + \
+                            [observation_gps_oid]
+            except:
+                arcpy.AddWarning("Skipping Bad Record.  Table: {0}; Record: {1}".format(feature_table,line))
+                continue
             observation_oid = observation_cursor.insertRow(observation)
             feature.append(observation_oid)
             feature_cursor.insertRow(feature)
