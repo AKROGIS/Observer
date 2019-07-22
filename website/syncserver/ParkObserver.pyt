@@ -9,6 +9,7 @@ import csv
 
 import arcpy
 
+# Version: 2019-07-22
 
 class Toolbox(object):
     """Define the toolbox (the name of the toolbox is the name of the
@@ -215,7 +216,7 @@ def process_feature_file_v1(feature_f, protocol, gps_points_list, feature_name, 
     feature_field_names, feature_field_types = extract_feature_attributes_from_protocol(protocol, feature_name)
     feature_fields_count = len(feature_field_names)
 
-    feature_table_name = feature_name
+    feature_table_name = arcpy.ValidateTableName(feature_name, database_path)
     feature_table = os.path.join(database_path, feature_table_name)
     feature_columns = ["SHAPE@XY"] + feature_field_names + protocol['csv']['features']['feature_field_names'] + \
                       ["GpsPoint_ID", "Observation_ID"]
@@ -563,7 +564,7 @@ def build_relationships(fgdb, protocol):
                                              "NONE", "ONE_TO_ONE", "NONE", "OBJECTID", "GpsPoint_ID")
 
     for feature_obj in protocol['features']:
-        feature = feature_obj["name"]
+        feature = arcpy.ValidateTableName(feature_obj["name"], fgdb) 
         feature_table = os.path.join(fgdb, feature)
         arcpy.CreateRelationshipClass_management(gps_points_table, feature_table,
                                                  os.path.join(fgdb, "{0}_to_GpsPoint".format(feature)),
