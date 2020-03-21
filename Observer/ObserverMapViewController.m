@@ -98,7 +98,7 @@
 @property (strong, nonatomic) AutoPanStateMachine *autoPanController;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 
-@property (strong, nonatomic) id<AGSFeature> movingGraphic;  //maintain state between AGSMapViewTouchDelegate calls
+@property (strong, nonatomic) id<AGSGeoElement> movingGraphic;  //maintain state between AGSMapViewTouchDelegate calls
 @property (strong, nonatomic) Observation *movingObservation;  //maintain state between AGSMapViewTouchDelegate calls
 @property (strong, nonatomic) MissionProperty *movingMissionProperty;  //maintain state between AGSMapViewTouchDelegate calls
 
@@ -128,7 +128,8 @@
     self.totalizerMessage.text = nil;
     [self updateStatusView];
     //Register map pan and zoom notifications for scale bar
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateScaleBar) name:AGSMapViewDidEndZoomingNotification object:nil];
+    //FIXME: Needed for scalebar
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateScaleBar) name:AGSMapViewDidEndZoomingNotification object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -180,7 +181,7 @@
         vc.surveyDeletedAction = ^(Survey *survey){
             if ([survey isEqualToSurvey:self.survey]) {
                 weakSelf.survey = nil;
-            };
+            }
         };
         return;
     }
@@ -199,7 +200,7 @@
             ObserverMapViewController *me = weakSelf;
             if ([me.map isEqualToMap:map]) {
                 me.map = nil;
-            };
+            }
         };
         return;
     }
@@ -222,7 +223,7 @@
     CGFloat radians = _initialRotationOfViewAtGestureStart + sender.rotation;
     double degrees = (double)radians * (180 / M_PI);
     self.compassRoseButton.transform = CGAffineTransformMakeRotation(radians);
-    self.mapView.rotationAngle = -1*degrees;
+    [self.mapView setViewpointRotation:-1*degrees completion:nil];
 }
 
 - (IBAction)panMap:(UIPanGestureRecognizer *)sender
@@ -241,7 +242,7 @@
 - (IBAction)resetNorth:(UIButton *)sender {
     [self.autoPanController userClickedCompassRoseButton];
     [self startStopLocationServicesForPanMode];
-    [self.mapView setRotationAngle:0 animated:YES];
+    [self.mapView  setViewpointRotation:0 completion:nil];
     self.compassRoseButton.transform = CGAffineTransformMakeRotation(0);
 }
 
@@ -258,7 +259,7 @@
         AKRLog(@"Whaaaat ... How did I try to start recording when I am already recording?");
         return;
     }
-    if(!self.mapView.loaded) {
+    if(self.mapView.map.loadStatus != AGSLoadStatusLoaded) {
         AKRLog(@"Whaaaat ... How did I try to start recording when I don't have a map?");
         return;
     }
@@ -326,8 +327,9 @@
     } else {
         AKRLog(@"Unsupported code path.  Mission Properties without GPS points are not supported");
         //TODO: #181 Evaluate the need, and support or remove this code
-        MissionProperty *missionProperty = [self.survey createMissionPropertyAtMapLocation:self.mapView.mapAnchor];
-        [self showMissionPropertyAttributeEditor:missionProperty];
+        // ArcGIS 100.x no longer has a map anchor
+        //MissionProperty *missionProperty = [self.survey createMissionPropertyAtMapLocation:self.mapView.mapAnchor];
+        //[self showMissionPropertyAttributeEditor:missionProperty];
     }
 }
 
@@ -559,7 +561,7 @@
 
 
 
-#pragma mark - Delegate Methods: AGSMapViewTouchDelegate (all optional)
+#pragma mark - Delegate Methods: AGSGeoViewTouchDelegate (all optional)
 
 - (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint features:(NSDictionary *)features
 {
@@ -636,8 +638,8 @@
                 case 0:
                     break;
                 case 1: {
-                    id<AGSFeature> feature = featureList[0];
-                    NSDate *timestamp = (NSDate *)[feature safeAttributeForKey:kTimestampKey];
+                    id<AGSGeoElement> feature = featureList[0];
+                    NSDate *timestamp = (NSDate *)feature.attributes[kTimestampKey];
                     NSManagedObject *entity = [self.survey entityOnLayerNamed:layerName atTimestamp:timestamp];
                     self.movingMissionProperty = [self.survey missionPropertyFromEntity:entity];
                     self.movingObservation = [self.survey observationFromEntity:entity];
@@ -734,7 +736,7 @@
 
 - (BOOL)hasMap
 {
-    return self.mapView.loaded;
+    return self.mapView.map.loadStatus == AGSLoadStatusLoaded;
 }
 
 - (BOOL)mapIsProjected
@@ -776,14 +778,18 @@
 
 - (void)configureMapView
 {
-    self.mapView.layerDelegate = self;
+    //self.mapView.layerDelegate = self;
     self.mapView.touchDelegate = self;
     self.mapView.callout.delegate = self;
     //the remaining configuration will occur after a layer is loaded
     //Alert: calling the tilecache property may block for IO
     if (self.map.tileCache) {
-        [self.mapView addMapLayer:self.map.tileCache withName:@"tilecache basemap"];
-        //adding a layer is async. wait for AGSLayerDelegate layerDidLoad or layerDidFailToLoad to decrementBusy
+        AGSBasemap *basemap = [AGSBasemap basemapWithBaseLayer:self.map.tileCache];
+        self.mapView.map = [AGSMap mapWithBasemap:basemap];
+        //  TODO: call delegate handler in completion handler
+        //  self.map.tileCache.delegate = self;
+        //adding a layer is async. See AGSLayerDelegate layerDidLoad or layerDidFailToLoad for additional action taken when opening a map
+        [self.mapView.map loadWithCompletion:nil];
     }
 }
 
@@ -889,9 +895,10 @@
     self.selectMapButton.enabled = YES;
     self.selectSurveyButton.enabled = YES;
 
-    self.panButton.enabled = self.mapView.loaded;
+    BOOL loaded = self.mapView.map.loadStatus == AGSLoadStatusLoaded;
+    self.panButton.enabled = loaded;
 
-    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady && self.mapView.loaded && self.locationServicesAvailable && !self.gpsFailed;
+    self.startStopRecordingBarButtonItem.enabled = self.survey.isReady && loaded && self.locationServicesAvailable && !self.gpsFailed;
     self.startStopObservingBarButtonItem.enabled = self.survey.isRecording && !self.gpsFailed;
     self.editEnvironmentBarButton.enabled = self.survey.isRecording && self.survey.protocol.missionFeature.attributes.count > 0 && !self.gpsFailed;
     for (AddFeatureBarButtonItem *item in self.addFeatureBarButtonItems) {
@@ -910,7 +917,7 @@
     }
     if (self.survey.isObserving || self.gpsFailed) {
         self.statusMessage.textColor = [UIColor colorWithRed:0.95686 green:0.26275 blue:0.21176 alpha:1.0]; // #F44336 (244,67,54) Google Material Collor 500
-        self.statusMessage.font = [UIFont boldSystemFontOfSize:(self.survey.protocol.statusMessageFontSize+2.0)];
+        self.statusMessage.font = [UIFont boldSystemFontOfSize:(self.survey.protocol.statusMessageFontSize+2)];
     }
     [self updateStatusView];
 }
@@ -1007,7 +1014,7 @@
 
 - (void)rotateNorthArrow
 {
-    double degrees = self.mapView.rotationAngle;
+    double degrees = self.mapView.rotation;
     //AKRLog(@"Rotating compass icon to %f degrees", degrees);
     //angle in radians with positive being counterclockwise (on iOS)
     double radians = -1*degrees * M_PI / 180.0;
@@ -1031,7 +1038,8 @@
     return newBarButton;
 }
 
-
+//FIXME: Needed for scalebar
+/*
 - (void)updateScaleBar
 {
     //Get length of ScaleBar
@@ -1040,10 +1048,8 @@
 
     CGPoint screenPointEnd = CGPointMake(self.scalebar.frame.origin.x + self.scalebar.frame.size.width, self.scalebar.frame.origin.y);
     AGSPoint *mapPointEnd = [self.mapView toMapPoint:screenPointEnd];
-
-    AGSGeometryEngine *ge = [AGSGeometryEngine defaultGeometryEngine];
     
-    double distance = [ge distanceFromGeometry:mapPointStart toGeometry:mapPointEnd];
+    double distance = [AGSGeometryEngine distanceFromGeometry:mapPointStart toGeometry:mapPointEnd];
     //TODO: #146 respect SR of mapView, and Distance units from settings
     //   Or use a Google style scale bar with both SI/metric
 
@@ -1061,7 +1067,7 @@
         self.scalebarEndLabel.text = [NSString stringWithFormat:@"%0.0f m", distance];
     }
 }
-
+*/
 
 #pragma mark - Private Methods - support for location delegate
 
@@ -1115,7 +1121,7 @@
         AKRLog(@"Cannot close the map because the view is not ready yet.");
         return;
     }
-    [self.mapView reset]; //removes all layers, clear SR, envelope, etc.
+    self.mapView.map = nil; //removes all layers, clear SR, envelope, etc.
     self.survey.map = nil;
     self.noMapView.hidden = NO;
     self.panButton.enabled = NO;
@@ -1137,10 +1143,13 @@
         [self incrementBusy];
         self.noMapView.hidden = YES;
         self.panButton.enabled = YES;
-        self.map.tileCache.delegate = self;
         AKRLog(@"Loading the basemap %@", map);
-        [self.mapView addMapLayer:map.tileCache withName:@"tilecache basemap"];
+        AGSBasemap *basemap = [AGSBasemap basemapWithBaseLayer:map.tileCache];
+        self.mapView.map = [AGSMap mapWithBasemap:basemap];
+        //  TODO: call prior delegate handle with completion handler
+        //  self.map.tileCache.delegate = self;
         //adding a layer is async. See AGSLayerDelegate layerDidLoad or layerDidFailToLoad for additional action taken when opening a map
+        [self.mapView.map loadWithCompletion:nil];
     } else {
         [self alert:nil message:@"Unable to open the map."];
     }
@@ -1150,7 +1159,8 @@
 {
     self.mapView.locationDisplay.navigationPointHeightFactor = 0.5;
     self.mapView.locationDisplay.wanderExtentFactor = 0.0;
-    [self.mapView.locationDisplay startDataSource];
+    //TODO: set the location datasource, and provide a completion handler (formerly the delegate)
+    [self.mapView.locationDisplay startWithCompletion:nil];
     [self startStopLocationServicesForPanMode];
 }
 
@@ -1160,13 +1170,13 @@
         AKRLog(@"Cannot load graphics because the survey isn't ready yet");
         return;
     }
-    if (!self.mapView.loaded) {
+    if (self.mapView.map.loadStatus != AGSLoadStatusLoaded) {
         AKRLog(@"Cannot load graphics because the map isn't loaded yet");
         return;
     }
     [self.survey setMap:self.map];
     self.survey.mapViewSpatialReference = self.mapView.spatialReference;
-    [self.mapView clearGraphicsLayers];
+    [self.mapView.graphicsOverlays removeAllObjects];
     [self initializeGraphicsLayer];
     [self.survey loadGraphics];
 }
@@ -1179,13 +1189,19 @@
     //Draw these layers first and in this order
     NSArray *lowerLayers = @[onTransect, offTransect, kGpsPointEntityName, kMissionPropertyEntityName, kLabelLayerName];
     for (NSString *name in lowerLayers) {
-        [self.mapView addMapLayer:graphicsLayers[name] withName:name];
+        AGSLayer *layer = graphicsLayers[name];
+        if (layer != nil) {
+            [self.mapView.map.operationalLayers addObject:layer];
+        }
     }
     // Draw the remaining layers (observations) in any order
     NSMutableArray *layerNames = [NSMutableArray arrayWithArray:graphicsLayers.allKeys];
     [layerNames removeObjectsInArray:lowerLayers];
     for (NSString *name in layerNames) {
-        [self.mapView addMapLayer:graphicsLayers[name] withName:name];
+        AGSLayer *layer = graphicsLayers[name];
+        if (layer != nil) {
+            [self.mapView.map.operationalLayers addObject:layer];
+        }
     }
 }
 
@@ -1204,7 +1220,7 @@
     if (survey.isRecording) {
         [self stopRecording:nil];
     }
-    [self.mapView clearGraphicsLayers];
+    [self.mapView.graphicsOverlays removeAllObjects];
     [self removeMissionPropertiesButton];
     [self configureObservationButtons:nil];
     [self updateTitleBar:nil];
@@ -1388,7 +1404,7 @@
     FeatureSelectorTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"FeatureSelectorTableViewController"];
     vc.features = features;
     vc.protocol = self.survey.protocol;
-    vc.featureSelectedCallback = ^(NSString *layerName, id<AGSFeature> graphic) {
+    vc.featureSelectedCallback = ^(NSString *layerName, id<AGSGeoElement> graphic) {
         //TODO: 185 a better solution would be to put this inside a navigation view controller inside the popover
         [self dismissViewControllerAnimated:YES completion:nil];
         [self presentFeature:graphic fromLayer:layerName atMapPoint:mapPoint];
@@ -1398,14 +1414,14 @@
     [self presentViewController:vc animated:YES completion:nil];
     UIPopoverPresentationController *popover = vc.popoverPresentationController;
     popover.sourceView = self.mapView;
-    CGPoint screenPoint = [self.mapView nearestScreenPoint:mapPoint];
+    CGPoint screenPoint = [self.mapView locationToScreen:mapPoint];
     popover.sourceRect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
 }
 
 //called by map touch and feature selector popover
-- (void)presentFeature:(id<AGSFeature>)agsFeature fromLayer:(NSString *)layerName atMapPoint:(AGSPoint *)mapPoint
+- (void)presentFeature:(id<AGSGeoElement>)agsFeature fromLayer:(NSString *)layerName atMapPoint:(AGSPoint *)mapPoint
 {
-    NSDate *timestamp = (NSDate *)[agsFeature safeAttributeForKey:kTimestampKey];
+    NSDate *timestamp = (NSDate *)agsFeature.attributes[kTimestampKey];
 
     AKRLog(@"Presenting feature for layer %@ with timestamp %@", layerName, timestamp);
 
@@ -1610,7 +1626,7 @@
     [self presentViewController:nav animated:YES completion:nil];
     UIPopoverPresentationController *popover = nav.popoverPresentationController;
     popover.sourceView = self.mapView;
-    CGPoint screenPoint = [self.mapView nearestScreenPoint:mapPoint];
+    CGPoint screenPoint = [self.mapView locationToScreen:mapPoint];
     popover.sourceRect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
     popover.delegate = self;
 }
@@ -1734,7 +1750,7 @@
     UIPopoverPresentationController *popover = nav.popoverPresentationController;
     popover.sourceView = self.mapView;
     AGSPoint *mapPoint = [self mapPointFromGpsPoint:gpsPoint];
-    CGPoint screenPoint = [self.mapView nearestScreenPoint:mapPoint];
+    CGPoint screenPoint = [self.mapView locationToScreen:mapPoint];
     popover.sourceRect = CGRectMake(screenPoint.x, screenPoint.y, 1, 1);
     popover.delegate = self;
 }

@@ -8,9 +8,9 @@
 
 #ifndef CommonDefines_h
 
-#define kAngleDistanceDistanceUnits      AGSSRUnitMeter;
-#define kAngleDistanceAngleDirection     AngleDirectionClockwise;
-#define kAngleDistanceDeadAhead          0.0;
+#define kAngleDistanceDistanceUnits      AGSLinearUnitIDMeters
+#define kAngleDistanceAngleDirection     AngleDirectionClockwise
+#define kAngleDistanceDeadAhead          0.0
 
 #define kAttributePrefix                 @"A_"
 #define kObservationPrefix               @"O_"

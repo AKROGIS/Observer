@@ -164,8 +164,7 @@ static NSUInteger currentUniqueId = 0;
             } @catch (NSException *exception) {
                 AKRLog(@"Failed to create feature renderer (bad protocol): %@", exception);
                 //Create a simple default
-                AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor greenColor]];
-                symbol.size = CGSizeMake(12,12);
+                AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithStyle:AGSSimpleMarkerSymbolStyleCircle color:[UIColor greenColor] size:12];
                 _pointRenderer = [AGSSimpleRenderer simpleRendererWithSymbol:symbol];
             }
             break;
@@ -190,8 +189,7 @@ static NSUInteger currentUniqueId = 0;
         } @catch (NSException *exception) {
             AKRLog(@"Failed to create feature renderer (bad protocol): %@", exception);
             //Create a simple default
-            AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor greenColor]];
-            symbol.size = CGSizeMake(12,12);
+            AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithStyle:AGSSimpleMarkerSymbolStyleCircle color:[UIColor greenColor] size:12];
             _pointRenderer = [AGSSimpleRenderer simpleRendererWithSymbol:symbol];
         }
         break;
@@ -205,18 +203,13 @@ static NSUInteger currentUniqueId = 0;
 
 - (AGSRenderer *)AGSRendererFromJSON:(NSDictionary *)json
 {
-    NSString *rendererType = json[@"type"];
-    if ([rendererType isEqualToString:@"simple"]) {
-        return [[AGSSimpleRenderer alloc] initWithJSON:json];
+    NSError *error = nil;
+    id<AGSJSONSerializable> result = [AGSRenderer fromJSON:json error:&error];
+    if (!result) {
+        NSLog(@"%@", error);
+        return nil;
     }
-    if ([rendererType isEqualToString:@"classBreaks"]) {
-        return [[AGSClassBreaksRenderer alloc] initWithJSON:json];
-    }
-    if ([rendererType isEqualToString:@"uniqueValue"]) {
-        return [[AGSUniqueValueRenderer alloc] initWithJSON:json];
-    }
-    return [[AGSRenderer alloc] initWithJSON:json];
-    //return [AGSRenderer fromJSON:json]  //ArcGIS version 100 (quartz)
+    return (AGSRenderer *)result;
 }
 
 @end

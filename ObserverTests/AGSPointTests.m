@@ -16,7 +16,7 @@
 
 @implementation AGSPointTests
 
-
+/*
 - (void)testPositiveAngleDistanceWithUnitsEqualSR
 {
     AGSSpatialReference *sr = [[AGSSpatialReference alloc] initWithWKID:3338]; //Alaska Albers
@@ -73,6 +73,6 @@
     XCTAssertEqualWithAccuracy(newPoint.x, 0.0, .00001, @"New X value is not correct");
     XCTAssertEqualWithAccuracy(newPoint.y, 100.0, .00001, @"New Y value is not correct");
 }
-
+*/
 
 @end

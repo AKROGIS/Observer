@@ -14,7 +14,6 @@
 		392E8FBD18EF2F030055D312 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 392E8FBC18EF2F030055D312 /* Crashlytics.framework */; };
 		39336F4618A1BA2100620A3A /* ProtocolMissionFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4518A1BA2100620A3A /* ProtocolMissionFeature.m */; };
 		39336F4E18AC25B100620A3A /* AddFeatureBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 39336F4D18AC25B100620A3A /* AddFeatureBarButtonItem.m */; };
-		393412C11C0524DD002A1551 /* ArcGIS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393412C01C0524DD002A1551 /* ArcGIS.framework */; };
 		393412C81C052BC7002A1551 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393412C71C052BC7002A1551 /* Fabric.framework */; };
 		393E8AFC17A2E1D8009AD0AC /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E8AFB17A2E1D8009AD0AC /* Settings.m */; };
 		393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 393E8AFD17A30012009AD0AC /* Settings.bundle */; };
@@ -110,7 +109,9 @@
 		59954F851D146175006C32B4 /* POGraphic.m in Sources */ = {isa = PBXBuildFile; fileRef = 59954F841D146175006C32B4 /* POGraphic.m */; };
 		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
 		59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FEE1863FDBF00470791 /* AKRFormatter.m */; };
-		59CBF9731E91887300AE13C3 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 59CBF9721E91887300AE13C3 /* ArcGIS.bundle */; };
+		74A719C82425CEF100444CB9 /* LocationAngleDistance.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1D94B17B464B40014C68F /* LocationAngleDistance.m */; };
+		74F281FD24245508008AAF0D /* ArcGIS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393412C01C0524DD002A1551 /* ArcGIS.framework */; };
+		74F281FE24245508008AAF0D /* ArcGIS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 393412C01C0524DD002A1551 /* ArcGIS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -172,6 +173,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		74F281FF24245508008AAF0D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				74F281FE24245508008AAF0D /* ArcGIS.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		3914013419759BB70055F2E1 /* ZipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZipKit.xcodeproj; path = ZipKit/ZipKit.xcodeproj; sourceTree = "<group>"; };
 		391401441975A03A0055F2E1 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -185,7 +200,7 @@
 		39336F4A18AC23DC00620A3A /* Protocol Specification V2.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = "Protocol Specification V2.rtf"; sourceTree = "<group>"; };
 		39336F4C18AC25B100620A3A /* AddFeatureBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddFeatureBarButtonItem.h; sourceTree = "<group>"; };
 		39336F4D18AC25B100620A3A /* AddFeatureBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddFeatureBarButtonItem.m; sourceTree = "<group>"; };
-		393412C01C0524DD002A1551 /* ArcGIS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ArcGIS.framework; path = ../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework; sourceTree = "<group>"; };
+		393412C01C0524DD002A1551 /* ArcGIS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ArcGIS.framework; path = ../../Library/SDKs/ArcGIS/iOS_100.7.0/Frameworks/Dynamic/ArcGIS.framework; sourceTree = "<group>"; };
 		393412C71C052BC7002A1551 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		393E8AFA17A2E1D8009AD0AC /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = Model/Settings.h; sourceTree = "<group>"; };
 		393E8AFB17A2E1D8009AD0AC /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Settings.m; path = Model/Settings.m; sourceTree = "<group>"; };
@@ -238,7 +253,6 @@
 		397CF5511D0B7296008D7227 /* ProtocolFeatureLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProtocolFeatureLabel.m; path = Protocols/ProtocolFeatureLabel.m; sourceTree = "<group>"; };
 		3982F6C818C00D040081C3F9 /* AGSMapView+AKRAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AGSMapView+AKRAdditions.h"; path = "Categories/AGSMapView+AKRAdditions.h"; sourceTree = "<group>"; };
 		3982F6C918C00D040081C3F9 /* AGSMapView+AKRAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "AGSMapView+AKRAdditions.m"; path = "Categories/AGSMapView+AKRAdditions.m"; sourceTree = "<group>"; };
-		398908041857DDFD007B3F67 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../../../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
 		398908181857EB2F007B3F67 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
 		398908191857EB2F007B3F67 /* Map.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Map.m; sourceTree = "<group>"; };
 		3989081A1857EB2F007B3F67 /* MapCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapCollection.h; sourceTree = "<group>"; };
@@ -359,7 +373,6 @@
 		59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRDirectionIndicatorView.m; sourceTree = "<group>"; };
 		59C60FED1863FDBF00470791 /* AKRFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRFormatter.h; sourceTree = "<group>"; };
 		59C60FEE1863FDBF00470791 /* AKRFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRFormatter.m; sourceTree = "<group>"; };
-		59CBF9721E91887300AE13C3 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -367,8 +380,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				393412C11C0524DD002A1551 /* ArcGIS.framework in Frameworks */,
 				3914014119759C450055F2E1 /* libtouchzipkit.a in Frameworks */,
+				74F281FD24245508008AAF0D /* ArcGIS.framework in Frameworks */,
 				394CC2381858E05F00FA859C /* libQuickDialog.a in Frameworks */,
 				392E8FBD18EF2F030055D312 /* Crashlytics.framework in Frameworks */,
 				39D1D95A17BC21D00014C68F /* CoreData.framework in Frameworks */,
@@ -562,7 +575,6 @@
 		39955E3E178334BF00D225D7 = {
 			isa = PBXGroup;
 			children = (
-				59CBF9721E91887300AE13C3 /* ArcGIS.bundle */,
 				39955E50178334BF00D225D7 /* Observer */,
 				39D9479D18BEA79E0069DB31 /* ObserverTests */,
 				39955E49178334BF00D225D7 /* Frameworks */,
@@ -638,7 +650,6 @@
 				39449F1618ADABCF00A1F8FE /* Localizable.strings */,
 				39C53E661885D96100C0CECE /* Images */,
 				39890DA21858C99E007B3F67 /* Images.xcassets */,
-				398908041857DDFD007B3F67 /* ArcGIS.bundle */,
 				393E8AFD17A30012009AD0AC /* Settings.bundle */,
 				3929196617BEB6A8008B0FFC /* Todo.rtf */,
 				396E1E9A189AD87000B735EF /* Sample Protocol.obsprot */,
@@ -744,7 +755,9 @@
 				39955E44178334BF00D225D7 /* Frameworks */,
 				392E8FBE18F354AE0055D312 /* Update Settings Bundle with Version Info */,
 				39955E45178334BF00D225D7 /* Resources */,
+				74F281FF24245508008AAF0D /* Embed Frameworks */,
 				392E8FBA18EF2E620055D312 /* Update Crashlytics with new build */,
+				74F281FC24245418008AAF0D /* Strip ArcGIS Framework */,
 			);
 			buildRules = (
 			);
@@ -795,6 +808,7 @@
 						};
 					};
 					39D9479818BEA79E0069DB31 = {
+						ProvisioningStyle = Automatic;
 						TestTargetID = 39955E46178334BF00D225D7;
 					};
 				};
@@ -872,7 +886,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59CBF9731E91887300AE13C3 /* ArcGIS.bundle in Resources */,
 				39955E55178334C000D225D7 /* InfoPlist.strings in Resources */,
 				39449F1418ADABCF00A1F8FE /* Localizable.strings in Resources */,
 				3914014B1975AA1D0055F2E1 /* ACKNOWLEDGEMENTS in Resources */,
@@ -909,7 +922,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Crashlytics.framework/run 48e51797d0250122096db58d369feab2cac2da33 2d48ac30a10b38d753d96fd97e0ec905cca09dd7a4929622195851d73f94c37e";
+			shellScript = "./Crashlytics.framework/run 48e51797d0250122096db58d369feab2cac2da33 2d48ac30a10b38d753d96fd97e0ec905cca09dd7a4929622195851d73f94c37e\n";
 		};
 		392E8FBE18F354AE0055D312 /* Update Settings Bundle with Version Info */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -924,6 +937,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "version=`/usr/libexec/PlistBuddy -c \"Print CFBundleShortVersionString\" \"$INFOPLIST_FILE\"`\nbuild=`/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$INFOPLIST_FILE\"`\nbuild=$(($build + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build\" \"$INFOPLIST_FILE\"\ndisplaytext=\"$version ($build)\"\n/usr/libexec/PlistBuddy \"$SRCROOT/Observer/Settings.bundle/Root.plist\" -c \"set PreferenceSpecifiers:7:DefaultValue $displaytext\"\n";
+		};
+		74F281FC24245418008AAF0D /* Strip ArcGIS Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Strip ArcGIS Framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/ArcGIS.framework/strip-frameworks.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1008,6 +1039,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				39D947AD18BEA7DF0069DB31 /* AGSPointTests.m in Sources */,
+				74A719C82425CEF100444CB9 /* LocationAngleDistance.m in Sources */,
 				39D947AE18BEA7DF0069DB31 /* LocationAngleDistanceTests.m in Sources */,
 				39D947A418BEA79E0069DB31 /* ObserverTests.m in Sources */,
 			);
@@ -1108,6 +1140,7 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/QuickDialog\"/** ./ZipKit/";
+				VALID_ARCHS = "arm64 arm64e armv7s";
 			};
 			name = Debug;
 		};
@@ -1144,6 +1177,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/QuickDialog\"/** ./ZipKit/";
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "arm64 arm64e armv7s";
 			};
 			name = Release;
 		};
@@ -1160,11 +1194,13 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(USER_LIBRARY_DIR)/SDKs/ArcGIS/iOS",
+					"$(USER_LIBRARY_DIR)/SDKs/ArcGIS/iOS_100.7.0/Frameworks/Dynamic",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.2.3;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.nps.akr.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "d7797107-2550-47ba-8a85-a4e29312a266";
@@ -1189,11 +1225,13 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(USER_LIBRARY_DIR)/SDKs/ArcGIS/iOS",
+					"$(USER_LIBRARY_DIR)/SDKs/ArcGIS/iOS_100.7.0/Frameworks/Dynamic",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Observer/Observer-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.2.3;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.nps.akr.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "a825d88d-45f0-413a-893d-8a9967a53f7a";
@@ -1207,8 +1245,8 @@
 		39D947A918BEA79E0069DB31 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Park Observer.app/Park Observer";
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -1217,6 +1255,10 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -1241,7 +1283,10 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.nps.akr.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Park Observer.app/Park Observer";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}\"/** \"${PROJECT_DIR}/QuickDialog\"/** ./ZipKit/";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -1249,8 +1294,8 @@
 		39D947AA18BEA79E0069DB31 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Park Observer.app/Park Observer";
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -1259,6 +1304,10 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1278,7 +1327,10 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "gov.nps.akr.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Park Observer.app/Park Observer";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}\"/** \"${PROJECT_DIR}/QuickDialog\"/** ./ZipKit/";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;

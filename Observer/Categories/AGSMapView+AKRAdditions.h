@@ -10,12 +10,10 @@
 
 @interface AGSMapView (AKRAdditions)
 
-- (CGPoint)nearestScreenPoint :(AGSPoint *)point;
-
-- (void)clearGraphicsLayers;
-
 @property (nonatomic, getter=isProjected, readonly) BOOL projected;
 
 @property (nonatomic, getter=isAutoRotating, readonly) BOOL autoRotating;
+
+@property (nonatomic, weak, readonly) AGSPoint *mapAnchor;
 
 @end

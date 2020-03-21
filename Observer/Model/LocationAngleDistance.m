@@ -49,16 +49,16 @@
 - (NSString *)basisDescription
 {
     double referenceAngle = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleBaseline : kAngleDistanceDeadAhead;
-    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : kAngleDistanceDistanceUnits;
+    AGSLinearUnitID distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : kAngleDistanceDistanceUnits;
     AngleDirection angleDirection = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.angleDirection : kAngleDistanceAngleDirection;
     
     NSString *description =
     [NSString stringWithFormat:@"Angle increases %@ with dead ahead equal to %u degrees. Distance is in %@.",
      angleDirection == AngleDirectionClockwise ? @"clockwise" : @"counter-clockwise",
      (int)referenceAngle,
-     distanceUnits == AGSSRUnitMeter ? @"meters" :
-     distanceUnits == AGSSRUnitFoot ? @"feet" :
-     distanceUnits == AGSSRUnitInternationalYard ? @"yards" : @"unknown units"
+     distanceUnits == AGSLinearUnitIDMeters ? @"meters" :
+     distanceUnits == AGSLinearUnitIDFeet ? @"feet" :
+     distanceUnits == AGSLinearUnitIDYards ? @"yards" : @"unknown units"
      ];
     return description;
 }
@@ -101,31 +101,31 @@
     return (0 < self.distanceMeters)  && (0 <= self.absoluteAngle);
 }
 
-- (AGSPoint *)pointFromPoint:(AGSPoint *)point
-{
-    if (!self.isValid || !self.isComplete)
-        return nil;
-    
-    return [point pointWithAngle:self.absoluteAngle distance:self.distanceMeters units:AGSSRUnitMeter];
-}
-
 - (CLLocationCoordinate2D)locationFromLocation:(CLLocationCoordinate2D)location
 {
     //Find the UTM zone based on our lat/long, then use AGS to create a LL point
     // project to UTM, do angle/distance offset, then project new UTM point to LL
     NSUInteger zone = 1 + (NSUInteger)((180 + location.longitude)/6.0);
-    NSUInteger wkid = location.latitude < 0 ? 32700 + zone : 32600 + zone;
-    AGSSpatialReference *utm = [AGSSpatialReference spatialReferenceWithWKID:wkid];
-    AGSSpatialReference *wgs84  = [AGSSpatialReference wgs84SpatialReference];
-    AGSPoint *startLL = [AGSPoint pointFromLocation:location spatialReference:wgs84];
-    AGSGeometryEngine *ge = [AGSGeometryEngine defaultGeometryEngine];
-    AGSPoint *startUTM = (AGSPoint *)[ge projectGeometry:startLL toSpatialReference:utm];
-    AGSPoint *endUTM = [startUTM pointWithAngle:self.absoluteAngle distance:self.distanceMeters units:AGSSRUnitMeter];
-    AGSPoint *endLL = (AGSPoint *)[ge projectGeometry:endUTM toSpatialReference:wgs84];
+    NSUInteger wkid = location.latitude < 0 ? 32700 + zone : 32600 + zone;  //datum: WGS84; units: meters
+    AGSSpatialReference *utm = [AGSSpatialReference spatialReferenceWithWKID:(NSInteger)wkid];
+    AGSPoint *startLL = [AGSPoint pointWithCLLocationCoordinate2D:location]; //WGS84
+    AGSPoint *startUTM = (AGSPoint *)[AGSGeometryEngine projectGeometry:startLL toSpatialReference:utm];
+    AGSPoint *endUTM = [self offsetUTMPoint:startUTM withAngle:self.absoluteAngle andMeters:self.distanceMeters];
+    AGSPoint *endLL = (AGSPoint *)[AGSGeometryEngine projectGeometry:endUTM toSpatialReference:[AGSSpatialReference WGS84]];
     CLLocationCoordinate2D newLocation;
     newLocation.latitude = endLL.y;
     newLocation.longitude = endLL.x;
     return newLocation;
+}
+
+- (AGSPoint *)offsetUTMPoint:(AGSPoint *)point withAngle:(double)absoluteAngle andMeters:(double)distance
+{
+    double angle = 90.0 - absoluteAngle;
+    double radians = angle * M_PI / 180.0;
+    double deltaX = isnan(distance) ? 0 : distance * cos(radians);
+    double deltaY = isnan(distance) ? 0 : distance * sin(radians);
+    AGSPoint *newPoint = [AGSPoint pointWithX:point.x + deltaX y:point.y + deltaY spatialReference:point.spatialReference];
+    return newPoint;
 }
 
 //- (CLLocationCoordinate2D)locationFromLocation1:(CLLocationCoordinate2D)location
@@ -170,7 +170,7 @@
 {
     if (!_srWithMeters) {
         //ESRI web mercator has units of meters
-        _srWithMeters = [AGSSpatialReference webMercatorSpatialReference];
+        _srWithMeters = [AGSSpatialReference webMercator];
     }
     return _srWithMeters;
 }
@@ -196,8 +196,11 @@
     if (distance <= 0)
         return nil;
 
-    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : kAngleDistanceDistanceUnits;
-    double localDistance = [self.srWithMeters convertValue:distance toUnit:distanceUnits];
+    AGSLinearUnitID distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : kAngleDistanceDistanceUnits;
+    AGSLinearUnit *units = [AGSLinearUnit unitWithUnitID:distanceUnits];
+    if (units == nil)
+        return nil;
+    double localDistance = [units convertFromMeters:distance];
     return @(localDistance);
 }
 
@@ -222,12 +225,12 @@
     if (distance == nil || distance.doubleValue <= 0)
         return -1.0;
     
-    AGSSRUnit distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : kAngleDistanceDistanceUnits;
-    //Despite working in the debugger, the following fails with EXC_BAD_ACCESS in production.
-    //return [self.srWithMeters convertValue:[distance doubleValue] fromUnit:distanceUnits];
-    //My simple workaround
-    double factor = [self.srWithMeters convertValue:1.0 toUnit:distanceUnits];
-    return distance.doubleValue/factor;
+    AGSLinearUnitID distanceUnits = self.feature.allowedLocations.definesAngleDistance ? self.feature.allowedLocations.distanceUnits : kAngleDistanceDistanceUnits;
+    AGSLinearUnit *units = [AGSLinearUnit unitWithUnitID:distanceUnits];
+    if (units == nil)
+        return -1.0;
+    double localDistance = [units convertFromMeters:distance.doubleValue];
+    return localDistance;
 }
 
 @end

@@ -33,7 +33,7 @@
             if ([self.graphic isKindOfClass:[POGraphic class]]) {
                 [(POGraphic *)self.graphic remove];
             } else {
-                [self.graphic.layer removeGraphic:self.graphic];
+                [self.graphic.graphicsOverlay.graphics removeObject:self.graphic];
             }
             [survey deleteEntity:self.managedObject];
             [self dismissViewControllerAnimated:YES completion:nil];

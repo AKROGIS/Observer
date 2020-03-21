@@ -51,7 +51,7 @@
 #define DEFAULTS_DEFAULT_AUTOPAN_MODE kNoAutoPanNoAutoRotateNorthUp
 
 #define DEFAULTS_KEY_UOM_DISTANCE_MEASURE @"uom_distance_measure"
-#define DEFAULTS_DEFAULT_UOM_DISTANCE_MEASURE AGSSRUnitStatuteMile
+#define DEFAULTS_DEFAULT_UOM_DISTANCE_MEASURE AGSLinearUnitIDMiles
 
 
 @implementation Settings
@@ -280,14 +280,14 @@
 
 
 
-- (AGSSRUnit) distanceUnitsForMeasuring
+- (AGSLinearUnitID) distanceUnitsForMeasuring
 {
     NSInteger archivedInt = [[NSUserDefaults standardUserDefaults] integerForKey:DEFAULTS_KEY_UOM_DISTANCE_MEASURE];
-    AGSSRUnit value = archivedInt <= 0 ? DEFAULTS_DEFAULT_UOM_DISTANCE_MEASURE : (NSUInteger)archivedInt;
+    AGSLinearUnitID value = archivedInt <= 0 ? DEFAULTS_DEFAULT_UOM_DISTANCE_MEASURE : (AGSLinearUnitID)archivedInt;
     return value;
 }
 
-- (void) setDistanceUnitsForMeasuring:(AGSSRUnit)distanceUnitsForMeasuring
+- (void) setDistanceUnitsForMeasuring:(AGSLinearUnitID)distanceUnitsForMeasuring
 {
     if (distanceUnitsForMeasuring == DEFAULTS_DEFAULT_UOM_DISTANCE_MEASURE)
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEFAULTS_KEY_UOM_DISTANCE_MEASURE];

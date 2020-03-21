@@ -101,8 +101,7 @@
 
 //Create a new observation point
 //The input point is the point of reference for the angle/distance measurements
-//Requires non-null input and 0 <= deadAhead, 0 < distanceMeters, 0 <= absoluteAngle
-- (AGSPoint *) pointFromPoint:(AGSPoint *)point;
+//Requires non-null location and 0 <= deadAhead, 0 < distanceMeters, 0 <= absoluteAngle
 - (CLLocationCoordinate2D)locationFromLocation:(CLLocationCoordinate2D)location;
 
 

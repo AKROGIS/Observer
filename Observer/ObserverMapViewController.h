@@ -13,7 +13,8 @@
 #import "Survey.h"
 #import "Map.h"
 
-@interface ObserverMapViewController : UIViewController <CLLocationManagerDelegate, AGSLayerDelegate, AGSMapViewLayerDelegate, AGSMapViewTouchDelegate, AGSCalloutDelegate, LocationPresenter, UIPopoverPresentationControllerDelegate>
+@interface ObserverMapViewController : UIViewController <CLLocationManagerDelegate, AGSGeoViewTouchDelegate, AGSCalloutDelegate, LocationPresenter, UIPopoverPresentationControllerDelegate>
+//AGSLayerDelegate, AGSMapViewLayerDelegate
 
 //Model
 @property (strong, nonatomic) SurveyCollection *surveys;

@@ -20,6 +20,6 @@
 @property (nonatomic, strong) SProtocol *protocol;
 
 //Selection Callback
-@property (copy, nonatomic) void (^featureSelectedCallback)(NSString *layerName, id<AGSFeature> graphic);
+@property (copy, nonatomic) void (^featureSelectedCallback)(NSString *layerName, id<AGSGeoElement> graphic);
 
 @end

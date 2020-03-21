@@ -297,7 +297,7 @@ static BOOL _isLoaded = NO;
                 [localFileNames addObject:name];
             }
         }
-        return [NSSet setWithArray:localFileNames];;
+        return [NSSet setWithArray:localFileNames];
     }
     AKRLog(@"Unable to enumerate %@: %@",[[Survey privateDocumentsDirectory] lastPathComponent], error.localizedDescription);
     return nil;
@@ -319,7 +319,7 @@ static BOOL _isLoaded = NO;
                 [localFileNames addObject:name];
             }
         }
-        return [NSMutableSet setWithArray:localFileNames];;
+        return [NSMutableSet setWithArray:localFileNames];
     }
     AKRLog(@"Unable to enumerate %@: %@",[self.documentsDirectory lastPathComponent], error.localizedDescription);
     return nil;
@@ -342,7 +342,7 @@ static BOOL _isLoaded = NO;
                 [localFileNames addObject:name];
             }
         }
-        return [NSMutableSet setWithArray:localFileNames];;
+        return [NSMutableSet setWithArray:localFileNames];
     }
     AKRLog(@"Unable to enumerate %@: %@",[self.documentsDirectory lastPathComponent], error.localizedDescription);
     return nil;

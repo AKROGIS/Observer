@@ -144,8 +144,8 @@
     if (distance == 0) {
         return @"On map!";
     }
-    AGSSRUnit units = [Settings manager].distanceUnitsForMeasuring;
-    if (units == AGSSRUnitMeter || units == AGSSRUnitKilometer) {
+    AGSLinearUnitID units = [Settings manager].distanceUnitsForMeasuring;
+    if (units == AGSLinearUnitIDMeters || units == AGSLinearUnitIDKilometers) {
         return [NSString stringWithFormat:@"%@ km", [AKRFormatter stringWith4SigFigsFromDouble:kilometers]];
     } else {
         double miles = kilometers * 0.621371;
@@ -161,8 +161,8 @@
     if (areakm < 0) {
         return @"Unknown";
     }
-    AGSSRUnit units = [Settings manager].distanceUnitsForMeasuring;
-    if (units == AGSSRUnitMeter || units == AGSSRUnitKilometer) {
+    AGSLinearUnitID units = [Settings manager].distanceUnitsForMeasuring;
+    if (units == AGSLinearUnitIDMeters || units == AGSLinearUnitIDKilometers) {
         return [NSString stringWithFormat:@"%@ sq km", [AKRFormatter stringWith3SigFigsFromDouble:areakm]];
     } else {
         double areami = areakm * 0.386102;

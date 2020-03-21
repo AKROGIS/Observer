@@ -28,7 +28,7 @@
 @property (nonatomic,         readwrite) BOOL isThumbnailLoaded;
 @property (nonatomic,         readwrite) BOOL isTileCacheLoaded;
 @property (nonatomic, strong, readwrite) UIImage *thumbnail;
-@property (nonatomic, strong, readwrite) AGSLocalTiledLayer *tileCache;
+@property (nonatomic, strong, readwrite) AGSArcGISTiledLayer *tileCache;
 
 //TODO: #6 move to NSOperation
 @property (nonatomic, readwrite) BOOL downloading;
@@ -105,7 +105,7 @@
     if (!fileAttributes) {
         return nil;
     }
-    AGSLocalTiledLayer *tileCache =[Map loadTileCacheAtURL:url];
+    AGSArcGISTiledLayer *tileCache =[Map loadTileCacheAtURL:url];
     // loadTileCacheAtURL will check tilecache properties and return nil if invalid.
     if (!tileCache) {
         return nil;
@@ -120,18 +120,21 @@
     //kRemoteThumbUrlKey - not available or required
     newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].lastPathComponent;
     newProperties[kDescriptionKey] = @"Not available."; //TODO: #92 get the description from the esriinfo.xml file in the zipped tpk
-    AGSEnvelope *extents = (AGSEnvelope *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:tileCache.fullEnvelope
-                                                                                  toSpatialReference:[AGSSpatialReference wgs84SpatialReference]];
-    newProperties[kXminKey] = @(extents.xmin);
-    newProperties[kYminKey] = @(extents.ymin);
-    newProperties[kXmaxKey] = @(extents.xmax);
-    newProperties[kYmaxKey] = @(extents.ymax);
+    AGSEnvelope *extents = tileCache.tileCache.fullExtent;
+    if (!extents) {
+        return nil;
+    }
+    extents = (AGSEnvelope *)[AGSGeometryEngine projectGeometry:extents toSpatialReference:[AGSSpatialReference WGS84]];
+    newProperties[kXminKey] = @(extents.xMin);
+    newProperties[kYminKey] = @(extents.yMin);
+    newProperties[kXmaxKey] = @(extents.xMax);
+    newProperties[kYmaxKey] = @(extents.yMax);
 
     self = [self initWithProperties:[newProperties copy]];
     if (self) {
         _tileCache = tileCache;
         self.isTileCacheLoaded = YES;
-        _thumbnail = tileCache.thumbnail;
+        _thumbnail = tileCache.tileCache.thumbnail;
         self.isThumbnailLoaded = YES;
         [Map saveImage:_thumbnail toURL:self.cachedThumbnailURL];
         _plistURL = [Map generatePlistURL];
@@ -372,7 +375,7 @@
         }
         double ymax = [item doubleValue];
         if (xmin < xmax && ymin < ymax) {
-            _extents = [[AGSEnvelope alloc] initWithXmin:xmin ymin:ymin xmax:xmax ymax:ymax spatialReference:[AGSSpatialReference wgs84SpatialReference]];
+            _extents = [[AGSEnvelope alloc] initWithXMin:xmin yMin:ymin xMax:xmax yMax:ymax spatialReference:[AGSSpatialReference WGS84]];
         }
     }
     return _extents;
@@ -472,7 +475,7 @@
 
 //Alert: may call a mutating function
 //Alert: may block for IO
-- (AGSLocalTiledLayer *)tileCache
+- (AGSArcGISTiledLayer *)tileCache
 {
     if (!_tileCache && !self.isTileCacheLoaded) {
         [self loadTileCache];
@@ -488,7 +491,7 @@
 }
 
 //Alert: will block for IO; Timing on an iPad Air2 was <.03 seconds
-+ (AGSLocalTiledLayer *)loadTileCacheAtURL:(NSURL *)url
++ (AGSArcGISTiledLayer *)loadTileCacheAtURL:(NSURL *)url
 {
     //with ArcGIS 10.2.5 tilecache is non-null even when initilazing with a bad file
     //However accessing properties like fullEnvelope will yield an EXC_BAD_ACCESS if it is invalid
@@ -499,8 +502,8 @@
     NSString *path = url.path;
     if (path != nil && [[NSFileManager defaultManager] fileExistsAtPath:path]) {
         @try {
-            AGSLocalTiledLayer *tiles = [[AGSLocalTiledLayer alloc] initWithPath:url.path];
-            if (tiles.fullEnvelope && !tiles.fullEnvelope.isEmpty) {
+            AGSArcGISTiledLayer *tiles = [[AGSArcGISTiledLayer alloc] initWithURL:url];
+            if (tiles.tileCache && tiles.tileCache.fullExtent && !tiles.tileCache.fullExtent.isEmpty) {
                 return tiles;
             }
             AKRLog(@"missing or empty envelope in tile cache %@",url);
@@ -620,7 +623,9 @@
     if (!self.extents || self.extents.isEmpty) {
         return -1;
     }
-    return [[AGSGeometryEngine defaultGeometryEngine] shapePreservingAreaOfGeometry:self.extents inUnit:AGSAreaUnitsSquareKilometers];
+    double area = [AGSGeometryEngine areaOfGeometry:self.extents];
+    AGSAreaUnit *unit = (AGSAreaUnit *)self.extents.spatialReference.unit;
+    return [unit convert:area toUnit:[AGSAreaUnit unitWithUnitID:AGSAreaUnitIDSquareKilometers]];
 }
 
 //Alert: Mutating function

@@ -78,7 +78,7 @@
         case kAutoPanAutoRotateByHeading:
             self.state = kAutoPanNoAutoRotate;
             [autoPanModeButton turnOnWithoutRotate];
-            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
+            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeRecenter;
             break;
         case kAutoPanNoAutoRotateNorthUp:
             self.state = kAutoPanNoAutoRotate;
@@ -99,12 +99,12 @@
         case kNoAutoPanNoAutoRotateNorthUp:
             self.state = kAutoPanNoAutoRotateNorthUp;
             [autoPanModeButton turnOnWithoutRotate];
-            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
+            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeRecenter;
             break;
         case kNoAutoPanNoAutoRotate:
             self.state = kAutoPanNoAutoRotate;
             [autoPanModeButton turnOnWithoutRotate];
-            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
+            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeRecenter;
             break;
         case kAutoPanNoAutoRotateNorthUp:
             [self showCompassRoseButton];
@@ -134,21 +134,21 @@
             break;
         case kNoAutoPanNoAutoRotate:
             self.state = kNoAutoPanNoAutoRotateNorthUp;
-            [mapView setRotationAngle:0.0 animated:YES];
+            [mapView setViewpointRotation:0.0 completion:nil];
             [self hideCompassRoseButton];
             break;
         case kAutoPanNoAutoRotate:
             self.state = kAutoPanNoAutoRotateNorthUp;
-            [mapView setRotationAngle:0.0 animated:YES];
+            [mapView setViewpointRotation:0.0 completion:nil];
             [self hideCompassRoseButton];
             break;
         case kAutoPanAutoRotateByBearing:
         case kAutoPanAutoRotateByHeading:
             self.state = kAutoPanNoAutoRotateNorthUp;
-            [mapView setRotationAngle:0.0 animated:YES];
+            [mapView setViewpointRotation:0.0 completion:nil];
             [self hideCompassRoseButton];
             [autoPanModeButton turnOnWithoutRotate];
-            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
+            mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeRecenter;
             break;
     }
 }
@@ -206,7 +206,7 @@
 {
     _mapView = mapView;
     if (self.state == kAutoPanNoAutoRotate || self.state == kAutoPanNoAutoRotateNorthUp) {
-        mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeDefault;
+        mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeRecenter;
     } else if (self.state == kAutoPanAutoRotateByBearing) {
         mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeCompassNavigation;
     } else if (self.state == kAutoPanAutoRotateByHeading) {
@@ -215,7 +215,7 @@
         mapView.locationDisplay.autoPanMode = AGSLocationDisplayAutoPanModeOff;
     }
     //Initilaizer assumed a mapView rotation of zero; correct if that assumption was wrong; convert to an int, so we do not compare floats
-    int rotation = (int)mapView.rotationAngle;
+    int rotation = (int)mapView.rotation;
     if (rotation != 0) {
         if (_state == kAutoPanNoAutoRotateNorthUp) {
             _state = kAutoPanNoAutoRotate;

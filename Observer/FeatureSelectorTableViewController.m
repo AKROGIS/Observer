@@ -69,16 +69,16 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     NSArray *graphics = (NSArray *)self.graphics[indexPath.usection];
-    id<AGSFeature> graphic = (id<AGSFeature>)graphics[indexPath.urow];
+    id<AGSGeoElement> graphic = (id<AGSGeoElement>)graphics[indexPath.urow];
     NSString *layerName = self.layerNames[indexPath.usection];
     ProtocolFeature *feature = [self.protocol featureWithName:layerName];
     if (feature.labelSpec && feature.labelSpec.field) {
-        cell.textLabel.text = [NSString stringWithFormat:@"%@", [graphic safeAttributeForKey:feature.labelSpec.field]];
+        cell.textLabel.text = [NSString stringWithFormat:@"%@", graphic.attributes[feature.labelSpec.field]];
     } else if (feature.hasUniqueId) {
         NSString *cleanName = [feature.uniqueIdName stringByReplacingOccurrencesOfString:kAttributePrefix withString:@""];
-        cell.textLabel.text = [NSString stringWithFormat:@"%@", [graphic safeAttributeForKey:cleanName]];
+        cell.textLabel.text = [NSString stringWithFormat:@"%@", graphic.attributes[cleanName]];
     } else {
-        id item = [graphic safeAttributeForKey:@"timestamp"];
+        id item = graphic.attributes[@"timestamp"];
         NSDate *timestamp = nil;
         if ([item isKindOfClass:[NSDate class]]) {
             timestamp = (NSDate *)item;

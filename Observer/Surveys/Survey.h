@@ -103,8 +103,8 @@ typedef NS_ENUM(NSUInteger, SurveyState) {
 
 // Layer Methods
 @property (nonatomic, strong, readonly) NSDictionary *graphicsLayersByName;
-- (AGSGraphicsLayer *)graphicsLayerForObservation:(Observation *)observation;
-- (AGSGraphicsLayer *)graphicsLayerForFeature:(ProtocolFeature *)feature;
+- (AGSGraphicsOverlay *)graphicsLayerForObservation:(Observation *)observation;
+- (AGSGraphicsOverlay *)graphicsLayerForFeature:(ProtocolFeature *)feature;
 
 - (BOOL)isSelectableLayerName:(NSString *)layerName;
 - (NSManagedObject *)entityOnLayerNamed:(NSString *)layerName atTimestamp:(NSDate *)timestamp;

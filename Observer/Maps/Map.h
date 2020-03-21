@@ -82,7 +82,7 @@
 //        check the resource property for nullity to determine success if isLoaded is YES
 //        if you want to try again, you must call the version with the completion handler
 @property (nonatomic, strong, readonly) UIImage *thumbnail;
-@property (nonatomic, strong, readonly) AGSLocalTiledLayer *tileCache;
+@property (nonatomic, strong, readonly) AGSArcGISTiledLayer *tileCache;
 
 @property (nonatomic,         readonly) BOOL isThumbnailLoaded;
 @property (nonatomic,         readonly) BOOL isTileCacheLoaded;

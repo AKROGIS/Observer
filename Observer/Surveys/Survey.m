@@ -145,7 +145,7 @@
     self = [self initWithURL:url title:nil state:kCreated date:[NSDate date]];
     if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nil]) {
         return nil;
-    };
+    }
     if (![protocol saveCopyToURL:self.protocolUrl]) {
         [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         return nil;
@@ -633,39 +633,39 @@
 {
     if (!_graphicsLayersByName) {
         NSMutableDictionary *graphicsLayers = [NSMutableDictionary new];
-        AGSGraphicsLayer *graphicsLayer;
+        AGSGraphicsOverlay *graphicsLayer;
 
         //Observations
         for (ProtocolFeature *feature in self.protocol.features) {
-            graphicsLayer = [[AGSGraphicsLayer alloc] init];
+            graphicsLayer = [[AGSGraphicsOverlay alloc] init];
             graphicsLayer.renderer = feature.pointRenderer;
             graphicsLayers[feature.name] = graphicsLayer;
         }
 
         //Observation labels (all labels on only one layer, individually rendered)
-        graphicsLayer = [[AGSGraphicsLayer alloc] init];
+        graphicsLayer = [[AGSGraphicsOverlay alloc] init];
         graphicsLayers[kLabelLayerName] = graphicsLayer;
 
         //Mission Properties
         ProtocolMissionFeature *missionFeature = self.protocol.missionFeature;
-        graphicsLayer = [[AGSGraphicsLayer alloc] init];
+        graphicsLayer = [[AGSGraphicsOverlay alloc] init];
         graphicsLayer.renderer = missionFeature.pointRenderer;
         graphicsLayers[kMissionPropertyEntityName] = graphicsLayer;
 
         //gps points
-        graphicsLayer = [[AGSGraphicsLayer alloc] init];
+        graphicsLayer = [[AGSGraphicsOverlay alloc] init];
         graphicsLayer.renderer = missionFeature.pointRendererGps;
         graphicsLayers[kGpsPointEntityName] = graphicsLayer;
 
         //Track logs observing
         NSString * name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOn];
-        graphicsLayer = [[AGSGraphicsLayer alloc] init];
+        graphicsLayer = [[AGSGraphicsOverlay alloc] init];
         graphicsLayer.renderer = missionFeature.lineRendererObserving;
         graphicsLayers[name] = graphicsLayer;
 
         //Track logs not observing
         name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, kTrackOff];
-        graphicsLayer = [[AGSGraphicsLayer alloc] init];
+        graphicsLayer = [[AGSGraphicsOverlay alloc] init];
         graphicsLayer.renderer = missionFeature.lineRendererNotObserving;
         graphicsLayers[name] = graphicsLayer;
 
@@ -674,13 +674,13 @@
     return _graphicsLayersByName;
 }
 
-- (AGSGraphicsLayer *)graphicsLayerForObservation:(Observation *)observation
+- (AGSGraphicsOverlay *)graphicsLayerForObservation:(Observation *)observation
 {
     NSString * name = [observation.entity.name stringByReplacingOccurrencesOfString:kObservationPrefix withString:@""];
     return self.graphicsLayersByName[name];
 }
 
-- (AGSGraphicsLayer *)graphicsLayerForFeature:(ProtocolFeature *)feature
+- (AGSGraphicsOverlay *)graphicsLayerForFeature:(ProtocolFeature *)feature
 {
     if ([feature isKindOfClass:[ProtocolMissionFeature class]]) {
         return self.graphicsLayersByName[kMissionPropertyEntityName];
@@ -779,17 +779,17 @@
 
 #pragma mark - Layer Methods - private
 
-- (AGSGraphicsLayer *)graphicsLayerForGpsPoints
+- (AGSGraphicsOverlay *)graphicsLayerForGpsPoints
 {
     return self.graphicsLayersByName[kGpsPointEntityName];
 }
 
-- (AGSGraphicsLayer *)graphicsLayerForMissionProperties
+- (AGSGraphicsOverlay *)graphicsLayerForMissionProperties
 {
     return self.graphicsLayersByName[kMissionPropertyEntityName];
 }
 
-- (AGSGraphicsLayer *)graphicsLayerForTracksLogObserving:(BOOL)observing
+- (AGSGraphicsOverlay *)graphicsLayerForTracksLogObserving:(BOOL)observing
 {
     NSString *name = [NSString stringWithFormat:@"%@_%@", kMissionPropertyEntityName, (observing ? kTrackOn : kTrackOff)];
     return self.graphicsLayersByName[name];
@@ -872,7 +872,7 @@
 
 - (void)setMapViewSpatialReference:(AGSSpatialReference *)sr
 {
-    if (sr.wkid != _mapViewSpatialReference.wkid) {
+    if (sr.WKID != _mapViewSpatialReference.WKID) {
         _mapViewSpatialReference = sr;
         _graphicsLayersByName = nil;
         self.isGraphicsLoaded = NO;
@@ -1190,7 +1190,7 @@
     }
     POGraphic *graphic = [[POGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
     graphic.label = [self drawLabelObservation:observation];
-    [[self graphicsLayerForObservation:observation] addGraphic:graphic];
+    [[self graphicsLayerForObservation:observation].graphics addObject:graphic];
     return graphic;
 }
 
@@ -1219,31 +1219,32 @@
     if (labelSpec.hasSymbol) {
         NSMutableDictionary *json = [NSMutableDictionary dictionaryWithDictionary:labelSpec.symbolJSON];
         json[@"text"] = labelText;
-        @try {
-            symbol = [[AGSTextSymbol alloc] initWithJSON:json];
-        } @catch (NSException *exception) {
-            AKRLog(@"Failed to create feature label (bad protocol): %@", exception);
+        NSError *error = nil;
+        id<AGSJSONSerializable> result = [AGSTextSymbol fromJSON:json error:&error];
+        if (!error) {
+            AKRLog(@"Failed to create feature label (bad protocol): %@", error);
+        }
+        if (result) {
+            symbol = (AGSTextSymbol *)result;
         }
     }
     if (symbol == nil) {
-         symbol = [AGSTextSymbol textSymbolWithText:labelText color:labelSpec.color];
-        symbol.fontSize = (CGFloat)labelSpec.size.doubleValue;
-        // make lable anchor at lower left with offset for 15pt round marker; Doing more would require a rendering engine
-        symbol.vAlignment = AGSTextSymbolVAlignmentBottom;
-        symbol.hAlignment = AGSTextSymbolHAlignmentLeft;
-        symbol.offset = CGPointMake(6,1);
+        // make label anchor at lower left with offset for 15pt round marker; Doing more would require a rendering engine
+        symbol = [AGSTextSymbol textSymbolWithText:labelText color:labelSpec.color size:labelSpec.size.floatValue horizontalAlignment:AGSHorizontalAlignmentLeft verticalAlignment:AGSVerticalAlignmentBottom];
+        symbol.offsetX = 6;
+        symbol.offsetY = 1;
     }
     AGSPoint *mapPoint = [observation pointOfFeatureWithSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:symbol attributes:nil];
-    AGSGraphicsLayer *layer = (AGSGraphicsLayer *)self.graphicsLayersByName[kLabelLayerName];
-    [layer addGraphic:graphic];
+    AGSGraphicsOverlay *layer = (AGSGraphicsOverlay *)self.graphicsLayersByName[kLabelLayerName];
+    [layer.graphics addObject:graphic];
     return graphic;
 }
 
 - (void)updateAdhocLocation:(AdhocLocation *)adhocLocation withMapPoint:(AGSPoint *)mapPoint
 {
     //mapPoint is in the map coordinates, convert to WGS84
-    AGSPoint *wgs84Point = (AGSPoint *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:mapPoint toSpatialReference:[AGSSpatialReference wgs84SpatialReference]];
+    AGSPoint *wgs84Point = (AGSPoint *)[AGSGeometryEngine projectGeometry:mapPoint toSpatialReference:[AGSSpatialReference WGS84]];
     adhocLocation.latitude = wgs84Point.y;
     adhocLocation.longitude = wgs84Point.x;
     if (self.lastGpsPoint && [self.lastGpsPoint.timestamp timeIntervalSinceDate: [NSDate date]] < kStaleInterval) {
@@ -1413,7 +1414,7 @@
     NSAssert(gpsPoint.timestamp, @"A gpsPoint has no timestamp: %@", gpsPoint);
     AGSPoint *mapPoint = [gpsPoint pointOfGpsWithSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:nil];
-    [[self graphicsLayerForGpsPoints] addGraphic:graphic];
+    [[self graphicsLayerForGpsPoints].graphics addObject:graphic];
 }
 
 - (void)drawMissionProperty:(MissionProperty *)missionProperty
@@ -1423,27 +1424,24 @@
     NSDictionary *attribs = @{kTimestampKey:timestamp};
     AGSPoint *mapPoint = [missionProperty pointOfMissionPropertyWithSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:mapPoint symbol:nil attributes:attribs];
-    [[self graphicsLayerForMissionProperties] addGraphic:graphic];
+    [[self graphicsLayerForMissionProperties].graphics addObject:graphic];
 }
 
 - (void)drawLineFor:(MissionProperty *)mp from:(GpsPoint *)oldPoint to:(GpsPoint *)newPoint
 {
     AGSPoint *point1 = [oldPoint pointOfGpsWithSpatialReference:self.mapViewSpatialReference];
     AGSPoint *point2 = [newPoint pointOfGpsWithSpatialReference:self.mapViewSpatialReference];
-    AGSMutablePolyline *line = [[AGSMutablePolyline alloc] init];
-    [line addPathToPolyline];
-    [line addPointToPath:point1];
-    [line addPointToPath:point2];
-    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:line symbol:nil attributes:nil];
-    [[self graphicsLayerForTracksLogObserving:mp.observing] addGraphic:graphic];
+    AGSPolylineBuilder *builder = [AGSPolylineBuilder polylineBuilderWithPoints:@[point1,point2]];
+    AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:[builder toGeometry] symbol:nil attributes:nil];
+    [[self graphicsLayerForTracksLogObserving:mp.observing].graphics addObject:graphic];
 }
 
 - (void)drawTrackLogSegment:(TrackLogSegment *)tracklog
 {
-    AGSPolyline *pline = (AGSPolyline *)[[AGSGeometryEngine defaultGeometryEngine] projectGeometry:tracklog.polyline
+    AGSPolyline *pline = (AGSPolyline *)[AGSGeometryEngine projectGeometry:tracklog.polyline
                                                                                 toSpatialReference:self.mapViewSpatialReference];
     AGSGraphic *graphic = [[AGSGraphic alloc] initWithGeometry:pline symbol:nil attributes:nil];
-    [[self graphicsLayerForTracksLogObserving:tracklog.missionProperty.observing] addGraphic:graphic];
+    [[self graphicsLayerForTracksLogObserving:tracklog.missionProperty.observing].graphics addObject:graphic];
 }
 
 

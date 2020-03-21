@@ -44,6 +44,6 @@
 
 @property (nonatomic) MapAutoPanState autoPanMode;
 
-@property (nonatomic) AGSSRUnit distanceUnitsForMeasuring;
+@property (nonatomic) AGSLinearUnitID distanceUnitsForMeasuring;
 
 @end

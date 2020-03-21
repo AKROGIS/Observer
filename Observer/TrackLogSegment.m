@@ -15,7 +15,7 @@
 
 @interface TrackLogSegment ()
 
-@property (nonatomic, strong, readwrite) AGSMutablePolyline *mutablePolyline;
+@property (nonatomic, strong, readwrite) AGSPolylineBuilder *polylineBuilder;
 @property (nonatomic, strong, readwrite) NSMutableArray *points; //of GpsPoints
 
 @end
@@ -31,11 +31,8 @@
     if (self) {
         _missionProperty = missionProperty;
         _points = [NSMutableArray arrayWithObject:missionProperty.gpsPoint];
-        AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];
-        AGSPoint *mapPoint = [AGSPoint pointFromLocation:missionProperty.gpsPoint.locationOfGps spatialReference:wgs84];
-        _mutablePolyline = [[AGSMutablePolyline alloc] initWithSpatialReference:wgs84];
-        [_mutablePolyline addPathToPolyline];
-        [_mutablePolyline addPointToPath:mapPoint];
+        AGSPoint *mapPoint = [AGSPoint pointWithCLLocationCoordinate2D:missionProperty.gpsPoint.locationOfGps]; //WGS84
+        _polylineBuilder = [AGSPolylineBuilder polylineBuilderWithPoints:@[mapPoint]];
     }
     return self;
 }
@@ -79,7 +76,7 @@
 
 - (AGSPolyline *)polyline
 {
-    return (AGSPolyline *)[[AGSGeometryEngine defaultGeometryEngine] simplifyGeometry:self.mutablePolyline];
+    return (AGSPolyline *)[AGSGeometryEngine simplifyGeometry:[self.polylineBuilder toGeometry]];
 }
 
 - (void)addGpsPoint:(GpsPoint *)gpsPoint
@@ -88,14 +85,13 @@
         return;
     }
     [self.points addObject:gpsPoint];
-    AGSSpatialReference *wgs84 = [AGSSpatialReference wgs84SpatialReference];
-    AGSPoint *point = [AGSPoint pointFromLocation:gpsPoint.locationOfGps spatialReference:wgs84];
-    [self.mutablePolyline addPointToPath:point];
+    AGSPoint *point = [AGSPoint pointWithCLLocationCoordinate2D:gpsPoint.locationOfGps]; //WGS84
+    [self.polylineBuilder addPoint:point];
 }
 
 - (double)length
 {
-    return [[AGSGeometryEngine defaultGeometryEngine] shapePreservingLengthOfGeometry:self.polyline inUnit:AGSSRUnitMeter];
+    return [AGSGeometryEngine lengthOfGeometry:self.polyline];  //Meters
 }
 
 - (NSTimeInterval)duration

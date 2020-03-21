@@ -37,8 +37,7 @@
 - (void)defineMissionReadonlyProperties:(NSDictionary *)json version:(NSInteger)version
 {
 
-    AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
-    symbol.size = CGSizeMake(6,6);
+    AGSMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithStyle:AGSSimpleMarkerSymbolStyleCircle color:[UIColor blueColor] size:6];
     ProtocolFeatureSymbology *observingSymbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"on-symbology"] version:version];
     ProtocolFeatureSymbology *notObservingSymbology = [[ProtocolFeatureSymbology alloc] initWithSymbologyJSON:json[@"off-symbology"] version:version];
     _lineRendererObserving = [AGSSimpleRenderer simpleRendererWithSymbol:observingSymbology.agsLineSymbol];
@@ -56,16 +55,11 @@
     } @catch (NSException *exception) {
         AKRLog(@"Failed to create renderers (bad protocol): %@", exception);
         //Create a simple default
-        AGSSimpleLineSymbol *symbol = [AGSSimpleLineSymbol simpleLineSymbol];
-        symbol.color =  [UIColor redColor];
-        symbol.width = 3;
+        AGSSimpleLineSymbol *symbol = [AGSSimpleLineSymbol simpleLineSymbolWithStyle:AGSSimpleLineSymbolStyleSolid color:[UIColor redColor] width:3];
         _lineRendererObserving = [AGSSimpleRenderer simpleRendererWithSymbol:symbol];
-        symbol = [AGSSimpleLineSymbol simpleLineSymbol];
-        symbol.color =  [UIColor grayColor];
-        symbol.width = 1.5;
+        symbol = [AGSSimpleLineSymbol simpleLineSymbolWithStyle:AGSSimpleLineSymbolStyleSolid color:[UIColor grayColor] width:1.5];
         _lineRendererNotObserving = [AGSSimpleRenderer simpleRendererWithSymbol:symbol];
-        AGSMarkerSymbol *msymbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithColor:[UIColor blueColor]];
-        msymbol.size = CGSizeMake(6,6);
+        AGSMarkerSymbol *msymbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithStyle:AGSSimpleMarkerSymbolStyleCircle color:[UIColor blueColor] size:6];
         _pointRendererGps = [AGSSimpleRenderer simpleRendererWithSymbol:msymbol];
     }
 }

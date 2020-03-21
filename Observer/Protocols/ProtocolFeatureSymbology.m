@@ -41,33 +41,36 @@
 
 - (AGSSimpleMarkerSymbol *)simpleMarkerSymbolFromColor:(id)color Size:(id)size
 {
-    AGSSimpleMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbol];
+    UIColor *markerColor = [UIColor blackColor];
     if ([color isKindOfClass:[NSString class]]) {
-        UIColor *realColor = [self colorFromHexString:(NSString *)color];
-        if (realColor) {
-            symbol.color =  realColor;
+        UIColor *maybeColor = [self colorFromHexString:(NSString *)color];
+        if (maybeColor) {
+            markerColor = maybeColor;
         }
     }
+    CGFloat markerSize = 8.0;
     if ([size isKindOfClass:[NSNumber class]]) {
-        CGFloat realSize = (CGFloat)((NSNumber *)size).doubleValue;
-        symbol.size = CGSizeMake(realSize, realSize);
+        markerSize = (CGFloat)((NSNumber *)size).doubleValue;
     }
+    AGSSimpleMarkerSymbol *symbol = [AGSSimpleMarkerSymbol simpleMarkerSymbolWithStyle:AGSSimpleMarkerSymbolStyleCircle color:markerColor size:markerSize];
+
     return symbol;
 }
 
 - (AGSSimpleLineSymbol *)simpleLineSymbolFromColor:(id)color Size:(id)size
 {
-    AGSSimpleLineSymbol *symbol = [AGSSimpleLineSymbol simpleLineSymbol];
+    UIColor *lineColor = [UIColor blackColor];
     if ([color isKindOfClass:[NSString class]]) {
-        UIColor *realColor = [self colorFromHexString:(NSString *)color];
-        if (realColor) {
-            symbol.color =  realColor;
+        UIColor *maybeColor = [self colorFromHexString:(NSString *)color];
+        if (maybeColor) {
+            lineColor = maybeColor;
         }
     }
+    CGFloat width = 1.0;
     if ([size isKindOfClass:[NSNumber class]]) {
-        CGFloat realSize = (CGFloat)((NSNumber *)size).doubleValue;
-        symbol.width = realSize;
+        width = (CGFloat)((NSNumber *)size).doubleValue;
     }
+    AGSSimpleLineSymbol *symbol = [AGSSimpleLineSymbol simpleLineSymbolWithStyle:AGSSimpleLineSymbolStyleSolid color:lineColor width:width];
     return symbol;
 }
 

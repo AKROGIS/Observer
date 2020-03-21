@@ -131,15 +131,15 @@
             if ([value isKindOfClass:[NSString class]]) {
                 NSString *units = (NSString *)value;
                 if ([@[@"feet", @"foot"] containsObject:units.lowercaseString]) {
-                    _distanceUnits = AGSSRUnitFoot;
+                    _distanceUnits = AGSLinearUnitIDFeet;
                     _definesAngleDistance = YES;
                 }
                 if ([@[@"yard", @"yards"] containsObject:units.lowercaseString]) {
-                    _distanceUnits = AGSSRUnitFoot;
+                    _distanceUnits = AGSLinearUnitIDFeet;
                     _definesAngleDistance = YES;
                 }
                 if ([@[@"meter", @"metre", @"metres", @"meters"] containsObject:units.lowercaseString]) {
-                    _distanceUnits = AGSSRUnitMeter;
+                    _distanceUnits = AGSLinearUnitIDMeters;
                     _definesAngleDistance = YES;
                 }
             }

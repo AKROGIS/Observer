@@ -38,7 +38,7 @@
 // The protocol provides the Angle Distance parameters
 @property (nonatomic, readonly) BOOL definesAngleDistance;
 // The units of measure (meters, feet, etc) for distances to observed items
-@property (nonatomic, readonly) AGSSRUnit distanceUnits;
+@property (nonatomic, readonly) AGSLinearUnitID distanceUnits;
 // The angle in degrees for dead ahead or true north
 @property (nonatomic, readonly) double angleBaseline;
 // What is the direction of increasing angles (clockwise or counter-clockwise)
