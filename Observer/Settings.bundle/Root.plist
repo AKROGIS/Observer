@@ -82,7 +82,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>$(MARKETING_VERSION) (828)</string>
+			<string>$(MARKETING_VERSION) (834)</string>
 			<key>Key</key>
 			<string>version</string>
 			<key>Title</key>

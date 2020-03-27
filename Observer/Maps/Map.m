@@ -28,7 +28,7 @@
 @property (nonatomic,         readwrite) BOOL isThumbnailLoaded;
 @property (nonatomic,         readwrite) BOOL isTileCacheLoaded;
 @property (nonatomic, strong, readwrite) UIImage *thumbnail;
-@property (nonatomic, strong, readwrite) AGSArcGISTiledLayer *tileCache;
+@property (nonatomic, strong, readwrite) AGSTileCache *tileCache;
 
 //TODO: #6 move to NSOperation
 @property (nonatomic, readwrite) BOOL downloading;
@@ -105,7 +105,7 @@
     if (!fileAttributes) {
         return nil;
     }
-    AGSArcGISTiledLayer *tileCache =[Map loadTileCacheAtURL:url];
+    AGSTileCache *tileCache =[Map loadTileCacheAtURL:url];
     // loadTileCacheAtURL will check tilecache properties and return nil if invalid.
     if (!tileCache) {
         return nil;
@@ -120,7 +120,7 @@
     //kRemoteThumbUrlKey - not available or required
     newProperties[kCachedThumbUrlKey] = [Map generateThumbnailURL].lastPathComponent;
     newProperties[kDescriptionKey] = @"Not available."; //TODO: #92 get the description from the esriinfo.xml file in the zipped tpk
-    AGSEnvelope *extents = tileCache.tileCache.fullExtent;
+    AGSEnvelope *extents = tileCache.fullExtent;
     if (!extents) {
         return nil;
     }
@@ -134,7 +134,7 @@
     if (self) {
         _tileCache = tileCache;
         self.isTileCacheLoaded = YES;
-        _thumbnail = tileCache.tileCache.thumbnail;
+        _thumbnail = tileCache.thumbnail;
         self.isThumbnailLoaded = YES;
         [Map saveImage:_thumbnail toURL:self.cachedThumbnailURL];
         _plistURL = [Map generatePlistURL];
@@ -475,7 +475,7 @@
 
 //Alert: may call a mutating function
 //Alert: may block for IO
-- (AGSArcGISTiledLayer *)tileCache
+- (AGSTileCache *)tileCache
 {
     if (!_tileCache && !self.isTileCacheLoaded) {
         [self loadTileCache];
@@ -491,7 +491,7 @@
 }
 
 //Alert: will block for IO; Timing on an iPad Air2 was <.03 seconds
-+ (AGSArcGISTiledLayer *)loadTileCacheAtURL:(NSURL *)url
++ (AGSTileCache *)loadTileCacheAtURL:(NSURL *)url
 {
     //with ArcGIS 10.2.5 tilecache is non-null even when initilazing with a bad file
     //However accessing properties like fullEnvelope will yield an EXC_BAD_ACCESS if it is invalid
@@ -499,18 +499,41 @@
     //July 2016 Update: this is not always true.  I'm getting some crash reports on the alloc/init line
     //So I am moving it inside the try/catch. The online documentation is silent on this:
     //https://developers.arcgis.com/ios/10-2/api-reference/interface_a_g_s_local_tiled_layer.html
+    
+    // With 100.x, initializing with the URL no longer loads the local tile cache.
+    // the loadWithCompletion: method needs to be called before I can access the fullextent or thumbnail properties
+    // adding it to a map (via a tile layer) will automatically load the tilecache
+    // TODO: refactor to use an asynchronous model
+    // for now I will block while awaiting the callback
     NSString *path = url.path;
     if (path != nil && [[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        @try {
-            AGSArcGISTiledLayer *tiles = [[AGSArcGISTiledLayer alloc] initWithURL:url];
-            if (tiles.tileCache && tiles.tileCache.fullExtent && !tiles.tileCache.fullExtent.isEmpty) {
-                return tiles;
+        __block BOOL failed = false;
+        AGSTileCache *tiles = [AGSTileCache tileCacheWithFileURL:url];
+        
+        // block while awaiting the callback (from https://stackoverflow.com/a/4326754)
+        dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+
+        [tiles loadWithCompletion:^(NSError * _Nullable error) {
+            if (error != nil) {
+                failed = true;
+                AKRLog(@"Error %@ when loading tile cache %@",error,url);
             }
-            AKRLog(@"missing or empty envelope in tile cache %@",url);
+            dispatch_semaphore_signal(sema);
+        }];
+
+        if (![NSThread isMainThread]) {
+            dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+        } else {
+            while (dispatch_semaphore_wait(sema, DISPATCH_TIME_NOW)) {
+                [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0]];
+            }
         }
-        @catch (NSException *exception) {
-            AKRLog(@"Exception %@ when checking tile cache %@",exception,url);
+        // End of busy wait for completion
+        
+        if (tiles.fullExtent && !tiles.fullExtent.isEmpty) {
+            return tiles;
         }
+        AKRLog(@"missing or empty envelope in tile cache %@",url);
     } else {
         AKRLog(@"tile cache not found at path %@",url);
     }

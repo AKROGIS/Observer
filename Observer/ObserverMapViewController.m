@@ -784,12 +784,18 @@
     //the remaining configuration will occur after a layer is loaded
     //Alert: calling the tilecache property may block for IO
     if (self.map.tileCache) {
-        AGSBasemap *basemap = [AGSBasemap basemapWithBaseLayer:self.map.tileCache];
+        AGSArcGISTiledLayer *layer = [AGSArcGISTiledLayer ArcGISTiledLayerWithTileCache:self.map.tileCache];
+        AGSBasemap *basemap = [AGSBasemap basemapWithBaseLayer:layer];
         self.mapView.map = [AGSMap mapWithBasemap:basemap];
-        //  TODO: call delegate handler in completion handler
-        //  self.map.tileCache.delegate = self;
-        //adding a layer is async. See AGSLayerDelegate layerDidLoad or layerDidFailToLoad for additional action taken when opening a map
-        [self.mapView.map loadWithCompletion:nil];
+        // This is a qucik/crude hack to use the 10.2.5 delegates methods in the 100.7.0 completion handler.
+        // TODO: refactor to make this cleaner.
+        [self.mapView.map loadWithCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                [self layer:layer didFailToLoadWithError:error];
+            } else {
+                [self mapViewDidLoad:self.mapView];
+            }
+        }];
     }
 }
 
@@ -1144,7 +1150,8 @@
         self.noMapView.hidden = YES;
         self.panButton.enabled = YES;
         AKRLog(@"Loading the basemap %@", map);
-        AGSBasemap *basemap = [AGSBasemap basemapWithBaseLayer:map.tileCache];
+        AGSArcGISTiledLayer *layer = [AGSArcGISTiledLayer ArcGISTiledLayerWithTileCache:self.map.tileCache];
+        AGSBasemap *basemap = [AGSBasemap basemapWithBaseLayer:layer];
         self.mapView.map = [AGSMap mapWithBasemap:basemap];
         //  TODO: call prior delegate handle with completion handler
         //  self.map.tileCache.delegate = self;
