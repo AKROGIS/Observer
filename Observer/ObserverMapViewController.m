@@ -787,7 +787,7 @@
         AGSArcGISTiledLayer *layer = [AGSArcGISTiledLayer ArcGISTiledLayerWithTileCache:self.map.tileCache];
         AGSBasemap *basemap = [AGSBasemap basemapWithBaseLayer:layer];
         self.mapView.map = [AGSMap mapWithBasemap:basemap];
-        // This is a qucik/crude hack to use the 10.2.5 delegates methods in the 100.7.0 completion handler.
+        // This is a quick/crude hack to use the 10.2.5 delegates methods in the 100.7.0 completion handler.
         // TODO: refactor to make this cleaner.
         [self.mapView.map loadWithCompletion:^(NSError * _Nullable error) {
             if (error) {
@@ -1153,10 +1153,15 @@
         AGSArcGISTiledLayer *layer = [AGSArcGISTiledLayer ArcGISTiledLayerWithTileCache:self.map.tileCache];
         AGSBasemap *basemap = [AGSBasemap basemapWithBaseLayer:layer];
         self.mapView.map = [AGSMap mapWithBasemap:basemap];
-        //  TODO: call prior delegate handle with completion handler
-        //  self.map.tileCache.delegate = self;
-        //adding a layer is async. See AGSLayerDelegate layerDidLoad or layerDidFailToLoad for additional action taken when opening a map
-        [self.mapView.map loadWithCompletion:nil];
+        // This is a quick/crude hack to use the 10.2.5 delegates methods in the 100.7.0 completion handler.
+        // TODO: refactor to make this cleaner.
+        [self.mapView.map loadWithCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                [self layer:layer didFailToLoadWithError:error];
+            } else {
+                [self mapViewDidLoad:self.mapView];
+            }
+        }];
     } else {
         [self alert:nil message:@"Unable to open the map."];
     }
