@@ -102,8 +102,8 @@
        ],
       "locations":[
         {"type":"gps",           "default":true, "allow":true},
-        {"type":"adhocTarget",   "default":false, "allow":false},
-        {"type":"adhocTouch",    "default":false, "allow":false},
+        {"type":"mapTarget",   "default":false, "allow":false},
+        {"type":"mapTouch",    "default":false, "allow":false},
         {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{

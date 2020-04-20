@@ -105,8 +105,8 @@
        ],
       "locations":[
         {"type":"gps",           "default":false, "allow":true},
-        {"type":"adhocTarget",   "default":false, "allow":true},
-        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"mapTarget",   "default":false, "allow":true},
+        {"type":"mapTouch",    "default":false, "allow":true},
         {"type":"angleDistance", "default":true, "allow":true, "baseline":0.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{
@@ -123,7 +123,7 @@
 			  {"type":"QBooleanElement",   "key":"sl", "bind":"boolValue:SangLater",         "title":"Sang later?",         "boolValue":0},
 			  {"type":"QBooleanElement",   "key":"p",  "bind":"boolValue:MatedPair",         "title":"Mated pair?",         "boolValue":0},
 			  {"type":"QBooleanElement",   "key":"t",  "bind":"boolValue:Territorial",       "title":"Territorial?",        "boolValue":0},
-			  {"type":"QBooleanElement",   "key":"2n",  "bind":"boolValue:SecondLocation",  "title":"Second Location?",    "boolValue":0},					  
+			  {"type":"QBooleanElement",   "key":"2n",  "bind":"boolValue:SecondLocation",  "title":"Second Location?",    "boolValue":0},
               {"type":"QMultilineElement", "key":"n",  "bind":"textValue:Notes",             "title":"Comments"}
             ]
           }
@@ -170,8 +170,8 @@
        ],
       "locations":[
         {"type":"gps",           "default":false, "allow":true},
-        {"type":"adhocTarget",   "default":false, "allow":true},
-        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"mapTarget",   "default":false, "allow":true},
+        {"type":"mapTouch",    "default":false, "allow":true},
         {"type":"angleDistance", "default":true,  "allow":true, "baseline":0.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{

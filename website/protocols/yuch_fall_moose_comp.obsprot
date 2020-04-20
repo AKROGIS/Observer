@@ -134,8 +134,8 @@
        ],
       "locations":[
         {"type":"gps",           "default":false, "allow":true},
-        {"type":"adhocTarget",   "default":true, "allow":true},
-        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"mapTarget",   "default":true, "allow":true},
+        {"type":"mapTouch",    "default":false, "allow":true},
         {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{
@@ -219,8 +219,8 @@
        ],
       "locations":[
         {"type":"gps",           "default":false, "allow":true},
-        {"type":"adhocTarget",   "default":true, "allow":true},
-        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"mapTarget",   "default":true, "allow":true},
+        {"type":"mapTouch",    "default":false, "allow":true},
         {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{

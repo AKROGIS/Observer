@@ -128,8 +128,8 @@
        ],
       "locations":[
         {"type":"gps",           "default":false, "allow":true},
-        {"type":"adhocTarget",   "default":true, "allow":true},
-        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"mapTarget",   "default":true, "allow":true},
+        {"type":"mapTouch",    "default":false, "allow":true},
         {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{
@@ -152,7 +152,7 @@
 			  {"type":"QLabelElement",     "title":"Vegetation Cover"},
 			  {"type":"QSegmentedElement", "key":"vc", "bind":"selectedItem:VegetationCover",   "title":"Vegetation Cover", "items":["<10%", "10-30%", ">30%"]},
 			  {"type":"QLabelElement",     "title":"Snow Cover"},
-			  {"type":"QSegmentedElement", "key":"sc", "bind":"selectedItem:SnowCover",          "title":"Snow Cover", "items":["None", "Patchy", "Complete"]},  
+			  {"type":"QSegmentedElement", "key":"sc", "bind":"selectedItem:SnowCover",          "title":"Snow Cover", "items":["None", "Patchy", "Complete"]},
               {"type":"QMultilineElement", "key":"c",  "bind":"textValue:Notes",            "title":"Comments"}
             ]
           }
@@ -199,8 +199,8 @@
        ],
       "locations":[
         {"type":"gps",           "default":false, "allow":true},
-        {"type":"adhocTarget",   "default":true, "allow":true},
-        {"type":"adhocTouch",    "default":false, "allow":true},
+        {"type":"mapTarget",   "default":true, "allow":true},
+        {"type":"mapTouch",    "default":false, "allow":true},
         {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{
