@@ -129,6 +129,8 @@
     [self updateStatusView];
     //Register map pan and zoom notifications for scale bar
     //FIXME: Needed for scalebar
+    // no notifications in 100.7  need to set () -> Void closure on mapView.viewpointChangedHandler
+    // can be called at 60hz on any thread; need to dispatch to main for UI updates
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateScaleBar) name:AGSMapViewDidEndZoomingNotification object:nil];
 }
 
@@ -563,6 +565,45 @@
 
 #pragma mark - Delegate Methods: AGSGeoViewTouchDelegate (all optional)
 
+- (void)geoView:(AGSGeoView *)geoView didTouchDownAtScreenPoint:(CGPoint)screenPoint mapPoint:(AGSPoint *)mapPoint completion:(void(^)(BOOL willHandleDrag))completion
+{
+    // This event is the precursor of a tap or a drag gesture
+    // invoke identify on the graphics overlay to check for feature hit
+    // return true in completion if touched on a feature that I am going to info (tap) or move (drag)
+    AKRLog(@"geoView Did Touch Down");
+    [geoView identifyGraphicsOverlaysAtScreenPoint:screenPoint tolerance:22 returnPopupsOnly:NO maximumResultsPerOverlay:10 completion:^(NSArray<AGSIdentifyGraphicsOverlayResult *> * _Nullable identifyResults, NSError * _Nullable error) {
+
+        AKRLog(@"Identify Graphics Overlays At ScreenPoint");
+        // Check error
+        // if empty array, clear the 'selected' graphic and return false in completion (other touch delegates will ignore drag events)
+        // Otherwise use the array to save the 'selected' graphic and return true in completion
+    }];
+}
+
+- (void)geoView:(AGSGeoView *)geoView didTapAtScreenPoint:(CGPoint)screenPoint mapPoint:(AGSPoint *)mapPoint
+{
+    // display popup on selected feature or ignore
+}
+
+- (void)geoView:(AGSGeoView *)geoView didTouchDragToScreenPoint:(CGPoint)screenPoint mapPoint:(AGSPoint *)mapPoint
+{
+    // Move selected feature to new location or ignore
+    AKRLog(@"geoView Did Drag To");
+}
+
+- (void)geoView:(AGSGeoView *)geoView didTouchUpAtScreenPoint:(CGPoint)screenPoint mapPoint:(AGSPoint *)mapPoint
+{
+    // Update/Save the new location of the selected feature or ignore
+    AKRLog(@"geoView Did Touch Up");
+}
+
+- (void)geoViewDidCancelTouchDrag:(AGSGeoView *)geoView
+{
+    // Move the selected feature to it's saved location or ignore
+    AKRLog(@"geoView Did Cancel Touch Drag");
+}
+
+
 - (void)mapView:(AGSMapView *)mapView didClickAtPoint:(CGPoint)screen mapPoint:(AGSPoint *)mapPoint features:(NSDictionary *)features
 {
     //Tells the delegate the map was single-tapped at specified location.
@@ -778,9 +819,7 @@
 
 - (void)configureMapView
 {
-    //self.mapView.layerDelegate = self;
     self.mapView.touchDelegate = self;
-    self.mapView.callout.delegate = self;
     //the remaining configuration will occur after a layer is loaded
     //Alert: calling the tilecache property may block for IO
     if (self.map.tileCache) {
