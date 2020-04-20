@@ -8,3 +8,5 @@
 *.ipa
 
 *.tpk
+# XCode User settings
+xcuserdata/
