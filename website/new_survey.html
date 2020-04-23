@@ -19,9 +19,11 @@
 
     <div id="content">
 	<br/>
-	<h3>Adding Maps and Protocols</h3>
-	    <p>Instructions on what to do if there is no protocol or basemap for your survey.</p>
-		<ol>
+	<h3>Maps and Protocols</h3>
+	    <p>Instructions on what to do if you cannot find what you need in the list of
+			<a href="protocols/">protocols</a> or <a href="maps/">basemaps</a> on the server.
+
+		<ul>
 			  <li>
 	    <strong>Contact <a href="mailto:regan_sarwas@nps.gov">AKR GIS</a></strong>.
 		<p>We are happy to help.
@@ -30,49 +32,51 @@
 	  <li>
 	    <strong>Thanks, but I want to do it myself.</strong>
 
-				<h4><a href="protocols/">Protocols</a></h4>
+				<h4>Protocols</h4>
 
-	    <p>Protocols define your survey - you must have a protocol to collect data.  The
-	    protocol defines the features that you can collect, and the attributes of those features.</p>
+	    <p>The protocol file define your survey, most importantly it specifies what features that you can collect,
+			and the attributes of those features.
+			You must have a protocol file to create a survey and collect data.</p>
 
 		<p>The easiest way to create a new protocol is to copy one of the <a href="protocols/">existing protocols</a>
-		and then edit it in a text editor like notepad.  If you get stuck,
-		try reading the <a href="ProtocolSpecification.html">specification for the protocol file</a></p>
+		and then edit it to meet your needs in a text editor like Notepad, <a href="https://notepad-plus-plus.org/">Notepad++</a>
+		or <a href="https://atom.io/">atom</a> (do not use MS Word).
+		The <a href="ProtocolSpecificationV2.html">Protocol Specification</a> is the definitive guide to the content and
+		format of a protocol file.  The specifications closely mirror the application code, and while it is long and boring,
+		it is defines exactly what is allowed and what is not.
+		The <a href="ProtocolGuide.html">Protocol Guide</a> provides a more readable discussion of some of
+		the considerations in making a protocol file suitable for your needs.
 
-		<p>A Protocol should have a unique name and version.  To avoid confusion, the file name should match the name attribute
-		inside the file, but this is not required.
-		Protocols have a major and minor version number.  Both are integers separated by a decimal point.
-		A change in the major version number indicates a change in the database schema.  Use the minor version number for all other changes.</p>
-
-		<p>Protocols create a FGDB on the server the first time a new major version is synced with the server.
-		The name of the database is determined by the protocol name and the major version number.  The world will end
-		if you try to sync a protocol with the same name and major version but different schema as an existing protocol.
-		Please don't do that.</p>
-
-		<p>The protocol must be a valid <a href="http://json.org/">JSON</a> file, or it will fail to load in the app.
-		You should validate it first by using an <a href="http://jsonlint.com/">online validator</a>.</p>
+		<p>The protocol file must be a valid <a href="http://json.org/">JSON</a> file, a single misplaced comma will
+		cause it to fail to load in the app.
+		You should validate it first by using an <a href="http://jsonlint.com/">online validator</a>.
 
 		<p>Once you have a valid protocol, you can use iTunes to load it onto your device.
 		It will then appear in the list of local protocols in your app.
 		If you want your protocol to appear in the list of protocols available to all users
 		<a href="mailto:regan_sarwas@nps.gov">contact me</a> and I will load it on the server.
 
-		<p>While a database for the protocol is created automatically, the associated layer file, mxd, map service and web map, are not.
-		<a href="mailto:regan_sarwas@nps.gov">Contact us</a> if you would like those created for your protocol.  Until then, you can
-		go to \\akrgis.nps.gob\MapData\Observer to make a copy of the FGDB.</p>
+		<p>The Park Observer app is not very friendly when you feed it a protocol that does not meet the specifications.
+			It usually just crashes without any explanation. Always thoroughly test your protocols before doing real
+			field work.  If you have a problem, consult the specification, and/or contact us for help.
+
+		<p>While the <a href="surveys/">database for surveys</a> created from a protocol is created automatically when you sync your
+			survey with the server, the associated layer files, mxd, map service and web map, are not.
+		<a href="mailto:regan_sarwas@nps.gov">Contact us</a> if you would like those created for your protocol.
+		Until then, you can go to \\akrgis.nps.gob\MapData\Observer to make a copy of the FGDB.</p>
 	    <p/>
-	<h4><a href="maps/">Maps</a></h4>
+	<h4>Maps</h4>
 	<p>Basemaps can be created in ArcMap 10.1 or greater.
 	The map is converted into a collection of small images at various scales for rapid
 	rendering on the device.  You can use any image or vector datasets that you like in your map,
 	however you can <strong>not</strong> use proprietary online basemaps (like Google, Bing, or ArcGIS).</p>
 	<p>To create a basemap (aka tilecache) in ArcMap:
-	<ol><li>Turn on the tool: Select ArcMap Options... in the Customize menu item.  Then select the Sharing tab,
+	<ol>
+		<li>Turn on the tool: Select ArcMap Options... in the Customize menu item.  Then select the Sharing tab,
 	and check the <em>Enable ArcGIS Runtime Tools</em></li>
 	<li>Assemble your map - set symbology, labeling, scale dependencies, etc. to your liking.</li>
 	<li>Zoom to the full extents of the area you would like to have in the tile cache.
 	To minimize file size you should make the area as small as necessary.</li>
-	</li>
 	<li>Export the map by selecting File->Share As->Tile Package from the ArcMap menu
 	<ol type="a">
 	  <li>Tile Package Tab<br>You will want to save the package to a file.  Give it any name you want.
@@ -95,7 +99,7 @@
 
 
 	    </li>
-	  </ol>
+	  </ul>
     </div>
 
     <div id="footer">
