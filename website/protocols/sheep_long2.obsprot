@@ -127,7 +127,7 @@
         {"type":"gps",           "default":false, "allow":true},
         {"type":"mapTarget",   "default":true, "allow":true},
         {"type":"mapTouch",    "default":false, "allow":true},
-        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+        {"type":"angleDistance", "default":false, "allow":false, "deadAhead":180.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{
         "title":"Sheep",
@@ -198,7 +198,7 @@
         {"type":"gps",           "default":false, "allow":true},
         {"type":"mapTarget",   "default":true, "allow":true},
         {"type":"mapTouch",    "default":false, "allow":true},
-        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+        {"type":"angleDistance", "default":false, "allow":false, "deadAhead":180.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{
         "title":"Other",

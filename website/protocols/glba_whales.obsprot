@@ -68,7 +68,7 @@
        ],
       "locations":[
         {"type":"mapTouch",    "default":false, "allow":true},
-        {"type":"angleDistance", "default":true,  "allow":true, "baseline":180.0, "units":"meters", "direction":"cw" }
+        {"type":"angleDistance", "default":true,  "allow":true, "deadAhead":180.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{
         "title":"Whale Pod",

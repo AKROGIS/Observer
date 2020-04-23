@@ -104,7 +104,7 @@
         {"type":"gps",           "default":true, "allow":true},
         {"type":"mapTarget",   "default":false, "allow":false},
         {"type":"mapTouch",    "default":false, "allow":false},
-        {"type":"angleDistance", "default":false, "allow":false, "baseline":180.0, "units":"meters", "direction":"cw" }
+        {"type":"angleDistance", "default":false, "allow":false, "deadAhead":180.0, "units":"meters", "direction":"cw" }
       ],
       "dialog":{
         "title":"Critter",
