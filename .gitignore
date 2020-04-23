@@ -7,4 +7,6 @@
 
 *.ipa
 
-*.ipa
+*.tpk
+
+xcuserdata/
