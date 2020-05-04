@@ -2,8 +2,8 @@
   "meta-name":"NPS-Protocol-Specification",
   "meta-version":2,
   "name":"LACL Sea Otter Survey",
-  "version":1.0,
-  "date":"2019-05-22",
+  "version":1.1,
+  "date":"2020-05-04",
   "description":"This aerial survey protocol was developed for Buck Mangipane (buck_mangipane@nps.gov)",
   "gps_interval": 1,
   "mission":{
@@ -22,7 +22,7 @@
       "sections":[
         {
           "elements":[
-            {"type":"QDecimalElement",   "key":"t",  "bind":"numberValue:transect", "title":"Transect (m)"},
+            {"type":"QDecimalElement",   "key":"t",  "bind":"numberValue:transect", "title":"Transect (m)", "fractionDigits": 0},
             {"type":"QEntryElement",     "key":"p",  "bind":"textValue:pilot",      "title":"Pilot",      "placeholder":"First initial and last name", "autocorrectionType":"No"},
             {"type":"QEntryElement",     "key":"a",  "bind":"textValue:aircraft",   "title":"Aircraft",   "placeholder":"Aircraft Type", "autocorrectionType":"No"},
             {"type":"QEntryElement",     "key":"o",  "bind":"textValue:observers",  "title":"Observers",  "placeholder":"First and last names of observers", "autocorrectionType":"No"},

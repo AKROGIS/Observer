@@ -70,6 +70,13 @@
 }
 ,
 {
+  "name":"LACL Sea Otter Survey",
+  "version":1.1,
+  "date":"2020-05-04",
+  "url":"https://akrgis.nps.gov/observer/protocols/lacl_seaotters.obsprot"
+}
+,
+{
   "name":"LACL Sheep",
   "version":1.01,
   "date":"2014-07-01",
@@ -78,8 +85,8 @@
 ,
 {
   "name":"Landbird Draft",
-  "version":0.7,
-  "date":"2019-02-08",
+  "version":0.8,
+  "date":"2020-05-04",
   "url":"https://akrgis.nps.gov/observer/protocols/landbird_draft.obsprot"
 }
 ,
