@@ -118,6 +118,46 @@ If a feature allows one or more non-touch location methods, then a button with t
       + A feature is added using the selected location method.
       + Set the feature's preferred location method to the selected location method.
 
+============ From specs
+
+Any location type containing the text "Touch" is a touch location, the others are non-touch locations.
+If a touch location method is allowed then a feature will be created when the
+user taps the map without selecting an existing feature.
+If one or more non-touch location methods are allowed, then an
+_Add Feature_ button is added to the user interface.
+
+The _Add Feature_ button has the following behavior if more than one non-touch location method is allowed:
+* **Tap:**
+If there is a location method with `"default":true`
+use that location method to add a new feature.
+If there is no location method with `"default":true` and
+if the feature's preferred location method (see Long Press) is not set, then
+set the feature's preferred method to the first of the following types to be allowed
+`gps`, `adhocTarget`, `angleDistance`.
+Use the user's preferred location method to add a new feature
+
+* **Long Press:**
+Provide the user with a selection list of all the allowed non-touch location methods.
+If the user selects one then a feature is added using the selected location method, and the selected location method is set as the user's preference.
+
+#### gps
+The feature is located at the current GPS position.  These observations cannot be moved.
+
+#### mapTarget
+The feature is located at the point on the map under the target (cross-hairs) at the center
+of the device screen.  These observations can be moved.
+
+#### mapTouch
+The feature is located at the point on the map where the user taps.  These observations can be moved.
+
+#### angleDistance
+The feature is located a certain angle (relative to the forward motion of the GPS, or the north if not moving) and distance from the current GPS position.  These observations cannot be moved.
+
+GPS cannot be moved.  angledistance can be moved by editing the angle/distance. mapTouch and mapTarget can be
+moved to the current GPS location(and subsequently not moved) or moved to an arbitrary touch on the map.
+
+============^ From specs
+
 
 Symbology
 ---------
@@ -129,3 +169,7 @@ The protocol file specifies symbology:
  * features - color and size (they are always circles)
 
  * points where mission properties are set - color and size (they are always circles)
+
+**Note** The track log start and stop points will be drawn on top of the
+gps points, which are drawn on top of the track log lines. This will affect
+the display of the symbols, and therefore how you might choose your symbology.

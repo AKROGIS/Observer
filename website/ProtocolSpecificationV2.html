@@ -22,250 +22,735 @@
   </style>
 </head>
 <body>
-<p class="p1"><span class="s1"><b>Protocol Specifications, version 2</b></span></p>
-<p class="p2"><br></p>
-<p class="p3">The protocol file (*.obsprot) is just a text file in JSON (javascript object notation).<span class="Apple-converted-space">  </span>The root of the file is a Javascript Object (dictionary) with the following properties (keys)</p>
-<ul class="ul1">
-  <li class="li4"><span class="s2">meta-name</span></li>
-  <li class="li4"><span class="s2">meta-version</span></li>
-  <li class="li4">name</li>
-  <li class="li4"><span class="s2">version</span></li>
-  <li class="li4"><span class="s2">date</span></li>
-  <li class="li4"><span class="s2">description</span></li>
-  <li class="li4"><span class="s2">mission</span></li>
-</ul>
-<ul class="ul1">
-  <li class="li4"><span class="s2">features</span></li>
-</ul>
-<p class="p3">Each of these properties is define in the following sections. Complete details on JSON file format the can be found at <a href="http://www.json.org/">http://www.json.org/</a></p>
-<p class="p2"><br></p>
-<ul class="ul1">
-  <li class="li4"><span class="s2">meta-name</span></li>
-  <ul class="ul2">
-    <li class="li3"><span class="s3"></span>Must be <span class="s4">"NPS-Protocol-Specification"</span>.<span class="Apple-converted-space">  </span>This designates the file as subscribing to this file format.</li>
+  <h1 id="protocol-specification">Protocol Specification</h1>
+  <p><em>If you just want a protocol for a new survey, please start with the <a href="https://akrgis.nps.gov/Observer/new_survey.html">tutorial instructions</a> and <a href="https://akrgis.nps.gov/Observer/protocols/">examples</a>.</em></p>
+  <p>This document is a technical reference for the structure and accepted content of the Park Observer protocol file.
+  A more general reference can be found in the <a href="Protocol_Guide.html">Protocol Guide</a></p>
+  <p>This specification describes version 1 (v1) and 2 (v2) of the protocol file.
+  Items that were introduced in version 2 are marked (v2).
+  Since most of the items introduced in v2 are optional and do not conflict with
+  v1, Park Observer will honor v2 items even if found in a v1 file.
+  Symbology is a notable exception and will be discussed in detail.
+  For clarity you are encouraged to use a v2 protocol file (defined below) when using v2 items.</p>
+  <p>The protocol file is a plain text file in <code>JSON</code> (javascript object notation) format.
+  The file typically contains only <code>ASCII</code> characters.
+  If special characters (accents marks, emoji, etc.) are needed, the file must be encoded in <code>UTF8</code>.
+  The protocol file name must end with <code>.obsprot</code>, which is short for (obs)ervation (prot)ocol.</p>
+  <p>A protocol file contains one JSON object.
+  An object begins with an opening curly bracket (<code>{</code>) and ends with an closing curly bracket (<code>}</code>)
+  An object is a list of properties (name-value pairs) separated by a comma(<code>,</code>).
+  Property names must be enclosed in double quotes (<code>&quot;</code>) and are case sensitive.
+  A colon (<code>:</code>) separates the property name from the property value.
+  A property value can be an object, a text string enclosed in double quotes (<code>&quot;</code>),
+  a number, or one of the special symbols: <code>true</code>, <code>false</code>, and <code>null</code>.
+  A property value can also be a list of property values.
+  A list begins with an opening square bracket (<code>[</code>), and ends with a closing square bracker (<code>]</code>).
+  Items in the list are separated by a comma (<code>,</code>).</p>
+  <p>The official specifications of the JSON file format can be found at <a href="http://www.json.org/">http://www.json.org/</a>.
+  The JSON file format is very specific and it is easy to introduce errors when editing by
+  hand.  There are a number of online JSON linters (e.g. <a href="https://jsonlint.com">https://jsonlint.com</a>) that will
+  check your protocol file to ensure it is valid JSON.  Most linters will also provide suggestions
+  for how to fix invalid JSON.</p>
+  <p>A JSON linter will only check for valid JSON, it will not check for compliance with
+  this document. For that you will need to use a Schema Validator.
+  This specification is also defined in a machine readable form in <code>protocol.v1.schema.json</code>
+  and <code>protocol.v2.schema.json</code>.  These schemas are also JSON files in the
+  <a href="http://json-schema.org/">JSON Schema</a> format.
+  These schema files can be used to validate a protocol file to ensure that it is not just valid
+  JSON, but meets the requirements of this specification.
+  One example of an online validator is <a href="https://www.jsonschemavalidator.net">https://www.jsonschemavalidator.net</a>.</p>
+  <p><strong>IMPORTANT:</strong>
+  This specification and the related schema documents, define the proper format of the
+  obsprot file.  It is possible that the implementation in Park Observer is more relaxed.
+  For example Park Observer might provide default values when a required value is missing,
+  or accept different spellings, but that behavior is subject to change without notice.</p>
+  <p>The JSON object in the protocol file understands properties with the following names.
+  Properties can appear in any order, but usually in the order shown.
+  Properties marked with an (o) are optional; the others are required.</p>
+  <ul>
+  <li><a href="#meta-name"><code>meta-name</code></a></li>
+  <li><a href="#meta-version"><code>meta-version</code></a></li>
+  <li><a href="#name"><code>name</code></a></li>
+  <li><a href="#version"><code>version</code></a></li>
+  <li><a href="#date"><code>date</code></a> (o)</li>
+  <li><a href="#description"><code>description</code></a> (o)</li>
+  <li><a href="#observing"><code>observing</code></a> (o)(v2)</li>
+  <li><a href="#notobserving"><code>notobserving</code></a> (o)(v2)</li>
+  <li><a href="#status_message_fontsize"><code>status_message_fontsize</code></a> (o)(v2)</li>
+  <li><a href="#cancel_on_top"><code>cancel_on_top</code></a> (o)(v2)</li>
+  <li><a href="#gps_interval"><code>gps_interval</code></a> (o)(v2)</li>
+  <li><a href="#mission"><code>mission</code></a> (o)</li>
+  <li><a href="#features"><code>features</code></a></li>
+  <li><a href="#csv"><code>csv</code></a> (o)</li>
   </ul>
-  <li class="li4"><span class="s2">meta-version</span></li>
-  <ul class="ul2">
-    <li class="li3"><span class="s3"></span>Must be a integer that defines the version of the specification.<span class="Apple-converted-space">  </span>This is version 2.</li>
+  <p>Each of these properties are defined in the following sections.</p>
+  <h1 id="meta-name"><code>meta-name</code></h1>
+  <p>This property is required and must be a string equal to <code>&quot;NPS-Protocol-Specification&quot;</code>.
+  This property designates the file as subscribing to these specifications.</p>
+  <h1 id="meta-version"><code>meta-version</code></h1>
+  <p>This property is required and must be an integer.
+  This property designates the version of the specification defining the content of the protocol file.
+  At this time, the only valid values are <code>1</code> and <code>2</code>.
+  Version <code>1</code> has been deprecated.</p>
+  <h1 id="name"><code>name</code></h1>
+  <p>This property is required and must be a string.
+  This is a short moniker used to reference this protocol.
+  It will be used in lists to choose among different protocols.</p>
+  <p>Names do not need to be unique, but having two protocols with the same name can cause confusion.
+  Protocols can evolve (see <a href="#version">version</a> and <a href="#date">date</a>).
+  The same name should be used for different version of the same protocol.</p>
+  <p>Technically, a name is not required by the Park Observer application.
+  However, the post processing tools (like the POZ to FGDB translator) require a name.
+  A protocol without a name is very hard to work with.</p>
+  <h1 id="version"><code>version</code></h1>
+  <p>This property is required and must be a number.
+  The version number looks like a floating point number (i.e. <code>2.1</code>)
+  but is actually two integers separated by a decimal point.
+  The first integer is the major version number the second integer is the minor version number.
+  The version number is used to track the evolution of a named protocol.
+  The version number will be displayed along with the name when presenting a list of protocols.</p>
+  <p>A change in the major version number represents a change in the database structure of the protocol.
+  If you add, remove, rename, or change the type of mission or feature attributes (defined below),
+  then you should update the major version number of your protocol.
+  Databases created with the postprocessing tools will be named with the protocol name and the major version number.
+  All surveys with the same protocol name and major version number can go into the same database.
+  Surveys with the same protocol name and a different major version number will go into different databases.
+  Databases created with different major version numbers of the same protocol will be difficult
+  to merge because the database structure is different.</p>
+  <p>Any other changes to a protocol should be accompanied by an increase in the minor version number.
+  For example, changes in symbology, location methods, and default or picklist values.</p>
+  <p>Technically, a version is not required by the Park Observer application.
+  However, the post processing tools require a major version number.
+  A protocol without a version number is easily confused with other protocols with the same name.</p>
+  <p>Because the major/minor version is a single number in the JSON file, the minor version number is
+  limited to the range 0..9.  This is due to the fact that 1.20 is the same number as 1.2, so the
+  minor number in both cases will be 2.  There is no limit to the major version.</p>
+  <h1 id="date"><code>date</code></h1>
+  <p>This property is optional. There is no default value.
+  If provided it must be a string that represent the date (but not time)
+  in the ISO format <code>YYYY-MM-DD</code> (e.g. <code>&quot;2016-05-24&quot;</code>).
+  This should be the date that the protocol file was last modified.
+  If provided, the date will be used in lists to help choose among different protocols.
+  If the date is missing, the wrong type, or an invalid date,
+  then the Park Observer will consider the date unknown.</p>
+  <h1 id="description"><code>description</code></h1>
+  <p>This property is optional. If provided it must be a string. There is no default value.
+  The description can be used to provide more information about the protocol than is available
+  in the protocol name.nIt typically describes who wrote the protocol and which surveys or
+  organizations it supports. Contact information can also be included.</p>
+  <h1 id="observing"><code>observing</code></h1>
+  <p>This property is optional. If provided it must be a string. There is no default value.
+  If a non-empty string is provided it will be displayed on the map when the Park Observer
+  application is recording <strong>and</strong> observing (i.e. on-transect).</p>
+  <p>This property is ignored in versions of Park Observer before 0.9.8b.</p>
+  <h1 id="notobserving"><code>notobserving</code></h1>
+  <p>This property is optional. If provided it must be a string. There is no default value.
+  If a non-empty string is provided it will be displayed on the map when the Park Observer
+  application is recording <strong>but not</strong> observing (i.e. off-transect).</p>
+  <p>This property is ignored in versions of Park Observer before 0.9.8b.</p>
+  <h1 id="status_message_fontsize"><code>status_message_fontsize</code></h1>
+  <p>This property is optional. If provided it must be a number. If omitted or invalid it will default to <code>16.0</code>.
+  This property specifies the size (in points, i.e. 1/72 of an inch) of the <code>notobserving</code> text.
+  The <code>observing</code> text will always be 2.0 points larger, bold, and red.
+  This property is ignored if <code>notobserving</code> and <code>observing</code> are not provided.</p>
+  <p>This property is ignored in versions of Park Observer before 1.2.0.</p>
+  <h1 id="cancel_on_top"><code>cancel_on_top</code></h1>
+  <p>This property is optional.  If provided it must be <code>true</code> or <code>false</code>. The default is <code>false</code>.
+  If <code>true</code> the attribute editors will put the <strong>Cancel/Delete</strong> button on the top of
+  the attribute editing forms, otherwise the button will be on the bottom of the form.</p>
+  <p>This property is ignored in versions of Park Observer before 0.9.8b.</p>
+  <h1 id="gps_interval"><code>gps_interval</code></h1>
+  <p>This property is optional.  If provided it must be a positive number.  There is no default.
+  The property is the number of seconds to wait between adding new GPS points to the tracklog.
+  When making observations, or starting/stopping recording/observing the most recently available
+  GPS point will be used regardless of this setting.
+  If omitted, or not a positive number, GPS points are added to the tracklog as often as provided
+  by the GPS device being used.  Typically the iPad&#39;s builtin GPS provides locations about 1 per second.
+  Some external GPS devices can provide multiple locations per second.
+  A number lower than the device can support will effectively be ignored.
+  Using an interval greater than the GPS can support may reduce battery consumption by allowing the GPS to rest.</p>
+  <p>This property is ignored in versions of Park Observer before 0.9.8b.</p>
+  <h1 id="mission"><code>mission</code></h1>
+  <p>This property is optional.  If provided it must be an object.  There is no default.
+  This object describes the attributes and symbology of the survey mission.
+  The attributes are things that may be constant for the entire survey, i.e. observer name, as
+  well as dynamic attributes like the weather.
+  It also describes the look and feel of the editing form and when the attributes should be edited.</p>
+  <p>A <code>mission</code> object has the following properties:</p>
+  <ul>
+  <li><a href="#attributes"><code>attributes</code></a> (o)</li>
+  <li><a href="#dialog"><code>dialog</code></a> (o)</li>
+  <li><code>edit_at_start_recording</code> (o)(v2)</li>
+  <li><code>edit_at_start_first_observing</code> (o)(v2)</li>
+  <li><code>edit_at_start_reobserving</code> (o)(v2)</li>
+  <li><code>edit_prior_at_stop_observing</code> (o)(v2)</li>
+  <li><code>edit_at_stop_observing</code> (o)(v2)</li>
+  <li><code>symbology</code></li>
+  <li><code>on-symbology</code> (o)</li>
+  <li><code>off-symbology</code> (o)</li>
+  <li><code>gps-symbology</code> (o)(v2)</li>
+  <li><code>totalizer</code> (o)(v2)</li>
   </ul>
-  <li class="li4">name</li>
-  <ul class="ul2">
-    <li class="li3"><span class="s3"></span>A user defined name (string) for this protocol.<span class="Apple-converted-space">  </span>Names do not need to be unique, but try to use a unique name to avoid confusion.</li>
-    <li class="li3">Protocols can evolve (see version and date).<span class="Apple-converted-space">  </span>The same name can and should be used for different version of the same protocol.<span class="Apple-converted-space"> </span></li>
+  <p>Each of these properties are defined in the following sections.</p>
+  <h2 id="attributes"><code>attributes</code></h2>
+  <p>An optional list of attribute objects.
+  The attributes are descriptive characterisitics for each segment of the survey.
+  A mission with no attributes only collects the location where the the user
+  stopped and started observing (i.e. went on/off transect). The mission
+  attributes are often things like the names of the observers, and the weather.</p>
+  <p>All the attributes default to a value of <code>null</code> until they are edited.
+  The exceptions are boolean attributes which defaults to <code>false</code>, and <code>id</code> attributes which default to <code>1</code>.
+  All attributes, except the <code>id</code> will never change unless you also have a <code>dialog</code> property.
+  An Attribute of type <code>id</code> only applies to features, and is incremented for each observation.
+  This can provide each feature with an automatic, unique, and sequential identifier.</p>
+  <p>If there is an attribute list then there must be at least one valid attribute object in it.
+  Each <code>attribute</code> has the following properties:</p>
+  <ul>
+  <li><code>name</code></li>
+  <li><code>type</code></li>
   </ul>
-  <li class="li4"><span class="s2">version</span></li>
-  <ul class="ul2">
-    <li class="li3"><span class="s3"></span>The version of this named protocol.<span class="Apple-converted-space">  </span>The version number looks like a floating point number but is actually two integers separated by a decimal point.</li>
-    <li class="li3"><span class="s3"></span>The first number is the major version number the second number is the minor version number</li>
-    <li class="li3">A change in the major version number represents a change in the database structure of the protocol.</li>
-    <ul class="ul2">
-      <li class="li3">Two protocol files with the same name that differ in the major version number cannot share the same feature class without some data manipulation.<span class="Apple-converted-space"> </span></li>
-    </ul>
-    <li class="li3">A change in the minor version number can change symbology, location methods, and default or picklist values.<span class="Apple-converted-space"> </span></li>
-    <ul class="ul2">
-      <li class="li3"><span class="s3"></span>It is assumed that two protocol files with the same name that differ only in the minor version number can and will share the same feature class on the server.</li>
-    </ul>
+  <h3 id="-name-"><code>name</code></h3>
+  <p>A required string identifying the attribute.  This will be the name of the column in an exported
+  CSV file, or a field in an ArcGIS geodatabase.
+  The name must start with a letter or underscore (<code>_</code>), and be followed by zero or more letters, numbers,
+  or underscores. It must be no longer than 30 characters.
+  Spaces and special characters are prohibited.
+  Each name must be unique within the mission or feature.
+  Different features can have attributes with the same name, but if they do they must have the same type.
+  Mission attributes and feature attributes are unrelated -- they can have the same name with different types.
+  <strong>Important</strong> Do not rely on upper/lowercase to distinguish two attributes;
+  <code>Species</code>, <code>species</code>, and <code>SPECIES</code> are the same attribute name.
+  However, the names in this protocol must
+  match in capitalization.  If you use <code>Species</code> in a <code>mission.totalizer</code> or a <code>feature.label</code>,
+  it must also be refered to as <code>Species</code> in the dialog element and <code>Species</code> in the attributes list.</p>
+  <h3 id="-type-"><code>type</code></h3>
+  <p>A required number that identifies the type (kind) of data the attribute stores.
+  The type must be an integer code with the following definitions.
+  These numbers (with the exception of 0) correspond with NSAttributeType in the iOS SDK.</p>
+  <ul>
+  <li>0 -&gt; sequential integer id (not editable, only available in v2)</li>
+  <li>100 -&gt; 16bit integer</li>
+  <li>200 -&gt; 32bit integer</li>
+  <li>300 -&gt; 64bit integer</li>
+  <li>400 -&gt; NSDecimal (currently not supported by ESRI)</li>
+  <li>500 -&gt; double precision floating point number</li>
+  <li>600 -&gt; single precision floating point number</li>
+  <li>700 -&gt; string</li>
+  <li>800 -&gt; boolean (converts to an ESRI integer 0 = NO, 1 = YES)</li>
+  <li>900 -&gt; datetime</li>
+  <li>1000 -&gt; binary blob (? no UI support, check on ESRI support)</li>
   </ul>
-  <li class="li4"><span class="s2">date</span></li>
-  <ul class="ul2">
-    <li class="li3"><span class="s3"></span>The publication date of the protocol file.<span class="Apple-converted-space">  </span>The date is a string in iso format, i.e. YYYY-MM-DD</li>
+  <p>The type vALue of 0 is ignored in versions of Park Observer before 0.9.8.</p>
+  <h2 id="dialog"><code>dialog</code></h2>
+  <p>This property is optional.  If provided it must be an object.  There is no default.
+  The dialog property describes the format of the editing form for the mission&#39;s attributes.
+  A dialog is not required, but the mission attributes cannot be edited without one.
+  If the dialog property is provided then the <code>attributes</code> property is required.
+  If a dialog is provided, there must be at least one section in the dialog and one element in that section.
+  All elements in the dialog except labels must refer to an attribute in the list of mission attributes.
+  It is an error if a dialog element refers to an attribute that is not in the list.</p>
+  <p>A dialog is not required because it is possible that the only attribute is a sequential Id which is
+  not editable and requires no dialog, or that the database schema is defined
+  by other drivers, and some attributes are not collected in the survey.</p>
+  <p>The dialog properties are based on the <a href="https://github.com/escoz/QuickDialog">QuickDialog</a> as
+  the form editor. While QuickDialog may have supported more properties than defined
+  below, the following are the only ones typically used by Park Observer and the only
+  ones that will be supported in the future.</p>
+  <ul>
+  <li><code>title</code></li>
+  <li><code>grouped</code> (o)</li>
+  <li><code>sections</code></li>
   </ul>
-  <li class="li4"><span class="s2">description</span></li>
-  <ul class="ul2">
-    <li class="li3"><span class="s3"></span>A user defined description (string) for this protocol</li>
+  <h3 id="-title-"><code>title</code></h3>
+  <p>This property is required and must be a text string.  It can be empty (<code>&quot;&quot;</code>)
+  This text is placed as a title at the top of the editing form.
+  It is typically either <code>&quot;Mission Properties&quot;</code>or the name of the feature.</p>
+  <h3 id="-grouped-"><code>grouped</code></h3>
+  <p>This property is optional.  If provided it must be a boolean.  The default is <code>false</code>.
+  This property determines if the sections in this form are grouped
+  (i.e. There is visual separation between sections).</p>
+  <h3 id="-sections-"><code>sections</code></h3>
+  <p>This property is requires and must be a list of one or section objects.
+  A dialog form is made up of one or more sections which group the editing controls
+  into logical collections. Each section object has the following properties.</p>
+  <ul>
+  <li><code>title</code> (o)</li>
+  <li><code>elements</code></li>
   </ul>
-  <li class="li4"><span class="s2">observing</span></li>
-  <ul class="ul2">
-    <li class="li3"><span class="s3"></span>User defined message to display on screen when observing. The default is nothing.</li>
+  <h4 id="-title-"><code>title</code></h4>
+  <p>This property is optional.  If provided it must be a string.  There is no default.
+  This text is placed as a title at the top of the section.</p>
+  <h4 id="-elements-"><code>elements</code></h4>
+  <p>This property is requires and must be a list of one or element objects.
+  Elements make up the interesting parts of the form.  They are usually tied to an attribute
+  and determine how the attribute can be edited.  Examples of form elements are text boxes,
+  on/off switches, and picklists. Each element has the following properties.  Some
+  properties are only relevant for certain types of elements.
+  Each element object has the following properties.</p>
+  <ul>
+  <li><code>title</code> (o)</li>
+  <li><code>type</code></li>
+  <li><code>bind</code> (o)</li>
+  <li><code>items</code> (o)</li>
+  <li><code>selected</code> (o)</li>
+  <li><code>boolValue</code> (o)</li>
+  <li><code>minimumValue</code> (o)</li>
+  <li><code>maximumValue</code> (o)</li>
+  <li><code>numberValue</code> (o)</li>
+  <li><code>placeholder</code> (o)</li>
+  <li><code>fractionDigits</code> (o)</li>
+  <li><code>keyboardType</code> (o)</li>
+  <li><code>autocorrectionType</code> (o)</li>
+  <li><code>autocapitalizationType</code> (o)</li>
+  <li><code>key</code> (o)</li>
   </ul>
-  <li class="li4"><span class="s2">notobserving</span></li>
-  <ul class="ul2">
-    <li class="li3"><span class="s3"></span>User defined message to display on screen when track logging but not observing.<span class="Apple-converted-space">  </span>The default is nothing.</li>
+  <h5 id="-title-"><code>title</code></h5>
+  <p>This property is optional.  If provided it must be a string.  There is no default.
+  This is a name/prompt that describes the data in this form element.  This usually appears to
+  the left of the attribute value in a different font. This is often the
+  only property used by a <code>QLabelElement</code>.</p>
+  <h5 id="-type-"><code>type</code></h5>
+  <p>This property is requires and must be one of the following text strings.
+  It describes the display and editing properties for the form element.  Park Observer
+  only supports the following types.  These are case sensitive.</p>
+  <ul>
+  <li><code>QBooleanElement</code> - an on/off switch, defaults to off.</li>
+  <li><code>QDecimalElement</code> - a &quot;real&quot; number editor with a limited number of digits after the decimal.</li>
+  <li><code>QEntryElement</code> - a single line text box.</li>
+  <li><code>QIntegerElement</code> - an integer input box with stepper (+1/-1) buttons.</li>
+  <li><code>QLabelElement</code> - non-editable text on its own line in the form.</li>
+  <li><code>QMultilineElement</code> - a multi-line text box.</li>
+  <li><code>QRadioElement</code> - A single selection picklist (as a vertical list of titles)</li>
+  <li><code>QSegmentedElement</code> - A single selection picklist (as a horizontal row of buttons)</li>
   </ul>
-  <li class="li4"><span class="s2">mission</span></li>
-  <ul class="ul2">
-    <li class="li3"><span class="s3"></span>An objects with the similar properties to the features described below.<span class="Apple-converted-space">  </span>For now, refer to that section for details</li>
-    <li class="li3"><span class="s3"></span>The mission describes the attributes and symbology of the mission.</li>
-    <li class="li3">The mission does not have a locations property (defined for features)</li>
-    <li class="li3">The mission has two additional properties <span class="s4">on-symbology</span> and <span class="s4">off-symbology</span> that are the same as the <span class="s4">symbology </span>property defined for features</li>
-    <ul class="ul2">
-      <li class="li3">These symbology properties define the look of the track log when observing (on or on-transect), and not observing (off).</li>
-    </ul>
-    <li class="li4">The mission attributes are often things like the names of the observers, and the weather.</li>
-    <li class="li3"><span class="s3">totalizer - </span>An object used to define the parameters for collecting and displaying a Mission Totalizer. <span class="Apple-converted-space">  </span>This is used to provide information on how long the user has been observing for a given set of conditions, usually this is just the transect id.<span class="Apple-converted-space">  </span>In this case, the totalizer show how long the user has been observing on a current transect.</li>
-    <ul class="ul2">
-      <li class="li3"><span class="s3">fields - </span>A required array of field names</li>
-      <ul class="ul2">
-        <li class="li3">when any of the fields change, a different total is displayed.</li>
-        <li class="li3">There must be at least on field (string) in the array which matches the name of one of the attributes in the mission</li>
-      </ul>
-      <li class="li3"><span class="s3">units - </span>An optional element with a value of <span class="s4">"kilometers"</span> or <span class="s4">"miles"</span> or <span class="s4">"minutes". </span>Default is <span class="s4">"kilometers"</span></li>
-      <li class="li3"><span class="s3">includeon - </span>A boolean value (<span class="s4">true</span>/<span class="s4">false</span>), that indicate is the total while "observing" is true should be displayed.<span class="Apple-converted-space">  </span>The default is<span class="Apple-converted-space">  </span><span class="s4">true</span></li>
-      <li class="li3"><span class="s3">includeoff - </span>A boolean value (<span class="s4">true</span>/<span class="s4">false</span>), that indicate if the total while "observing" is false should be displayed.<span class="Apple-converted-space">  </span>The default is<span class="Apple-converted-space">  </span><span class="s4">false</span></li>
-      <li class="li3"><span class="s3">includetotal - </span>A boolean value (<span class="s4">true</span>/<span class="s4">false</span>), that indicate if the total regardless of "observing" status should be displayed.<span class="Apple-converted-space">  </span>The default is<span class="Apple-converted-space">  </span><span class="s4">false</span></li>
-    </ul>
+  <h5 id="-bind-"><code>bind</code></h5>
+  <p>This property is required for all types except <code>QLabelElement</code> when it is optional.
+  If provided it must be a specially formatted string.  There is no default.
+  This string encodes the type and attribute name of the data for this element.
+  <code>QLabelElement</code> only uses the <code>value:</code> type when
+  displaying a unique feature id).  The bind value must start with one of the following:</p>
+  <ul>
+  <li><code>boolValue:</code> - a boolean (true or false) value</li>
+  <li><code>numberValue:</code></li>
+  <li><code>selected:</code> - the zero based index of the selected item in <code>items</code></li>
+  <li><code>selectedItem:</code>  - the text of the selected item in <code>items</code></li>
+  <li><code>textValue:</code></li>
+  <li><code>value:</code> - used for Unique ID Attributes (Attribute Type = 0)</li>
   </ul>
-  <li class="li4"><span class="s2">features</span></li>
-  <ul class="ul2">
-    <li class="li3"><span class="s3"></span>An Array of objects with the following properties</li>
-    <li class="li4"><span class="s2">name</span></li>
-    <ul class="ul2">
-      <li class="li3">Each feature must have a unique name.</li>
-      <li class="li3">The name can be any sequence of characters, and must be enclosed in quotes</li>
-      <li class="li3">The name is used in the interface to let the user choose among different feature types</li>
-      <ul class="ul2">
-        <li class="li3">It should be short and descriptive.</li>
-      </ul>
-    </ul>
-    <li class="li4"><span class="s5"></span><span class="s2">attributes</span></li>
-    <ul class="ul2">
-      <li class="li3">A feature type can have an optional list of attributes to be collected for each feature</li>
-      <li class="li3">A feature with no attributes, only collects a location (and the type of the feature)</li>
-      <li class="li3">Each attribute must have a "<span class="s4">name</span>" element</li>
-      <ul class="ul2">
-        <li class="li3">The name element must be unique within a feature.  Different features can have attributes with
-          the same name, but if they do they must have the same type.  Mission property and feature attributes are
-          unrelated -- they can have the same name with different types.</li>
-        <li class="li3">It will be used as a database column name, so it should be a simple ASCII name without spaces or special characters</li>
-        <ul class="ul2">
-          <li class="li3">It will be prefixed internally to avoid clashes with reserved words</li>
-        </ul>
-      </ul>
-      <li class="li3">Each attribute must have a "<span class="s4">type</span>" element</li>
-      <ul class="ul2">
-        <li class="li3">The type is an integer code with the following definitions (from NSAttributeType)</li>
-        <ul class="ul2">
-          <li class="li3">100 -&gt; 16bit integer</li>
-          <li class="li3">200 -&gt; 32bit integer</li>
-          <li class="li3">300 -&gt; 64bit integer</li>
-          <li class="li3">400 -&gt; NSDecimal (currently not supported by ESRI)</li>
-          <li class="li3">500 -&gt; double precision floating point number</li>
-          <li class="li3">600 -&gt; single precision floating point number</li>
-          <li class="li3">700 -&gt; string</li>
-          <li class="li3">800 -&gt; boolean (converts to an ESRI integer 0 = NO, 1 = YES)</li>
-          <li class="li3">900 -&gt; datetime</li>
-          <li class="li3">1000 -&gt; binary blob (? no UI support, check on ESRI support)</li>
-        </ul>
-      </ul>
-    </ul>
-    <li class="li4"><span class="s5"></span><span class="s2">locations</span></li>
-    <ul class="ul2">
-      <li class="li3">Each feature must have a <span class="s4">"locations" </span>element with a non-empty list of location methods (a technique for locating a feature).</li>
-      <li class="li3">Each location method must have a <span class="s4">"type"</span> element</li>
-      <ul class="ul2">
-        <li class="li4"><span class="s5">The value must be one of </span><span class="s2">"gps", "mapTarget", "mapTouch", "angleDistance"</span></li>
-        <li class="li3">Any location type containing the text "Touch" is a touch location, the others are non-touch locations.</li>
-        <li class="li3">Providing multiple methods with the same type is allowed but discouraged as the behavior is undefined.</li>
-      </ul>
-      <li class="li3">A location method can have an optional<span class="Apple-converted-space"> </span><span class="s4"> "allow" </span>element with a value of either <span class="s4">true</span> or <span class="s4">false</span>.<span class="Apple-converted-space"> </span></li>
-      <ul class="ul2">
-        <li class="li3">The value of <span class="s4">true</span> is assumed if this element is absent.</li>
-        <li class="li3">If the value is <span class="s4">false</span>, this type of location method is not allowed.<span class="Apple-converted-space">  </span>This is equivalent to not providing the location method in the list.</li>
-      </ul>
-      <li class="li3">A location method can have an optional default element with a value of either <span class="s4">true</span> or <span class="s4">false</span>.</li>
-      <ul class="ul2">
-        <li class="li3">A value of <span class="s4">false</span> is assumed if this element is absent</li>
-        <li class="li3">Only one non-touch locations should have a <span class="s4">true</span> value, otherwise the behavior is undefined.</li>
-      </ul>
-      <li class="li3">A location method of <span class="s4">"type":"angleDistance"</span> has the following requirements</li>
-      <ul class="ul2">
-        <li class="li3">An optional element <span class="s4">"deadAhead"</span> with a numeric value between <span class="s4">0.0</span> and <span class="s4">360.0</span></li>
-        <ul class="ul2">
-          <li class="li3">The numeric value provided is the angle measurement in degrees that means the feature is dead ahead</li>
-          <li class="li3">The default is <span class="s4">0.0</span></li>
-        </ul>
-        <li class="li3"><span class="s3"></span>An optional element <span class="s4">"direction"</span> with a value of <span class="s4">"cw"</span> or <span class="s4">"ccw"</span></li>
-        <ul class="ul2">
-          <li class="li3">Angles increase in the clockwise (<span class="s4">"cw"</span>) or counter-clockwise (<span class="s4">"ccw"</span>) direction</li>
-          <li class="li3">The default is <span class="s4">"cw"</span></li>
-        </ul>
-        <li class="li3">An optional element <span class="s4">"units"</span> with value of <span class="s4">"feet"</span> or <span class="s4">"meters"</span> or <span class="s4">"yards"</span></li>
-        <ul class="ul2">
-          <li class="li3">Distance measurements to the feature are reported in these units</li>
-          <li class="li3">The default is <span class="s4">"meters"</span></li>
-        </ul>
-        <li class="li3">If all these elements are omitted</li>
-        <ul class="ul2">
-          <li class="li3">Then the user is free to set their own preferences for these parameters in the user interface</li>
-        </ul>
-        <li class="li3">If any of these elements is provided</li>
-        <ul class="ul2">
-          <li class="li3">The user interface locks the user into using the parameters (or their defaults) as provided</li>
-        </ul>
-      </ul>
-      <li class="li3">If a touch location method is allowed</li>
-      <ul class="ul2">
-        <li class="li3">A feature will be created when the user touches the map without selecting an existing feature</li>
-        <li class="li3">If one or more non-touch location methods allowed</li>
-        <li class="li3">Then an Add Feature button is added to the user interface</li>
-      </ul>
-      <li class="li3">The Add Feature button has the following behavior if more than one non-touch location method is allowed</li>
-      <ul class="ul2">
-        <li class="li3">Tap:</li>
-        <ul class="ul2">
-          <li class="li3">If there is a location method with <span class="s4">"default":true</span></li>
-          <ul class="ul2">
-            <li class="li3">Use that location method to add a new feature</li>
-          </ul>
-          <li class="li3">If there is no location method with <span class="s4">"default":true</span></li>
-          <ul class="ul2">
-            <li class="li3">If the feature's preferred location method (see Long Press) is not set</li>
-            <ul class="ul2">
-              <li class="li3">Set the feature's preferred method to the first of the following types to be allowed</li>
-              <ul class="ul2">
-                <li class="li4"><span class="s5"></span><span class="s2">"gps", "adhocTarget", "angleDistance"</span></li>
-              </ul>
-            </ul>
-            <li class="li3">Use the user's preferred location method to add a new feature</li>
-          </ul>
-        </ul>
-        <li class="li3">Long Press:</li>
-        <ul class="ul2">
-          <li class="li3">Provide the user with a selection list of all the allowed non-touch location methods</li>
-          <li class="li3">If the user selects one</li>
-          <ul class="ul2">
-            <li class="li3">A feature is added using the selected location method</li>
-            <li class="li3">Set the feature's preferred location method to the selected location method</li>
-          </ul>
-        </ul>
-      </ul>
-    </ul>
-    <li class="li4"><span class="s5"></span><span class="s2">dialog</span></li>
-    <ul class="ul2">
-      <li class="li3">Provides the look and feel of the attribute input form presented to the user</li>
-      <li class="li3">Only<span class="Apple-converted-space">  </span>required if the feature has attributes</li>
-      <li class="li3">See the QuickDialog documentation for details</li>
-    </ul>
-    <li class="li4"><span class="s5"></span><span class="s2">symbology</span></li>
-    <ul class="ul2">
-      <li class="li3">Defines how the feature will be displayed on the map</li>
-      <li class="li3">The symbology may have an optional "color" element</li>
-      <ul class="ul2">
-        <li class="li3">The color element is a string in the form "#FFFFFF"</li>
-        <ul class="ul2">
-          <li class="li3">where F is a hexadecimal digit</li>
-          <li class="li3">The Hex pairs represent the Red, Green, and Blue respectively.</li>
-        </ul>
-        <li class="li3">The default if not provided, or malformed is "#000000" (black)</li>
-      </ul>
-      <li class="li3">The symbology may have an optional "size" element</li>
-      <ul class="ul2">
-        <li class="li3">The size is an integer number for the size in points of the simple circle marker symbol</li>
-        <li class="li3">The default is 12 if not provided.</li>
-      </ul>
-    </ul>
+  <p>and be followed by an attribute name from the list of Attributes.
+  This will determine the type of value extracted from the form element,
+  and which attribute it is tied to (i.e. read from and saved to).
+  It is important that the type above matches the type of the attrribute in
+  the Attributes section.  Note that the will always be a colon (:) in the
+  bind string seperating the type from the name.
+  The attribute name in the bind property must be in the list of attributes.</p>
+  <h5 id="-items-"><code>items</code></h5>
+  <p>This property is optional.  If provided it must be a list of one or more strings.  There is no default.
+  This property provides a list of choices for picklist type elements.
+  It is required for <code>QRadioElement</code> and <code>QSegmentedElement</code>, and ignored for all other types.</p>
+  <h5 id="-selected-"><code>selected</code></h5>
+  <p>This property is optional.  If provided it must be an integer.  There is no default.
+  It is the zero based index of the intially selected item from the list of items.
+  If not provided, nothing is selected initiailly.</p>
+  <h5 id="-boolvalue-"><code>boolValue</code></h5>
+  <p>This property is optional.  If provided it must be an integer value of 0 or 1.  The default is 0 (false).
+  This property is the initial value for the <code>QBooleanElement</code>. It is ignored by all other types.</p>
+  <h5 id="-minimumvalue-"><code>minimumValue</code></h5>
+  <p>This property is optional.  If provided it must be number.  The default is 0.
+  This is the minimum value allowed in <code>QIntegerElement</code>.</p>
+  <h5 id="-maximumvalue-"><code>maximumValue</code></h5>
+  <p>This property is optional.  If provided it must be number.  The default is 100.
+  This is the maximum value allowed in <code>QIntegerElement</code>.</p>
+  <h5 id="-numbervalue-"><code>numberValue</code></h5>
+  <p>This property is optional.  If provided it must be number.   There is no default.
+  This is the initial value for <code>QIntegerElement</code> or <code>QDecimalElement</code>.
+  There is no default; that is the initial value is null. Protocol authors are discouraged
+  from using an initial value, as it causes confusion regarding whether there was an
+  observation of the default value, or there was no observation.  Leaving as null removes
+  the ambiguity.  If a default value is desired when there was no observation this can be
+  done in post processing without lossing the fact that no observation was actually made.</p>
+  <h5 id="-placeholder-"><code>placeholder</code></h5>
+  <p>This property is optional.  If provided it must be a text string.  There is no default.
+  This is the background text to put in a text box to suggest to the user what to enter.</p>
+  <h5 id="fractiondigits">fractionDigits</h5>
+  <p>This property is optional.  If provided it must be an integer.   There is no default.
+  This is a limit on the number of digits to be shown after the decimal point. Only
+  used by <code>QDecimalElement</code>.</p>
+  <h5 id="-keyboardtype-"><code>keyboardType</code></h5>
+  <p>This property is optional.  If provided it must be one of the text strings below (<strong>It must match in capitalization</strong>).  The default is <code>&quot;Default&quot;</code>.
+  This determines what kind of keyboard will appear when text editing is required.</p>
+  <ul>
+  <li><code>Default</code></li>
+  <li><code>ASCIICapable</code></li>
+  <li><code>NumbersAndPunctuation</code></li>
+  <li><code>URL</code></li>
+  <li><code>NumberPad</code></li>
+  <li><code>PhonePad</code></li>
+  <li><code>NamePhonePad</code></li>
+  <li><code>EmailAddress</code></li>
+  <li><code>DecimalPad</code></li>
+  <li><code>Twitter</code></li>
+  <li><code>Alphabet</code></li>
   </ul>
-</ul>
-<p class="p3">Notes on Version 2</p>
-<p class="p2"><br></p>
-<p class="p3">Added gps-symbology under mission</p>
-<p class="p2"><br></p>
-<p class="p3">The value of the symbology tags are full ESRI Renderer JSON as defined in <a href="http://resources.arcgis.com/en/help/rest/apiref/renderer.html">http://resources.arcgis.com/en/help/rest/apiref/renderer.html</a></p>
-<p class="p2"><br></p>
-<p class="p3">Not all fields in the ESRI rest API need to be provided, when defaults are obvious ; i.e. "label":"" and "angle":0 (I have not tested everything)</p>
-<p class="p3">the type is required and must be one of simple, uniqueValue, classBreak</p>
-<p class="p3">TODO test which other fields are required, and document the defaults</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
+  <h5 id="-autocorrectiontype-"><code>autocorrectionType</code></h5>
+  <p>This property is optional.  If provided it must be one of the text strings below (<strong>It must match in capitalization</strong>).  The default is <code>&quot;Default&quot;</code>.
+  This determines if a text box will auto correct (fix spelling) the user&#39;s typing.
+  <code>Default</code> allows iOS to decide when to apply autocorrection.  If you have a preference, choose
+  one of the other options.</p>
+  <ul>
+  <li><code>Default</code></li>
+  <li><code>No</code></li>
+  <li><code>Yes</code></li>
+  </ul>
+  <h5 id="-autocapitalizationtype-"><code>autocapitalizationType</code></h5>
+  <p>This property is optional.  If provided it must be one of the text strings below (<strong>It must match in capitalization</strong>).  The default is <code>&quot;None&quot;</code>.
+  This determines if and how a text box will auto capitalize the user&#39;s typing.</p>
+  <ul>
+  <li><code>None</code></li>
+  <li><code>Words</code></li>
+  <li><code>Sentences</code></li>
+  <li><code>AllCharacters</code></li>
+  </ul>
+  <h5 id="-key-"><code>key</code></h5>
+  <p>This property is optional.  If provided it must be a string. There is no default.
+  A unique identifier for this element in the form. It is an alternative to bind for
+  referencing the data in the form. <code>bind</code>, but not <code>key</code> is used in Park Observer.
+  This was not well understood initially and most protocols have a key property
+  defined even though it is not used.</p>
+  <p>This property is ignored in all versions of Park Observer.</p>
+  <h2 id="-edit_at_start_recording-"><code>edit_at_start_recording</code></h2>
+  <p>This property is optional.  If provided it must be a boolean. The default is true.
+  If true, the mission attributes editor will be displayed when the start recording button is pushed.</p>
+  <p>This property is ignored in versions of Park Observer before 1.2.0.</p>
+  <h2 id="-edit_at_start_first_observing-"><code>edit_at_start_first_observing</code></h2>
+  <p>This property is optional.  If provided it must be a boolean. The default is false.
+  If true, then editor will be displayed when start observing button is pushed after start recording.</p>
+  <p>This property is ignored in versions of Park Observer before 1.2.0.</p>
+  <h2 id="-edit_at_start_reobserving-"><code>edit_at_start_reobserving</code></h2>
+  <p>This property is optional.  If provided it must be a boolean. The default is true.
+  If true, then editor will be displayed when start observing button is pushed after stop observing.</p>
+  <p>This property is ignored in versions of Park Observer before 1.2.0.</p>
+  <h2 id="-edit_prior_at_stop_observing-"><code>edit_prior_at_stop_observing</code></h2>
+  <p>This property is optional.  If provided it must be a boolean. The default is false.
+  If true, then editor will be displayed for the prior track log segment when done observing
+  (stop observing or stop recording button press).
+  See the note for <code>edit_at_stop_observing</code> for an additional constraint.</p>
+  <p>This property is ignored in versions of Park Observer before 1.2.0.</p>
+  <h2 id="-edit_at_stop_observing-"><code>edit_at_stop_observing</code></h2>
+  <p>This property is optional.  If provided it must be a boolean. The default is false.
+  An optional boolean (true/false) value that defaults to false.
+  If true, then editor will be displayed when when done observing (stop observing or stop recording button press)</p>
+  <p><strong>Note:</strong> Only one of <code>edit_prior_at_stop_observing</code> and <code>edit_at_stop_observing</code> should be set to true.
+  If both are set to true, <code>edit_prior_at_stop_observing</code> is ignored.
+  (In this case, you can edit the prior mission property by taping the marker on the map)</p>
+  <p>This property is ignored in versions of Park Observer before 1.2.0.</p>
+  <h2 id="-symbology-"><code>symbology</code></h2>
+  <p>A required object as defined in the <a href="#symbology">symbology</a> section at the end of this document.
+  This object defines how a mission properties point is drawn on the map.  This point occurs
+  when starting recording, starting/stoping recording, and when editing the mission attributes.</p>
+  <h2 id="-on-symbology-"><code>on-symbology</code></h2>
+  <p>An optional object as defined in the <a href="#symbology">symbology</a> section at the end of this document.
+  This object defines the look of the track log line when observing (i.e. on-transect).
+  The default in version 1 was a 1 point wide solid black line.
+  The default in version 2 was a 3 point wide solid red line.</p>
+  <h2 id="-off-symbology-"><code>off-symbology</code></h2>
+  <p>An optional object as defined in the <a href="#symbology">symbology</a> section at the end of this document.
+  This object defines the look of the track log line when not observing (i.e. off-transect).
+  The default in version 1 was a 1 point wide solid black line.
+  The default in version 2 was a 1.5 point wide solid gray line.</p>
+  <h2 id="-gps-symbology-"><code>gps-symbology</code></h2>
+  <p>An optional object as defined in the <a href="#symbology">symbology</a> section at the end of this document.
+  This object defines the look of the gps points along the track log.
+  The default is a 6 point blue circle.</p>
+  <p>This property is ignored in versions of Park Observer before 0.9.8.  In that case,
+  all gps points are rendered as a blue 6 point circle.</p>
+  <h2 id="-totalizer-"><code>totalizer</code></h2>
+  <p>An optionaThis property is optional. If provided it must be an object.  There is no default.
+  The totalizer object is used to define the parameters for collecting and displaying a Mission Totalizer.
+  If the property is not provided, no totalizer will be shown on the map.
+  The totalizer is used to provide information on how long the user has been recording and/or observing.
+  The totalizer can be given an optional list of fields to monitor.  It one of the fields changes, then
+  the totalizer will reset.  This it typically set to the transect id, so the totalizer will show the time or
+  distance recording/observing on a given transect.  If fields are given, then the fields must be in
+  the dialog (otherwise, they will never change). If an empty object is given to the totalizer,
+  it will display how many kilometers you have been observing, and reset each time to stop/stop
+  observing.</p>
+  <p>This property is ignored in versions of Park Observer before 0.9.8b.</p>
+  <p>The <code>totalizer</code> has the following properties</p>
+  <ul>
+  <li><code>fields</code> (o)</li>
+  <li><code>fontsize</code> (o)</li>
+  <li><code>includeon</code> (o)</li>
+  <li><code>includeoff</code> (o)</li>
+  <li><code>includetotal</code> (o)</li>
+  <li><code>units</code> (o)</li>
+  </ul>
+  <h3 id="-fields-"><code>fields</code></h3>
+  <p>This property is optional. If provided it must be a list of one or more strings. There is no default.
+  The list contains attribute names. When any of the attribute in this list change, a different total is displayed.
+  The attributes in the list must be in referenced in the
+  mission dialog (so that it can be changed -- monitoring a unchanging field is pointless).</p>
+  <h3 id="-fontsize-"><code>fontsize</code></h3>
+  <p>This property is optional. If provided it must be a number. The default is 14.0.
+  This property indicates the size (in points) of the totalizer text.</p>
+  <h3 id="-includeon-"><code>includeon</code></h3>
+  <p>This property is optional. If provided it must be a boolean. The default is true.
+  This property indicates if the total while &quot;observing&quot; should be displayed.</p>
+  <h3 id="-includeoff-"><code>includeoff</code></h3>
+  <p>This property is optional. If provided it must be a boolean. The default is false.
+  This property indicates if the total while &quot;recording&quot; but not &quot;observing&quot;
+  should be displayed.</p>
+  <h3 id="-includetotal-"><code>includetotal</code></h3>
+  <p>This property is optional. If provided it must be a boolean. The default is false.
+  This property indicates if the total regardless of &quot;observing&quot; status should be displayed.</p>
+  <h3 id="-units-"><code>units</code></h3>
+  <p>This property is optional. If provided it must be a string. The default is &quot;kilometers&quot;.
+  The property indicates the kind of total to display.
+  It must be one of &quot;kilometers&quot;, &quot;miles&quot; or &quot;minutes&quot;.</p>
+  <h1 id="features"><code>features</code></h1>
+  <p>This property is required and must be a list of one or more feature objects.
+  A feature is a kind of thing that will be observed during your survey.
+  Often it is an animal species.
+  It is defined by a list of attributes that you will collect every time you observe the feature.
+  You can have multiple features in your protocol, however many surveys only observe one feature.
+  The number of features in a protocol file should be kept as small as possible to keep the survey
+  focused and easier to manage.</p>
+  <p>Each feature is an object with the following properties</p>
+  <ul>
+  <li><code>name</code></li>
+  <li><code>attributes</code> (o)</li>
+  <li><code>dialog</code> (o)</li>
+  <li><code>allow_off_transect_observations</code> (o)</li>
+  <li><code>locations</code></li>
+  <li><code>symbology</code></li>
+  </ul>
+  <h2 id="-name-"><code>name</code></h2>
+  <p>This property is required and must be a non-empty text string.
+  Each feature name must be unique name. The name is used in the interface to let the
+  user choose among different feature types. All the observation in one feature will
+  be exported in a CSV file with this name, and a geodatabase table with this name.
+  It should be short and descriptive.</p>
+  <h2 id="-attributes-"><code>attributes</code></h2>
+  <p>An optional list of attributes to collect for this feature.
+  A Feature with no attributes only collects a location and the name of the feature.</p>
+  <p>See the <a href="#attributes"><code>mission.attributes</code></a> section for details.</p>
+  <h2 id="-dialog-"><code>dialog</code></h2>
+  <p>An optional property that describes the format of the editing form for this feature&#39;s attributes.</p>
+  <p>See the <a href="#dialog"><code>mission.dialog</code></a> section for details.</p>
+  <h2 id="-allow_off_transect_observations-"><code>allow_off_transect_observations</code></h2>
+  <p>This property is optional. If provided it must be a boolean. The default is false.
+  If true, then this feature can be observed while off transect (not observing)</p>
+  <p>This property is ignored in versions of Park Observer before 1.2.0.</p>
+  <h2 id="-locations-"><code>locations</code></h2>
+  <p>This property is required and must be an array of one or more location objects.
+  A location is an object that describes the permitted techniques for specifying the location of an observation. A location is defined by the following properties:</p>
+  <ul>
+  <li><code>type</code></li>
+  <li><code>allow</code> (o)</li>
+  <li><code>default</code> (o)</li>
+  <li><code>deadAhead</code> (o)</li>
+  <li><code>baseline</code> (deprecated)</li>
+  <li><code>direction</code> (o)</li>
+  <li><code>units</code> (o)</li>
+  </ul>
+  <h3 id="-type-"><code>type</code></h3>
+  <p>This property is required and must be one of the follwing strings:</p>
+  <ul>
+  <li><code>gps</code> - locates the observation at the devices GPS location</li>
+  <li><code>mapTarget</code> - locates the observation where the target is on the map</li>
+  <li><code>mapTouch</code> - locates the observation where the user touches the map</li>
+  <li><code>angleDistance</code> - locates the observation at an angle and distance from the GPS location and course.</li>
+  </ul>
+  <p><code>adhocTarget</code> is a deprecated synonym for <code>mapTarget</code>, and
+  <code>adhocTouch</code> is a deprecated synonym for <code>mapTouch</code>.  These types should not be
+  used in new protocol files, but may still exist in older files.</p>
+  <p><strong>Important:</strong> Providing multiple locations with the same type not prohibited,
+   but it is discouraged as the behavior is undefined.</p>
+  <p>See the <a href="Protocol_Guide.html">Protocol Guide</a> for details on how the user interface behaves with
+  different location types.</p>
+  <h3 id="-allow-"><code>allow</code></h3>
+  <p>This property is optional. If provided it must be a boolean. The default is true.
+  If the value is false, this type of location method is not allowed.
+  This is equivalent to not providing the location method in the list.</p>
+  <h3 id="-default-"><code>default</code></h3>
+  <p>This property is optional. If provided it must be a boolean. The default is false.
+  This is used to determine which &quot;allowed&quot; non-touch location method should be used
+  by default (until the user specifies thier preference).
+  Only one non-touch locations should have a true value, otherwise the behavior is undefined.</p>
+  <h3 id="-deadahead-"><code>deadAhead</code></h3>
+  <p>This property is optional. If provided it must be a number between 0.0 and 360.0. The default is 0.0.
+  The numeric value provided is the angle measurement in degrees that means the feature is dead ahead
+  (i.e. on course or trajectory of the device per the GPS)</p>
+  <h3 id="-baseline-deprecated-"><code>baseline</code> (deprecated)</h3>
+  <p>This property is a deprecated synonym for <code>deadAhead</code>.
+  Its use is discouraged, but it may be found in older protocol files.</p>
+  <h3 id="-direction-"><code>direction</code></h3>
+  <p>This property is optional. If provided it must be one of &quot;cw&quot; or &quot;ccw&quot;. The default is &quot;cw&quot;.
+  With &quot;cw&quot;, angles for the <code>angleDistance</code> location type will increase in the clockwise direction,
+  otherwise they increase in the counter-clockwise direction.</p>
+  <h3 id="-units-"><code>units</code></h3>
+  <p>This property is optional. If provided it must be one of &quot;feet&quot; or &quot;meters&quot; or &quot;yards&quot;. The default is &quot;meters&quot;.
+  With &quot;meters&quot;, distances for the <code>angleDistance</code> location type will be assumed to be in meters.
+  Otherwise they will be in feet or yards.</p>
+  <h2 id="-symbology-"><code>symbology</code></h2>
+  <p>A required object as defined in the <a href="#symbology">symbology</a> section at the end of this document.
+  This object defines how an observation of this feature is drawn on the map.</p>
+  <h2 id="-label-"><code>label</code></h2>
+  <p>This property is optional. If provided it must be an object.  There is no default.
+  The label object defines how the feature will be labeled on the map.</p>
+  <p>This <code>label</code> object has the following properties:</p>
+  <ul>
+  <li><code>field</code></li>
+  <li><code>color</code> (o)</li>
+  <li><code>size</code> (o)</li>
+  <li><code>symbol</code> (o)</li>
+  </ul>
+  <h3 id="-field-"><code>field</code></h3>
+  <p>This property is required and must be a non-empty text string.
+  The string must match one of the attribute names for this feature.
+  If the <code>field</code> is not provided, or can&#39;t be found in the feature attributes, no label is shown.</p>
+  <h3 id="-color-"><code>color</code></h3>
+  <p>This property is optional. If provided it must be an string.  The default is &quot;#FFFFFF&quot; (white)
+  The color property is discussed in more detail in the <a href="#symbology">symbology</a> section at the end of this document.</p>
+  <h3 id="-size-"><code>size</code></h3>
+  <p>This property is optional. If provided it must be an number.  The default is 14.0
+  It sepcifies the size in points of the label text.
+  The size property is discussed in more detail in the <a href="#symbology">symbology</a> section at the end of this document.</p>
+  <h3 id="-symbol-"><code>symbol</code></h3>
+  <p>This property is optional. If provided it must be an object.  There is no default
+  The symbol is a JSON object as described in the Text Symbol section of the ArcGIS ReST API (<a href="http://resources.arcgis.com/en/help/arcgis-rest-api/#/Symbol_Objects/02r3000000n5000000/">http://resources.arcgis.com/en/help/arcgis-rest-api/#/Symbol_Objects/02r3000000n5000000/</a>)
+  If the JSON object is malformed or unrecognized, then it is ignored in deference to the color and size properties.
+  If the symbol is valid, then the <code>size</code> and <code>color</code> properties  of <code>label</code> are ignored.</p>
+  <h1 id="csv"><code>csv</code></h1>
+  <p>This property is optional. If provided it must be an object.  There is no default</p>
+  <p>This object describes the format of the CSV exported survey data.
+  Currently the format of the CSV files output by Park Observer is hard coded.
+  This part of the protocol file is ignored by Park Observer, and only used
+  by tools that convert the csv data to an esri file geodatabases.</p>
+  <p>If provided it must be a object identical to <a href="https://akrgis.nps.gov/observer/syncserver/csv.json">csv.json</a>.  If provided, it will be used by post processing tools like the POZ to FGDB translator to understand how the CSV export files are formatted. If it is not provided, the upload server, and the POZ to FGDB translator will use <a href="https://akrgis.nps.gov/observer/syncserver/csv.json">csv.json</a>.</p>
+  <p>A future version of Park Observer may use this property to allow users to configure the format of the exported CSV files.</p>
+  <p>The csv object has the following properties.  All are required.</p>
+  <ul>
+  <li><code>features</code></li>
+  <li><code>gps_points</code></li>
+  <li><code>track_logs</code></li>
+  </ul>
+  <h2 id="-features-"><code>features</code></h2>
+  <p>An object that describes how to build the observer and feature point feature classes from the CSV
+  file containing the observed features. The features object has the following properties.
+  All are required.</p>
+  <ul>
+  <li><code>feature_field_map</code></li>
+  <li><code>feature_field_names</code></li>
+  <li><code>feature_field_types</code></li>
+  <li><code>feature_key_indexes</code></li>
+  <li><code>header</code></li>
+  <li><code>obs_field_map</code></li>
+  <li><code>obs_field_names</code></li>
+  <li><code>obs_field_types</code></li>
+  <li><code>obs_key_indexes</code></li>
+  <li><code>obs_name</code></li>
+  </ul>
+  <h3 id="-feature_field_map-"><code>feature_field_map</code></h3>
+  <p>A list of integer column indices from the csv header, starting with zero, for the columns containing the data for the observed feature tables.</p>
+  <h3 id="-feature_field_names-"><code>feature_field_names</code></h3>
+  <p>A list of the string field names from the csv header that will create the observed feature tables.</p>
+  <h3 id="-feature_field_types-"><code>feature_field_types</code></h3>
+  <p>A list of the string field types for each column listed in the &#39;feature_field_names&#39; property.</p>
+  <h3 id="-feature_key_indexes-"><code>feature_key_indexes</code></h3>
+  <p>A list of 3 integer column indices, starting with zero, for the columns containing the time, x and y coordinates of the feature.</p>
+  <h3 id="-header-"><code>header</code></h3>
+  <p>The header of the CSV file; a list of the column names in order.</p>
+  <h3 id="-obs_field_map-"><code>obs_field_map</code></h3>
+  <p>A list of integer column indices from the csv header, starting with zero, for the columns containing the data for the observer table.</p>
+  <h3 id="-obs_field_names-"><code>obs_field_names</code></h3>
+  <p>A list of the field names from the csv header that will create the observed feature table.</p>
+  <h3 id="-obs_field_types-"><code>obs_field_types</code></h3>
+  <p>A list of the field types for each column listed in the &#39;obs_field_names&#39; property.</p>
+  <h3 id="-obs_key_indexes-"><code>obs_key_indexes</code></h3>
+  <p>A list of 3 integer column indices, starting with zero, for the columns containing the time, x and y coordinates of the observer.</p>
+  <h3 id="-obs_name-"><code>obs_name</code></h3>
+  <p>The name of the table in the esri geodatabase that will contain the data for the observer of the features.</p>
+  <h2 id="-gps_points-"><code>gps_points</code></h2>
+  <p>An object that describes how to build the GPS point feature class from the CSV file containing the GPS points. The gps_points object has the following properties.
+  All are required.</p>
+  <ul>
+  <li><code>field_names</code></li>
+  <li><code>field_types</code></li>
+  <li><code>key_indexes</code></li>
+  <li><code>name</code></li>
+  </ul>
+  <h3 id="-field_names-"><code>field_names</code></h3>
+  <p>A list of the field names in the header of the CSV file in order.</p>
+  <h3 id="-field_types-"><code>field_types</code></h3>
+  <p>A list of the field types in the columns of the CSV file in order.</p>
+  <h3 id="-key_indexes-"><code>key_indexes</code></h3>
+  <p>A list of 3 integer column indices, starting with zero, for the columns containing the time, x and y coordinates of the point.</p>
+  <h3 id="-name-"><code>name</code></h3>
+  <p>The name of the csv file, and the table in the esri geodatabase.</p>
+  <h2 id="-track_logs-"><code>track_logs</code></h2>
+  <p>An object that describes how to build the GPS point feature class from the CSV file containing the tracklogs and mission properties. The track_logs object has the following properties.
+  All are required.</p>
+  <ul>
+  <li><code>end_key_indexes</code></li>
+  <li><code>field_names</code></li>
+  <li><code>field_types</code></li>
+  <li><code>name</code></li>
+  <li><code>start_key_indexes</code></li>
+  </ul>
+  <h3 id="-end_key_indexes-"><code>end_key_indexes</code></h3>
+  <p>A list of 3 integer column indices, starting with zero, for the columns containing the time, x and y coordinates of the first point in the tracklog.</p>
+  <h3 id="-field_names-"><code>field_names</code></h3>
+  <p>A list of the field names in the header of the CSV file in order.</p>
+  <h3 id="-field_types-"><code>field_types</code></h3>
+  <p>A list of the field types in the columns of the CSV file in order.</p>
+  <h3 id="-name-"><code>name</code></h3>
+  <p>The name of the csv file, and the table in the esri geodatabase.</p>
+  <h3 id="-start_key_indexes-"><code>start_key_indexes</code></h3>
+  <p>A list of 3 integer column indices, starting with zero, for the columns containing the time, x and y coordinates of the last point in the tracklog.</p>
+  <h1 id="symbology">Symbology</h1>
+  <p>The symbology that Park Observer understands changed at 0.9.8.  Before that, only version 1
+  symbology was understood.  After that it depended on which <code>meta-version</code> the document
+  specified.</p>
+  <h2 id="-meta-version-1-"><code>&quot;meta-version&quot;: 1</code></h2>
+  <p>In version 1, the symbology object had only two optional properties.  If the symbology
+  property was missing in versions of Park Observer before 2.0, then there would be no
+  symbology for that item and it would not be drawn on the map.  However if an empty object
+  was provided, then Park Observer would use the default values specified in the individual
+  symbology properties.  The default values would also be provided if any of the following
+  properties were missing or invalid.  The version 1 symbology object has the following
+  properties</p>
+  <ul>
+  <li><code>color</code></li>
+  <li><code>size</code></li>
+  </ul>
+  <h3 id="-color-"><code>color</code></h3>
+  <p>This property is optional. If provided it must be a text string. There is no default.
+  The color element is a string in the form &quot;#FFFFFF&quot;
+  where F is a hexadecimal digit (0-9,A-F).
+  The Hex pairs represent the Red, Green, and Blue respectively.
+  If the string is missing, or malformed, then the esri mapping framework was free to choose
+  a default value.  Typically this was black.</p>
+  <h3 id="-size-"><code>size</code></h3>
+  <p>This property is optional. If provided it must be a number. There is no default.
+  The size is a number for the diameter in points of the simple circle marker symbol,
+  or the width of a simple solid line.
+  If the number is missing, or invalid, then the esri mapping framework was free to choose
+  a default value at one point this was 6 points for diameter, and 1 point for width.</p>
+  <h2 id="-meta-version-2-"><code>&quot;meta-version&quot;: 2</code></h2>
+  <p>With version 2, the symbology object was specified by the JSON format for ESRI Renderers
+  as defined in the <a href="https://developers.arcgis.com/documentation/common-data-types/renderer-objects.htm">renderer object in the ArcGIS ReST API</a>.
+  This is the format that esri uses when building web maps for AGOL.
+  Depending on which version of the esri mapping SDK that Park Observer is using,
+  some of the properties may be optional (the <code>type</code> property is always required).
+  However the default value provided may vary with different versions. To be
+  safest, do not rely on default values, and always test your symbology before
+  distributing your protocol file.</p>
+  <p>When using version2 symbology, it is on you to verify you are using the right type
+  of symbol (marker symbols like <code>esriSMS</code> for points and <code>esriSLM</code> for lines).</p>
+  <p>If the symbol object was invalid, a 12 point green circle was provided for points.
+  The default line symbol by property in the mission property.</p>
+  <p>If you wish to not draw the track logs or gps points, then you need to provide valid symbology
+  with either 0 size, or a fully transparent color.</p>
 </body>
 </html>
