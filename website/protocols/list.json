@@ -91,6 +91,13 @@
 }
 ,
 {
+  "name":"DENA Caribou Survey",
+  "version":1.0,
+  "date":"2020-06-05",
+  "url":"https://akrgis.nps.gov/observer/protocols/DENA_Caribou.obsprot"
+}
+,
+{
   "name":"SEAN KIMU Protocol",
   "version":3.0,
   "date":"2019-06-06",

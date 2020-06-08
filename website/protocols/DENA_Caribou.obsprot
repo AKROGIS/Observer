@@ -1,0 +1,234 @@
+{
+  "meta-name":"NPS-Protocol-Specification",
+  "meta-version":2,
+  "name":"DENA Caribou Survey",
+  "version":1.0,
+  "date":"2020-06-05",
+  "description":"This protocol is for Caribou surveys in Denali NP&P.  Contact Bridget_borg@nps.gov for more details.",
+  "observing": "Observing in Survey Area",
+  "notobserving": "Not Observing",
+  "status_message_fontsize":18.0,
+  "cancel_on_top": true,
+  "gps_interval": 2,
+  "mission":{
+    "attributes":[
+      {"name":"SurveyArea",    "type":700},
+      {"name":"Pilot",         "type":700},
+      {"name":"Observer",      "type":700},
+      {"name":"Aircraft",      "type":700},
+      {"name":"CloudCover",    "type":700},
+      {"name":"Precipitation", "type":700},
+      {"name":"TurbIntensity", "type":700},
+      {"name":"TurbDuration",  "type":700},
+      {"name":"Temperature",   "type":600},
+      {"name":"Comments",      "type":700}
+    ],
+    "dialog":{
+      "title":"Mission Properties",
+      "grouped":true,
+      "sections":[
+        {
+          "elements":[
+            {"type":"QEntryElement",     "key":"t",   "bind":"textValue:SurveyArea",      "title":"Survey Area",   "placeholder":"ID", "autocorrectionType":"No"},
+            {"type":"QEntryElement",     "key":"p",   "bind":"textValue:Pilot",           "title":"Pilot",         "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QEntryElement",     "key":"o1",  "bind":"textValue:Observer",        "title":"Observer",      "placeholder":"Initials", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QEntryElement",     "key":"a",   "bind":"textValue:Aircraft",        "title":"Aircraft",      "placeholder":"Tail Number", "autocorrectionType":"No", "autocapitalizationType":"AllCharacters"},
+            {"type":"QLabelElement",     "title":"Cloud Cover"},
+            {"type":"QSegmentedElement", "key":"cc",  "bind":"selectedItem:CloudCover",   "items":["None", "<50% scattered", "> 50% broken", "Overcast"]},
+            {"type":"QLabelElement",     "title":"Precipitation"},
+            {"type":"QSegmentedElement", "key":"pp",  "bind":"selectedItem:Precipitation","items":["None", "Rain", "Snow"]},
+            {"type":"QLabelElement",     "title":"Turbulence Intensity"},
+            {"type":"QSegmentedElement", "key":"ti",  "bind":"selectedItem:TurbIntensity","items":["None", "Light", "Moderate"]},
+            {"type":"QLabelElement",     "title":"Turbulence Duration"},
+            {"type":"QSegmentedElement", "key":"td",  "bind":"selectedItem:TurbDuration", "items":["None", "Occasional", "Intermittent", "Constant"]},
+            {"type":"QDecimalElement",   "key":"tp",  "bind":"numberValue:Temperature",   "title":"Temperature (F)", "fractionDigits":0},
+            {"type":"QMultilineElement", "key":"c",   "bind":"textValue:Comments",        "title":"Comments"}
+          ]
+        }
+      ]
+    },
+    "edit_prior_at_stop_observing":false,
+    "symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSSquare",
+        "color": [171,235,198,255],
+        "size": 11,
+        "outline": {
+          "color": [24,106,59,255],
+          "width": 1
+        }
+      }
+    },
+    "on-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSSolid",
+        "color": [46,204,113,255],
+        "width": 3
+      }
+    },
+    "off-symbology":{
+      "type": "simple",
+      "symbol": {
+        "type": "esriSLS",
+        "style": "esriSLSDash",
+        "color": [231,76,60,255],
+        "width": 1.5
+      }
+    },
+    "gps-symbology": {
+      "type": "simple",
+      "symbol": {
+        "type": "esriSMS",
+        "style": "esriSMSCircle",
+        "color": [52,152,219,255],
+        "size": 5
+      }
+    },
+    "totalizer": {
+      "fields": ["Transect"],
+      "units": "kilometers",
+      "fontsize": 18.0,
+      "includeon": true,
+      "includeoff": false,
+      "includetotal": false
+    }
+  },
+  "features":[
+    {
+      "name":"Collar",
+      "allow_off_transect_observations": true,
+      "attributes":[
+        {"name":"Frequency", "type":700},
+        {"name":"Missing",   "type":800},
+        {"name":"Notes",     "type":700}
+       ],
+      "dialog":{
+        "title":"Radio Collar",
+        "grouped":true,
+        "sections":[
+          {
+            "elements":[
+              {"type":"QEntryElement",     "key":"c", "bind":"textValue:Frequency", "title":"Frequency", "autocorrectionType":"No", "keyboardType": "NumberPad"},
+              {"type":"QBooleanElement",   "key":"o", "bind":"boolValue:Missing", "title":"Missing", "boolValue":0},
+              {"type":"QMultilineElement", "key":"n", "bind":"textValue:Notes",   "title":"Comments"}
+            ]
+          }
+        ]
+      },
+      "locations":[
+        {"type":"mapTarget",     "default":true,  "allow":true},
+        {"type":"gps",           "default":false, "allow":true},
+        {"type":"mapTouch",      "default":false, "allow":true}
+      ],
+      "label":{
+        "field":"Frequency",
+        "symbol":{
+          "type":"esriTS",
+          "color":[0,0,255,255],
+          "font":{"family":"Arial", "size":14, "weight":"bold", "style":"normal", "decoration":"none"},
+          "verticalAlignment": "bottom",
+          "horizontalAlignment": "left",
+          "xoffset": 10, "yoffset": 20
+        }
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [0,215,255,255],
+          "size": 18,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 1
+          }
+        }
+      }
+    },
+    {
+      "name":"Caribou",
+      "allow_off_transect_observations": true,
+      "attributes":[
+        {"name":"Id",      "type":0},
+        {"name":"Count",   "type":100},
+        {"name":"Missing", "type":800},
+        {"name":"Collars", "type":700},
+        {"name":"Notes",   "type":700}
+       ],
+      "dialog":{
+        "title":"Caribou",
+        "grouped":true,
+        "sections":[
+          {
+            "elements":[
+              {"type":"QIntegerElement",   "key":"e", "bind":"numberValue:Count", "title":"Count"},
+              {"type":"QBooleanElement",   "key":"o", "bind":"boolValue:Missing", "title":"Missing", "boolValue":0},
+              {"type":"QMultilineElement", "key":"c", "bind":"textValue:Collars", "title":"Collars", "autocorrectionType":"No", "keyboardType": "NumberPad"},
+              {"type":"QMultilineElement", "key":"n", "bind":"textValue:Notes",   "title":"Comments"}
+            ]
+          }
+        ]
+      },
+      "locations":[
+        {"type":"mapTarget",     "default":true,  "allow":true},
+        {"type":"gps",           "default":false, "allow":true},
+        {"type":"mapTouch",      "default":false, "allow":true}
+      ],
+      "label":{
+        "field":"Id",
+        "symbol":{
+          "type":"esriTS",
+          "color":[255,0,0,255],
+          "font":{"family":"Arial", "size":24, "weight":"bold", "style":"normal", "decoration":"none"},
+          "verticalAlignment": "bottom",
+          "horizontalAlignment": "left",
+          "xoffset": 10, "yoffset": 20
+        }
+      },
+      "symbology":{
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [255,215,0,255],
+          "size": 24,
+          "outline": {
+            "color": [0,0,0,255],
+            "width": 2
+          }
+        }
+      }
+    }
+  ],
+  "csv":{
+    "gps_points":{
+      "name":"GpsPoints",
+      "field_names":["Timestamp", "Latitude", "Longitude", "Datum", "Error_radius_m", "Course", "Speed_mps", "Altitude_m", "Vert_error_m"],
+      "field_types":["TEXT", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE"],
+      "key_indexes":[0,2,1]
+    },
+    "track_logs":{
+      "name":"TrackLogs",
+      "field_names":["Observing", "Start_UTC", "Start_Local", "Year", "Day_of_Year", "End_UTC", "End_Local", "Duration_sec", "Start_Latitude", "Start_Longitude", "End_Latitude", "End_Longitude", "Datum", "Length_m"],
+      "field_types":["TEXT", "TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT", "DOUBLE"],
+      "start_key_indexes":[1,9,8],
+      "end_key_indexes":[5,11,10]
+    },
+    "features":{
+      "header": "Timestamp_UTC,Timestamp_Local,Year,Day_of_Year,Feature_Latitude,Feature_Longitude,Observer_Latitude,Observer_Longitude,Datum,Map_Name,Map_Author,Map_Date,Angle,Distance,Perp_Meters",
+      "feature_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Latitude", "Longitude", "Datum"],
+      "feature_field_types":["DATE", "DATE", "SHORT", "SHORT", "DOUBLE", "DOUBLE", "TEXT"],
+      "feature_field_map":[0,1,2,3,4,5,8],
+      "feature_key_indexes":[0,5,4],
+      "obs_name":"Observations",
+      "obs_field_names":["Timestamp_UTC", "Timestamp_Local", "Year", "Day_of_Year", "Map_Name", "Map_Author", "Map_Date", "Angle", "Distance", "Perp_meters", "Latitude", "Longitude", "Datum"],
+      "obs_field_types":["TEXT", "TEXT", "SHORT", "SHORT", "TEXT", "TEXT", "TEXT", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "DOUBLE", "TEXT"],
+      "obs_field_map":[0,1,2,3,9,10,11,12,13,14,6,7,8],
+      "obs_key_indexes":[0,11,10]
+    }
+  }
+}
