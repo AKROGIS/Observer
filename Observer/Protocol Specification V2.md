@@ -4,7 +4,7 @@ Protocol Specification -- 1.x
 *This document is for Park Observer 1.x.  If you are using Park Observer 2.0
 please see [this version](Protocol_Specification_V2.html).* 
 
-*If you just want a protocol for a new survey, please start with the
+*If you are new to Park Observer, please start with the
 [tutorial instructions](../new_survey.html) and [examples](../protocols/).*
 
 This document is a technical reference for the structure and accepted content of the Park Observer protocol file.
@@ -20,7 +20,7 @@ For clarity you are encouraged to use a v2 protocol file (defined below) when us
 The protocol file is a plain text file in `JSON` (javascript object notation) format.
 The file typically contains only `ASCII` characters.
 If special characters (accents marks, emoji, etc.) are needed, the file must be encoded in `UTF8`.
-The protocol file name must end with `.obsprot`, which is short for (obs)ervation (prot)ocol.
+The protocol file name must end with `.obsprot`, which is short for observation protocol.
 
 A protocol file contains one JSON object.
 An object begins with an opening curly bracket (`{`) and ends with an closing curly bracket (`}`)
@@ -30,7 +30,7 @@ A colon (`:`) separates the property name from the property value.
 A property value can be an object, a text string enclosed in double quotes (`"`),
 a number, or one of the special symbols: `true`, `false`, and `null`.
 A property value can also be a list of property values.
-A list begins with an opening square bracket (`[`), and ends with a closing square bracker (`]`).
+A list begins with an opening square bracket (`[`), and ends with a closing square bracket (`]`).
 Items in the list are separated by a comma (`,`).
 
 The official specifications of the JSON file format can be found at http://www.json.org/.
@@ -52,7 +52,7 @@ One example of an online validator is https://www.jsonschemavalidator.net.
 
 **IMPORTANT:**
 This specification and the related schema documents, define the proper format of the
-obsprot file.  It is possible that the implementation in Park Observer is more relaxed.
+`obsprot` file.  It is possible that the implementation in Park Observer is more relaxed.
 For example Park Observer might provide default values when a required value is missing,
 or accept different spellings, but that behavior is subject to change without notice.
 
@@ -93,7 +93,7 @@ This is a short moniker used to reference this protocol.
 It will be used in lists to choose among different protocols.
 
 Names do not need to be unique, but having two protocols with the same name can cause confusion.
-Protocols can evolve (see [version](#-version-) and [date](#-date-)).
+Protocols can evolve (see [`version`](#-version-) and [`date`](#-date-)).
 The same name should be used for different version of the same protocol.
 
 Technically, a name is not required by the Park Observer application.
@@ -111,14 +111,14 @@ The version number will be displayed along with the name when presenting a list 
 A change in the major version number represents a change in the database structure of the protocol.
 If you add, remove, rename, or change the type of mission or feature attributes (defined below),
 then you should update the major version number of your protocol.
-Databases created with the postprocessing tools will be named with the protocol name and the major version number.
+Databases created with the post-processing tools will be named with the protocol name and the major version number.
 All surveys with the same protocol name and major version number can go into the same database.
 Surveys with the same protocol name and a different major version number will go into different databases.
 Databases created with different major version numbers of the same protocol will be difficult
 to merge because the database structure is different.
 
 Any other changes to a protocol should be accompanied by an increase in the minor version number.
-For example, changes in symbology, location methods, and default or picklist values.
+For example, changes in symbology, location methods, and default or pick list values.
 
 Technically, a version is not required by the Park Observer application.
 However, the post processing tools require a major version number.
@@ -174,10 +174,10 @@ This property is ignored in versions of Park Observer before 0.9.8b.
 
 # `gps_interval`
 This property is optional.  If provided it must be a positive number.  There is no default.
-The property is the number of seconds to wait between adding new GPS points to the tracklog.
+The property is the number of seconds to wait between adding new GPS points to the track log.
 When making observations, or starting/stopping recording/observing the most recently available
 GPS point will be used regardless of this setting.
-If omitted, or not a positive number, GPS points are added to the tracklog as often as provided
+If omitted, or not a positive number, GPS points are added to the track log as often as provided
 by the GPS device being used.  Typically the iPad's builtin GPS provides locations about 1 per second.
 Some external GPS devices can provide multiple locations per second.
 A number lower than the device can support will effectively be ignored.
@@ -192,7 +192,7 @@ This property is ignored in versions of Park Observer before 0.9.8b.
 This property is optional.  If provided it must be an object.  There is no default.
 This object describes the attributes and symbology of the survey mission.
 The attributes are things that may be constant for the entire survey, i.e. observer name, as
-well as dynamic attributes like the weather.
+well as dynamic attributes like the weather that may apply to many observations.
 It also describes the look and feel of the editing form and when the attributes should be edited.
 
 A `mission` object has the following properties:
@@ -214,7 +214,7 @@ Each of these properties are defined in the following sections.
 
 ## `attributes`
 An optional list of attribute objects.
-The attributes are descriptive characterisitics for each segment of the survey.
+The attributes are descriptive characteristics for each segment of the survey.
 A mission with no attributes only collects the location where the the user
 stopped and started observing (i.e. went on/off transect). The mission
 attributes are often things like the names of the observers, and the weather.
@@ -233,7 +233,7 @@ Each `attribute` has the following properties:
 
 ### `name`
 A required string identifying the attribute.  This will be the name of the column in an exported
-CSV file, or a field in an ArcGIS geodatabase.
+CSV file, or a field in an ArcGIS geo-database.
 The name must start with a letter or underscore (`_`), and be followed by zero or more letters, numbers,
 or underscores. It must be no longer than 30 characters.
 Spaces and special characters are prohibited.
@@ -244,7 +244,7 @@ Mission attributes and feature attributes are unrelated -- they can have the sam
 `Species`, `species`, and `SPECIES` are the same attribute name.
 However, the names in this protocol must
 match in capitalization.  If you use `Species` in a `mission.totalizer` or a `feature.label`,
-it must also be refered to as `Species` in the dialog element and `Species` in the attributes list.
+it must also be referred to as `Species` in the dialog element and `Species` in the attributes list.
 
 ### `type`
 A required number that identifies the type (kind) of data the attribute stores.
@@ -260,10 +260,10 @@ These numbers (with the exception of 0) correspond with NSAttributeType in the i
 -	600 -> single precision floating point number
 -	700 -> string
 -	800 -> boolean (converts to an ESRI integer 0 = NO, 1 = YES)
--	900 -> datetime
+-	900 -> DateTime
 -	1000 -> binary blob (? no UI support, check on ESRI support)
 
-The type vALue of 0 is ignored in versions of Park Observer before 0.9.8.
+The type 0 is ignored in versions of Park Observer before 0.9.8.
 
 ## `dialog`
 This property is optional.  If provided it must be an object.  There is no default.
@@ -313,7 +313,7 @@ This text is placed as a title at the top of the section.
 This property is requires and must be a list of one or element objects.
 Elements make up the interesting parts of the form.  They are usually tied to an attribute
 and determine how the attribute can be edited.  Examples of form elements are text boxes,
-on/off switches, and picklists. Each element has the following properties.  Some
+on/off switches, and pick lists. Each element has the following properties.  Some
 properties are only relevant for certain types of elements.
 Each element object has the following properties.
 
@@ -350,8 +350,8 @@ only supports the following types.  These are case sensitive.
 * `QIntegerElement` - an integer input box with stepper (+1/-1) buttons.
 * `QLabelElement` - non-editable text on its own line in the form.
 * `QMultilineElement` - a multi-line text box.
-* `QRadioElement` - A single selection picklist (as a vertical list of titles)
-* `QSegmentedElement` - A single selection picklist (as a horizontal row of buttons)
+* `QRadioElement` - A single selection pick list (as a vertical list of titles)
+* `QSegmentedElement` - A single selection pick list (as a horizontal row of buttons)
 
 
 ##### `bind`
@@ -371,20 +371,20 @@ displaying a unique feature id).  The bind value must start with one of the foll
 and be followed by an attribute name from the list of Attributes.
 This will determine the type of value extracted from the form element,
 and which attribute it is tied to (i.e. read from and saved to).
-It is important that the type above matches the type of the attrribute in
+It is important that the type above matches the type of the attribute in
 the Attributes section.  Note that the will always be a colon (:) in the
-bind string seperating the type from the name.
+bind string separating the type from the name.
 The attribute name in the bind property must be in the list of attributes.
 
 ##### `items`
 This property is optional.  If provided it must be a list of one or more strings.  There is no default.
-This property provides a list of choices for picklist type elements.
+This property provides a list of choices for pick list type elements.
 It is required for `QRadioElement` and `QSegmentedElement`, and ignored for all other types.
 
 ##### `selected`
 This property is optional.  If provided it must be an integer.  There is no default.
-It is the zero based index of the intially selected item from the list of items.
-If not provided, nothing is selected initiailly.
+It is the zero based index of the initially selected item from the list of items.
+If not provided, nothing is selected initially.
 
 ##### `boolValue`
 This property is optional.  If provided it must be an integer value of 0 or 1.  The default is 0 (false).
@@ -405,7 +405,7 @@ There is no default; that is the initial value is null. Protocol authors are dis
 from using an initial value, as it causes confusion regarding whether there was an
 observation of the default value, or there was no observation.  Leaving as null removes
 the ambiguity.  If a default value is desired when there was no observation this can be
-done in post processing without lossing the fact that no observation was actually made.
+done in post processing without losing the fact that no observation was actually made.
 
 ##### `placeholder`
 This property is optional.  If provided it must be a text string.  There is no default.
@@ -516,11 +516,11 @@ The default in version 2 was a 1.5 point wide solid gray line.
 
 ## `gps-symbology`
 An optional object as defined in the [symbology](#symbology) section at the end of this document.
-This object defines the look of the gps points along the track log.
+This object defines the look of the GPS points along the track log.
 The default is a 6 point blue circle.
 
 This property is ignored in versions of Park Observer before 0.9.8.  In that case,
-all gps points are rendered as a blue 6 point circle.
+all GPS points are rendered as a blue 6 point circle.
 
 ## `totalizer`
 This property is optional. If provided it must be an object as defined below. There is no default.
@@ -598,7 +598,7 @@ Each feature is an object with the following properties
 This property is required and must be a non-empty text string.
 Each feature name must be unique name. The name is used in the interface to let the
 user choose among different feature types. All the observation in one feature will
-be exported in a CSV file with this name, and a geodatabase table with this name.
+be exported in a CSV file with this name, and a geo-database table with this name.
 It should be short and descriptive.
 
 ## `attributes`
@@ -631,7 +631,7 @@ A location is an object that describes the permitted techniques for specifying t
 * `units` (o)
 
 ### `type`
-This property is required and must be one of the follwing strings:
+This property is required and must be one of the following strings:
 
  * `gps` - locates the observation at the devices GPS location
  * `mapTarget` - locates the observation where the target is on the map
@@ -642,7 +642,7 @@ This property is required and must be one of the follwing strings:
 `adhocTouch` is a deprecated synonym for `mapTouch`.  These types should not be
 used in new protocol files, but may still exist in older files.
 
-**Important:** Providing multiple locations with the same type not prohibited,
+**Important:** Providing multiple locations with the same type is not prohibited,
  but it is discouraged as the behavior is undefined.
 
 See the [Protocol Guide](Protocol_Guide_V1.html) for details on how the user interface behaves with
@@ -656,7 +656,7 @@ This is equivalent to not providing the location method in the list.
 ### `default`
 This property is optional. If provided it must be a boolean. The default is false.
 This is used to determine which "allowed" non-touch location method should be used
-by default (until the user specifies thier preference).
+by default (until the user specifies their preference).
 Only one non-touch locations should have a true value, otherwise the behavior is undefined.
 
 ### `deadAhead`
@@ -669,8 +669,8 @@ This property is a deprecated synonym for `deadAhead`.
 Its use is discouraged, but it may be found in older protocol files.
 
 ### `direction`
-This property is optional. If provided it must be one of "cw" or "ccw". The default is "cw".
-With "cw", angles for the `angleDistance` location type will increase in the clockwise direction,
+This property is optional. If provided it must be one of `cw` or `ccw`. The default is `cw`.
+With `cw`, angles for the `angleDistance` location type will increase in the clockwise direction,
 otherwise they increase in the counter-clockwise direction.
 
 ### `units`
@@ -704,7 +704,7 @@ The color property is discussed in more detail in the [symbology](#symbology) se
 
 ### `size`
 This property is optional. If provided it must be an number.  The default is 14.0
-It sepcifies the size in points of the label text.
+It specifies the size in points of the label text.
 The size property is discussed in more detail in the [symbology](#symbology) section at the end of this document.
 
 ### `symbol`
@@ -722,13 +722,13 @@ This property is optional. If provided it must be an object.  There is no defaul
 This object describes the format of the CSV exported survey data.
 Currently the format of the CSV files output by Park Observer is hard coded.
 This part of the protocol file is ignored by Park Observer, and only used
-by tools that convert the csv data to an esri file geodatabases.
+by tools that convert the CSV data to an ESRI file geo-databases.
 
 If provided it must be a object identical to [`csv.json`](csv.json).  If provided, it will be used by post processing tools like the POZ to FGDB translator to understand how the CSV export files are formatted. If it is not provided, the upload server, and the POZ to FGDB translator will use [`csv.json`](csv.json).
 
 A future version of Park Observer may use this property to allow users to configure the format of the exported CSV files.
 
-The csv object has the following properties.  All are required.
+The CSV object has the following properties.  All are required.
 
 * `features`
 * `gps_points`
@@ -751,10 +751,10 @@ All are required.
  * `obs_name`
 
 ### `feature_field_map`
-A list of integer column indices from the csv header, starting with zero, for the columns containing the data for the observed feature tables.
+A list of integer column indices from the CSV header, starting with zero, for the columns containing the data for the observed feature tables.
 
 ### `feature_field_names`
-A list of the string field names from the csv header that will create the observed feature tables.
+A list of the string field names from the CSV header that will create the observed feature tables.
 
 ### `feature_field_types`
 A list of the string field types for each column listed in the 'feature_field_names' property.
@@ -766,22 +766,22 @@ A list of 3 integer column indices, starting with zero, for the columns containi
 The header of the CSV file; a list of the column names in order.
 
 ### `obs_field_map`
-A list of integer column indices from the csv header, starting with zero, for the columns containing the data for the observer table.
+A list of integer column indices from the CSV header, starting with zero, for the columns containing the data for the observer table.
 
 ### `obs_field_names`
-A list of the field names from the csv header that will create the observed feature table.
+A list of the field names from the CSV header that will create the observed feature table.
 
 ### `obs_field_types`
-A list of the field types for each column listed in the 'obs_field_names' property.
+A list of the field types for each column listed in the `obs_field_names` property.
 
 ### `obs_key_indexes`
 A list of 3 integer column indices, starting with zero, for the columns containing the time, x and y coordinates of the observer.
 
 ### `obs_name`
-The name of the table in the esri geodatabase that will contain the data for the observer of the features.
+The name of the table in the ESRI geo-database that will contain the data for the observer of the features.
 
 ## `gps_points`
-An object that describes how to build the GPS point feature class from the CSV file containing the GPS points. The gps_points object has the following properties.
+An object that describes how to build the GPS point feature class from the CSV file containing the GPS points. The `gps_points` object has the following properties.
 All are required.
 
  * `field_names`
@@ -799,10 +799,10 @@ A list of the field types in the columns of the CSV file in order.
 A list of 3 integer column indices, starting with zero, for the columns containing the time, x and y coordinates of the point.
 
 ### `name`
-The name of the csv file, and the table in the esri geodatabase.
+The name of the CSV file, and the table in the ESIR geo-database.
 
 ## `track_logs`
-An object that describes how to build the GPS point feature class from the CSV file containing the tracklogs and mission properties. The track_logs object has the following properties.
+An object that describes how to build the GPS point feature class from the CSV file containing the track logs and mission properties. The track_logs object has the following properties.
 All are required.
 
  * `end_key_indexes`
@@ -812,7 +812,7 @@ All are required.
  * `start_key_indexes`
 
 ### `end_key_indexes`
-A list of 3 integer column indices, starting with zero, for the columns containing the time, x and y coordinates of the first point in the tracklog.
+A list of 3 integer column indices, starting with zero, for the columns containing the time, x and y coordinates of the first point in the track log.
 
 ### `field_names`
 A list of the field names in the header of the CSV file in order.
@@ -821,10 +821,10 @@ A list of the field names in the header of the CSV file in order.
 A list of the field types in the columns of the CSV file in order.
 
 ### `name`
-The name of the csv file, and the table in the esri geodatabase.
+The name of the CSV file, and the table in the ESRI geo-database.
 
 ### `start_key_indexes`
-A list of 3 integer column indices, starting with zero, for the columns containing the time, x and y coordinates of the last point in the tracklog.
+A list of 3 integer column indices, starting with zero, for the columns containing the time, x and y coordinates of the last point in the track log.
 
 
 
@@ -850,21 +850,21 @@ This property is optional. If provided it must be a text string. There is no def
 The color element is a string in the form "#FFFFFF"
 where F is a hexadecimal digit (0-9,A-F).
 The Hex pairs represent the Red, Green, and Blue respectively.
-If the string is missing, or malformed, then the esri mapping framework was free to choose
+If the string is missing, or malformed, then the ESRI mapping framework was free to choose
 a default value.  Typically this was black.
 
 ### `size`
 This property is optional. If provided it must be a number. There is no default.
 The size is a number for the diameter in points of the simple circle marker symbol,
 or the width of a simple solid line.
-If the number is missing, or invalid, then the esri mapping framework was free to choose
+If the number is missing, or invalid, then the ESRI mapping framework was free to choose
 a default value at one point this was 6 points for diameter, and 1 point for width.
 
 ## `"meta-version": 2`
 With version 2, the symbology object was specified by the JSON format for ESRI Renderers
 as defined in the [renderer object in the ArcGIS ReST API](https://developers.arcgis.com/documentation/common-data-types/renderer-objects.htm).
-This is the format that esri uses when building web maps for AGOL.
-Depending on which version of the esri mapping SDK that Park Observer is using,
+This is the format that ESRI uses when building web maps for AGOL.
+Depending on which version of the ESRI mapping SDK that Park Observer is using,
 some of the properties may be optional (the `type` property is always required).
 However the default value provided may vary with different versions. To be
 safest, do not rely on default values, and always test your symbology before
@@ -876,5 +876,5 @@ of symbol (marker symbols like `esriSMS` for points and `esriSLM` for lines).
 If the symbol object was invalid, a 12 point green circle was provided for points.
 The default line symbol by property in the mission property.
 
-If you wish to not draw the track logs or gps points, then you need to provide valid symbology
+If you wish to not draw the track logs or GPS points, then you need to provide valid symbology
 with either 0 size, or a fully transparent color.
