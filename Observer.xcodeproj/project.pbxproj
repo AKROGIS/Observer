@@ -111,6 +111,7 @@
 		59C60FE8185ABF9400470791 /* AKRDirectionIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FE7185ABF9400470791 /* AKRDirectionIndicatorView.m */; };
 		59C60FEF1863FDBF00470791 /* AKRFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C60FEE1863FDBF00470791 /* AKRFormatter.m */; };
 		59CBF9731E91887300AE13C3 /* ArcGIS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 59CBF9721E91887300AE13C3 /* ArcGIS.bundle */; };
+		59E56C1724F4A46C005284C3 /* Protocol Guide.md in Resources */ = {isa = PBXBuildFile; fileRef = 59E56C1324F4A46C005284C3 /* Protocol Guide.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -360,6 +361,7 @@
 		59C60FED1863FDBF00470791 /* AKRFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKRFormatter.h; sourceTree = "<group>"; };
 		59C60FEE1863FDBF00470791 /* AKRFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKRFormatter.m; sourceTree = "<group>"; };
 		59CBF9721E91887300AE13C3 /* ArcGIS.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ArcGIS.bundle; path = ../../Library/SDKs/ArcGIS/iOS/ArcGIS.framework/Versions/Current/Resources/ArcGIS.bundle; sourceTree = "<group>"; };
+		59E56C1324F4A46C005284C3 /* Protocol Guide.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = "Protocol Guide.md"; path = "Protocols/Protocol Guide.md"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -627,6 +629,7 @@
 		39955E51178334C000D225D7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				59E56C1324F4A46C005284C3 /* Protocol Guide.md */,
 				39BAF29D1CD28C7E0093A5A5 /* Protocol Specification V2.md */,
 				399F09411AD828B800E89EE2 /* Distribution Instructions.txt */,
 				391401441975A03A0055F2E1 /* LICENSE */,
@@ -880,6 +883,7 @@
 				39C53E6B1885D98400C0CECE /* SurveyDocumentIcon.png in Resources */,
 				39C53E6E1885D9DF00C0CECE /* ProtocolDocumentIcon.png in Resources */,
 				391401451975A03A0055F2E1 /* LICENSE in Resources */,
+				59E56C1724F4A46C005284C3 /* Protocol Guide.md in Resources */,
 				39955E67178334C000D225D7 /* MainStoryboard_iPad.storyboard in Resources */,
 				39C53E701885DAB000C0CECE /* TilePackageDocumentIcon.png in Resources */,
 				393E8AFE17A30012009AD0AC /* Settings.bundle in Resources */,
