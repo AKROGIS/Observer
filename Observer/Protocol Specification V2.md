@@ -220,10 +220,10 @@ stopped and started observing (i.e. went on/off transect). The mission
 attributes are often things like the names of the observers, and the weather.
 
 All the attributes default to a value of `null` until they are edited.
-The exceptions are boolean attributes which defaults to `false`, and `id` attributes which default to `1`.
+The exceptions are boolean attributes which defaults to `false`, and 
+the `id` attribute which starts at `1` and increments by `1` for each each observation.
+The `id` attribute can provide each observation with an automatic, unique, and sequential identifier.
 All attributes, except the `id` will never change unless you also have a `dialog` property.
-An Attribute of type `id` only applies to features, and is incremented for each observation.
-This can provide each feature with an automatic, unique, and sequential identifier.
 
 If there is an attribute list then there must be at least one valid attribute object in it.
 Each `attribute` has the following properties:
